@@ -1,0 +1,20 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up meson and vala
+      run: sudo apt update && sudo apt install valac build-essential meson valadoc
+
+    - name: Build
+      run: meson build && ninja -C build
