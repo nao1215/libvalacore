@@ -6,7 +6,6 @@
 The basic API of Vala language is provided by GLib and libgee. However, I think Vala's API difficult to use. It looks like there are many inconsistent libraries compared to Python, Java and Golang.  
 
 So, let's create the easy-to-use Vala basic API library.  
-()
 
 # How to build (install)
 ```
