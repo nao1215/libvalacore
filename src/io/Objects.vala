@@ -1,7 +1,7 @@
 /*
  * libcore/src/io/Objects.vala
  *
- * Copyright 2021 Naohiro CHIKAMATSU
+ * Copyright 2022 Naohiro CHIKAMATSU
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Core {
          * @param obj Object to be checked.
          * @return true: object is null, false: object is not null.
          */
-        public static bool isNull<T>(T obj) {
+        public static bool isNull<T>(T ? obj) {
             return obj == null;
         }
 
@@ -34,7 +34,7 @@ namespace Core {
          * @param obj Object to be checked.
          * @return true: object is not null, false: object is null.
          */
-        public static bool nonNull<T>(T obj) {
+        public static bool nonNull<T>(T ? obj) {
             return !isNull (obj);
         }
     }

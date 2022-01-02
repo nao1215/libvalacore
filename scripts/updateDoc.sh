@@ -4,7 +4,7 @@
 # Furthermore, the script copy valadoc at /docs.
 ROOT_DIR=$(git rev-parse --show-toplevel)
 BUILD_DIR="${ROOT_DIR}/build"
-VALADOC_DIR="${BUILD_DIR}/src/Core-*/Core-*"
+VALADOC_DIR="${BUILD_DIR}/src/Valacore-*/Valacore-*"
 DOC_DIR="${ROOT_DIR}/docs"
 
 source ${ROOT_DIR}/scripts/libbash.sh

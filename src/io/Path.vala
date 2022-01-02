@@ -21,14 +21,40 @@ namespace Core {
      * the file system.
      */
     public class Path : GLib.Object {
-        private string path = null;
+        private string path;
 
         /**
          * Construct Path object.
          * @param path PATH information represented by the string
+         * @return Path object
          */
         public Path (string path) {
-            this.path = path;
+            this.path = path.dup ();
         }
+
+        /**
+         * Returns absolute path that is normalized.
+         * @return If the Path information is correct, abs() returns an absolute path.
+         * If the Path information is incorrect (e.g. null), abs() returns "".
+         */
+        /*
+           public string ? abs () {
+           if (Objects.isNull (this.path)) {
+               return null;
+           }
+           var cwd = Os.cwd ();
+           return (cwd + "/" + this.path).dup ();
+           }
+         */
+
+        /** T.B.D */
+        /*
+           private string ? normalized () {
+            if (Objects.isNull (path)) {
+                return null;
+            }
+            return path;
+           }
+         */
     }
 }

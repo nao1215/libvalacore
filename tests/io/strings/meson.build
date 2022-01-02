@@ -1,15 +1,15 @@
 test_name = meson.project_name() + '-test'
 
-objects_test_sources = files(
-  './TestObjects.vala'
+strings_test_sources = files(
+  './TestStrings.vala'
 )
 
-objects_test_sources += valacore_sources
+strings_test_sources += valacore_sources
 
-test_unit = 'Objects-test'
+test_unit = 'Strings-test'
 
 exe = executable(test_unit,
-                 sources: objects_test_sources,
+                 sources: strings_test_sources,
                  dependencies : dependencies,
                  install: false)
 test(test_unit, exe)

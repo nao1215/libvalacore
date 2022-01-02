@@ -2,45 +2,57 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-    <title>Core.Path &ndash; Valacore-0.1.0 &ndash; Vala Binding Reference</title>
+    <title>Core.Os &ndash; Valacore-0.1.0 &ndash; Vala Binding Reference</title>
     <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
     </script>
   </head>
   <body>
-    <div class="site_header">Core.Path &ndash; Valacore-0.1.0 Reference Manual</div>
+    <div class="site_header">Core.Os &ndash; Valacore-0.1.0 Reference Manual</div>
     <div class="site_body">
       <div class="site_content">
-        <h1 class="main_title">Path</h1>
+        <h1 class="main_title">Os</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Object Hierarchy:</h2>
-        <img class="main_diagram" usemap="#Core.Path" alt="Object hierarchy for Path" src="img/Core.Path.png"/>
+        <img class="main_diagram" usemap="#Core.Os" alt="Object hierarchy for Os" src="img/Core.Os.png"/>
 
-      <map id="Core.Path" name="Core.Path">
-<area shape="rect" id="node1" href="Core.Path.html" title="Core.Path" alt="" coords="15,101,109,149"/>
+      <map id="Core.Os" name="Core.Os">
+<area shape="rect" id="node1" href="Core.Os.html" title="Core.Os" alt="" coords="21,101,103,149"/>
 </map>
 
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Path</span></b> : <span class="main_type"><span class="class">Object</span></span>
-        </div>
-        <div class="description">
-          <p>The Path class is an object that can be used to identify the file path in the file system.</p>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Os</span></b> : <span class="main_type"><span class="class">Object</span></span>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Core.html">Core</a>
         </div>
         <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore-0.1.0</a>
         </div>
         <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Core.Os.chdir.html" class="static_method">chdir</a></b> (<span class="main_basic_type"><span class="class">string</span></span> path)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Change current directory.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Core.Os.cwd.html" class="static_method">cwd</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns current working directory.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Core.Os.getEnv.html" class="static_method">getEnv</a></b> (<span class="main_basic_type"><span class="class">string</span></span> env)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the value of the environment variable.</span>
+            </div></li>
+        </ul>
         <h3 class="main_title">Creation methods:</h3>
         <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Core.Path.Path.html" class="creation_method">Path</a></b> (<span class="main_basic_type"><span class="class">string</span></span> path)
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Core.Os.Os.html" class="creation_method">Os</a></b> ()
             </span>
-            <div class="leaf_brief_description"><span class="brief_description">Construct Path object.</span>
+            <div class="leaf_brief_description">
             </div></li>
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-1')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-1">
+          <div class="headline" onclick="toggle_box (this, 'box-content-3')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-3">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
