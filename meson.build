@@ -32,3 +32,6 @@ g_ir_compiler = find_program('g-ir-compiler', required: false)
 
 subdir('src')
 subdir('tests')
+
+setup_unittest= find_program('scripts/setupUnitTest.sh')
+run_command(setup_unittest)

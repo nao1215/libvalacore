@@ -1,5 +1,5 @@
 /*
- * libcore/src/io/Objects.vala
+ * libvalacore/src/io/Objects.vala
  *
  * Copyright 2022 Naohiro CHIKAMATSU
  *

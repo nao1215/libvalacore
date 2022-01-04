@@ -1,5 +1,5 @@
 /*
- * libcore/src/io/Strings.vala
+ * libvalacore/src/io/Strings.vala
  *
  * Copyright 2022 Naohiro CHIKAMATSU
  *
@@ -63,6 +63,19 @@ namespace Core {
                 tmp += str.get_char (i).to_string ();
             }
             return tmp.dup ();
+        }
+
+        /**
+         * Returns whether substr is included in the s.
+         * @param s The string to be searched
+         * @param substr Search keyword
+         * @return true: substr is included, false substr is not included.
+         */
+        public static bool contains (string ? s, string ? substr) {
+            if (isNullOrEmpty (s) || isNullOrEmpty (substr)) {
+                return false;
+            }
+            return s.contains (substr);
         }
     }
 }

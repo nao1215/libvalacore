@@ -1,5 +1,5 @@
 /*
- * libcore/src/io/Path.vala
+ * libvalacore/src/io/Path.vala
  *
  * Copyright 2022 Naohiro CHIKAMATSU
  *
@@ -29,7 +29,31 @@ namespace Core {
          * @return Path object
          */
         public Path (string path) {
-            this.path = path.dup ();
+            this.path = path;
+        }
+
+        /**
+         * Extract the base name (file name) from the file path.
+         * @param path file path to be checked.
+         * @return string of basename. If path is null or not file path, return "";
+         */
+        public static string basename (string path) {
+            if (Strings.isNullOrEmpty (path)) {
+                return "";
+            }
+            return GLib.Path.get_basename (path);
+        }
+
+        /**
+         * Extract the dirname from the file path.
+         * @param path file path to be checked.
+         * @return string of dirname. If path is null or not file path, return "";
+         */
+        public static string dirname (string path) {
+            if (Strings.isNullOrEmpty (path)) {
+                return "";
+            }
+            return GLib.Path.get_dirname (path);
         }
 
         /**

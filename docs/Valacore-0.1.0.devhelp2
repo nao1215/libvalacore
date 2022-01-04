@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <book xmlns="http://www.devhelp.net/book" title="Valacore-0.1.0 Reference Manual" language="vala" name="Valacore-0.1.0" version="" author="" link="index.htm">
-  <chapters><sub name="Core" link="Core.html"><sub name="Objects" link="Core.Objects.html"></sub><sub name="Path" link="Core.Path.html"></sub>
-      <sub name="Strings" link="Core.Strings.html"></sub><sub name="Os" link="Core.Os.html"></sub></sub>
-  </chapters><functions><keyword type="function" name="Core.Objects.Objects" link="Core.Objects.Objects.html"/>
+  <chapters><sub name="Core" link="Core.html"><sub name="File" link="Core.File.html"></sub><sub name="Objects" link="Core.Objects.html"></sub>
+      <sub name="Path" link="Core.Path.html"></sub><sub name="Strings" link="Core.Strings.html"></sub><sub name="Os" link="Core.Os.html"></sub></sub>
+  </chapters><functions><keyword type="function" name="Core.File.isFile" link="Core.File.isFile.html"/>
+    <keyword type="function" name="Core.File.isDir" link="Core.File.isDir.html"/>
+    <keyword type="function" name="Core.File.canRead" link="Core.File.canRead.html"/>
+    <keyword type="function" name="Core.File.canWrite" link="Core.File.canWrite.html"/>
+    <keyword type="function" name="Core.File.canExec" link="Core.File.canExec.html"/>
+    <keyword type="function" name="Core.File.isSymbolicFile" link="Core.File.isSymbolicFile.html"/>
+    <keyword type="function" name="Core.File.isHiddenFile" link="Core.File.isHiddenFile.html"/>
+    <keyword type="function" name="Core.File.File" link="Core.File.File.html"/><keyword type="" name="Core.File" link="Core.File.html"/>
+    <keyword type="function" name="Core.Objects.Objects" link="Core.Objects.Objects.html"/>
     <keyword type="function" name="Core.Objects.isNull" link="Core.Objects.isNull.html"/>
     <keyword type="function" name="Core.Objects.nonNull" link="Core.Objects.nonNull.html"/>
     <keyword type="" name="Core.Objects" link="Core.Objects.html"/><keyword type="function" name="Core.Path.Path" link="Core.Path.Path.html"/>
-    <keyword type="" name="Core.Path" link="Core.Path.html"/><keyword type="function" name="Core.Strings.Strings" link="Core.Strings.Strings.html"/>
+    <keyword type="function" name="Core.Path.basename" link="Core.Path.basename.html"/>
+    <keyword type="function" name="Core.Path.dirname" link="Core.Path.dirname.html"/><keyword type="" name="Core.Path" link="Core.Path.html"/>
+    <keyword type="function" name="Core.Strings.Strings" link="Core.Strings.Strings.html"/>
     <keyword type="function" name="Core.Strings.isNullOrEmpty" link="Core.Strings.isNullOrEmpty.html"/>
     <keyword type="function" name="Core.Strings.trimSpace" link="Core.Strings.trimSpace.html"/>
+    <keyword type="function" name="Core.Strings.contains" link="Core.Strings.contains.html"/>
     <keyword type="" name="Core.Strings" link="Core.Strings.html"/><keyword type="function" name="Core.Os.Os" link="Core.Os.Os.html"/>
     <keyword type="function" name="Core.Os.getEnv" link="Core.Os.getEnv.html"/><keyword type="function" name="Core.Os.cwd" link="Core.Os.cwd.html"/>
     <keyword type="function" name="Core.Os.chdir" link="Core.Os.chdir.html"/><keyword type="" name="Core.Os" link="Core.Os.html"/>

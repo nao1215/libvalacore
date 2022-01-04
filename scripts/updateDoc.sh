@@ -25,6 +25,7 @@ function build() {
 }
 
 function cpValadoc() {
+    warnMsg "Copy valadoc at ${DOC_DIR}"
     cp -rf ${VALADOC_DIR}/* ${DOC_DIR}
 }
 

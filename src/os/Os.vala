@@ -1,5 +1,5 @@
 /*
- * libcore/src/os/Os.vala
+ * libvalacore/src/os/Os.vala
  *
  * Copyright 2022 Naohiro CHIKAMATSU
  *
