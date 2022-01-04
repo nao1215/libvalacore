@@ -17,7 +17,7 @@
  */
 namespace Core {
     /**
-     * The Path class is an object that can be used to identify the file path in
+     * Path class is an object that can be used to identify the file path in
      * the file system.
      */
     public class Path : GLib.Object {

@@ -18,7 +18,7 @@
 using Posix;
 namespace Core {
     /**
-     * The File class is an abstract representation of file and directory pathnames.
+     * File class is an abstract representation of file and directory pathnames.
      */
     public class File : GLib.Object {
         /**TODO: In the future, replace strings with path objects. */
