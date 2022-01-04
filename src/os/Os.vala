@@ -17,6 +17,9 @@
  */
 using Posix;
 namespace Core {
+    /**
+     * Os class is operating system interfaces.
+     */
     public class Os : GLib.Object {
         /**
          * Returns the value of the environment variable.
