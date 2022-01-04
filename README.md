@@ -21,7 +21,7 @@ $ sudo ninja install
 ```
 
 # Valadoc
-[Click here for libcore's Valadoc.](https://nao1215.github.io/libcore/)
+[Click here for libcore's Valadoc.](https://nao1215.github.io/libvalacore/)
 
 # Goal
 The goal is to make it easier for people with other language experience to use the Vala language through the libvalacore library. Therefore, we will proceed with the implementation while referring to the APIs of other languages.  
