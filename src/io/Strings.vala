@@ -77,5 +77,29 @@ namespace Core {
             }
             return s.contains (substr);
         }
+
+        /**
+         * Split the string by the specified number of characters and returns it as an
+         * array of strings.
+         * @param str Character string to be splited
+         * @return Array of split string.
+         */
+        public static string[] splitByNum (string str, uint num) {
+            if (Objects.isNull (str) || num == 0) {
+                return new string[1];
+            }
+
+            string[] strs = {};
+            string tmp = "";
+            for (int i = 0; i < str.length; i++) {
+                tmp += str.get_char (i).to_string ();
+                if (i != 0 && i % num == 0) {
+                    strs += tmp;
+                    tmp = "";
+                }
+            }
+            strs += tmp;
+            return strs;
+        }
     }
 }

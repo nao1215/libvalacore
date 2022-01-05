@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <book xmlns="http://www.devhelp.net/book" title="Valacore-0.1.0 Reference Manual" language="vala" name="Valacore-0.1.0" version="" author="" link="index.htm">
-  <chapters><sub name="Core" link="Core.html"><sub name="File" link="Core.File.html"></sub><sub name="Objects" link="Core.Objects.html"></sub>
+  <chapters><sub name="Core" link="Core.html"><sub name="ArgParser" link="Core.ArgParser.html"><sub name="Builder" link="Core.ArgParser.Builder.html">
+        </sub></sub><sub name="File" link="Core.File.html"></sub><sub name="Objects" link="Core.Objects.html"></sub>
       <sub name="Path" link="Core.Path.html"></sub><sub name="Strings" link="Core.Strings.html"></sub><sub name="Os" link="Core.Os.html"></sub></sub>
-  </chapters><functions><keyword type="function" name="Core.File.isFile" link="Core.File.isFile.html"/>
+  </chapters><functions><keyword type="function" name="Core.ArgParser.addOption" link="Core.ArgParser.addOption.html"/>
+    <keyword type="function" name="Core.ArgParser.usage" link="Core.ArgParser.usage.html"/>
+    <keyword type="function" name="Core.ArgParser.showVersion" link="Core.ArgParser.showVersion.html"/>
+    <keyword type="function" name="Core.ArgParser.parse" link="Core.ArgParser.parse.html"/>
+    <keyword type="function" name="Core.ArgParser.hasOption" link="Core.ArgParser.hasOption.html"/>
+    <keyword type="function" name="Core.ArgParser.copyArgWithoutCmdNameAndOptions" link="Core.ArgParser.copyArgWithoutCmdNameAndOptions.html"/>
+    <keyword type="function" name="Core.ArgParser.parseResult" link="Core.ArgParser.parseResult.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.applicationName" link="Core.ArgParser.Builder.applicationName.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.applicationArgument" link="Core.ArgParser.Builder.applicationArgument.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.description" link="Core.ArgParser.Builder.description.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.version" link="Core.ArgParser.Builder.version.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.author" link="Core.ArgParser.Builder.author.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.contact" link="Core.ArgParser.Builder.contact.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.build" link="Core.ArgParser.Builder.build.html"/>
+    <keyword type="function" name="Core.ArgParser.Builder.Builder" link="Core.ArgParser.Builder.Builder.html"/>
+    <keyword type="property" name="Core.ArgParser.Builder.appName" link="Core.ArgParser.Builder.appName.html"/>
+    <keyword type="property" name="Core.ArgParser.Builder.appArg" link="Core.ArgParser.Builder.appArg.html"/>
+    <keyword type="property" name="Core.ArgParser.Builder.desc" link="Core.ArgParser.Builder.desc.html"/>
+    <keyword type="property" name="Core.ArgParser.Builder.ver" link="Core.ArgParser.Builder.ver.html"/>
+    <keyword type="property" name="Core.ArgParser.Builder.appAuthor" link="Core.ArgParser.Builder.appAuthor.html"/>
+    <keyword type="property" name="Core.ArgParser.Builder.appContact" link="Core.ArgParser.Builder.appContact.html"/>
+    <keyword type="" name="Core.ArgParser.Builder" link="Core.ArgParser.Builder.html"/>
+    <keyword type="" name="Core.ArgParser" link="Core.ArgParser.html"/><keyword type="function" name="Core.File.isFile" link="Core.File.isFile.html"/>
     <keyword type="function" name="Core.File.isDir" link="Core.File.isDir.html"/>
     <keyword type="function" name="Core.File.exists" link="Core.File.exists.html"/>
     <keyword type="function" name="Core.File.canRead" link="Core.File.canRead.html"/>
@@ -22,6 +45,7 @@
     <keyword type="function" name="Core.Strings.isNullOrEmpty" link="Core.Strings.isNullOrEmpty.html"/>
     <keyword type="function" name="Core.Strings.trimSpace" link="Core.Strings.trimSpace.html"/>
     <keyword type="function" name="Core.Strings.contains" link="Core.Strings.contains.html"/>
+    <keyword type="function" name="Core.Strings.splitByNum" link="Core.Strings.splitByNum.html"/>
     <keyword type="" name="Core.Strings" link="Core.Strings.html"/><keyword type="function" name="Core.Os.Os" link="Core.Os.Os.html"/>
     <keyword type="function" name="Core.Os.get_env" link="Core.Os.get_env.html"/><keyword type="function" name="Core.Os.cwd" link="Core.Os.cwd.html"/>
     <keyword type="function" name="Core.Os.chdir" link="Core.Os.chdir.html"/><keyword type="" name="Core.Os" link="Core.Os.html"/>
