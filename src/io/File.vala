@@ -56,6 +56,18 @@ namespace Core {
         }
 
         /**
+         * Returns whether the file or directory exists in the specified path.
+         * @return true: File or Directory exists, false: File or Directory doesn't exist
+         */
+        public bool exists () {
+            if (Strings.isNullOrEmpty (this.path)) {
+                return false;
+            }
+            var f = GLib.File.new_for_path (this.path);
+            return f.query_exists();
+        }    
+        
+        /**
          * Returns whether the file can read in the specified path.
          * @return true: can read, false: can not read.
          */

@@ -65,6 +65,7 @@ if get_option('enable_valadoc')
       '--doclet',
       'devhelp',
       '--pkg=posix',
+      '--pkg=gio-2.0',
       '@INPUT@',
       '--force'
     ],

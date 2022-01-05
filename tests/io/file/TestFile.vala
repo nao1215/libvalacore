@@ -4,6 +4,7 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/testIsFile", testIsFile);
     Test.add_func ("/testIsDir", testIsDir);
+    Test.add_func ("/testExists", testExists);
     Test.add_func ("/testCanRead", testCanRead);
     Test.add_func ("/testCanWrite", testCanWrite);
     Test.add_func ("/testCanExec", testCanExec);
@@ -30,6 +31,17 @@ void testIsDir () {
 
     var f3 = new Core.File ("");
     assert (f3.isDir () == false);
+}
+
+void testExists () {
+    var f1 = new Core.File ("/tmp/valacore/ut/file.txt");
+    assert (f1.exists () == true);
+
+    var f2 = new Core.File ("/tmp/valacore/ut");
+    assert (f2.exists () == true);
+
+    var f3 = new Core.File ("no_exists");
+    assert (f3.exists () == false);
 }
 
 void testCanRead () {

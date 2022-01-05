@@ -27,7 +27,7 @@ namespace Core {
          * @return If the environment variable env is set, its value is returned.
          * If not set, returns null.
          */
-        public static string ? getEnv (string env) {
+        public static string ? get_env (string env) {
             if (Objects.isNull (env)) {
                 return null;
             }

@@ -5,6 +5,7 @@
       <sub name="Path" link="Core.Path.html"></sub><sub name="Strings" link="Core.Strings.html"></sub><sub name="Os" link="Core.Os.html"></sub></sub>
   </chapters><functions><keyword type="function" name="Core.File.isFile" link="Core.File.isFile.html"/>
     <keyword type="function" name="Core.File.isDir" link="Core.File.isDir.html"/>
+    <keyword type="function" name="Core.File.exists" link="Core.File.exists.html"/>
     <keyword type="function" name="Core.File.canRead" link="Core.File.canRead.html"/>
     <keyword type="function" name="Core.File.canWrite" link="Core.File.canWrite.html"/>
     <keyword type="function" name="Core.File.canExec" link="Core.File.canExec.html"/>
@@ -22,7 +23,7 @@
     <keyword type="function" name="Core.Strings.trimSpace" link="Core.Strings.trimSpace.html"/>
     <keyword type="function" name="Core.Strings.contains" link="Core.Strings.contains.html"/>
     <keyword type="" name="Core.Strings" link="Core.Strings.html"/><keyword type="function" name="Core.Os.Os" link="Core.Os.Os.html"/>
-    <keyword type="function" name="Core.Os.getEnv" link="Core.Os.getEnv.html"/><keyword type="function" name="Core.Os.cwd" link="Core.Os.cwd.html"/>
+    <keyword type="function" name="Core.Os.get_env" link="Core.Os.get_env.html"/><keyword type="function" name="Core.Os.cwd" link="Core.Os.cwd.html"/>
     <keyword type="function" name="Core.Os.chdir" link="Core.Os.chdir.html"/><keyword type="" name="Core.Os" link="Core.Os.html"/>
     <keyword type="" name="Core" link="Core.html"/>
   </functions>

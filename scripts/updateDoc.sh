@@ -32,3 +32,4 @@ function cpValadoc() {
 rmBuildDirIfNeeded
 build
 cpValadoc
+rmBuildDirIfNeeded
