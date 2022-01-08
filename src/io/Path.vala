@@ -1,5 +1,5 @@
 /*
- * libvalacore/src/io/Paths.vala
+ * libvalacore/src/io/Path.vala
  *
  * Copyright 2022 Naohiro CHIKAMATSU
  *
@@ -20,7 +20,7 @@ namespace Vala.Io {
      * Paths class is an object that can be used to identify the file path in
      * the file system.
      */
-    public class Paths : GLib.Object {
+    public class Path : GLib.Object {
         private string path;
 
         /**
@@ -28,19 +28,23 @@ namespace Vala.Io {
          * @param path PATH information represented by the string
          * @return Path object
          */
-        public Paths (string path) {
+        public Path (string path) {
             this.path = path;
         }
 
         /**
+         * Returns Path as a string.
+         * @return path as a string.
+         */
+        public string toString () {
+            return path;
+        }
+
+        /**
          * Extract the base name (file name) from the file path.
-         * @param path file path to be checked.
          * @return string of basename. If path is null or not file path, return "";
          */
-        public static string basename (string path) {
-            if (Strings.isNullOrEmpty (path)) {
-                return "";
-            }
+        public string basename () {
             return GLib.Path.get_basename (path);
         }
 
@@ -49,7 +53,7 @@ namespace Vala.Io {
          * @param path file path to be checked.
          * @return string of dirname. If path is null or not file path, return "";
          */
-        public static string dirname (string path) {
+        public string dirname (string path) {
             if (Strings.isNullOrEmpty (path)) {
                 return "";
             }

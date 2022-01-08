@@ -14,173 +14,75 @@ void main (string[] args) {
 }
 
 void testIsFile () {
-    var f1 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f1.isFile () == true);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.isFile () == false);
-
-    var f3 = new Files ("");
-    assert (f3.isFile () == false);
-
-    var f4 = new Files ("/tmp/valacore/ut/symbolic.txt");
-    assert (f4.isFile () == true);
-
-    var f5 = new Files ("/tmp/valacore/ut/symbolic");
-    assert (f5.isFile () == false);
-
-    var f6 = new Files ("/tmp/valacore/ut/.hidden.txt");
-    assert (f6.isFile () == true);
-
-    var f7 = new Files ("/tmp/valacore/ut/.hidden");
-    assert (f7.isFile () == false);
+    assert (Files.isFile (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == true);
+    assert (Files.isFile (new Vala.Io.Path ("/tmp/valacore/ut")) == false);
+    assert (Files.isFile (new Vala.Io.Path ("")) == false);
+    assert (Files.isFile (new Vala.Io.Path ("/tmp/valacore/ut/symbolic.txt")) == true);
+    assert (Files.isFile (new Vala.Io.Path ("/tmp/valacore/ut/symbolic")) == false);
+    assert (Files.isFile (new Vala.Io.Path ("/tmp/valacore/ut/.hidden.txt")) == true);
+    assert (Files.isFile (new Vala.Io.Path ("/tmp/valacore/ut/.hidden")) == false);
 }
 
 void testIsDir () {
-    var f1 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f1.isDir () == false);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.isDir () == true);
-
-    var f3 = new Files ("");
-    assert (f3.isDir () == false);
-
-    var f4 = new Files ("/tmp/valacore/ut/symbolic.txt");
-    assert (f4.isDir () == false);
-
-    var f5 = new Files ("/tmp/valacore/ut/symbolic");
-    assert (f5.isDir () == true);
-
-    var f6 = new Files ("/tmp/valacore/ut/.hidden.txt");
-    assert (f6.isDir () == false);
-
-    var f7 = new Files ("/tmp/valacore/ut/.hidden");
-    assert (f7.isDir () == true);
+    assert (Files.isDir (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == false);
+    assert (Files.isDir (new Vala.Io.Path ("/tmp/valacore/ut")) == true);
+    assert (Files.isDir (new Vala.Io.Path ("")) == false);
+    assert (Files.isDir (new Vala.Io.Path ("/tmp/valacore/ut/symbolic.txt")) == false);
+    assert (Files.isDir (new Vala.Io.Path ("/tmp/valacore/ut/symbolic")) == true);
+    assert (Files.isDir (new Vala.Io.Path ("/tmp/valacore/ut/.hidden.txt")) == false);
+    assert (Files.isDir (new Vala.Io.Path ("/tmp/valacore/ut/.hidden")) == true);
 }
 
 void testExists () {
-    var f1 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f1.exists () == true);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.exists () == true);
-
-    var f3 = new Files ("no_exists");
-    assert (f3.exists () == false);
-
-    var f4 = new Files ("/tmp/valacore/ut/symbolic.txt");
-    assert (f4.exists () == true);
-
-    var f5 = new Files ("/tmp/valacore/ut/symbolic");
-    assert (f5.exists () == true);
-
-    var f6 = new Files ("/tmp/valacore/ut/.hidden.txt");
-    assert (f6.exists () == true);
-
-    var f7 = new Files ("/tmp/valacore/ut/.hidden");
-    assert (f7.exists () == true);
+    assert (Files.exists (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == true);
+    assert (Files.exists (new Vala.Io.Path ("/tmp/valacore/ut")) == true);
+    assert (Files.exists (new Vala.Io.Path ("no_exists")) == false);
+    assert (Files.exists (new Vala.Io.Path ("/tmp/valacore/ut/symbolic.txt")) == true);
+    assert (Files.exists (new Vala.Io.Path ("/tmp/valacore/ut/symbolic")) == true);
+    assert (Files.exists (new Vala.Io.Path ("/tmp/valacore/ut/.hidden.txt")) == true);
+    assert (Files.exists (new Vala.Io.Path ("/tmp/valacore/ut/.hidden")) == true);
 }
 
 void testCanRead () {
-    var f1 = new Files ("/tmp/valacore/ut/canNotRead.txt");
-    assert (f1.canRead () == false);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.canRead () == true);
-
-    var f3 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f3.canRead () == true);
-
-    var f4 = new Files ("/tmp/valacore/ut/no_exist_file.txt");
-    assert (f4.canRead () == false);
-
-    var f5 = new Files ("/tmp/valacore/ut/canNotReadDir");
-    assert (f5.canRead () == false);
+    assert (Files.canRead (new Vala.Io.Path ("/tmp/valacore/ut/canNotRead.txt")) == false);
+    assert (Files.canRead (new Vala.Io.Path ("/tmp/valacore/ut")) == true);
+    assert (Files.canRead (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == true);
+    assert (Files.canRead (new Vala.Io.Path ("/tmp/valacore/ut/no_exist_file.txt")) == false);
+    assert (Files.canRead (new Vala.Io.Path ("/tmp/valacore/ut/canNotReadDir")) == false);
 }
 
 void testCanWrite () {
-    var f1 = new Files ("/tmp/valacore/ut/canNotWrite.txt");
-    assert (f1.canWrite () == false);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.canWrite () == true);
-
-    var f3 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f3.canWrite () == true);
-
-    var f4 = new Files ("/tmp/valacore/ut/no_exist_file.txt");
-    assert (f4.canWrite () == false);
-
-    var f5 = new Files ("/tmp/valacore/ut/canNotWriteDir");
-    assert (f5.canWrite () == false);
+    assert (Files.canWrite (new Vala.Io.Path ("/tmp/valacore/ut/canNotWrite.txt")) == false);
+    assert (Files.canWrite (new Vala.Io.Path ("/tmp/valacore/ut")) == true);
+    assert (Files.canWrite (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == true);
+    assert (Files.canWrite (new Vala.Io.Path ("/tmp/valacore/ut/no_exist_file.txt")) == false);
+    assert (Files.canWrite (new Vala.Io.Path ("/tmp/valacore/ut/canNotWriteDir")) == false);
 }
 
 void testCanExec () {
-    var f1 = new Files ("/tmp/valacore/ut/canNotExec.txt");
-    assert (f1.canExec () == false);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.canExec () == true);
-
-    var f3 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f3.canExec () == true);
-
-    var f4 = new Files ("/tmp/valacore/ut/no_exist_file.txt");
-    assert (f4.canExec () == false);
-
-    var f5 = new Files ("/tmp/valacore/ut/canNotExecDir");
-    assert (f5.canExec () == false);
+    assert (Files.canExec (new Vala.Io.Path ("/tmp/valacore/ut/canNotExec.txt")) == false);
+    assert (Files.canExec (new Vala.Io.Path ("/tmp/valacore/ut")) == true);
+    assert (Files.canExec (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == true);
+    assert (Files.canExec (new Vala.Io.Path ("/tmp/valacore/ut/no_exist_file.txt")) == false);
+    assert (Files.canExec (new Vala.Io.Path ("/tmp/valacore/ut/canNotExecDir")) == false);
 }
 
 void testIsSymbolicFile () {
-    var f1 = new Files ("/tmp/valacore/ut/canNotExec.txt");
-    assert (f1.isSymbolicFile () == false);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.isSymbolicFile () == false);
-
-    var f3 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f3.isSymbolicFile () == false);
-
-    var f4 = new Files ("/tmp/valacore/ut/no_exist_file.txt");
-    assert (f4.isSymbolicFile () == false);
-
-    var f5 = new Files ("/tmp/valacore/ut/canNotExecDir");
-    assert (f5.isSymbolicFile () == false);
-
-    var f6 = new Files ("/tmp/valacore/ut/symbolic.txt");
-    assert (f6.isSymbolicFile () == true);
-
-    var f7 = new Files ("/tmp/valacore/ut/.hidden.txt");
-    assert (f7.isSymbolicFile () == false);
-
-    var f8 = new Files ("/tmp/valacore/ut/.hidden");
-    assert (f8.isSymbolicFile () == false);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut")) == false);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == false);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut/no_exist_file.txt")) == false);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut/symbolic.txt")) == true);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut/symbolic")) == true);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut/.hidden.txt")) == false);
+    assert (Files.isSymbolicFile (new Vala.Io.Path ("/tmp/valacore/ut/.hidden")) == false);
 }
 
 void testIsHiddenFile () {
-    var f1 = new Files ("/tmp/valacore/ut/canNotExec.txt");
-    assert (f1.isHiddenFile () == false);
-
-    var f2 = new Files ("/tmp/valacore/ut");
-    assert (f2.isHiddenFile () == false);
-
-    var f3 = new Files ("/tmp/valacore/ut/file.txt");
-    assert (f3.isHiddenFile () == false);
-
-    var f4 = new Files ("/tmp/valacore/ut/no_exist_file.txt");
-    assert (f4.isHiddenFile () == false);
-
-    var f5 = new Files ("/tmp/valacore/ut/canNotExecDir");
-    assert (f5.isHiddenFile () == false);
-
-    var f6 = new Files ("/tmp/valacore/ut/symbolic.txt");
-    assert (f6.isHiddenFile () == false);
-
-    var f7 = new Files ("/tmp/valacore/ut/.hidden.txt");
-    assert (f7.isHiddenFile () == true);
-
-    var f8 = new Files ("/tmp/valacore/ut/.hidden");
-    assert (f8.isHiddenFile () == true);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut")) == false);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut/file.txt")) == false);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut/no_exist_file.txt")) == false);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut/symbolic.txt")) == false);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut/symbolic")) == false);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut/.hidden.txt")) == true);
+    assert (Files.isHiddenFile (new Vala.Io.Path ("/tmp/valacore/ut/.hidden")) == true);
 }

@@ -2,11 +2,13 @@
 
 <book xmlns="http://www.devhelp.net/book" title="Valacore-0.1.0 Reference Manual" language="vala" name="Valacore-0.1.0" version="" author="" link="index.htm">
   <chapters><sub name="Vala" link="Vala.html"><sub name="Io" link="Vala.Io.html"><sub name="Files" link="Vala.Io.Files.html"></sub>
-        <sub name="Paths" link="Vala.Io.Paths.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
+        <sub name="Path" link="Vala.Io.Path.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
       <sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html"></sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub>
       </sub><sub name="Parser" link="Vala.Parser.html"><sub name="ArgParser" link="Vala.Parser.ArgParser.html">
           <sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub></sub>
-  </chapters><functions><keyword type="function" name="Vala.Io.Files.isFile" link="Vala.Io.Files.isFile.html"/>
+  </chapters><functions><keyword type="function" name="Vala.Io.Files.makeDir" link="Vala.Io.Files.makeDir.html"/>
+    <keyword type="function" name="Vala.Io.Files.Files" link="Vala.Io.Files.Files.html"/>
+    <keyword type="function" name="Vala.Io.Files.isFile" link="Vala.Io.Files.isFile.html"/>
     <keyword type="function" name="Vala.Io.Files.isDir" link="Vala.Io.Files.isDir.html"/>
     <keyword type="function" name="Vala.Io.Files.exists" link="Vala.Io.Files.exists.html"/>
     <keyword type="function" name="Vala.Io.Files.canRead" link="Vala.Io.Files.canRead.html"/>
@@ -14,14 +16,12 @@
     <keyword type="function" name="Vala.Io.Files.canExec" link="Vala.Io.Files.canExec.html"/>
     <keyword type="function" name="Vala.Io.Files.isSymbolicFile" link="Vala.Io.Files.isSymbolicFile.html"/>
     <keyword type="function" name="Vala.Io.Files.isHiddenFile" link="Vala.Io.Files.isHiddenFile.html"/>
-    <keyword type="function" name="Vala.Io.Files.mkdirs" link="Vala.Io.Files.mkdirs.html"/>
-    <keyword type="function" name="Vala.Io.Files.mkdir" link="Vala.Io.Files.mkdir.html"/>
-    <keyword type="function" name="Vala.Io.Files.Files" link="Vala.Io.Files.Files.html"/>
+    <keyword type="function" name="Vala.Io.Files.makeDirs" link="Vala.Io.Files.makeDirs.html"/>
     <keyword type="" name="Vala.Io.Files" link="Vala.Io.Files.html"/>
-    <keyword type="function" name="Vala.Io.Paths.Paths" link="Vala.Io.Paths.Paths.html"/>
-    <keyword type="function" name="Vala.Io.Paths.basename" link="Vala.Io.Paths.basename.html"/>
-    <keyword type="function" name="Vala.Io.Paths.dirname" link="Vala.Io.Paths.dirname.html"/>
-    <keyword type="" name="Vala.Io.Paths" link="Vala.Io.Paths.html"/>
+    <keyword type="function" name="Vala.Io.Path.toString" link="Vala.Io.Path.toString.html"/>
+    <keyword type="function" name="Vala.Io.Path.basename" link="Vala.Io.Path.basename.html"/>
+    <keyword type="function" name="Vala.Io.Path.dirname" link="Vala.Io.Path.dirname.html"/>
+    <keyword type="function" name="Vala.Io.Path.Path" link="Vala.Io.Path.Path.html"/><keyword type="" name="Vala.Io.Path" link="Vala.Io.Path.html"/>
     <keyword type="function" name="Vala.Io.Strings.Strings" link="Vala.Io.Strings.Strings.html"/>
     <keyword type="function" name="Vala.Io.Strings.isNullOrEmpty" link="Vala.Io.Strings.isNullOrEmpty.html"/>
     <keyword type="function" name="Vala.Io.Strings.trimSpace" link="Vala.Io.Strings.trimSpace.html"/>

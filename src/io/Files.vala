@@ -1,5 +1,5 @@
 /*
- * libvalacore/src/io/File.vala
+ * libvalacore/src/io/Files.vala
  *
  * Copyright 2022 Naohiro CHIKAMATSU
  *
@@ -22,123 +22,92 @@ namespace Vala.Io {
      * Files class is an abstract representation of file and directory pathnames.
      */
     public class Files : GLib.Object {
-        /**TODO: In the future, replace strings with path objects. */
-        private string path;
-
-        /**
-         * Construct File object.
-         * @param path PATH information represented by the string
-         * @return File object
-         */
-        public Files (string path) {
-            this.path = path;
-        }
-
         /**
          * Returns whether the file exists in the specified path.
+         * @param path Path to file or directory.
          * @return true: File object(path) is file, false: File object(path)  is not file
          */
-        public bool isFile () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return FileUtils.test (this.path, FileTest.IS_REGULAR);
+        public static bool isFile (Vala.Io.Path path) {
+            return FileUtils.test (path.toString (), FileTest.IS_REGULAR);
         }
 
         /**
          * Returns whether the directory exists in the specified path.
+         * @param path Path to file or directory.
          * @return true: File object(path) is directory, false: File object(path) is not directory
          */
-        public bool isDir () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return FileUtils.test (this.path, FileTest.IS_DIR);
+        public static bool isDir (Vala.Io.Path path) {
+            return FileUtils.test (path.toString (), FileTest.IS_DIR);
         }
 
         /**
          * Returns whether the file or directory exists in the specified path.
+         * @param path Path to file or directory.
          * @return true: File or Directory exists, false: File or Directory doesn't exist
          */
-        public bool exists () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            var f = GLib.File.new_for_path (this.path);
+        public static bool exists (Vala.Io.Path path) {
+            var f = GLib.File.new_for_path (path.toString ());
             return f.query_exists ();
         }
 
         /**
          * Returns whether the file can read in the specified path.
+         * @param path Path to file or directory.
          * @return true: can read, false: can not read.
          */
-        public bool canRead () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return (Posix.access (this.path, R_OK) == 0) ? true : false;
+        public static bool canRead (Vala.Io.Path path) {
+            return (Posix.access (path.toString (), R_OK) == 0) ? true : false;
         }
 
         /**
          * Returns whether the file can write in the specified path.
+         * @param path Path to file or directory.
          * @return true: can write, false: can not write.
          */
-        public bool canWrite () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return (Posix.access (this.path, W_OK) == 0) ? true : false;
+        public static bool canWrite (Vala.Io.Path path) {
+            return (Posix.access (path.toString (), W_OK) == 0) ? true : false;
         }
 
         /**
          * Returns whether the file can execute in the specified path.
+         * @param path Path to file or directory.
          * @return true: can execute, false: can not execute.
          */
-        public bool canExec () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return FileUtils.test (this.path, FileTest.IS_EXECUTABLE);
+        public static bool canExec (Vala.Io.Path path) {
+            return FileUtils.test (path.toString (), FileTest.IS_EXECUTABLE);
         }
 
         /**
          * Returns whether the symbolic file exists in the specified path.
+         * @param path Path to file or directory.
          * @return true: path is symbolic file, false: path is not symbolic file
          */
-        public bool isSymbolicFile () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return FileUtils.test (this.path, FileTest.IS_SYMLINK);
+        public static bool isSymbolicFile (Vala.Io.Path path) {
+            return FileUtils.test (path.toString (), FileTest.IS_SYMLINK);
         }
 
         /**
          * Returns whether the hidden file exists in the specified path.
+         * @param path Path to file or directory.
          * @return true: path is hidden file, false: path is not hidden file
          */
-        public bool isHiddenFile () {
-            if (Strings.isNullOrEmpty (this.path)) {
-                return false;
-            }
-            return Paths.basename (this.path).get_char (0).to_string () == ".";
+        public static bool isHiddenFile (Vala.Io.Path path) {
+            return path.basename ().get_char (0).to_string () == ".";
         }
 
         /**
          * Create a directory including the parent directory.
+         * @param path Path to file or directory.
          * @return true: directory is created successfully.
          *         false: path is null, or directory creation fails, or
          *                file to be created already exists.
          */
-        public bool mkdirs () {
-            if (Strings.isNullOrEmpty (path)) {
-                return false;
-            }
-
-            if (isDir ()) {
+        public static bool makeDirs (Vala.Io.Path path) {
+            if (Files.isDir (path)) {
                 return false; /* already exists. */
             }
             try {
-                var file = GLib.File.new_for_path (path);
+                var file = GLib.File.new_for_path (path.toString ());
                 file.make_directory_with_parents ();
             } catch (Error e) {
                 return false;
@@ -148,20 +117,17 @@ namespace Vala.Io {
 
         /**
          * Create a directory.
+         * @param path Path to file or directory.
          * @return true: directory is created successfully.
          *         false: path is null, or directory creation fails, or
          *                file to be created already exists.
          */
-        public bool mkdir () {
-            if (Strings.isNullOrEmpty (path)) {
-                return false;
-            }
-
-            if (isDir ()) {
+        public bool makeDir (Vala.Io.Path path) {
+            if (Files.isDir (path)) {
                 return false; /* already exists. */
             }
             try {
-                var file = GLib.File.new_for_path (path);
+                var file = GLib.File.new_for_path (path.toString ());
                 file.make_directory ();
             } catch (Error e) {
                 return false;

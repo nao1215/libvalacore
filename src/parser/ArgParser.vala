@@ -169,8 +169,11 @@ namespace Vala.Parser {
          */
         private void getArgListWithoutOptions (string[] args) {
             foreach (string arg in args) {
-                if (arg.contains (appName) && Paths.basename (arg) == appName) {
-                    continue;
+                if (arg.contains (appName)) {
+                    var p = new Vala.Io.Path (arg);
+                    if (p.basename () == appName) {
+                        continue;
+                    }
                 }
 
                 bool optionFound = false;
