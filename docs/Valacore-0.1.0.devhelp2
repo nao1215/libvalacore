@@ -1,54 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <book xmlns="http://www.devhelp.net/book" title="Valacore-0.1.0 Reference Manual" language="vala" name="Valacore-0.1.0" version="" author="" link="index.htm">
-  <chapters><sub name="Core" link="Core.html"><sub name="ArgParser" link="Core.ArgParser.html"><sub name="Builder" link="Core.ArgParser.Builder.html">
-        </sub></sub><sub name="File" link="Core.File.html"></sub><sub name="Objects" link="Core.Objects.html"></sub>
-      <sub name="Path" link="Core.Path.html"></sub><sub name="Strings" link="Core.Strings.html"></sub><sub name="Os" link="Core.Os.html"></sub></sub>
-  </chapters><functions><keyword type="function" name="Core.ArgParser.addOption" link="Core.ArgParser.addOption.html"/>
-    <keyword type="function" name="Core.ArgParser.usage" link="Core.ArgParser.usage.html"/>
-    <keyword type="function" name="Core.ArgParser.showVersion" link="Core.ArgParser.showVersion.html"/>
-    <keyword type="function" name="Core.ArgParser.parse" link="Core.ArgParser.parse.html"/>
-    <keyword type="function" name="Core.ArgParser.hasOption" link="Core.ArgParser.hasOption.html"/>
-    <keyword type="function" name="Core.ArgParser.copyArgWithoutCmdNameAndOptions" link="Core.ArgParser.copyArgWithoutCmdNameAndOptions.html"/>
-    <keyword type="function" name="Core.ArgParser.parseResult" link="Core.ArgParser.parseResult.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.applicationName" link="Core.ArgParser.Builder.applicationName.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.applicationArgument" link="Core.ArgParser.Builder.applicationArgument.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.description" link="Core.ArgParser.Builder.description.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.version" link="Core.ArgParser.Builder.version.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.author" link="Core.ArgParser.Builder.author.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.contact" link="Core.ArgParser.Builder.contact.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.build" link="Core.ArgParser.Builder.build.html"/>
-    <keyword type="function" name="Core.ArgParser.Builder.Builder" link="Core.ArgParser.Builder.Builder.html"/>
-    <keyword type="property" name="Core.ArgParser.Builder.appName" link="Core.ArgParser.Builder.appName.html"/>
-    <keyword type="property" name="Core.ArgParser.Builder.appArg" link="Core.ArgParser.Builder.appArg.html"/>
-    <keyword type="property" name="Core.ArgParser.Builder.desc" link="Core.ArgParser.Builder.desc.html"/>
-    <keyword type="property" name="Core.ArgParser.Builder.ver" link="Core.ArgParser.Builder.ver.html"/>
-    <keyword type="property" name="Core.ArgParser.Builder.appAuthor" link="Core.ArgParser.Builder.appAuthor.html"/>
-    <keyword type="property" name="Core.ArgParser.Builder.appContact" link="Core.ArgParser.Builder.appContact.html"/>
-    <keyword type="" name="Core.ArgParser.Builder" link="Core.ArgParser.Builder.html"/>
-    <keyword type="" name="Core.ArgParser" link="Core.ArgParser.html"/><keyword type="function" name="Core.File.isFile" link="Core.File.isFile.html"/>
-    <keyword type="function" name="Core.File.isDir" link="Core.File.isDir.html"/>
-    <keyword type="function" name="Core.File.exists" link="Core.File.exists.html"/>
-    <keyword type="function" name="Core.File.canRead" link="Core.File.canRead.html"/>
-    <keyword type="function" name="Core.File.canWrite" link="Core.File.canWrite.html"/>
-    <keyword type="function" name="Core.File.canExec" link="Core.File.canExec.html"/>
-    <keyword type="function" name="Core.File.isSymbolicFile" link="Core.File.isSymbolicFile.html"/>
-    <keyword type="function" name="Core.File.isHiddenFile" link="Core.File.isHiddenFile.html"/>
-    <keyword type="function" name="Core.File.File" link="Core.File.File.html"/><keyword type="" name="Core.File" link="Core.File.html"/>
-    <keyword type="function" name="Core.Objects.Objects" link="Core.Objects.Objects.html"/>
-    <keyword type="function" name="Core.Objects.isNull" link="Core.Objects.isNull.html"/>
-    <keyword type="function" name="Core.Objects.nonNull" link="Core.Objects.nonNull.html"/>
-    <keyword type="" name="Core.Objects" link="Core.Objects.html"/><keyword type="function" name="Core.Path.Path" link="Core.Path.Path.html"/>
-    <keyword type="function" name="Core.Path.basename" link="Core.Path.basename.html"/>
-    <keyword type="function" name="Core.Path.dirname" link="Core.Path.dirname.html"/><keyword type="" name="Core.Path" link="Core.Path.html"/>
-    <keyword type="function" name="Core.Strings.Strings" link="Core.Strings.Strings.html"/>
-    <keyword type="function" name="Core.Strings.isNullOrEmpty" link="Core.Strings.isNullOrEmpty.html"/>
-    <keyword type="function" name="Core.Strings.trimSpace" link="Core.Strings.trimSpace.html"/>
-    <keyword type="function" name="Core.Strings.contains" link="Core.Strings.contains.html"/>
-    <keyword type="function" name="Core.Strings.splitByNum" link="Core.Strings.splitByNum.html"/>
-    <keyword type="" name="Core.Strings" link="Core.Strings.html"/><keyword type="function" name="Core.Os.Os" link="Core.Os.Os.html"/>
-    <keyword type="function" name="Core.Os.get_env" link="Core.Os.get_env.html"/><keyword type="function" name="Core.Os.cwd" link="Core.Os.cwd.html"/>
-    <keyword type="function" name="Core.Os.chdir" link="Core.Os.chdir.html"/><keyword type="" name="Core.Os" link="Core.Os.html"/>
-    <keyword type="" name="Core" link="Core.html"/>
+  <chapters><sub name="Vala" link="Vala.html"><sub name="Io" link="Vala.Io.html"><sub name="Files" link="Vala.Io.Files.html"></sub>
+        <sub name="Paths" link="Vala.Io.Paths.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
+      <sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html"></sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub>
+      </sub><sub name="Parser" link="Vala.Parser.html"><sub name="ArgParser" link="Vala.Parser.ArgParser.html">
+          <sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub></sub>
+  </chapters><functions><keyword type="function" name="Vala.Io.Files.isFile" link="Vala.Io.Files.isFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.isDir" link="Vala.Io.Files.isDir.html"/>
+    <keyword type="function" name="Vala.Io.Files.exists" link="Vala.Io.Files.exists.html"/>
+    <keyword type="function" name="Vala.Io.Files.canRead" link="Vala.Io.Files.canRead.html"/>
+    <keyword type="function" name="Vala.Io.Files.canWrite" link="Vala.Io.Files.canWrite.html"/>
+    <keyword type="function" name="Vala.Io.Files.canExec" link="Vala.Io.Files.canExec.html"/>
+    <keyword type="function" name="Vala.Io.Files.isSymbolicFile" link="Vala.Io.Files.isSymbolicFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.isHiddenFile" link="Vala.Io.Files.isHiddenFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.mkdirs" link="Vala.Io.Files.mkdirs.html"/>
+    <keyword type="function" name="Vala.Io.Files.mkdir" link="Vala.Io.Files.mkdir.html"/>
+    <keyword type="function" name="Vala.Io.Files.Files" link="Vala.Io.Files.Files.html"/>
+    <keyword type="" name="Vala.Io.Files" link="Vala.Io.Files.html"/>
+    <keyword type="function" name="Vala.Io.Paths.Paths" link="Vala.Io.Paths.Paths.html"/>
+    <keyword type="function" name="Vala.Io.Paths.basename" link="Vala.Io.Paths.basename.html"/>
+    <keyword type="function" name="Vala.Io.Paths.dirname" link="Vala.Io.Paths.dirname.html"/>
+    <keyword type="" name="Vala.Io.Paths" link="Vala.Io.Paths.html"/>
+    <keyword type="function" name="Vala.Io.Strings.Strings" link="Vala.Io.Strings.Strings.html"/>
+    <keyword type="function" name="Vala.Io.Strings.isNullOrEmpty" link="Vala.Io.Strings.isNullOrEmpty.html"/>
+    <keyword type="function" name="Vala.Io.Strings.trimSpace" link="Vala.Io.Strings.trimSpace.html"/>
+    <keyword type="function" name="Vala.Io.Strings.contains" link="Vala.Io.Strings.contains.html"/>
+    <keyword type="function" name="Vala.Io.Strings.splitByNum" link="Vala.Io.Strings.splitByNum.html"/>
+    <keyword type="" name="Vala.Io.Strings" link="Vala.Io.Strings.html"/><keyword type="" name="Vala.Io" link="Vala.Io.html"/>
+    <keyword type="function" name="Vala.Lang.Os.Os" link="Vala.Lang.Os.Os.html"/>
+    <keyword type="function" name="Vala.Lang.Os.get_env" link="Vala.Lang.Os.get_env.html"/>
+    <keyword type="function" name="Vala.Lang.Os.cwd" link="Vala.Lang.Os.cwd.html"/>
+    <keyword type="function" name="Vala.Lang.Os.chdir" link="Vala.Lang.Os.chdir.html"/><keyword type="" name="Vala.Lang.Os" link="Vala.Lang.Os.html"/>
+    <keyword type="function" name="Vala.Lang.Objects.Objects" link="Vala.Lang.Objects.Objects.html"/>
+    <keyword type="function" name="Vala.Lang.Objects.isNull" link="Vala.Lang.Objects.isNull.html"/>
+    <keyword type="function" name="Vala.Lang.Objects.nonNull" link="Vala.Lang.Objects.nonNull.html"/>
+    <keyword type="" name="Vala.Lang.Objects" link="Vala.Lang.Objects.html"/><keyword type="" name="Vala.Lang" link="Vala.Lang.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.addOption" link="Vala.Parser.ArgParser.addOption.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.usage" link="Vala.Parser.ArgParser.usage.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.showVersion" link="Vala.Parser.ArgParser.showVersion.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.parse" link="Vala.Parser.ArgParser.parse.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.hasOption" link="Vala.Parser.ArgParser.hasOption.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.copyArgWithoutCmdNameAndOptions" link="Vala.Parser.ArgParser.copyArgWithoutCmdNameAndOptions.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.parseResult" link="Vala.Parser.ArgParser.parseResult.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.applicationName" link="Vala.Parser.ArgParser.Builder.applicationName.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.applicationArgument" link="Vala.Parser.ArgParser.Builder.applicationArgument.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.description" link="Vala.Parser.ArgParser.Builder.description.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.version" link="Vala.Parser.ArgParser.Builder.version.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.author" link="Vala.Parser.ArgParser.Builder.author.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.contact" link="Vala.Parser.ArgParser.Builder.contact.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.build" link="Vala.Parser.ArgParser.Builder.build.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.Builder" link="Vala.Parser.ArgParser.Builder.Builder.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appName" link="Vala.Parser.ArgParser.Builder.appName.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appArg" link="Vala.Parser.ArgParser.Builder.appArg.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.desc" link="Vala.Parser.ArgParser.Builder.desc.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.ver" link="Vala.Parser.ArgParser.Builder.ver.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appAuthor" link="Vala.Parser.ArgParser.Builder.appAuthor.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appContact" link="Vala.Parser.ArgParser.Builder.appContact.html"/>
+    <keyword type="" name="Vala.Parser.ArgParser.Builder" link="Vala.Parser.ArgParser.Builder.html"/>
+    <keyword type="" name="Vala.Parser.ArgParser" link="Vala.Parser.ArgParser.html"/><keyword type="" name="Vala.Parser" link="Vala.Parser.html"/>
+    <keyword type="" name="Vala" link="Vala.html"/>
   </functions>
 </book>

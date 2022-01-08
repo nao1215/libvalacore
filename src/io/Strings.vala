@@ -15,7 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Core {
+using Vala.Lang;
+namespace Vala.Io {
     /**
      * Strings class is a collection of static APIs for manipulating string.
      */

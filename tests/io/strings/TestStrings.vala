@@ -1,4 +1,4 @@
-using Core;
+using Vala.Io;
 
 void main (string[] args) {
     Test.init (ref args);

@@ -6,13 +6,13 @@ conf.set('PROJECT_VERSION', '0.0.1')
 conf.set('API_VERSION', API_VERSION)
 
 valacore_sources = files([
-  'cli/ArgParser.vala',
-  'io/File.vala',
-  'io/Objects.vala',
-  'io/Path.vala',
+  'io/Files.vala',
+  'io/Paths.vala',
   'io/Strings.vala',
-  'os/Os.vala'
-  ])
+  'lang/Os.vala',
+  'lang/Objects.vala',
+  'parser/ArgParser.vala'
+])
 
 libvalacore = library('valacore-' + API_VERSION,
   valacore_sources,

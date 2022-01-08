@@ -1,4 +1,4 @@
-using Core;
+using Vala.Lang;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -11,20 +11,20 @@ void main (string[] args) {
 
 void testIsNullTrue () {
     string test = null;
-    assert (Core.Objects.isNull (test) == true);
+    assert (Objects.isNull (test) == true);
 }
 
 void testIsNullFalse () {
     string test = "test";
-    assert (Core.Objects.isNull (test) == false);
+    assert (Objects.isNull (test) == false);
 }
 
 void testNonNullTrue () {
     string test = "test";
-    assert (Core.Objects.nonNull (test) == true);
+    assert (Objects.nonNull (test) == true);
 }
 
 void testNonNullFalse () {
     string test = null;
-    assert (Core.Objects.nonNull (test) == false);
+    assert (Objects.nonNull (test) == false);
 }

@@ -1,7 +1,7 @@
 test_name = meson.project_name() + '-test'
 
-subdir('io/file')
+subdir('io/files')
 subdir('io/objects')
-subdir('io/path')
+subdir('io/paths')
 subdir('io/strings')
-subdir('os')
+subdir('lang')
