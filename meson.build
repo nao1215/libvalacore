@@ -35,4 +35,4 @@ subdir('src')
 subdir('tests')
 
 setup_unittest= find_program('scripts/setupUnitTest.sh')
-run_command(setup_unittest)
+run_command(setup_unittest, check: true)
