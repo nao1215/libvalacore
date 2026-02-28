@@ -29,7 +29,7 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `makeDir(Path path)` | Creates a single directory |
 
 ## Vala.Io.Path
-An object representing a file system path.
+An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
 
 | Method | Description |
 |---|---|
@@ -37,6 +37,18 @@ An object representing a file system path.
 | `toString()` | Returns the path as a string |
 | `basename()` | Extracts the base name (file name) from the path |
 | `dirname(string path)` | Extracts the directory name from the path |
+| `extension()` | Returns the file extension including the dot (e.g. ".txt") |
+| `withoutExtension()` | Returns the path without the file extension |
+| `isAbsolute()` | Returns whether the path is absolute |
+| `parent()` | Returns a new Path for the parent directory |
+| `resolve(string other)` | Resolves a path against this path |
+| `join(string part1, ...)` | Joins multiple path components |
+| `equals(Path other)` | Returns whether two paths are equal |
+| `startsWith(string prefix)` | Returns whether the path starts with the prefix |
+| `endsWith(string suffix)` | Returns whether the path ends with the suffix |
+| `components()` | Returns the path components as a list |
+| `normalize()` | Returns a normalized path (resolves "." and "..") |
+| `abs()` | Returns the absolute, normalized path |
 
 ## Vala.Io.Strings
 Static utility methods for string manipulation. All methods are null-safe.
