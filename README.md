@@ -115,6 +115,28 @@ Process execution helper methods.
 | `execWithOutput(string cmd, string[] args)` | Executes an external command and returns stdout text on success (`null` on failure) |
 | `kill(int pid)` | Sends SIGKILL to the specified process ID (`true` when signal delivery succeeds). POSIX only |
 
+### Vala.Io.Shell
+Shell command utility with captured output and pipeline helpers.
+
+| Method | Description |
+|---|---|
+| `exec(string command)` | Executes shell command and returns `ShellResult` |
+| `execQuiet(string command)` | Executes command and returns result with output fields cleared |
+| `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound |
+| `pipe(string[] commands)` | Executes commands as a pipeline (`cmd1 | cmd2 | ...`) |
+| `which(string binary)` | Resolves command path from `PATH` (`null` if not found) |
+
+#### Vala.Io.ShellResult
+| Method | Description |
+|---|---|
+| `exitCode()` | Process exit code |
+| `stdout()` | Captured standard output |
+| `stderr()` | Captured standard error |
+| `isSuccess()` | `true` when `exitCode() == 0` |
+| `stdoutLines()` | Non-empty stdout lines |
+| `stderrLines()` | Non-empty stderr lines |
+| `durationMillis()` | Execution duration in milliseconds |
+
 ### Vala.Io.Temp
 Temporary resource helpers that auto-clean up after callback execution.
 
