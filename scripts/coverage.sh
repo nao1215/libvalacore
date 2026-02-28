@@ -76,21 +76,31 @@ FILTERED="${BUILD_DIR}/coverage.info"
 lcov --remove "${MERGED}" \
     '*/tests/*' '*/Test*.c' '*.vapi' '*.vala' '/usr/*' \
     --output-file "${FILTERED}" \
-    --ignore-errors unused,source,deprecated \
+    --ignore-errors unused,source,deprecated,inconsistent \
     --rc branch_coverage=0 \
     --quiet > /dev/null 2>&1
 
 rm -rf "${TMPDIR}"
 
+if [ ! -f "${FILTERED}" ]; then
+    echo "Error: coverage info file was not generated."
+    exit 1
+fi
+
 # Display results
 echo ""
-lcov --list "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated 2>/dev/null | grep -v "^Message summary" | grep -v "no messages were reported"
+lcov --list "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent,missing 2>/dev/null | grep -v "^Message summary" | grep -v "no messages were reported"
 
 # Extract total line coverage percentage
-SUMMARY=$(lcov --summary "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated 2>&1)
+SUMMARY=$(lcov --summary "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent,missing 2>&1)
 TOTAL_COVER=$(echo "${SUMMARY}" | grep 'lines' | sed 's/.*: *\([0-9]*\.[0-9]*\)%.*/\1/' | head -1)
 # Convert to integer for comparison (truncate decimal)
 TOTAL_COVER_INT=${TOTAL_COVER%.*}
+
+if [ -z "${TOTAL_COVER}" ]; then
+    echo "Error: failed to parse line coverage percentage."
+    exit 1
+fi
 
 echo ""
 echo "Line coverage: ${TOTAL_COVER}%"
