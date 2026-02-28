@@ -1,6 +1,7 @@
 test_name = meson.project_name() + '-test'
 
 subdir('io/bufferedreader')
+subdir('io/bufferedwriter')
 subdir('io/files')
 subdir('io/objects')
 subdir('io/paths')

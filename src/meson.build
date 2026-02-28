@@ -7,6 +7,7 @@ conf.set('API_VERSION', API_VERSION)
 
 valacore_sources = files([
   'io/BufferedReader.vala',
+  'io/BufferedWriter.vala',
   'io/Files.vala',
   'io/Path.vala',
   'io/StringBuilder.vala',

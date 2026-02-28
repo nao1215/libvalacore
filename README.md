@@ -83,6 +83,19 @@ A mutable string buffer for efficient string construction. Wraps GLib.StringBuil
 | `toString()` | Returns the built string |
 | `capacity()` | Returns the allocated buffer capacity |
 
+## Vala.Io.BufferedWriter
+Buffered character-output-stream writer. Wraps GLib.DataOutputStream for convenient string and line writing, similar to Java's BufferedWriter.
+
+| Method | Description |
+|---|---|
+| `BufferedWriter.fromFile(Path path)` | Creates a writer to a file (replaces content) |
+| `BufferedWriter.fromFileAppend(Path path)` | Creates a writer that appends to a file |
+| `write(string s)` | Writes a string to the stream |
+| `writeLine(string s)` | Writes a string followed by a newline |
+| `newLine()` | Writes a newline |
+| `flush()` | Flushes any buffered data |
+| `close()` | Closes the underlying stream |
+
 ## Vala.Io.BufferedReader
 Buffered character-input-stream reader. Wraps GLib.DataInputStream for convenient line-by-line or full-text reading, similar to Java's BufferedReader.
 
