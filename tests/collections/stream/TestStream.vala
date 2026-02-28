@@ -105,6 +105,10 @@ void testSkip () {
 
     var none = Stream.fromList<string> (list).skip (100).toList ();
     assert (none.size () == 0);
+
+    var negative = Stream.fromList<string> (list).skip (-2).toList ();
+    assert (negative.size () == 5);
+    assert (negative.get (0) == "a");
 }
 
 void testTakeWhile () {

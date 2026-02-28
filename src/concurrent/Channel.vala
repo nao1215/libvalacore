@@ -6,6 +6,9 @@ namespace Vala.Concurrent {
      * between threads. It supports both unbuffered (synchronous) and
      * buffered (asynchronous up to capacity) modes.
      *
+     * In unbuffered mode (default), send blocks until a receiver calls
+     * receive, providing true rendezvous semantics.
+     *
      * Example (unbuffered):
      * {{{
      *     var ch = new ChannelInt ();
@@ -31,11 +34,12 @@ namespace Vala.Concurrent {
         private bool _closed;
         private GLib.Mutex _mutex;
         private GLib.Cond _notFull;
+        private GLib.Cond _delivered;
         private int _size;
 
         /**
          * Creates an unbuffered channel.
-         * Send blocks until a receiver is ready.
+         * Send blocks until a receiver is ready (rendezvous).
          */
         public ChannelInt () {
             _capacity = 0;
@@ -60,7 +64,10 @@ namespace Vala.Concurrent {
         }
 
         /**
-         * Sends a value into the channel, blocking if the buffer is full.
+         * Sends a value into the channel.
+         * For buffered channels, blocks if the buffer is full.
+         * For unbuffered channels, blocks until a receiver calls receive
+         * (rendezvous semantics).
          * Logs a warning and returns if the channel is closed.
          *
          * @param value the value to send.
@@ -82,11 +89,17 @@ namespace Vala.Concurrent {
                     warning ("send on closed channel");
                     return;
                 }
+                _queue.push (new IntBox (value));
+                _size++;
+                _mutex.unlock ();
+            } else {
+                _queue.push (new IntBox (value));
+                _size++;
+                while (_size > 0 && !_closed) {
+                    _delivered.wait (_mutex);
+                }
+                _mutex.unlock ();
             }
-
-            _size++;
-            _mutex.unlock ();
-            _queue.push (new IntBox (value));
         }
 
         /**
@@ -111,9 +124,9 @@ namespace Vala.Concurrent {
                 return false;
             }
 
+            _queue.push (new IntBox (value));
             _size++;
             _mutex.unlock ();
-            _queue.push (new IntBox (value));
             return true;
         }
 
@@ -133,6 +146,8 @@ namespace Vala.Concurrent {
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
+            } else {
+                _delivered.signal ();
             }
             _mutex.unlock ();
 
@@ -154,6 +169,8 @@ namespace Vala.Concurrent {
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
+            } else {
+                _delivered.signal ();
             }
             _mutex.unlock ();
 
@@ -168,6 +185,7 @@ namespace Vala.Concurrent {
             _mutex.lock ();
             _closed = true;
             _notFull.broadcast ();
+            _delivered.broadcast ();
             _mutex.unlock ();
         }
 
@@ -226,6 +244,9 @@ namespace Vala.Concurrent {
     /**
      * Thread-safe string message-passing channel.
      *
+     * In unbuffered mode (default), send blocks until a receiver calls
+     * receive, providing true rendezvous semantics.
+     *
      * Example:
      * {{{
      *     var ch = ChannelString.buffered (5);
@@ -239,10 +260,12 @@ namespace Vala.Concurrent {
         private bool _closed;
         private GLib.Mutex _mutex;
         private GLib.Cond _notFull;
+        private GLib.Cond _delivered;
         private int _size;
 
         /**
          * Creates an unbuffered string channel.
+         * Send blocks until a receiver is ready (rendezvous).
          */
         public ChannelString () {
             _capacity = 0;
@@ -267,7 +290,9 @@ namespace Vala.Concurrent {
         }
 
         /**
-         * Sends a string value into the channel, blocking if full.
+         * Sends a string value into the channel.
+         * For buffered channels, blocks if the buffer is full.
+         * For unbuffered channels, blocks until a receiver calls receive.
          *
          * @param value the string to send.
          */
@@ -288,11 +313,17 @@ namespace Vala.Concurrent {
                     warning ("send on closed channel");
                     return;
                 }
+                _queue.push (new StringBox (value));
+                _size++;
+                _mutex.unlock ();
+            } else {
+                _queue.push (new StringBox (value));
+                _size++;
+                while (_size > 0 && !_closed) {
+                    _delivered.wait (_mutex);
+                }
+                _mutex.unlock ();
             }
-
-            _size++;
-            _mutex.unlock ();
-            _queue.push (new StringBox (value));
         }
 
         /**
@@ -317,9 +348,9 @@ namespace Vala.Concurrent {
                 return false;
             }
 
+            _queue.push (new StringBox (value));
             _size++;
             _mutex.unlock ();
-            _queue.push (new StringBox (value));
             return true;
         }
 
@@ -338,6 +369,8 @@ namespace Vala.Concurrent {
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
+            } else {
+                _delivered.signal ();
             }
             _mutex.unlock ();
 
@@ -359,6 +392,8 @@ namespace Vala.Concurrent {
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
+            } else {
+                _delivered.signal ();
             }
             _mutex.unlock ();
 
@@ -372,6 +407,7 @@ namespace Vala.Concurrent {
             _mutex.lock ();
             _closed = true;
             _notFull.broadcast ();
+            _delivered.broadcast ();
             _mutex.unlock ();
         }
 

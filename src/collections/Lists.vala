@@ -181,9 +181,11 @@ namespace Vala.Collections {
          * @return a new list with duplicates removed.
          */
         public static ArrayList<string> distinctString (ArrayList<string> list) {
+            var seen = new HashSet<string> (GLib.str_hash, GLib.str_equal);
             var result = new ArrayList<string> (GLib.str_equal);
             for (int i = 0; i < (int) list.size (); i++) {
-                if (!result.contains (list.get (i))) {
+                if (!seen.contains (list.get (i))) {
+                    seen.add (list.get (i));
                     result.add (list.get (i));
                 }
             }

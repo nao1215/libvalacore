@@ -6,8 +6,9 @@ namespace Vala.Collections {
      *
      * Stream provides a chainable API for filter, map, sort, distinct,
      * limit/skip, and terminal operations like reduce, count, and
-     * findFirst. Intermediate operations return a new Stream, and
-     * terminal operations produce a final result.
+     * findFirst. Most intermediate operations return a new Stream,
+     * except peek which returns the same instance for chaining.
+     * Terminal operations produce a final result.
      *
      * Example:
      * {{{
@@ -195,7 +196,8 @@ namespace Vala.Collections {
          */
         public Stream<T> skip (int n) {
             var result = new ArrayList<T> ();
-            for (int i = n; i < _data.size (); i++) {
+            int start = int.max (0, n);
+            for (int i = start; i < _data.size (); i++) {
                 result.add (_data.get (i));
             }
             return new Stream<T> (result);

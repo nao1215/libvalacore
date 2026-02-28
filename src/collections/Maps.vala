@@ -1,5 +1,3 @@
-using Vala.Collections;
-
 namespace Vala.Collections {
     /**
      * Static utility methods for HashMap operations.

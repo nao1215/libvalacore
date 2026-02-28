@@ -190,9 +190,7 @@ namespace Vala.Concurrent {
             var captured = (owned) task;
             wrapper.run = () => {
                 double ? val = captured ();
-                if (val != null) {
-                    promise.complete (val);
-                }
+                promise.complete (val != null ? val : 0.0);
             };
             enqueue (wrapper);
             return promise;
@@ -303,6 +301,10 @@ namespace Vala.Concurrent {
                 TaskWrapper task = _queue.pop ();
                 if (task.poison) {
                     break;
+                }
+
+                if (task.run == null) {
+                    continue;
                 }
 
                 _mutex.lock ();

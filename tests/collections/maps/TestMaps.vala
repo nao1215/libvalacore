@@ -20,6 +20,7 @@ void main (string[] args) {
 }
 
 HashMap<string, string> sm (string[] keys, string[] values) {
+    assert (keys.length == values.length);
     var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     for (int i = 0; i < keys.length; i++) {
         map.put (keys[i], values[i]);

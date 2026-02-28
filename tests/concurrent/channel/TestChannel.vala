@@ -133,7 +133,6 @@ void testProducerConsumer () {
     var mutex = new Vala.Concurrent.Mutex ();
     var wg = new WaitGroup ();
 
-    wg.add (1);
     new Thread<void *> ("producer", () => {
         for (int i = 1; i <= 10; i++) {
             ch.send (i);
@@ -142,6 +141,7 @@ void testProducerConsumer () {
         return null;
     });
 
+    wg.add (1);
     new Thread<void *> ("consumer", () => {
         while (true) {
             IntBox ? box = ch.tryReceive ();
@@ -149,7 +149,7 @@ void testProducerConsumer () {
                 mutex.withLock (() => {
                     sum += box.value;
                 });
-            } else if (ch.isClosed ()) {
+            } else if (ch.isClosed () && ch.size () == 0) {
                 break;
             } else {
                 Thread.usleep (100);
