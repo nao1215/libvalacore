@@ -83,6 +83,18 @@ A mutable string buffer for efficient string construction. Wraps GLib.StringBuil
 | `toString()` | Returns the built string |
 | `capacity()` | Returns the allocated buffer capacity |
 
+## Vala.Io.StringJoiner
+Constructs a sequence of characters separated by a delimiter, optionally with a prefix and suffix. Equivalent to Java's StringJoiner.
+
+| Method | Description |
+|---|---|
+| `StringJoiner(string delimiter, string prefix, string suffix)` | Constructor. Creates a StringJoiner with delimiter, prefix, and suffix |
+| `add(string element)` | Adds an element to the joiner |
+| `merge(StringJoiner other)` | Merges another joiner's elements into this one |
+| `setEmptyValue(string value)` | Sets the value returned when no elements are present |
+| `length()` | Returns the length of the joined string |
+| `toString()` | Returns the joined string with prefix, elements, and suffix |
+
 ## Vala.Io.Strings
 Static utility methods for string manipulation. All methods are null-safe.
 
