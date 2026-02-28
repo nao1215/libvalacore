@@ -646,6 +646,34 @@ Fixed-size worker pool for executing tasks concurrently. Manages worker threads 
 | `poolSize()` | Returns the number of worker threads |
 | `queueSize()` | Returns the number of tasks waiting in the queue |
 
+### Vala.Concurrent.Future\<T\>
+Represents the eventual result of an asynchronous computation.
+
+| Method | Description |
+|---|---|
+| `run<T>(TaskFunc<T> task)` | Starts asynchronous execution and returns a pending future |
+| `completed<T>(T value)` | Creates an already successful future |
+| `failed<T>(string message)` | Creates an already failed future |
+| `await()` | Waits for completion and returns success value (value-type futures return default value on failure) |
+| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time |
+| `isDone()` | Returns whether the future is completed |
+| `isSuccess()` | Returns whether the future is successful |
+| `isFailed()` | Returns whether the future failed |
+| `error()` | Returns failure reason (`null` for successful futures) |
+| `map<U>(MapFunc<T, U> fn)` | Transforms success value into a new future |
+| `flatMap<U>(MapFunc<T, Future<U>> fn)` | Chains asynchronous operations |
+| `recover(RecoverFunc<T> fn)` | Converts failure into a fallback success value |
+| `onComplete(ConsumerFunc<T?> fn)` | Registers completion callback |
+| `timeout(Duration timeout)` | Returns a future that fails with `timeout` when deadline expires |
+| `orElse(T fallback)` | Returns success value or fallback when failed/cancelled |
+| `cancel()` | Cancels pending future |
+| `isCancelled()` | Returns whether future was cancelled |
+| `all<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns a future of collected values |
+| `any<T>(ArrayList<Future<T>> futures)` | Returns the first completed future result |
+| `delayed<T>(Duration delay, TaskFunc<T> task)` | Starts a task after delay |
+| `allSettled<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns settled futures |
+| `race<T>(ArrayList<Future<T>> futures)` | Alias of `any` |
+
 ### Vala.Concurrent.PromiseInt / PromiseString / PromiseBool / PromiseDouble
 Promise types representing the pending result of an asynchronous computation.
 

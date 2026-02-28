@@ -29,6 +29,7 @@ valacore_sources = files([
   'collections/Triple.vala',
   'concurrent/Channel.vala',
   'concurrent/CountDownLatch.vala',
+  'concurrent/Future.vala',
   'concurrent/Mutex.vala',
   'concurrent/Once.vala',
   'concurrent/RWMutex.vala',
