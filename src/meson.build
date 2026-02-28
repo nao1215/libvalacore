@@ -20,6 +20,7 @@ valacore_sources = files([
   'collections/Stack.vala',
   'collections/TreeMap.vala',
   'collections/Triple.vala',
+  'encoding/Base64.vala',
   'io/BufferedReader.vala',
   'io/BufferedWriter.vala',
   'io/Files.vala',

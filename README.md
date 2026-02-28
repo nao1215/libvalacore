@@ -207,6 +207,16 @@ Static utility methods for string manipulation. All methods are null-safe.
 | `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
 | `wrap(string? s, int width)` | Wraps at specified width |
 
+### Vala.Encoding.Base64
+Static utility methods for Base64 encoding and decoding.
+
+| Method | Description |
+|---|---|
+| `encode(uint8[] data)` | Encodes bytes to Base64 text |
+| `decode(string encoded)` | Decodes Base64 text to bytes |
+| `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
+| `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 
