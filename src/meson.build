@@ -63,6 +63,7 @@ valacore_sources = files([
   'io/StringBuilder.vala',
   'io/StringJoiner.vala',
   'io/Strings.vala',
+  'lang/Context.vala',
   'lang/Os.vala',
   'lang/Objects.vala',
   'lang/Exceptions.vala',

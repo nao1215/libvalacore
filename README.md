@@ -1205,6 +1205,23 @@ Static utility methods for null checking.
 | `isNull<T>(T? obj)` | Returns whether the object is null |
 | `nonNull<T>(T? obj)` | Returns whether the object is not null |
 
+### Vala.Lang.Context
+Cancellation and timeout context propagated across call boundaries.
+
+| Method | Description |
+|---|---|
+| `background()` | Creates root context |
+| `withCancel(Context parent)` | Creates cancellable child context |
+| `withTimeout(Context parent, Duration timeout)` | Creates timeout child context |
+| `withDeadline(Context parent, DateTime deadline)` | Creates deadline child context |
+| `cancel()` | Cancels this context |
+| `isCancelled()` | Returns cancellation state |
+| `error()` | Returns cancellation reason (`cancelled` / `timeout`) |
+| `remaining()` | Returns remaining time until deadline, or `null` when no deadline |
+| `done()` | Returns notification channel closed on cancellation |
+| `value(string key)` | Returns scoped value by key |
+| `withValue(string key, string value)` | Creates child context with key-value |
+
 ### Vala.Lang.Os
 Operating system interface methods.
 
