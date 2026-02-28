@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.0
+
+### Added
+- `Vala.Io.Scanner` - Tokenized input reader from files, strings, or stdin with configurable delimiter
+- `Vala.Collections.Optional<T>` - Type-safe container for nullable values (inspired by Java Optional, Rust Option)
+- `Vala.Collections.Result<T,E>` - Success/error container for exception-free error handling (inspired by Rust Result)
+- `Vala.Collections.Stack<T>` - LIFO stack backed by GLib.Queue
+- `Vala.Collections.Queue<T>` - FIFO queue backed by GLib.Queue
+- `Vala.Collections.ArrayList<T>` - Dynamic array list with O(1) indexed access and functional operations (map, filter, reduce, find, sort)
+- `Vala.Io.Files` - 10 new file operation methods (readBytes, writeBytes, chmod, chown, lastModified, createSymlink, readSymlink, isSameFile, glob, deleteRecursive)
+- `Vala.Io.Path` - 5 new path methods (toUri, match, relativeTo, components, separator, volumeName, normalize, abs)
+- New delegate types: `SupplierFunc<T>`, `ConsumerFunc<T>`, `PredicateFunc<T>`, `MapFunc<T,U>`, `ReduceFunc<T,U>`, `ComparatorFunc<T>`
+
 ## 0.2.0
 
 ### Added
