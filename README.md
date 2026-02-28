@@ -1224,6 +1224,23 @@ Weighted highest-random-weight hash for routing and replica selection.
 | `nodeIdOf(int64 id)` | Extracts node ID |
 | `sequenceOf(int64 id)` | Extracts sequence number |
 
+## Vala.Collections.HyperLogLog
+Approximate unique counter with fixed memory footprint.
+
+| Method | Description |
+|---|---|
+| `HyperLogLog(double errorRate = 0.01)` | Creates estimator with target error rate |
+| `add(string value)` | Adds one value |
+| `addBytes(uint8[] value)` | Adds raw byte value |
+| `addAll(ArrayList<string> values)` | Adds multiple values |
+| `count()` | Returns estimated unique count |
+| `merge(HyperLogLog other)` | Merges another estimator with same precision |
+| `errorRate()` | Returns configured error rate |
+| `registerCount()` | Returns internal register count |
+| `toBytes()` | Serializes estimator state |
+| `fromBytes(uint8[] bytes)` | Restores estimator from serialized bytes |
+| `clear()` | Resets estimator state |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
