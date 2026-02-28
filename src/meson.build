@@ -41,6 +41,7 @@ valacore_sources = files([
   'io/BufferedReader.vala',
   'io/BufferedWriter.vala',
   'io/Console.vala',
+  'io/Filesystem.vala',
   'io/Files.vala',
   'io/Path.vala',
   'io/IoProcess.vala',

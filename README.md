@@ -57,6 +57,19 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `glob(Path dir, string pattern)` | Returns files matching a glob pattern |
 | `deleteRecursive(Path path)` | Recursively deletes a directory and all its contents |
 
+### Vala.Io.Filesystem
+Filesystem metadata utility methods.
+
+| Method | Description |
+|---|---|
+| `getFileAttributes(Path path)` | Returns file attributes (`GLib.FileInfo`) or `null` |
+| `setLastModifiedTime(Path path, DateTime t)` | Sets file modification time |
+| `isReadable(Path path)` | Returns whether file is readable |
+| `isWritable(Path path)` | Returns whether file is writable |
+| `isExecutable(Path path)` | Returns whether file is executable |
+| `getOwner(Path path)` | Returns owner user name or `null` |
+| `setOwner(Path path, string owner)` | Sets owner by user name (`true` on success) |
+
 ### Vala.Io.Console
 Console utility methods.
 
