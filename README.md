@@ -738,6 +738,22 @@ A doubly-linked list that supports efficient insertion and removal at both ends.
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 | `toArray()` | Returns elements as a native array |
 
+### Vala.Collections.LruCache\<K,V\>
+LRU cache with optional TTL and cache-miss loader.
+
+| Method | Description |
+|---|---|
+| `LruCache(int maxEntries, HashFunc<K>, EqualFunc<K>)` | Creates an LRU cache with key hash/equality functions |
+| `withTtl(Duration ttl)` | Sets entry TTL and returns this instance |
+| `withLoader(CacheLoaderFunc<K, V> loader)` | Sets cache-miss loader and returns this instance |
+| `get(K key)` | Returns cached value or loader value; updates LRU order |
+| `put(K key, V value)` | Inserts or replaces an entry |
+| `contains(K key)` | Returns whether a non-expired key exists |
+| `remove(K key)` | Removes an entry by key |
+| `clear()` | Removes all entries |
+| `size()` | Returns current entry count |
+| `stats()` | Returns `(hits, misses)` as `Pair<int, int>` |
+
 ### Vala.Collections.Deque\<T\>
 A double-ended queue (deque) that supports efficient insertion and removal at both ends. Inspired by Java's ArrayDeque.
 
