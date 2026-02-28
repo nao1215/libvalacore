@@ -46,6 +46,11 @@ void testReplace () {
 
     assert (p.replaceFirst ("a1b22", "X") == "aXb22");
     assert (p.replaceAll ("a1b22", "X") == "aXbX");
+
+    Pattern ? groups = Pattern.compile ("(\\d+)");
+    assert (groups != null);
+    assert (groups.replaceFirst ("a1b22", "[\\1]") == "a[1]b22");
+    assert (groups.replaceAll ("a1b22", "[\\1]") == "a[1]b[22]");
 }
 
 void testSplit () {

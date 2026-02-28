@@ -96,6 +96,7 @@ namespace Vala.Regex {
          *
          * @param input source text.
          * @param replacement replacement text.
+         *                    Backreferences like `\1` and `\g<name>` are supported.
          * @return replaced text.
          */
         public string replaceFirst (string input, string replacement) {
@@ -110,7 +111,12 @@ namespace Vala.Regex {
                 return input;
             }
 
-            return input.substring (0, start) + replacement + input.substring (end);
+            try {
+                string expanded = info.expand_references (replacement);
+                return input.substring (0, start) + expanded + input.substring (end);
+            } catch (GLib.RegexError e) {
+                return input;
+            }
         }
 
         /**
@@ -118,11 +124,12 @@ namespace Vala.Regex {
          *
          * @param input source text.
          * @param replacement replacement text.
+         *                    Backreferences like `\1` and `\g<name>` are supported.
          * @return replaced text.
          */
         public string replaceAll (string input, string replacement) {
             try {
-                return _regex.replace_literal (input, input.length, 0, replacement, 0);
+                return _regex.replace (input, input.length, 0, replacement, 0);
             } catch (GLib.RegexError e) {
                 return input;
             }
