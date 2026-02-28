@@ -315,6 +315,16 @@ Immutable URL value object.
 | `fragment()` | Returns fragment |
 | `toString()` | Returns normalized URL string |
 
+### Vala.Concurrent.Mutex
+Mutex wrapper with utility methods.
+
+| Method | Description |
+|---|---|
+| `lock()` | Acquires lock |
+| `unlock()` | Releases lock |
+| `tryLock()` | Tries to acquire lock without blocking |
+| `withLock(WithLockFunc func)` | Runs a callback while holding lock |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
