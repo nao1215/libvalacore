@@ -20,7 +20,7 @@ Let's make Vala's standard library truly world-class together.
 meson setup build              # Configure (if not done)
 meson test -C build            # Run all tests
 ./scripts/format.sh --check    # Verify formatting
-./scripts/coverage.sh --check  # Verify 80%+ line coverage (requires: sudo apt install gcovr)
+./scripts/coverage.sh --check  # Verify 80%+ line coverage (requires: sudo apt install lcov)
 ```
 
 ### 4. Code style

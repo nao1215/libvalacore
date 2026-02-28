@@ -274,8 +274,8 @@ void testCount () {
 }
 
 void testJoin () {
-    assert (Strings.join (", ", {"a", "b", "c"}) == "a, b, c");
-    assert (Strings.join ("-", {"hello"}) == "hello");
+    assert (Strings.join (", ", { "a", "b", "c" }) == "a, b, c");
+    assert (Strings.join ("-", { "hello" }) == "hello");
     assert (Strings.join (",", {}) == "");
 }
 

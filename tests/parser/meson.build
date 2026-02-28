@@ -1,0 +1,15 @@
+test_name = meson.project_name() + '-test'
+
+argparser_test_sources = files(
+  './TestArgParser.vala'
+)
+
+argparser_test_sources += valacore_sources
+
+test_unit = 'ArgParser-test'
+
+exe = executable(test_unit,
+                 sources: argparser_test_sources,
+                 dependencies : dependencies,
+                 install: false)
+test(test_unit, exe)

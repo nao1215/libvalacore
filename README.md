@@ -148,10 +148,10 @@ $ meson test -C build
 # Test coverage
 We target 80%+ line coverage. CI enforces this threshold automatically.
 ```
-$ sudo apt install gcovr
-$ ./scripts/coverage.sh          # Generate HTML report and show summary
+$ sudo apt install lcov
+$ ./scripts/coverage.sh          # Show coverage summary
 $ ./scripts/coverage.sh --check  # Check 80% threshold (fails if below)
-$ ./scripts/coverage.sh --text   # Show text summary only
+$ ./scripts/coverage.sh --html   # Generate HTML report
 ```
 
 # Code formatting
