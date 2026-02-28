@@ -710,6 +710,14 @@ Wrapper for external process execution.
 | `waitFor()` | Waits for process completion |
 | `kill()` | Forcefully exits process |
 
+### Vala.Lang.Preconditions
+Fail-fast precondition checks for arguments and object state.
+
+| Method | Description |
+|---|---|
+| `checkArgument(bool cond, string message)` | Validates method arguments and aborts when invalid |
+| `checkState(bool cond, string message)` | Validates object state and aborts when invalid |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
