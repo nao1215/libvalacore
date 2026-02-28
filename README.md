@@ -701,6 +701,19 @@ Represents the eventual result of an asynchronous computation.
 | `allSettled<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns settled futures |
 | `race<T>(ArrayList<Future<T>> futures)` | Alias of `any` |
 
+### Vala.Concurrent.SingleFlight
+Suppresses duplicate concurrent work for the same key.
+
+| Method | Description |
+|---|---|
+| `SingleFlight()` | Creates empty singleflight group |
+| `do<T>(string key, SingleFlightFunc<T> fn)` | Executes function once per key and shares result |
+| `doFuture<T>(string key, SingleFlightFunc<T> fn)` | Asynchronous version returning `Future<T>` |
+| `forget(string key)` | Removes in-flight state for a key |
+| `inFlightCount()` | Returns number of in-flight keys |
+| `hasInFlight(string key)` | Returns whether key is in flight |
+| `clear()` | Clears all tracked in-flight keys |
+
 ### Vala.Concurrent.PromiseInt / PromiseString / PromiseBool / PromiseDouble
 Promise types representing the pending result of an asynchronous computation.
 
