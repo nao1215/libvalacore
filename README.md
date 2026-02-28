@@ -841,6 +841,24 @@ Static utility methods for ArrayList operations (partition, chunk, zip, flatten,
 | `interleaveString(a, b)` | Alternates elements from two lists |
 | `frequencyString(list)` | Counts occurrences of each element |
 
+### Vala.Collections.Maps
+Static utility methods for HashMap operations (merge, filter, mapValues, invert, entries, etc.).
+
+| Method | Description |
+|---|---|
+| `mergeString(a, b)` | Merges two maps; second map takes priority |
+| `filterString(map, fn)` | Returns entries matching a bi-predicate |
+| `mapValuesString(map, fn)` | Transforms all values |
+| `mapKeysString(map, fn)` | Transforms all keys |
+| `invertString(map)` | Swaps keys and values |
+| `getOrDefaultString(map, key, defaultValue)` | Gets value or returns default |
+| `computeIfAbsentString(map, key, fn)` | Computes and stores value if key absent |
+| `keysString(map)` | Returns keys as ArrayList |
+| `valuesString(map)` | Returns values as ArrayList |
+| `entriesString(map)` | Returns Pair list of entries |
+| `fromPairsString(pairs)` | Creates HashMap from Pair list |
+| `isEmptyString(map)` | Returns whether the map is empty |
+
 ### Vala.Collections.LruCache\<K,V\>
 LRU cache with optional TTL and cache-miss loader.
 

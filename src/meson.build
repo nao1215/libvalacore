@@ -16,6 +16,7 @@ valacore_sources = files([
   'collections/LinkedList.vala',
   'collections/Lists.vala',
   'collections/LruCache.vala',
+  'collections/Maps.vala',
   'collections/MultiMap.vala',
   'collections/Optional.vala',
   'collections/Pair.vala',
