@@ -707,6 +707,20 @@ A sorted map backed by a binary search tree. Keys are ordered by a comparison fu
 | `keys()` | Returns all keys in sorted order |
 | `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry in key order |
 
+## Vala.Config.Properties
+Java-like key-value configuration file utility.
+
+| Method | Description |
+|---|---|
+| `load(Path path)` | Loads properties from file |
+| `save(Path path)` | Saves properties to file |
+| `get(string key)` | Returns value by key |
+| `getOrDefault(string key, string defaultValue)` | Returns value or fallback |
+| `set(string key, string value)` | Sets key-value pair |
+| `remove(string key)` | Removes key |
+| `keys()` | Returns all keys |
+| `size()` | Returns number of entries |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
