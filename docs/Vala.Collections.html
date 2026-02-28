@@ -34,8 +34,18 @@
               values.</span></li>
           <li class="class"><a href="Vala.Collections.HashSet.html">HashSet</a> - <span class="brief_description">A hash table-based set of unique 
               elements.</span></li>
+          <li class="class"><a href="Vala.Collections.ImmutableList.html">ImmutableList</a> - <span class="brief_description">Immutable list value 
+              object.</span></li>
           <li class="class"><a href="Vala.Collections.LinkedList.html">LinkedList</a> - <span class="brief_description">A doubly-linked list that 
               supports efficient insertion and removal at both ends.</span></li>
+          <li class="class"><a href="Vala.Collections.Lists.html">Lists</a> - <span class="brief_description">Static utility methods for ArrayList 
+              operations.</span></li>
+          <li class="class"><a href="Vala.Collections.LruCache.html">LruCache</a> - <span class="brief_description">LRU cache with optional TTL and 
+              cache-miss loader.</span></li>
+          <li class="class"><a href="Vala.Collections.Maps.html">Maps</a> - <span class="brief_description">Static utility methods for HashMap 
+              operations.</span></li>
+          <li class="class"><a href="Vala.Collections.MultiMap.html">MultiMap</a> - <span class="brief_description">A map that can store multiple 
+              values per key.</span></li>
           <li class="class"><a href="Vala.Collections.Optional.html">Optional</a> - <span class="brief_description">A container object that may or may
               not contain a value.</span></li>
           <li class="class"><a href="Vala.Collections.Pair.html">Pair</a> - <span class="brief_description">An immutable pair of two values.</span>
@@ -48,6 +58,8 @@
               success value or an error.</span></li>
           <li class="class"><a href="Vala.Collections.Stack.html">Stack</a> - <span class="brief_description">A LIFO (Last-In-First-Out) stack backed 
               by a GLib.Queue.</span></li>
+          <li class="class"><a href="Vala.Collections.Stream.html">Stream</a> - <span class="brief_description">A fluent pipeline for transforming and
+              aggregating collection data.</span></li>
           <li class="class"><a href="Vala.Collections.TreeMap.html">TreeMap</a> - <span class="brief_description">A sorted map backed by a balanced 
               binary search tree.</span></li>
           <li class="class"><a href="Vala.Collections.Triple.html">Triple</a> - <span class="brief_description">An immutable triple of three values.
@@ -58,6 +70,14 @@
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.BiConsumerFunc.html" class="delegate">BiConsumerFunc</a></b>&lt;<b><span>A</span></b>,<b><span>B</span></b>&gt; (<span class="main_type"><span>A</span></span> a, <span class="main_type"><span>B</span></span> b)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">A function that takes two arguments and returns nothing.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.BiPredicateFunc.html" class="delegate">BiPredicateFunc</a></b>&lt;<b><span>A</span></b>,<b><span>B</span></b>&gt; (<span class="main_type"><span>A</span></span> a, <span class="main_type"><span>B</span></span> b)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">A function that takes two arguments and returns a boolean.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>V</span></span> <b><a href="Vala.Collections.CacheLoaderFunc.html" class="delegate">CacheLoaderFunc</a></b>&lt;<b><span>K</span></b>,<b><span>V</span></b>&gt; (<span class="main_type"><span>K</span></span> key)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Loader function for cache misses.</span>
             </div></li>
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Collections.ComparatorFunc.html" class="delegate">ComparatorFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> a, <span class="main_type"><span>T</span></span> b)
             </span>

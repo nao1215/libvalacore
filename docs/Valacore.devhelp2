@@ -4,39 +4,53 @@
         <sub name="Arrays" link="Vala.Collections.Arrays.html"></sub><sub name="ArrayList" link="Vala.Collections.ArrayList.html"></sub>
         <sub name="BitSet" link="Vala.Collections.BitSet.html"></sub><sub name="Deque" link="Vala.Collections.Deque.html"></sub>
         <sub name="HashMap" link="Vala.Collections.HashMap.html"></sub><sub name="HashSet" link="Vala.Collections.HashSet.html"></sub>
-        <sub name="LinkedList" link="Vala.Collections.LinkedList.html"></sub><sub name="Optional" link="Vala.Collections.Optional.html"></sub>
-        <sub name="Pair" link="Vala.Collections.Pair.html"></sub><sub name="PriorityQueue" link="Vala.Collections.PriorityQueue.html"></sub>
-        <sub name="Queue" link="Vala.Collections.Queue.html"></sub><sub name="Result" link="Vala.Collections.Result.html"></sub>
-        <sub name="Stack" link="Vala.Collections.Stack.html"></sub><sub name="TreeMap" link="Vala.Collections.TreeMap.html"></sub>
+        <sub name="ImmutableList" link="Vala.Collections.ImmutableList.html"></sub><sub name="LinkedList" link="Vala.Collections.LinkedList.html">
+        </sub><sub name="Lists" link="Vala.Collections.Lists.html"></sub><sub name="LruCache" link="Vala.Collections.LruCache.html"></sub>
+        <sub name="Maps" link="Vala.Collections.Maps.html"></sub><sub name="MultiMap" link="Vala.Collections.MultiMap.html"></sub>
+        <sub name="Optional" link="Vala.Collections.Optional.html"></sub><sub name="Pair" link="Vala.Collections.Pair.html"></sub>
+        <sub name="PriorityQueue" link="Vala.Collections.PriorityQueue.html"></sub><sub name="Queue" link="Vala.Collections.Queue.html"></sub>
+        <sub name="Result" link="Vala.Collections.Result.html"></sub><sub name="Stack" link="Vala.Collections.Stack.html"></sub>
+        <sub name="Stream" link="Vala.Collections.Stream.html"></sub><sub name="TreeMap" link="Vala.Collections.TreeMap.html"></sub>
         <sub name="Triple" link="Vala.Collections.Triple.html"></sub></sub><sub name="Concurrent" link="Vala.Concurrent.html">
+        <sub name="ChannelInt" link="Vala.Concurrent.ChannelInt.html"></sub><sub name="IntBox" link="Vala.Concurrent.IntBox.html"></sub>
+        <sub name="ChannelString" link="Vala.Concurrent.ChannelString.html"></sub><sub name="StringBox" link="Vala.Concurrent.StringBox.html"></sub>
         <sub name="CountDownLatch" link="Vala.Concurrent.CountDownLatch.html"></sub><sub name="Mutex" link="Vala.Concurrent.Mutex.html"></sub>
         <sub name="Once" link="Vala.Concurrent.Once.html"></sub><sub name="RWMutex" link="Vala.Concurrent.RWMutex.html"></sub>
-        <sub name="Semaphore" link="Vala.Concurrent.Semaphore.html"></sub><sub name="WaitGroup" link="Vala.Concurrent.WaitGroup.html"></sub></sub>
-      <sub name="Config" link="Vala.Config.html"><sub name="Properties" link="Vala.Config.Properties.html"></sub></sub>
+        <sub name="Semaphore" link="Vala.Concurrent.Semaphore.html"></sub><sub name="WorkerPool" link="Vala.Concurrent.WorkerPool.html"></sub>
+        <sub name="TaskWrapper" link="Vala.Concurrent.TaskWrapper.html"></sub><sub name="PromiseInt" link="Vala.Concurrent.PromiseInt.html"></sub>
+        <sub name="PromiseString" link="Vala.Concurrent.PromiseString.html"></sub><sub name="PromiseBool" link="Vala.Concurrent.PromiseBool.html">
+        </sub><sub name="PromiseDouble" link="Vala.Concurrent.PromiseDouble.html"></sub><sub name="WaitGroup" link="Vala.Concurrent.WaitGroup.html">
+        </sub></sub><sub name="Config" link="Vala.Config.html"><sub name="Properties" link="Vala.Config.Properties.html"></sub></sub>
       <sub name="Conv" link="Vala.Conv.html"><sub name="Convert" link="Vala.Conv.Convert.html"></sub></sub><sub name="Crypto" link="Vala.Crypto.html">
         <sub name="Hash" link="Vala.Crypto.Hash.html"></sub><sub name="Hmac" link="Vala.Crypto.Hmac.html"></sub>
         <sub name="Uuid" link="Vala.Crypto.Uuid.html"></sub></sub><sub name="Encoding" link="Vala.Encoding.html">
-        <sub name="Base64" link="Vala.Encoding.Base64.html"></sub><sub name="Hex" link="Vala.Encoding.Hex.html"></sub>
-        <sub name="Url" link="Vala.Encoding.Url.html"></sub></sub><sub name="Format" link="Vala.Format.html">
-        <sub name="NumberFormat" link="Vala.Format.NumberFormat.html"></sub></sub><sub name="Io" link="Vala.Io.html">
-        <sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub><sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub>
-        <sub name="Files" link="Vala.Io.Files.html"></sub><sub name="Path" link="Vala.Io.Path.html"></sub>
-        <sub name="Scanner" link="Vala.Io.Scanner.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
+        <sub name="Base64" link="Vala.Encoding.Base64.html"></sub><sub name="Csv" link="Vala.Encoding.Csv.html"></sub>
+        <sub name="Hex" link="Vala.Encoding.Hex.html"></sub><sub name="Url" link="Vala.Encoding.Url.html"></sub></sub>
+      <sub name="Format" link="Vala.Format.html"><sub name="NumberFormat" link="Vala.Format.NumberFormat.html"></sub></sub>
+      <sub name="Io" link="Vala.Io.html"><sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub>
+        <sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub><sub name="Console" link="Vala.Io.Console.html"></sub>
+        <sub name="Filesystem" link="Vala.Io.Filesystem.html"></sub><sub name="Files" link="Vala.Io.Files.html"></sub>
+        <sub name="Path" link="Vala.Io.Path.html"></sub><sub name="Process" link="Vala.Io.Process.html"></sub>
+        <sub name="Resource" link="Vala.Io.Resource.html"></sub><sub name="Scanner" link="Vala.Io.Scanner.html"></sub>
+        <sub name="Temp" link="Vala.Io.Temp.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
         <sub name="StringJoiner" link="Vala.Io.StringJoiner.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
       <sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html"></sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub>
-        <sub name="Preconditions" link="Vala.Lang.Preconditions.html"></sub><sub name="Process" link="Vala.Lang.Process.html"></sub>
-        <sub name="StringEscape" link="Vala.Lang.StringEscape.html"></sub><sub name="SystemEnv" link="Vala.Lang.SystemEnv.html"></sub>
-        <sub name="SystemInfo" link="Vala.Lang.SystemInfo.html"></sub><sub name="Threads" link="Vala.Lang.Threads.html"></sub></sub>
-      <sub name="Log" link="Vala.Log.html"><sub name="Logger" link="Vala.Log.Logger.html"></sub><sub name="LogLevel" link="Vala.Log.LogLevel.html">
-        </sub><sub name="LogHandler" link="Vala.Log.LogHandler.html"></sub></sub><sub name="Math" link="Vala.Math.html">
+        <sub name="Exceptions" link="Vala.Lang.Exceptions.html"></sub><sub name="Preconditions" link="Vala.Lang.Preconditions.html"></sub>
+        <sub name="Process" link="Vala.Lang.Process.html"></sub><sub name="Randoms" link="Vala.Lang.Randoms.html"></sub>
+        <sub name="ShutdownHooks" link="Vala.Lang.ShutdownHooks.html"></sub><sub name="StringEscape" link="Vala.Lang.StringEscape.html"></sub>
+        <sub name="SystemEnv" link="Vala.Lang.SystemEnv.html"></sub><sub name="SystemInfo" link="Vala.Lang.SystemInfo.html"></sub>
+        <sub name="Threads" link="Vala.Lang.Threads.html"></sub></sub><sub name="Log" link="Vala.Log.html">
+        <sub name="Logger" link="Vala.Log.Logger.html"></sub><sub name="LogLevel" link="Vala.Log.LogLevel.html"></sub>
+        <sub name="LogHandler" link="Vala.Log.LogHandler.html"></sub></sub><sub name="Math" link="Vala.Math.html">
+        <sub name="BigDecimal" link="Vala.Math.BigDecimal.html"></sub><sub name="BigInteger" link="Vala.Math.BigInteger.html"></sub>
         <sub name="Math" link="Vala.Math.Math.html"></sub><sub name="Random" link="Vala.Math.Random.html"></sub></sub>
       <sub name="Net" link="Vala.Net.html"><sub name="Url" link="Vala.Net.Url.html"></sub></sub><sub name="Parser" link="Vala.Parser.html">
         <sub name="ArgParser" link="Vala.Parser.ArgParser.html"><sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub>
       <sub name="Regex" link="Vala.Regex.html"><sub name="Pattern" link="Vala.Regex.Pattern.html"></sub></sub>
       <sub name="Runtime" link="Vala.Runtime.html"><sub name="SystemProperties" link="Vala.Runtime.SystemProperties.html"></sub></sub>
       <sub name="Text" link="Vala.Text.html"><sub name="Regex" link="Vala.Text.Regex.html"></sub></sub><sub name="Time" link="Vala.Time.html">
-        <sub name="DateTime" link="Vala.Time.DateTime.html"></sub><sub name="Duration" link="Vala.Time.Duration.html"></sub>
-        <sub name="Stopwatch" link="Vala.Time.Stopwatch.html"></sub></sub></sub>
+        <sub name="DateTime" link="Vala.Time.DateTime.html"></sub><sub name="Dates" link="Vala.Time.Dates.html"></sub>
+        <sub name="Duration" link="Vala.Time.Duration.html"></sub><sub name="Stopwatch" link="Vala.Time.Stopwatch.html"></sub></sub></sub>
   </chapters><functions><keyword type="function" name="Vala.Collections.Arrays.Arrays" link="Vala.Collections.Arrays.Arrays.html"/>
     <keyword type="function" name="Vala.Collections.Arrays.sort" link="Vala.Collections.Arrays.sort.html"/>
     <keyword type="function" name="Vala.Collections.Arrays.binarySearch" link="Vala.Collections.Arrays.binarySearch.html"/>
@@ -123,6 +137,14 @@
     <keyword type="function" name="Vala.Collections.HashSet.addAll" link="Vala.Collections.HashSet.addAll.html"/>
     <keyword type="function" name="Vala.Collections.HashSet.HashSet" link="Vala.Collections.HashSet.HashSet.html"/>
     <keyword type="" name="Vala.Collections.HashSet" link="Vala.Collections.HashSet.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.size" link="Vala.Collections.ImmutableList.size.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.isEmpty" link="Vala.Collections.ImmutableList.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.@get" link="Vala.Collections.ImmutableList.@get.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.contains" link="Vala.Collections.ImmutableList.contains.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.toArray" link="Vala.Collections.ImmutableList.toArray.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.ImmutableList" link="Vala.Collections.ImmutableList.ImmutableList.html"/>
+    <keyword type="function" name="Vala.Collections.ImmutableList.of" link="Vala.Collections.ImmutableList.of.html"/>
+    <keyword type="" name="Vala.Collections.ImmutableList" link="Vala.Collections.ImmutableList.html"/>
     <keyword type="function" name="Vala.Collections.LinkedList.addFirst" link="Vala.Collections.LinkedList.addFirst.html"/>
     <keyword type="function" name="Vala.Collections.LinkedList.addLast" link="Vala.Collections.LinkedList.addLast.html"/>
     <keyword type="function" name="Vala.Collections.LinkedList.removeFirst" link="Vala.Collections.LinkedList.removeFirst.html"/>
@@ -139,6 +161,54 @@
     <keyword type="function" name="Vala.Collections.LinkedList.toArray" link="Vala.Collections.LinkedList.toArray.html"/>
     <keyword type="function" name="Vala.Collections.LinkedList.LinkedList" link="Vala.Collections.LinkedList.LinkedList.html"/>
     <keyword type="" name="Vala.Collections.LinkedList" link="Vala.Collections.LinkedList.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.Lists" link="Vala.Collections.Lists.Lists.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.partitionString" link="Vala.Collections.Lists.partitionString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.chunkString" link="Vala.Collections.Lists.chunkString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.zipString" link="Vala.Collections.Lists.zipString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.zipWithIndexString" link="Vala.Collections.Lists.zipWithIndexString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.flattenString" link="Vala.Collections.Lists.flattenString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.groupByString" link="Vala.Collections.Lists.groupByString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.distinctString" link="Vala.Collections.Lists.distinctString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.reverseString" link="Vala.Collections.Lists.reverseString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.slidingString" link="Vala.Collections.Lists.slidingString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.interleaveString" link="Vala.Collections.Lists.interleaveString.html"/>
+    <keyword type="function" name="Vala.Collections.Lists.frequencyString" link="Vala.Collections.Lists.frequencyString.html"/>
+    <keyword type="" name="Vala.Collections.Lists" link="Vala.Collections.Lists.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.withTtl" link="Vala.Collections.LruCache.withTtl.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.withLoader" link="Vala.Collections.LruCache.withLoader.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.@get" link="Vala.Collections.LruCache.@get.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.put" link="Vala.Collections.LruCache.put.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.contains" link="Vala.Collections.LruCache.contains.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.remove" link="Vala.Collections.LruCache.remove.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.clear" link="Vala.Collections.LruCache.clear.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.size" link="Vala.Collections.LruCache.size.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.stats" link="Vala.Collections.LruCache.stats.html"/>
+    <keyword type="function" name="Vala.Collections.LruCache.LruCache" link="Vala.Collections.LruCache.LruCache.html"/>
+    <keyword type="" name="Vala.Collections.LruCache" link="Vala.Collections.LruCache.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.Maps" link="Vala.Collections.Maps.Maps.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.mergeString" link="Vala.Collections.Maps.mergeString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.filterString" link="Vala.Collections.Maps.filterString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.mapValuesString" link="Vala.Collections.Maps.mapValuesString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.mapKeysString" link="Vala.Collections.Maps.mapKeysString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.invertString" link="Vala.Collections.Maps.invertString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.getOrDefaultString" link="Vala.Collections.Maps.getOrDefaultString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.computeIfAbsentString" link="Vala.Collections.Maps.computeIfAbsentString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.keysString" link="Vala.Collections.Maps.keysString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.valuesString" link="Vala.Collections.Maps.valuesString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.entriesString" link="Vala.Collections.Maps.entriesString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.fromPairsString" link="Vala.Collections.Maps.fromPairsString.html"/>
+    <keyword type="function" name="Vala.Collections.Maps.isEmptyString" link="Vala.Collections.Maps.isEmptyString.html"/>
+    <keyword type="" name="Vala.Collections.Maps" link="Vala.Collections.Maps.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.put" link="Vala.Collections.MultiMap.put.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.@get" link="Vala.Collections.MultiMap.@get.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.containsKey" link="Vala.Collections.MultiMap.containsKey.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.remove" link="Vala.Collections.MultiMap.remove.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.removeAll" link="Vala.Collections.MultiMap.removeAll.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.size" link="Vala.Collections.MultiMap.size.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.isEmpty" link="Vala.Collections.MultiMap.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.clear" link="Vala.Collections.MultiMap.clear.html"/>
+    <keyword type="function" name="Vala.Collections.MultiMap.MultiMap" link="Vala.Collections.MultiMap.MultiMap.html"/>
+    <keyword type="" name="Vala.Collections.MultiMap" link="Vala.Collections.MultiMap.html"/>
     <keyword type="function" name="Vala.Collections.Optional.isPresent" link="Vala.Collections.Optional.isPresent.html"/>
     <keyword type="function" name="Vala.Collections.Optional.isEmpty" link="Vala.Collections.Optional.isEmpty.html"/>
     <keyword type="function" name="Vala.Collections.Optional.@get" link="Vala.Collections.Optional.@get.html"/>
@@ -193,6 +263,29 @@
     <keyword type="function" name="Vala.Collections.Stack.clear" link="Vala.Collections.Stack.clear.html"/>
     <keyword type="function" name="Vala.Collections.Stack.Stack" link="Vala.Collections.Stack.Stack.html"/>
     <keyword type="" name="Vala.Collections.Stack" link="Vala.Collections.Stack.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.filter" link="Vala.Collections.Stream.filter.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.map" link="Vala.Collections.Stream.map.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.sorted" link="Vala.Collections.Stream.sorted.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.distinct" link="Vala.Collections.Stream.distinct.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.limit" link="Vala.Collections.Stream.limit.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.skip" link="Vala.Collections.Stream.skip.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.takeWhile" link="Vala.Collections.Stream.takeWhile.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.dropWhile" link="Vala.Collections.Stream.dropWhile.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.peek" link="Vala.Collections.Stream.peek.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.toList" link="Vala.Collections.Stream.toList.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.count" link="Vala.Collections.Stream.count.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.findFirst" link="Vala.Collections.Stream.findFirst.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.findLast" link="Vala.Collections.Stream.findLast.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.anyMatch" link="Vala.Collections.Stream.anyMatch.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.allMatch" link="Vala.Collections.Stream.allMatch.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.noneMatch" link="Vala.Collections.Stream.noneMatch.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.reduce" link="Vala.Collections.Stream.reduce.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.forEach" link="Vala.Collections.Stream.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.min" link="Vala.Collections.Stream.min.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.max" link="Vala.Collections.Stream.max.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.fromList" link="Vala.Collections.Stream.fromList.html"/>
+    <keyword type="function" name="Vala.Collections.Stream.empty" link="Vala.Collections.Stream.empty.html"/>
+    <keyword type="" name="Vala.Collections.Stream" link="Vala.Collections.Stream.html"/>
     <keyword type="function" name="Vala.Collections.TreeMap.put" link="Vala.Collections.TreeMap.put.html"/>
     <keyword type="function" name="Vala.Collections.TreeMap.@get" link="Vala.Collections.TreeMap.@get.html"/>
     <keyword type="function" name="Vala.Collections.TreeMap.containsKey" link="Vala.Collections.TreeMap.containsKey.html"/>
@@ -219,11 +312,43 @@
     <keyword type="" name="Vala.Collections.ReduceFunc" link="Vala.Collections.ReduceFunc.html"/>
     <keyword type="" name="Vala.Collections.ComparatorFunc" link="Vala.Collections.ComparatorFunc.html"/>
     <keyword type="" name="Vala.Collections.BiConsumerFunc" link="Vala.Collections.BiConsumerFunc.html"/>
+    <keyword type="" name="Vala.Collections.CacheLoaderFunc" link="Vala.Collections.CacheLoaderFunc.html"/>
+    <keyword type="" name="Vala.Collections.BiPredicateFunc" link="Vala.Collections.BiPredicateFunc.html"/>
     <keyword type="" name="Vala.Collections.SupplierFunc" link="Vala.Collections.SupplierFunc.html"/>
     <keyword type="" name="Vala.Collections.ConsumerFunc" link="Vala.Collections.ConsumerFunc.html"/>
     <keyword type="" name="Vala.Collections.PredicateFunc" link="Vala.Collections.PredicateFunc.html"/>
     <keyword type="" name="Vala.Collections.MapFunc" link="Vala.Collections.MapFunc.html"/>
     <keyword type="" name="Vala.Collections" link="Vala.Collections.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.send" link="Vala.Concurrent.ChannelInt.send.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.trySend" link="Vala.Concurrent.ChannelInt.trySend.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.receive" link="Vala.Concurrent.ChannelInt.receive.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.tryReceive" link="Vala.Concurrent.ChannelInt.tryReceive.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.close" link="Vala.Concurrent.ChannelInt.close.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.isClosed" link="Vala.Concurrent.ChannelInt.isClosed.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.size" link="Vala.Concurrent.ChannelInt.size.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.capacity" link="Vala.Concurrent.ChannelInt.capacity.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.ChannelInt" link="Vala.Concurrent.ChannelInt.ChannelInt.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelInt.buffered" link="Vala.Concurrent.ChannelInt.buffered.html"/>
+    <keyword type="" name="Vala.Concurrent.ChannelInt" link="Vala.Concurrent.ChannelInt.html"/>
+    <keyword type="function" name="Vala.Concurrent.IntBox.IntBox" link="Vala.Concurrent.IntBox.IntBox.html"/>
+    <keyword type="variable" name="Vala.Concurrent.IntBox.value" link="Vala.Concurrent.IntBox.value.html"/>
+    <keyword type="variable" name="Vala.Concurrent.IntBox.sentinel" link="Vala.Concurrent.IntBox.sentinel.html"/>
+    <keyword type="" name="Vala.Concurrent.IntBox" link="Vala.Concurrent.IntBox.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.send" link="Vala.Concurrent.ChannelString.send.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.trySend" link="Vala.Concurrent.ChannelString.trySend.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.receive" link="Vala.Concurrent.ChannelString.receive.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.tryReceive" link="Vala.Concurrent.ChannelString.tryReceive.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.close" link="Vala.Concurrent.ChannelString.close.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.isClosed" link="Vala.Concurrent.ChannelString.isClosed.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.size" link="Vala.Concurrent.ChannelString.size.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.capacity" link="Vala.Concurrent.ChannelString.capacity.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.ChannelString" link="Vala.Concurrent.ChannelString.ChannelString.html"/>
+    <keyword type="function" name="Vala.Concurrent.ChannelString.buffered" link="Vala.Concurrent.ChannelString.buffered.html"/>
+    <keyword type="" name="Vala.Concurrent.ChannelString" link="Vala.Concurrent.ChannelString.html"/>
+    <keyword type="function" name="Vala.Concurrent.StringBox.StringBox" link="Vala.Concurrent.StringBox.StringBox.html"/>
+    <keyword type="variable" name="Vala.Concurrent.StringBox.value" link="Vala.Concurrent.StringBox.value.html"/>
+    <keyword type="variable" name="Vala.Concurrent.StringBox.sentinel" link="Vala.Concurrent.StringBox.sentinel.html"/>
+    <keyword type="" name="Vala.Concurrent.StringBox" link="Vala.Concurrent.StringBox.html"/>
     <keyword type="function" name="Vala.Concurrent.CountDownLatch.countDown" link="Vala.Concurrent.CountDownLatch.countDown.html"/>
     <keyword type="function" name="Vala.Concurrent.CountDownLatch.await" link="Vala.Concurrent.CountDownLatch.await.html"/>
     <keyword type="function" name="Vala.Concurrent.CountDownLatch.awaitTimeout" link="Vala.Concurrent.CountDownLatch.awaitTimeout.html"/>
@@ -251,6 +376,35 @@
     <keyword type="function" name="Vala.Concurrent.Semaphore.availablePermits" link="Vala.Concurrent.Semaphore.availablePermits.html"/>
     <keyword type="function" name="Vala.Concurrent.Semaphore.Semaphore" link="Vala.Concurrent.Semaphore.Semaphore.html"/>
     <keyword type="" name="Vala.Concurrent.Semaphore" link="Vala.Concurrent.Semaphore.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.submitInt" link="Vala.Concurrent.WorkerPool.submitInt.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.submitString" link="Vala.Concurrent.WorkerPool.submitString.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.submitBool" link="Vala.Concurrent.WorkerPool.submitBool.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.submitDouble" link="Vala.Concurrent.WorkerPool.submitDouble.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.execute" link="Vala.Concurrent.WorkerPool.execute.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.shutdown" link="Vala.Concurrent.WorkerPool.shutdown.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.isShutdown" link="Vala.Concurrent.WorkerPool.isShutdown.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.activeCount" link="Vala.Concurrent.WorkerPool.activeCount.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.poolSize" link="Vala.Concurrent.WorkerPool.poolSize.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.queueSize" link="Vala.Concurrent.WorkerPool.queueSize.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.WorkerPool" link="Vala.Concurrent.WorkerPool.WorkerPool.html"/>
+    <keyword type="function" name="Vala.Concurrent.WorkerPool.withDefault" link="Vala.Concurrent.WorkerPool.withDefault.html"/>
+    <keyword type="" name="Vala.Concurrent.WorkerPool" link="Vala.Concurrent.WorkerPool.html"/>
+    <keyword type="function" name="Vala.Concurrent.TaskWrapper.TaskWrapper" link="Vala.Concurrent.TaskWrapper.TaskWrapper.html"/>
+    <keyword type="variable" name="Vala.Concurrent.TaskWrapper.run" link="Vala.Concurrent.TaskWrapper.run.html"/>
+    <keyword type="variable" name="Vala.Concurrent.TaskWrapper.poison" link="Vala.Concurrent.TaskWrapper.poison.html"/>
+    <keyword type="" name="Vala.Concurrent.TaskWrapper" link="Vala.Concurrent.TaskWrapper.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseInt.await" link="Vala.Concurrent.PromiseInt.await.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseInt.isDone" link="Vala.Concurrent.PromiseInt.isDone.html"/>
+    <keyword type="" name="Vala.Concurrent.PromiseInt" link="Vala.Concurrent.PromiseInt.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseString.await" link="Vala.Concurrent.PromiseString.await.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseString.isDone" link="Vala.Concurrent.PromiseString.isDone.html"/>
+    <keyword type="" name="Vala.Concurrent.PromiseString" link="Vala.Concurrent.PromiseString.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseBool.await" link="Vala.Concurrent.PromiseBool.await.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseBool.isDone" link="Vala.Concurrent.PromiseBool.isDone.html"/>
+    <keyword type="" name="Vala.Concurrent.PromiseBool" link="Vala.Concurrent.PromiseBool.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseDouble.await" link="Vala.Concurrent.PromiseDouble.await.html"/>
+    <keyword type="function" name="Vala.Concurrent.PromiseDouble.isDone" link="Vala.Concurrent.PromiseDouble.isDone.html"/>
+    <keyword type="" name="Vala.Concurrent.PromiseDouble" link="Vala.Concurrent.PromiseDouble.html"/>
     <keyword type="function" name="Vala.Concurrent.WaitGroup.add" link="Vala.Concurrent.WaitGroup.add.html"/>
     <keyword type="function" name="Vala.Concurrent.WaitGroup.done" link="Vala.Concurrent.WaitGroup.done.html"/>
     <keyword type="function" name="Vala.Concurrent.WaitGroup.wait" link="Vala.Concurrent.WaitGroup.wait.html"/>
@@ -258,6 +412,8 @@
     <keyword type="" name="Vala.Concurrent.WaitGroup" link="Vala.Concurrent.WaitGroup.html"/>
     <keyword type="" name="Vala.Concurrent.WithLockFunc" link="Vala.Concurrent.WithLockFunc.html"/>
     <keyword type="" name="Vala.Concurrent.OnceFunc" link="Vala.Concurrent.OnceFunc.html"/>
+    <keyword type="" name="Vala.Concurrent.TaskFunc" link="Vala.Concurrent.TaskFunc.html"/>
+    <keyword type="" name="Vala.Concurrent.VoidTaskFunc" link="Vala.Concurrent.VoidTaskFunc.html"/>
     <keyword type="" name="Vala.Concurrent" link="Vala.Concurrent.html"/>
     <keyword type="function" name="Vala.Config.Properties.load" link="Vala.Config.Properties.load.html"/>
     <keyword type="function" name="Vala.Config.Properties.save" link="Vala.Config.Properties.save.html"/>
@@ -304,6 +460,11 @@
     <keyword type="function" name="Vala.Encoding.Base64.encodeString" link="Vala.Encoding.Base64.encodeString.html"/>
     <keyword type="function" name="Vala.Encoding.Base64.decodeString" link="Vala.Encoding.Base64.decodeString.html"/>
     <keyword type="" name="Vala.Encoding.Base64" link="Vala.Encoding.Base64.html"/>
+    <keyword type="function" name="Vala.Encoding.Csv.Csv" link="Vala.Encoding.Csv.Csv.html"/>
+    <keyword type="function" name="Vala.Encoding.Csv.parse" link="Vala.Encoding.Csv.parse.html"/>
+    <keyword type="function" name="Vala.Encoding.Csv.parseFile" link="Vala.Encoding.Csv.parseFile.html"/>
+    <keyword type="function" name="Vala.Encoding.Csv.write" link="Vala.Encoding.Csv.write.html"/>
+    <keyword type="" name="Vala.Encoding.Csv" link="Vala.Encoding.Csv.html"/>
     <keyword type="function" name="Vala.Encoding.Hex.Hex" link="Vala.Encoding.Hex.Hex.html"/>
     <keyword type="function" name="Vala.Encoding.Hex.encode" link="Vala.Encoding.Hex.encode.html"/>
     <keyword type="function" name="Vala.Encoding.Hex.decode" link="Vala.Encoding.Hex.decode.html"/>
@@ -338,6 +499,19 @@
     <keyword type="function" name="Vala.Io.BufferedWriter.fromFile" link="Vala.Io.BufferedWriter.fromFile.html"/>
     <keyword type="function" name="Vala.Io.BufferedWriter.fromFileAppend" link="Vala.Io.BufferedWriter.fromFileAppend.html"/>
     <keyword type="" name="Vala.Io.BufferedWriter" link="Vala.Io.BufferedWriter.html"/>
+    <keyword type="function" name="Vala.Io.Console.Console" link="Vala.Io.Console.Console.html"/>
+    <keyword type="function" name="Vala.Io.Console.isTTY" link="Vala.Io.Console.isTTY.html"/>
+    <keyword type="function" name="Vala.Io.Console.readPassword" link="Vala.Io.Console.readPassword.html"/>
+    <keyword type="" name="Vala.Io.Console" link="Vala.Io.Console.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.Filesystem" link="Vala.Io.Filesystem.Filesystem.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.getFileAttributes" link="Vala.Io.Filesystem.getFileAttributes.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.setLastModifiedTime" link="Vala.Io.Filesystem.setLastModifiedTime.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.isReadable" link="Vala.Io.Filesystem.isReadable.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.isWritable" link="Vala.Io.Filesystem.isWritable.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.isExecutable" link="Vala.Io.Filesystem.isExecutable.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.getOwner" link="Vala.Io.Filesystem.getOwner.html"/>
+    <keyword type="function" name="Vala.Io.Filesystem.setOwner" link="Vala.Io.Filesystem.setOwner.html"/>
+    <keyword type="" name="Vala.Io.Filesystem" link="Vala.Io.Filesystem.html"/>
     <keyword type="function" name="Vala.Io.Files.makeDir" link="Vala.Io.Files.makeDir.html"/>
     <keyword type="function" name="Vala.Io.Files.Files" link="Vala.Io.Files.Files.html"/>
     <keyword type="function" name="Vala.Io.Files.isFile" link="Vala.Io.Files.isFile.html"/>
@@ -394,6 +568,14 @@
     <keyword type="function" name="Vala.Io.Path.Path" link="Vala.Io.Path.Path.html"/>
     <keyword type="function" name="Vala.Io.Path.separator" link="Vala.Io.Path.separator.html"/>
     <keyword type="" name="Vala.Io.Path" link="Vala.Io.Path.html"/>
+    <keyword type="function" name="Vala.Io.Process.Process" link="Vala.Io.Process.Process.html"/>
+    <keyword type="function" name="Vala.Io.Process.exec" link="Vala.Io.Process.exec.html"/>
+    <keyword type="function" name="Vala.Io.Process.execWithOutput" link="Vala.Io.Process.execWithOutput.html"/>
+    <keyword type="function" name="Vala.Io.Process.kill" link="Vala.Io.Process.kill.html"/>
+    <keyword type="" name="Vala.Io.Process" link="Vala.Io.Process.html"/>
+    <keyword type="function" name="Vala.Io.Resource.Resource" link="Vala.Io.Resource.Resource.html"/>
+    <keyword type="function" name="Vala.Io.Resource.readResource" link="Vala.Io.Resource.readResource.html"/>
+    <keyword type="" name="Vala.Io.Resource" link="Vala.Io.Resource.html"/>
     <keyword type="function" name="Vala.Io.Scanner.nextLine" link="Vala.Io.Scanner.nextLine.html"/>
     <keyword type="function" name="Vala.Io.Scanner.nextInt" link="Vala.Io.Scanner.nextInt.html"/>
     <keyword type="function" name="Vala.Io.Scanner.nextDouble" link="Vala.Io.Scanner.nextDouble.html"/>
@@ -406,6 +588,10 @@
     <keyword type="function" name="Vala.Io.Scanner.fromString" link="Vala.Io.Scanner.fromString.html"/>
     <keyword type="function" name="Vala.Io.Scanner.fromStdin" link="Vala.Io.Scanner.fromStdin.html"/>
     <keyword type="" name="Vala.Io.Scanner" link="Vala.Io.Scanner.html"/>
+    <keyword type="function" name="Vala.Io.Temp.Temp" link="Vala.Io.Temp.Temp.html"/>
+    <keyword type="function" name="Vala.Io.Temp.withTempFile" link="Vala.Io.Temp.withTempFile.html"/>
+    <keyword type="function" name="Vala.Io.Temp.withTempDir" link="Vala.Io.Temp.withTempDir.html"/>
+    <keyword type="" name="Vala.Io.Temp" link="Vala.Io.Temp.html"/>
     <keyword type="function" name="Vala.Io.StringBuilder.append" link="Vala.Io.StringBuilder.append.html"/>
     <keyword type="function" name="Vala.Io.StringBuilder.appendLine" link="Vala.Io.StringBuilder.appendLine.html"/>
     <keyword type="function" name="Vala.Io.StringBuilder.appendChar" link="Vala.Io.StringBuilder.appendChar.html"/>
@@ -471,8 +657,8 @@
     <keyword type="function" name="Vala.Io.Strings.words" link="Vala.Io.Strings.words.html"/>
     <keyword type="function" name="Vala.Io.Strings.truncate" link="Vala.Io.Strings.truncate.html"/>
     <keyword type="function" name="Vala.Io.Strings.wrap" link="Vala.Io.Strings.wrap.html"/>
-    <keyword type="" name="Vala.Io.Strings" link="Vala.Io.Strings.html"/><keyword type="" name="Vala.Io" link="Vala.Io.html"/>
-    <keyword type="function" name="Vala.Lang.Os.Os" link="Vala.Lang.Os.Os.html"/>
+    <keyword type="" name="Vala.Io.Strings" link="Vala.Io.Strings.html"/><keyword type="" name="Vala.Io.TempFunc" link="Vala.Io.TempFunc.html"/>
+    <keyword type="" name="Vala.Io" link="Vala.Io.html"/><keyword type="function" name="Vala.Lang.Os.Os" link="Vala.Lang.Os.Os.html"/>
     <keyword type="function" name="Vala.Lang.Os.get_env" link="Vala.Lang.Os.get_env.html"/>
     <keyword type="function" name="Vala.Lang.Os.cwd" link="Vala.Lang.Os.cwd.html"/>
     <keyword type="function" name="Vala.Lang.Os.chdir" link="Vala.Lang.Os.chdir.html"/><keyword type="" name="Vala.Lang.Os" link="Vala.Lang.Os.html"/>
@@ -480,6 +666,10 @@
     <keyword type="function" name="Vala.Lang.Objects.isNull" link="Vala.Lang.Objects.isNull.html"/>
     <keyword type="function" name="Vala.Lang.Objects.nonNull" link="Vala.Lang.Objects.nonNull.html"/>
     <keyword type="" name="Vala.Lang.Objects" link="Vala.Lang.Objects.html"/>
+    <keyword type="function" name="Vala.Lang.Exceptions.Exceptions" link="Vala.Lang.Exceptions.Exceptions.html"/>
+    <keyword type="function" name="Vala.Lang.Exceptions.sneakyThrow" link="Vala.Lang.Exceptions.sneakyThrow.html"/>
+    <keyword type="function" name="Vala.Lang.Exceptions.getStackTrace" link="Vala.Lang.Exceptions.getStackTrace.html"/>
+    <keyword type="" name="Vala.Lang.Exceptions" link="Vala.Lang.Exceptions.html"/>
     <keyword type="function" name="Vala.Lang.Preconditions.Preconditions" link="Vala.Lang.Preconditions.Preconditions.html"/>
     <keyword type="function" name="Vala.Lang.Preconditions.checkArgument" link="Vala.Lang.Preconditions.checkArgument.html"/>
     <keyword type="function" name="Vala.Lang.Preconditions.checkState" link="Vala.Lang.Preconditions.checkState.html"/>
@@ -492,6 +682,14 @@
     <keyword type="function" name="Vala.Lang.Process.exec" link="Vala.Lang.Process.exec.html"/>
     <keyword type="function" name="Vala.Lang.Process.execAsync" link="Vala.Lang.Process.execAsync.html"/>
     <keyword type="" name="Vala.Lang.Process" link="Vala.Lang.Process.html"/>
+    <keyword type="function" name="Vala.Lang.Randoms.Randoms" link="Vala.Lang.Randoms.Randoms.html"/>
+    <keyword type="function" name="Vala.Lang.Randoms.nextInt" link="Vala.Lang.Randoms.nextInt.html"/>
+    <keyword type="function" name="Vala.Lang.Randoms.nextDouble" link="Vala.Lang.Randoms.nextDouble.html"/>
+    <keyword type="function" name="Vala.Lang.Randoms.shuffle" link="Vala.Lang.Randoms.shuffle.html"/>
+    <keyword type="" name="Vala.Lang.Randoms" link="Vala.Lang.Randoms.html"/>
+    <keyword type="function" name="Vala.Lang.ShutdownHooks.ShutdownHooks" link="Vala.Lang.ShutdownHooks.ShutdownHooks.html"/>
+    <keyword type="function" name="Vala.Lang.ShutdownHooks.addHook" link="Vala.Lang.ShutdownHooks.addHook.html"/>
+    <keyword type="" name="Vala.Lang.ShutdownHooks" link="Vala.Lang.ShutdownHooks.html"/>
     <keyword type="function" name="Vala.Lang.StringEscape.StringEscape" link="Vala.Lang.StringEscape.StringEscape.html"/>
     <keyword type="function" name="Vala.Lang.StringEscape.escapeHtml" link="Vala.Lang.StringEscape.escapeHtml.html"/>
     <keyword type="function" name="Vala.Lang.StringEscape.escapeJson" link="Vala.Lang.StringEscape.escapeJson.html"/>
@@ -509,7 +707,9 @@
     <keyword type="" name="Vala.Lang.SystemInfo" link="Vala.Lang.SystemInfo.html"/>
     <keyword type="function" name="Vala.Lang.Threads.Threads" link="Vala.Lang.Threads.Threads.html"/>
     <keyword type="function" name="Vala.Lang.Threads.sleepMillis" link="Vala.Lang.Threads.sleepMillis.html"/>
-    <keyword type="" name="Vala.Lang.Threads" link="Vala.Lang.Threads.html"/><keyword type="" name="Vala.Lang" link="Vala.Lang.html"/>
+    <keyword type="" name="Vala.Lang.Threads" link="Vala.Lang.Threads.html"/>
+    <keyword type="" name="Vala.Lang.ShutdownHookFunc" link="Vala.Lang.ShutdownHookFunc.html"/>
+    <keyword type="" name="Vala.Lang" link="Vala.Lang.html"/>
     <keyword type="function" name="Vala.Log.Logger.setLevel" link="Vala.Log.Logger.setLevel.html"/>
     <keyword type="function" name="Vala.Log.Logger.addHandler" link="Vala.Log.Logger.addHandler.html"/>
     <keyword type="function" name="Vala.Log.Logger.debug" link="Vala.Log.Logger.debug.html"/>
@@ -525,6 +725,30 @@
     <keyword type="enum" name="Vala.Log.LogLevel" link="Vala.Log.LogLevel.html"/>
     <keyword type="function" name="Vala.Log.LogHandler.handle" link="Vala.Log.LogHandler.handle.html"/>
     <keyword type="" name="Vala.Log.LogHandler" link="Vala.Log.LogHandler.html"/><keyword type="" name="Vala.Log" link="Vala.Log.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.toString" link="Vala.Math.BigDecimal.toString.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.scale" link="Vala.Math.BigDecimal.scale.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.abs" link="Vala.Math.BigDecimal.abs.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.negate" link="Vala.Math.BigDecimal.negate.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.compareTo" link="Vala.Math.BigDecimal.compareTo.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.add" link="Vala.Math.BigDecimal.add.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.subtract" link="Vala.Math.BigDecimal.subtract.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.multiply" link="Vala.Math.BigDecimal.multiply.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.divide" link="Vala.Math.BigDecimal.divide.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.divideWithScale" link="Vala.Math.BigDecimal.divideWithScale.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.mod" link="Vala.Math.BigDecimal.mod.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.pow" link="Vala.Math.BigDecimal.pow.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.BigDecimal" link="Vala.Math.BigDecimal.BigDecimal.html"/>
+    <keyword type="function" name="Vala.Math.BigDecimal.parse" link="Vala.Math.BigDecimal.parse.html"/>
+    <keyword type="" name="Vala.Math.BigDecimal" link="Vala.Math.BigDecimal.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.toString" link="Vala.Math.BigInteger.toString.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.add" link="Vala.Math.BigInteger.add.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.subtract" link="Vala.Math.BigInteger.subtract.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.multiply" link="Vala.Math.BigInteger.multiply.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.divide" link="Vala.Math.BigInteger.divide.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.mod" link="Vala.Math.BigInteger.mod.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.pow" link="Vala.Math.BigInteger.pow.html"/>
+    <keyword type="function" name="Vala.Math.BigInteger.BigInteger" link="Vala.Math.BigInteger.BigInteger.html"/>
+    <keyword type="" name="Vala.Math.BigInteger" link="Vala.Math.BigInteger.html"/>
     <keyword type="constant" name="Vala.Math.Math.PI" link="Vala.Math.Math.PI.html"/>
     <keyword type="constant" name="Vala.Math.Math.E" link="Vala.Math.Math.E.html"/>
     <keyword type="function" name="Vala.Math.Math.Math" link="Vala.Math.Math.Math.html"/>
@@ -632,6 +856,13 @@
     <keyword type="function" name="Vala.Time.DateTime.parse" link="Vala.Time.DateTime.parse.html"/>
     <keyword type="function" name="Vala.Time.DateTime.fromUnixTimestamp" link="Vala.Time.DateTime.fromUnixTimestamp.html"/>
     <keyword type="" name="Vala.Time.DateTime" link="Vala.Time.DateTime.html"/>
+    <keyword type="function" name="Vala.Time.Dates.Dates" link="Vala.Time.Dates.Dates.html"/>
+    <keyword type="function" name="Vala.Time.Dates.now" link="Vala.Time.Dates.now.html"/>
+    <keyword type="function" name="Vala.Time.Dates.parse" link="Vala.Time.Dates.parse.html"/>
+    <keyword type="function" name="Vala.Time.Dates.format" link="Vala.Time.Dates.format.html"/>
+    <keyword type="function" name="Vala.Time.Dates.addDays" link="Vala.Time.Dates.addDays.html"/>
+    <keyword type="function" name="Vala.Time.Dates.isLeapYear" link="Vala.Time.Dates.isLeapYear.html"/>
+    <keyword type="" name="Vala.Time.Dates" link="Vala.Time.Dates.html"/>
     <keyword type="function" name="Vala.Time.Duration.toSeconds" link="Vala.Time.Duration.toSeconds.html"/>
     <keyword type="function" name="Vala.Time.Duration.toMillis" link="Vala.Time.Duration.toMillis.html"/>
     <keyword type="function" name="Vala.Time.Duration.plus" link="Vala.Time.Duration.plus.html"/>

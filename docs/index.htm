@@ -71,8 +71,18 @@
                 to values.</span></li>
             <li class="class"><a href="Vala.Collections.HashSet.html">HashSet</a> - <span class="brief_description">A hash table-based set of unique 
                 elements.</span></li>
+            <li class="class"><a href="Vala.Collections.ImmutableList.html">ImmutableList</a> - <span class="brief_description">Immutable list value 
+                object.</span></li>
             <li class="class"><a href="Vala.Collections.LinkedList.html">LinkedList</a> - <span class="brief_description">A doubly-linked list that 
                 supports efficient insertion and removal at both ends.</span></li>
+            <li class="class"><a href="Vala.Collections.Lists.html">Lists</a> - <span class="brief_description">Static utility methods for ArrayList 
+                operations.</span></li>
+            <li class="class"><a href="Vala.Collections.LruCache.html">LruCache</a> - <span class="brief_description">LRU cache with optional TTL and 
+                cache-miss loader.</span></li>
+            <li class="class"><a href="Vala.Collections.Maps.html">Maps</a> - <span class="brief_description">Static utility methods for HashMap 
+                operations.</span></li>
+            <li class="class"><a href="Vala.Collections.MultiMap.html">MultiMap</a> - <span class="brief_description">A map that can store multiple 
+                values per key.</span></li>
             <li class="class"><a href="Vala.Collections.Optional.html">Optional</a> - <span class="brief_description">A container object that may or 
                 may not contain a value.</span></li>
             <li class="class"><a href="Vala.Collections.Pair.html">Pair</a> - <span class="brief_description">An immutable pair of two values.</span>
@@ -85,6 +95,8 @@
                 success value or an error.</span></li>
             <li class="class"><a href="Vala.Collections.Stack.html">Stack</a> - <span class="brief_description">A LIFO (Last-In-First-Out) stack 
                 backed by a GLib.Queue.</span></li>
+            <li class="class"><a href="Vala.Collections.Stream.html">Stream</a> - <span class="brief_description">A fluent pipeline for transforming 
+                and aggregating collection data.</span></li>
             <li class="class"><a href="Vala.Collections.TreeMap.html">TreeMap</a> - <span class="brief_description">A sorted map backed by a balanced 
                 binary search tree.</span></li>
             <li class="class"><a href="Vala.Collections.Triple.html">Triple</a> - <span class="brief_description">An immutable triple of three values.
@@ -95,6 +107,14 @@
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.BiConsumerFunc.html" class="delegate">BiConsumerFunc</a></b>&lt;<b><span>A</span></b>,<b><span>B</span></b>&gt; (<span class="main_type"><span>A</span></span> a, <span class="main_type"><span>B</span></span> b)
               </span>
               <div class="leaf_brief_description"><span class="brief_description">A function that takes two arguments and returns nothing.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.BiPredicateFunc.html" class="delegate">BiPredicateFunc</a></b>&lt;<b><span>A</span></b>,<b><span>B</span></b>&gt; (<span class="main_type"><span>A</span></span> a, <span class="main_type"><span>B</span></span> b)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that takes two arguments and returns a boolean.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>V</span></span> <b><a href="Vala.Collections.CacheLoaderFunc.html" class="delegate">CacheLoaderFunc</a></b>&lt;<b><span>K</span></b>,<b><span>V</span></b>&gt; (<span class="main_type"><span>K</span></span> key)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">Loader function for cache misses.</span>
               </div></li>
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Collections.ComparatorFunc.html" class="delegate">ComparatorFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> a, <span class="main_type"><span>T</span></span> b)
               </span>
@@ -125,22 +145,51 @@
           <li class="namespace"><a href="Vala.Concurrent.html">Concurrent</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
+            <li class="class"><a href="Vala.Concurrent.ChannelInt.html">ChannelInt</a> - <span class="brief_description">Thread-safe message-passing 
+                channel inspired by Go channels.</span></li>
+            <li class="class"><a href="Vala.Concurrent.ChannelString.html">ChannelString</a> - <span class="brief_description">Thread-safe string 
+                message-passing channel.</span></li>
             <li class="class"><a href="Vala.Concurrent.CountDownLatch.html">CountDownLatch</a> - <span class="brief_description">Countdown latch for 
                 one-shot synchronization.</span></li>
+            <li class="class"><a href="Vala.Concurrent.IntBox.html">IntBox</a> - <span class="brief_description">Boxed int value for channel 
+                transport.</span></li>
             <li class="class"><a href="Vala.Concurrent.Mutex.html">Mutex</a> - <span class="brief_description">Mutex wrapper with utility methods.
               </span></li>
             <li class="class"><a href="Vala.Concurrent.Once.html">Once</a> - <span class="brief_description">Executes a function at most once.</span>
             </li>
+            <li class="class"><a href="Vala.Concurrent.PromiseBool.html">PromiseBool</a> - <span class="brief_description">Promise for a bool result 
+                from an asynchronous computation.</span></li>
+            <li class="class"><a href="Vala.Concurrent.PromiseDouble.html">PromiseDouble</a> - <span class="brief_description">Promise for a double 
+                result from an asynchronous computation.</span></li>
+            <li class="class"><a href="Vala.Concurrent.PromiseInt.html">PromiseInt</a> - <span class="brief_description">Promise for an int result 
+                from an asynchronous computation.</span></li>
+            <li class="class"><a href="Vala.Concurrent.PromiseString.html">PromiseString</a> - <span class="brief_description">Promise for a string 
+                result from an asynchronous computation.</span></li>
             <li class="class"><a href="Vala.Concurrent.RWMutex.html">RWMutex</a> - <span class="brief_description">Reader-writer mutex.</span></li>
             <li class="class"><a href="Vala.Concurrent.Semaphore.html">Semaphore</a> - <span class="brief_description">Counting semaphore.</span></li>
+            <li class="class"><a href="Vala.Concurrent.StringBox.html">StringBox</a> - <span class="brief_description">Boxed string value for channel 
+                transport.</span></li>
+            <li class="class"><a href="Vala.Concurrent.TaskWrapper.html">TaskWrapper</a> - <span class="brief_description">Internal task wrapper used 
+                by WorkerPool.</span></li>
             <li class="class"><a href="Vala.Concurrent.WaitGroup.html">WaitGroup</a> - <span class="brief_description">Waits for a collection of tasks
                 to complete.</span></li>
+            <li class="class"><a href="Vala.Concurrent.WorkerPool.html">WorkerPool</a> - <span class="brief_description">Fixed-size worker pool for 
+                executing tasks concurrently.</span></li>
           </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.OnceFunc.html" class="delegate">OnceFunc</a></b> ()
               </span>
               <div class="leaf_brief_description"><span class="brief_description">Function delegate for Once execution.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.TaskFunc.html" class="delegate">TaskFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">Function delegate that returns a value of type T.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.VoidTaskFunc.html" class="delegate">VoidTaskFunc</a></b> ()
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">Function delegate that takes no arguments and returns nothing.
+                </span>
               </div></li>
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.WithLockFunc.html" class="delegate">WithLockFunc</a></b> ()
               </span>
@@ -172,6 +221,8 @@
           <ul class="navi_inline">
             <li class="class"><a href="Vala.Encoding.Base64.html">Base64</a> - <span class="brief_description">Static utility methods for Base64 
                 encoding and decoding.</span></li>
+            <li class="class"><a href="Vala.Encoding.Csv.html">Csv</a> - <span class="brief_description">Static utility methods for CSV parsing and 
+                writing.</span></li>
             <li class="class"><a href="Vala.Encoding.Hex.html">Hex</a> - <span class="brief_description">Static utility methods for hexadecimal 
                 encoding and decoding.</span></li>
             <li class="class"><a href="Vala.Encoding.Url.html">Url</a> - <span class="brief_description">Static utility methods for URL percent-
@@ -193,10 +244,17 @@
             <li class="class"><a href="Vala.Io.BufferedWriter.html">BufferedWriter</a> - <span class="brief_description">BufferedWriter provides 
                 buffered character-output-stream writing. It wraps a GLib.DataOutputStream and offers convenient methods for writing strings and 
                 lines, similar to Java's BufferedWriter.</span></li>
+            <li class="class"><a href="Vala.Io.Console.html">Console</a> - <span class="brief_description">Console utility methods.</span></li>
             <li class="class"><a href="Vala.Io.Files.html">Files</a> - <span class="brief_description">Files class provides static utility methods for
                 common file and directory operations.</span></li>
+            <li class="class"><a href="Vala.Io.Filesystem.html">Filesystem</a> - <span class="brief_description">Filesystem metadata utility methods.
+              </span></li>
             <li class="class"><a href="Vala.Io.Path.html">Path</a> - <span class="brief_description">Path class is a value object that represents a 
                 file system path.</span></li>
+            <li class="class"><a href="Vala.Io.Process.html">Process</a> - <span class="brief_description">Process execution utility methods.</span>
+            </li>
+            <li class="class"><a href="Vala.Io.Resource.html">Resource</a> - <span class="brief_description">Resource loading helper methods.</span>
+            </li>
             <li class="class"><a href="Vala.Io.Scanner.html">Scanner</a> - <span class="brief_description">Scanner splits input into tokens and 
                 provides typed parsing.</span></li>
             <li class="class"><a href="Vala.Io.StringBuilder.html">StringBuilder</a> - <span class="brief_description">StringBuilder is a mutable 
@@ -206,11 +264,21 @@
                 Java's StringJoiner.</span></li>
             <li class="class"><a href="Vala.Io.Strings.html">Strings</a> - <span class="brief_description">Strings class is a collection of static 
                 APIs for manipulating string.</span></li>
+            <li class="class"><a href="Vala.Io.Temp.html">Temp</a> - <span class="brief_description">Temporary file and directory helpers.</span></li>
+          </ul>
+          <h3 class="main_title">Delegates:</h3>
+          <ul class="navi_inline">
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Io.TempFunc.html" class="delegate">TempFunc</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">Callback delegate used by temporary resource helpers.</span>
+              </div></li>
           </ul>
           <li class="namespace"><a href="Vala.Lang.html">Lang</a> - <span class="brief_description">Vala.Lang namespace provides language-level 
               utilities such as null checking and OS interfaces.</span></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
+            <li class="class"><a href="Vala.Lang.Exceptions.html">Exceptions</a> - <span class="brief_description">Exception utility methods.</span>
+            </li>
             <li class="class"><a href="Vala.Lang.Objects.html">Objects</a> - <span class="brief_description">Objects class is a collection of static 
                 APIs for manipulating objects</span></li>
             <li class="class"><a href="Vala.Lang.Os.html">Os</a> - <span class="brief_description">Os class is operating system interfaces.</span>
@@ -219,6 +287,9 @@
                 precondition checks.</span></li>
             <li class="class"><a href="Vala.Lang.Process.html">Process</a> - <span class="brief_description">Wrapper for external process execution.
               </span></li>
+            <li class="class"><a href="Vala.Lang.Randoms.html">Randoms</a> - <span class="brief_description">Random utility methods.</span></li>
+            <li class="class"><a href="Vala.Lang.ShutdownHooks.html">ShutdownHooks</a> - <span class="brief_description">Utilities for registering 
+                callbacks executed at process shutdown.</span></li>
             <li class="class"><a href="Vala.Lang.StringEscape.html">StringEscape</a> - <span class="brief_description">String escaping utilities.
               </span></li>
             <li class="class"><a href="Vala.Lang.SystemEnv.html">SystemEnv</a> - <span class="brief_description">Environment variable helper methods.
@@ -226,6 +297,13 @@
             <li class="class"><a href="Vala.Lang.SystemInfo.html">SystemInfo</a> - <span class="brief_description">System information helper methods.
               </span></li>
             <li class="class"><a href="Vala.Lang.Threads.html">Threads</a> - <span class="brief_description">Thread utility methods.</span></li>
+          </ul>
+          <h3 class="main_title">Delegates:</h3>
+          <ul class="navi_inline">
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Lang.ShutdownHookFunc.html" class="delegate">ShutdownHookFunc</a></b> ()
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">Callback delegate for shutdown hook handlers.</span>
+              </div></li>
           </ul>
           <li class="namespace"><a href="Vala.Log.html">Log</a></li>
           <h3 class="main_title">Interfaces:</h3>
@@ -245,6 +323,10 @@
           <li class="namespace"><a href="Vala.Math.html">Math</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
+            <li class="class"><a href="Vala.Math.BigDecimal.html">BigDecimal</a> - <span class="brief_description">Immutable arbitrary-precision 
+                decimal value object.</span></li>
+            <li class="class"><a href="Vala.Math.BigInteger.html">BigInteger</a> - <span class="brief_description">Immutable arbitrary-precision 
+                integer value object.</span></li>
             <li class="class"><a href="Vala.Math.Math.html">Math</a> - <span class="brief_description">Static utility methods for mathematics.</span>
             </li>
             <li class="class"><a href="Vala.Math.Random.html">Random</a> - <span class="brief_description">Static utility methods for random values.
@@ -284,6 +366,8 @@
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
             <li class="class"><a href="Vala.Time.DateTime.html">DateTime</a> - <span class="brief_description">Immutable value object for date-time 
+                operations.</span></li>
+            <li class="class"><a href="Vala.Time.Dates.html">Dates</a> - <span class="brief_description">Static utility methods for DateTime 
                 operations.</span></li>
             <li class="class"><a href="Vala.Time.Duration.html">Duration</a> - <span class="brief_description">Immutable value object that represents 
                 a duration.</span></li>

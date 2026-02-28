@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Collections.Stream &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Collections.Stream &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">Stream</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Collections.Stream" alt="Object hierarchy for Stream" src="img/Vala.Collections.Stream.png"/>
+
+      <map id="Vala.Collections.Stream" name="Vala.Collections.Stream">
+<area shape="rect" id="node1" href="Vala.Collections.Stream.html" title="Vala.Collections.Stream" alt="" coords="5,101,204,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Stream</span></b>&lt;<b><span>T</span></b>&gt; : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>A fluent pipeline for transforming and aggregating collection data.</p>
+          <p>Stream provides a chainable API for filter, map, sort, distinct, limit/skip, and terminal operations like reduce, count, and findFirst. 
+            Most intermediate operations return a new Stream, except peek which returns the same instance for chaining. Terminal operations produce a 
+            final result.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> list = <span class="main_keyword">new</span> ArrayList&lt;<span class="main_basic_type">string</span>&gt; (GLib.str_equal);<br/>    list.add (<span class="main_literal">"banana"</span>);<br/>    list.add (<span class="main_literal">"apple"</span>);<br/>    list.add (<span class="main_literal">"cherry"</span>);<br/><br/>    <span class="main_keyword">var</span> result = Stream.fromList&lt;<span class="main_basic_type">string</span>&gt; (list)<br/>        .filter ((s) =&gt; { <span class="main_keyword">return</span> s.length &gt; <span class="main_literal">5</span>; })<br/>        .sorted ((a, b) =&gt; { <span class="main_keyword">return</span> strcmp (a, b); })<br/>        .toList ();<br/>    <span class="main_comment">// result: ["banana", "cherry"]</span></code></pre>
+          </p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Collections.html">Vala.Collections</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.empty.html" class="static_method">empty</a></b>&lt;<b><span>T</span></b>&gt; ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates an empty Stream.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.fromList.html" class="static_method">fromList</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; list)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates a Stream from an ArrayList.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.Stream.allMatch.html" class="method">allMatch</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether all elements match the predicate. Returns true for an 
+                empty stream.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.Stream.anyMatch.html" class="method">anyMatch</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether any element matches the predicate.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Collections.Stream.count.html" class="method">count</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the number of elements in this stream.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.distinct.html" class="method">distinct</a></b> (<span class="main_type"><span class="delegate">EqualFunc</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; equal)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream with duplicate elements removed. Uses the provided 
+                equality function for comparison.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.dropWhile.html" class="method">dropWhile</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream skipping elements while the predicate is true, then 
+                includes all remaining elements.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.filter.html" class="method">filter</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream containing only elements that match the predicate.
+              </span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Stream.findFirst.html" class="method">findFirst</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the first element, or null if the stream is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Stream.findLast.html" class="method">findLast</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the last element, or null if the stream is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.Stream.forEach.html" class="method">forEach</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ConsumerFunc.html" class="delegate">ConsumerFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Executes an action for each element.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.limit.html" class="method">limit</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> n)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream limited to the first n elements.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>U</span></span>&gt; <b><a href="Vala.Collections.Stream.map.html" class="method">map</a></b>&lt;<b><span>U</span></b>&gt; (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.MapFunc.html" class="delegate">MapFunc</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_type"><span>U</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream with each element transformed by the function.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Stream.max.html" class="method">max</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ComparatorFunc.html" class="delegate">ComparatorFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; cmp)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the maximum element using the given comparator, or null if the
+                stream is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Stream.min.html" class="method">min</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ComparatorFunc.html" class="delegate">ComparatorFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; cmp)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the minimum element using the given comparator, or null if the
+                stream is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.Stream.noneMatch.html" class="method">noneMatch</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether no elements match the predicate. Returns true for an 
+                empty stream.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.peek.html" class="method">peek</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ConsumerFunc.html" class="delegate">ConsumerFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Executes an action on each element and returns the same Stream. Useful
+                for debugging pipeline contents.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>U</span></span> <b><a href="Vala.Collections.Stream.reduce.html" class="method">reduce</a></b>&lt;<b><span>U</span></b>&gt; (<span class="main_type"><span>U</span></span> initial, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ReduceFunc.html" class="delegate">ReduceFunc</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_type"><span>U</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Folds the stream into a single value by applying the accumulator 
+                function to each element, starting from the initial value.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.skip.html" class="method">skip</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> n)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream with the first n elements skipped.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.sorted.html" class="method">sorted</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ComparatorFunc.html" class="delegate">ComparatorFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; cmp)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream sorted using the given comparator.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Stream</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.takeWhile.html" class="method">takeWhile</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a Stream of elements taken while the predicate is true. Stops 
+                at the first element that does not match.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Stream.toList.html" class="method">toList</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Collects the stream elements into an ArrayList.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-18')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-18">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

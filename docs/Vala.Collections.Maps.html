@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Collections.Maps &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Collections.Maps &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">Maps</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Collections.Maps" alt="Object hierarchy for Maps" src="img/Vala.Collections.Maps.png"/>
+
+      <map id="Vala.Collections.Maps" name="Vala.Collections.Maps">
+<area shape="rect" id="node1" href="Vala.Collections.Maps.html" title="Vala.Collections.Maps" alt="" coords="5,101,192,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Maps</span></b> : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>Static utility methods for HashMap operations.</p>
+          <p>Maps provides high-level operations like merge, filter, mapValues, invert, and entries that would otherwise require 5-15 lines of manual 
+            loop code.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> defaults = <span class="main_keyword">new</span> HashMap&lt;<span class="main_basic_type">string</span>, <span class="main_basic_type">string</span>&gt; (GLib.str_hash, GLib.str_equal);<br/>    defaults.put (<span class="main_literal">"theme"</span>, <span class="main_literal">"light"</span>);<br/>    defaults.put (<span class="main_literal">"lang"</span>, <span class="main_literal">"en"</span>);<br/>    <span class="main_keyword">var</span> overrides = <span class="main_keyword">new</span> HashMap&lt;<span class="main_basic_type">string</span>, <span class="main_basic_type">string</span>&gt; (GLib.str_hash, GLib.str_equal);<br/>    overrides.put (<span class="main_literal">"theme"</span>, <span class="main_literal">"dark"</span>);<br/>    <span class="main_keyword">var</span> config = Maps.mergeString (defaults, overrides);<br/>    <span class="main_comment">// config: {"theme": "dark", "lang": "en"}</span></code></pre>
+          </p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Collections.html">Vala.Collections</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Collections.Maps.computeIfAbsentString.html" class="static_method">computeIfAbsentString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map, <span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.SupplierFunc.html" class="delegate">SupplierFunc</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the value for the key. If the key is absent, computes the 
+                value using the supplier function, stores it in the map, and returns it.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><a href="Vala.Collections.Pair.html" class="class">Pair</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt;&gt; <b><a href="Vala.Collections.Maps.entriesString.html" class="static_method">entriesString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns an ArrayList of key-value Pairs from the map.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.filterString.html" class="static_method">filterString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.BiPredicateFunc.html" class="delegate">BiPredicateFunc</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a new map containing only entries that match the predicate.
+              </span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.fromPairsString.html" class="static_method">fromPairsString</a></b> (<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><a href="Vala.Collections.Pair.html" class="class">Pair</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt;&gt; pairs)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates a HashMap from a list of key-value Pairs. If duplicate keys 
+                exist, later Pairs overwrite earlier ones.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Collections.Maps.getOrDefaultString.html" class="static_method">getOrDefaultString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map, <span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="class">string</span></span> defaultValue)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the value for the key, or the default value if the key is not 
+                found.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.invertString.html" class="static_method">invertString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a new map with keys and values swapped. If multiple entries 
+                have the same value, later entries overwrite earlier ones in the result.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.Maps.isEmptyString.html" class="static_method">isEmptyString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether the map is empty.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.keysString.html" class="static_method">keysString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns an ArrayList of all keys in the map.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.mapKeysString.html" class="static_method">mapKeysString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.MapFunc.html" class="delegate">MapFunc</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a new map with all keys transformed by the function. Values 
+                are preserved. If multiple keys map to the same new key, later entries overwrite earlier ones.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.mapValuesString.html" class="static_method">mapValuesString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.MapFunc.html" class="delegate">MapFunc</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a new map with all values transformed by the function. Keys 
+                are preserved.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.mergeString.html" class="static_method">mergeString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; a, <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; b)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Merges two string maps into a new map. When both maps contain the same
+                key, the value from the second map takes priority.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Collections.Maps.valuesString.html" class="static_method">valuesString</a></b> (<span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; map)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns an ArrayList of all values in the map.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Collections.Maps.Maps.html" class="creation_method">Maps</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-10')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-10">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

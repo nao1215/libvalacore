@@ -22,22 +22,50 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Classes:</h3>
         <ul class="navi_inline">
+          <li class="class"><a href="Vala.Concurrent.ChannelInt.html">ChannelInt</a> - <span class="brief_description">Thread-safe message-passing 
+              channel inspired by Go channels.</span></li>
+          <li class="class"><a href="Vala.Concurrent.ChannelString.html">ChannelString</a> - <span class="brief_description">Thread-safe string 
+              message-passing channel.</span></li>
           <li class="class"><a href="Vala.Concurrent.CountDownLatch.html">CountDownLatch</a> - <span class="brief_description">Countdown latch for one
               -shot synchronization.</span></li>
+          <li class="class"><a href="Vala.Concurrent.IntBox.html">IntBox</a> - <span class="brief_description">Boxed int value for channel transport.
+            </span></li>
           <li class="class"><a href="Vala.Concurrent.Mutex.html">Mutex</a> - <span class="brief_description">Mutex wrapper with utility methods.
             </span></li>
           <li class="class"><a href="Vala.Concurrent.Once.html">Once</a> - <span class="brief_description">Executes a function at most once.</span>
           </li>
+          <li class="class"><a href="Vala.Concurrent.PromiseBool.html">PromiseBool</a> - <span class="brief_description">Promise for a bool result 
+              from an asynchronous computation.</span></li>
+          <li class="class"><a href="Vala.Concurrent.PromiseDouble.html">PromiseDouble</a> - <span class="brief_description">Promise for a double 
+              result from an asynchronous computation.</span></li>
+          <li class="class"><a href="Vala.Concurrent.PromiseInt.html">PromiseInt</a> - <span class="brief_description">Promise for an int result from 
+              an asynchronous computation.</span></li>
+          <li class="class"><a href="Vala.Concurrent.PromiseString.html">PromiseString</a> - <span class="brief_description">Promise for a string 
+              result from an asynchronous computation.</span></li>
           <li class="class"><a href="Vala.Concurrent.RWMutex.html">RWMutex</a> - <span class="brief_description">Reader-writer mutex.</span></li>
           <li class="class"><a href="Vala.Concurrent.Semaphore.html">Semaphore</a> - <span class="brief_description">Counting semaphore.</span></li>
+          <li class="class"><a href="Vala.Concurrent.StringBox.html">StringBox</a> - <span class="brief_description">Boxed string value for channel 
+              transport.</span></li>
+          <li class="class"><a href="Vala.Concurrent.TaskWrapper.html">TaskWrapper</a> - <span class="brief_description">Internal task wrapper used by
+              WorkerPool.</span></li>
           <li class="class"><a href="Vala.Concurrent.WaitGroup.html">WaitGroup</a> - <span class="brief_description">Waits for a collection of tasks 
               to complete.</span></li>
+          <li class="class"><a href="Vala.Concurrent.WorkerPool.html">WorkerPool</a> - <span class="brief_description">Fixed-size worker pool for 
+              executing tasks concurrently.</span></li>
         </ul>
         <h3 class="main_title">Delegates:</h3>
         <ul class="navi_inline">
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.OnceFunc.html" class="delegate">OnceFunc</a></b> ()
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Function delegate for Once execution.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.TaskFunc.html" class="delegate">TaskFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Function delegate that returns a value of type T.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.VoidTaskFunc.html" class="delegate">VoidTaskFunc</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Function delegate that takes no arguments and returns nothing.</span>
             </div></li>
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.WithLockFunc.html" class="delegate">WithLockFunc</a></b> ()
             </span>
