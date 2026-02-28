@@ -1,0 +1,52 @@
+name: Update Valadoc
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y valac build-essential meson valadoc libglib2.0-dev ninja-build
+
+    - name: Build and generate Valadoc
+      run: meson setup build && ninja -C build
+
+    - name: Copy Valadoc to docs/
+      run: |
+        VALADOC_DIR=$(find build/src -type d -name 'Valacore-*' | head -1)
+        if [ -z "${VALADOC_DIR}" ]; then
+          echo "Error: Valadoc output directory not found"
+          exit 1
+        fi
+        # Find the nested Valacore-* directory inside
+        INNER_DIR=$(find "${VALADOC_DIR}" -mindepth 1 -maxdepth 1 -type d -name 'Valacore-*' | head -1)
+        if [ -n "${INNER_DIR}" ]; then
+          cp -rf "${INNER_DIR}"/* docs/
+        else
+          cp -rf "${VALADOC_DIR}"/* docs/
+        fi
+
+    - name: Check for changes
+      id: check
+      run: |
+        git diff --quiet docs/ && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+    - name: Commit and push docs
+      if: steps.check.outputs.changed == 'true'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add docs/
+        git commit -m "docs: update Valadoc for ${GITHUB_REF_NAME}"
+        git push origin HEAD:main

@@ -1,0 +1,19 @@
+name: Format Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install uncrustify
+      run: sudo apt update && sudo apt install -y uncrustify
+
+    - name: Check formatting
+      run: ./scripts/format.sh --check

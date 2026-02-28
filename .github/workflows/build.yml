@@ -7,14 +7,13 @@ on:
     branches: [ main ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
 
-    - name: Set up meson and vala
-      run: sudo apt update && sudo apt install valac build-essential meson valadoc
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y valac build-essential meson valadoc libglib2.0-dev ninja-build
 
     - name: Build
-      run: meson build && ninja -C build
+      run: meson setup build && ninja -C build
