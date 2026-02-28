@@ -482,6 +482,15 @@ Static utility methods for Base64 encoding and decoding.
 | `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
 | `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
 
+### Vala.Encoding.Csv
+Static utility methods for CSV parsing and writing.
+
+| Method | Description |
+|---|---|
+| `parse(string csv)` | Parses CSV text into `ArrayList<ArrayList<string>>` |
+| `parseFile(Path path)` | Parses a CSV file into `ArrayList<ArrayList<string>>` |
+| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text |
+
 ### Vala.Encoding.Hex
 Static utility methods for hexadecimal encoding and decoding.
 
