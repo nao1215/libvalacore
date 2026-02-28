@@ -216,6 +216,27 @@ Static utility methods for regular expressions.
 | `replaceAll(string s, string pattern, string repl)` | Replaces all matches |
 | `split(string s, string pattern)` | Splits text by regex pattern |
 
+### Vala.Time.DateTime
+Immutable value object for date-time operations.
+
+| Method | Description |
+|---|---|
+| `now()` | Returns current local date-time |
+| `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components |
+| `parse(string s, string format)` | Parses text into date-time (supported formats only) |
+| `format(string format)` | Formats with strftime format |
+| `year()` / `month()` / `day()` | Returns date components |
+| `hour()` / `minute()` / `second()` | Returns time components |
+| `dayOfWeek()` | Returns day of week (`1`=Mon, `7`=Sun) |
+| `plusDays(int days)` | Returns shifted date-time by days |
+| `plusHours(int hours)` | Returns shifted date-time by hours |
+| `minusDays(int days)` | Returns shifted date-time by negative days |
+| `isBefore(DateTime other)` | Returns whether this is before other |
+| `isAfter(DateTime other)` | Returns whether this is after other |
+| `toUnixTimestamp()` | Returns UNIX timestamp |
+| `fromUnixTimestamp(int64 ts)` | Creates date-time from UNIX timestamp |
+| `diff(DateTime other)` | Returns difference as `Duration` |
+
 ### Vala.Time.Duration
 Immutable value object that represents a duration.
 
