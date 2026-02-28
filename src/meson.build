@@ -39,6 +39,7 @@ valacore_sources = files([
   'format/NumberFormat.vala',
   'io/BufferedReader.vala',
   'io/BufferedWriter.vala',
+  'io/Console.vala',
   'io/Files.vala',
   'io/Path.vala',
   'io/Resource.vala',

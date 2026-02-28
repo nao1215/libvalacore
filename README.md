@@ -57,6 +57,14 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `glob(Path dir, string pattern)` | Returns files matching a glob pattern |
 | `deleteRecursive(Path path)` | Recursively deletes a directory and all its contents |
 
+### Vala.Io.Console
+Console utility methods.
+
+| Method | Description |
+|---|---|
+| `isTTY()` | Returns whether standard input is a terminal |
+| `readPassword()` | Reads a password from terminal input without echo (`null` when stdin is not a TTY) |
+
 ### Vala.Io.Temp
 Temporary resource helpers that auto-clean up after callback execution.
 
