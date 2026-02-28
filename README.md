@@ -123,10 +123,11 @@ Shell command utility with captured output and pipeline helpers.
 | `exec(string command)` | Executes shell command and returns `ShellResult` |
 | `execQuiet(string command)` | Executes command and returns result with output fields cleared |
 | `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound |
-| `pipe(string[] commands)` | Executes commands as a pipeline (`cmd1 | cmd2 | ...`) |
+| `pipe(string[] commands)` | Executes commands as a pipeline (`cmd1 \| cmd2 \| ...`) |
 | `which(string binary)` | Resolves command path from `PATH` (`null` if not found) |
 
 #### Vala.Io.ShellResult
+
 | Method | Description |
 |---|---|
 | `exitCode()` | Process exit code |
@@ -529,7 +530,7 @@ Circuit breaker for protecting unstable dependencies.
 | `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN |
 | `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout |
 | `onStateChange(StateChangeCallback fn)` | Registers state transition callback |
-| `call<T>(CircuitFunc<T> fn)` | Executes callback through breaker and returns null when blocked/failed |
+| `call<T>(CircuitFunc<T> fn)` | Executes callback through breaker and returns `Result<T,string>` (error when blocked/failed) |
 | `recordFailure()` | Records one failure |
 | `recordSuccess()` | Records one success |
 | `state()` | Returns current state (`CLOSED`, `OPEN`, `HALF_OPEN`) |

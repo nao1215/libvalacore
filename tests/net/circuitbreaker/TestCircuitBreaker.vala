@@ -1,5 +1,6 @@
 using Vala.Net;
 using Vala.Time;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -17,11 +18,15 @@ void testOpenAfterThreshold () {
 
     assert (cb.state () == CircuitState.CLOSED);
 
-    string ? r1 = cb.call<string ?> (() => { return null; });
-    string ? r2 = cb.call<string ?> (() => { return null; });
+    Result<string, string> r1 = cb.call<string> (() => {
+        return Result.error<string, string> ("failed");
+    });
+    Result<string, string> r2 = cb.call<string> (() => {
+        return Result.error<string, string> ("failed");
+    });
 
-    assert (r1 == null);
-    assert (r2 == null);
+    assert (r1.isError ());
+    assert (r2.isError ());
     assert (cb.state () == CircuitState.OPEN);
 }
 
@@ -29,16 +34,16 @@ void testOpenShortCircuit () {
     var cb = new CircuitBreaker ("api").withFailureThreshold (1)
               .withOpenTimeout (Duration.ofSeconds (10));
 
-    cb.call<string ?> (() => { return null; });
+    cb.call<string> (() => { return Result.error<string, string> ("boom"); });
     assert (cb.state () == CircuitState.OPEN);
 
     int calls = 0;
-    string ? blocked = cb.call<string> (() => {
+    Result<string, string> blocked = cb.call<string> (() => {
         calls++;
-        return "ok";
+        return Result.ok<string, string> ("ok");
     });
 
-    assert (blocked == null);
+    assert (blocked.isError ());
     assert (calls == 0);
 }
 
@@ -47,11 +52,16 @@ void testHalfOpenToClosed () {
               .withSuccessThreshold (1)
               .withOpenTimeout (Duration.ofSeconds (0));
 
-    cb.call<string ?> (() => { return null; });
+    cb.call<string> (() => {
+        return Result.error<string, string> ("first attempt failed");
+    });
 
-    string ? ok = cb.call<string> (() => { return "ok"; });
+    Result<string, string> ok = cb.call<string> (() => {
+        return Result.ok<string, string> ("ok");
+    });
 
-    assert (ok == "ok");
+    assert (ok.isOk ());
+    assert (ok.unwrap () == "ok");
     assert (cb.state () == CircuitState.CLOSED);
 }
 
@@ -59,12 +69,21 @@ void testHalfOpenFailureReopens () {
     var cb = new CircuitBreaker ("api").withFailureThreshold (1)
               .withOpenTimeout (Duration.ofSeconds (1));
 
-    cb.call<string ?> (() => { return null; });
+    cb.call<string> (() => {
+        return Result.error<string, string> ("initial failure");
+    });
     assert (cb.state () == CircuitState.OPEN);
+    Posix.usleep (1100 * 1000);
+    assert (cb.state () == CircuitState.HALF_OPEN);
 
-    string ? result = cb.call<string ?> (() => { return "ok"; });
+    int calls = 0;
+    Result<string, string> result = cb.call<string> (() => {
+        calls++;
+        return Result.error<string, string> ("half-open probe failed");
+    });
 
-    assert (result == null); // still OPEN; call should be short-circuited
+    assert (result.isError ());
+    assert (calls == 1);
     assert (cb.state () == CircuitState.OPEN);
 }
 
@@ -78,9 +97,8 @@ void testStateChangeCallback () {
         assert (from != to);
     });
 
-    cb.withOpenTimeout (Duration.ofSeconds (0));
-    cb.call<string ?> (() => { return null; });
-    cb.call<string ?> (() => { return "ok"; });
+    cb.call<string> (() => { return Result.error<string, string> ("failed"); });
+    cb.call<string> (() => { return Result.ok<string, string> ("ok"); });
 
     assert (transitions >= 2);
 }

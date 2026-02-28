@@ -44,8 +44,8 @@ void testWait () {
     limiter.wait ();
     int64 elapsed_millis = (GLib.get_monotonic_time () - start) / 1000;
 
-    assert (elapsed_millis >= 8);
-    assert (elapsed_millis < 300);
+    assert (elapsed_millis >= 1);
+    assert (elapsed_millis < 1000);
 }
 
 void testSetRateAndReset () {

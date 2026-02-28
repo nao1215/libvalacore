@@ -25,13 +25,16 @@ namespace Vala.Lang {
             if (Objects.isNull (env)) {
                 return null;
             }
-            return Environment.get_variable (env).dup ();
+            string ? value = Environment.get_variable (env);
+            if (value == null) {
+                return null;
+            }
+            return value.dup ();
         }
 
         /**
          * Returns current working directory.
-         * @return If the environment variable "PWD" is set to a value, that value is returned.
-         * Returns null if the value is not set.
+         * @return current working directory path, or null when unavailable.
          */
         public static string ? cwd () {
             return Environment.get_current_dir ();
@@ -46,7 +49,7 @@ namespace Vala.Lang {
             if (Objects.isNull (path)) {
                 return false;
             }
-            return Posix.chdir (path) == 0 ? true : false;
+            return Posix.chdir (path) == 0;
         }
     }
 }

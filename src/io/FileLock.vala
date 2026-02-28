@@ -68,13 +68,24 @@ namespace Vala.Io {
             }
 
             int64 deadlineMicros = GLib.get_monotonic_time () + (timeoutMillis * 1000);
-            while (GLib.get_monotonic_time () <= deadlineMicros) {
+            while (true) {
+                if (GLib.get_monotonic_time () > deadlineMicros) {
+                    return false;
+                }
                 if (tryAcquire ()) {
                     return true;
                 }
-                Threads.sleepMillis (RETRY_SLEEP_MILLIS);
+                int64 remainingMicros = deadlineMicros - GLib.get_monotonic_time ();
+                if (remainingMicros <= 0) {
+                    return false;
+                }
+
+                int64 sleepMillis = (remainingMicros + 999) / 1000;
+                if (sleepMillis > RETRY_SLEEP_MILLIS) {
+                    sleepMillis = RETRY_SLEEP_MILLIS;
+                }
+                Threads.sleepMillis ((int) sleepMillis);
             }
-            return false;
         }
 
         /**
@@ -93,7 +104,12 @@ namespace Vala.Io {
             }
 
             string pidText = "%d\n".printf ((int) Posix.getpid ());
-            Posix.write (fd, pidText, pidText.length);
+            ssize_t written = Posix.write (fd, pidText, pidText.length);
+            if (written < 0 || written != pidText.length) {
+                Posix.close (fd);
+                Files.remove (_path);
+                return false;
+            }
             Posix.close (fd);
 
             _held = true;
@@ -131,10 +147,7 @@ namespace Vala.Io {
          * @return callback result when lock acquisition succeeds.
          */
         public bool withLock (owned WithFileLockFunc fn) {
-            if (!acquire ()) {
-                return false;
-            }
-
+            acquire ();
             try {
                 return fn ();
             } finally {

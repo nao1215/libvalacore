@@ -1,5 +1,15 @@
 using Vala.Io;
 
+Vala.Io.Path mustTempDir (string prefix) {
+    Vala.Io.Path ? dir = Files.tempDir (prefix);
+    assert (dir != null);
+    return (Vala.Io.Path) dir;
+}
+
+void cleanupTempDir (Vala.Io.Path dir) {
+    Files.deleteRecursive (dir);
+}
+
 void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/io/atomicfile/testWriteAndReadConsistent", testWriteAndReadConsistent);
@@ -14,133 +24,143 @@ void main (string[] args) {
 }
 
 void testWriteAndReadConsistent () {
-    Vala.Io.Path path = new Vala.Io.Path ("/tmp/valacore/ut/atomic_write.txt");
-    Files.remove (path);
+    Vala.Io.Path dir = mustTempDir ("atomicfile-write-");
+    Vala.Io.Path path = dir.resolve ("atomic_write.txt");
 
-    var atomic = new AtomicFile ();
-    assert (atomic.write (path, "hello") == true);
-    assert (Files.readAllText (path) == "hello");
+    try {
+        var atomic = new AtomicFile ();
+        assert (atomic.write (path, "hello") == true);
+        assert (Files.readAllText (path) == "hello");
 
-    string ? stable = atomic.readConsistent (path);
-    assert (stable == "hello");
-
-    assert (Files.remove (path) == true);
+        string ? stable = atomic.readConsistent (path);
+        assert (stable == "hello");
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testWriteBytes () {
-    Vala.Io.Path path = new Vala.Io.Path ("/tmp/valacore/ut/atomic_bytes.bin");
-    Files.remove (path);
+    Vala.Io.Path dir = mustTempDir ("atomicfile-bytes-");
+    Vala.Io.Path path = dir.resolve ("atomic_bytes.bin");
 
-    var atomic = new AtomicFile ();
-    uint8[] data = { 0x41, 0x42, 0x43 };
+    try {
+        var atomic = new AtomicFile ();
+        uint8[] data = { 0x41, 0x42, 0x43 };
 
-    assert (atomic.writeBytes (path, data) == true);
+        assert (atomic.writeBytes (path, data) == true);
 
-    uint8[] ? loaded = Files.readBytes (path);
-    assert (loaded != null);
-    assert (loaded.length == 3);
-    assert (loaded[0] == 0x41);
-    assert (loaded[1] == 0x42);
-    assert (loaded[2] == 0x43);
-
-    assert (Files.remove (path) == true);
+        uint8[] ? loaded = Files.readBytes (path);
+        assert (loaded != null);
+        assert (loaded.length == 3);
+        assert (loaded[0] == 0x41);
+        assert (loaded[1] == 0x42);
+        assert (loaded[2] == 0x43);
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testAppend () {
-    Vala.Io.Path path = new Vala.Io.Path ("/tmp/valacore/ut/atomic_append.txt");
-    Files.remove (path);
+    Vala.Io.Path dir = mustTempDir ("atomicfile-append-");
+    Vala.Io.Path path = dir.resolve ("atomic_append.txt");
 
-    var atomic = new AtomicFile ();
+    try {
+        var atomic = new AtomicFile ();
 
-    assert (atomic.append (path, "a") == true);
-    assert (atomic.append (path, "b") == true);
-    assert (atomic.append (path, "c") == true);
+        assert (atomic.append (path, "a") == true);
+        assert (atomic.append (path, "b") == true);
+        assert (atomic.append (path, "c") == true);
 
-    assert (Files.readAllText (path) == "abc");
-    assert (Files.remove (path) == true);
+        assert (Files.readAllText (path) == "abc");
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testReplace () {
-    Vala.Io.Path srcTmp = new Vala.Io.Path ("/tmp/valacore/ut/atomic_src.tmp");
-    Vala.Io.Path dst = new Vala.Io.Path ("/tmp/valacore/ut/atomic_dst.txt");
+    Vala.Io.Path dir = mustTempDir ("atomicfile-replace-");
+    Vala.Io.Path srcTmp = dir.resolve ("atomic_src.tmp");
+    Vala.Io.Path dst = dir.resolve ("atomic_dst.txt");
 
-    Files.remove (srcTmp);
-    Files.remove (dst);
+    try {
+        assert (Files.writeText (srcTmp, "new-content") == true);
+        assert (Files.writeText (dst, "old-content") == true);
 
-    assert (Files.writeText (srcTmp, "new-content") == true);
-    assert (Files.writeText (dst, "old-content") == true);
+        var atomic = new AtomicFile ();
+        assert (atomic.replace (srcTmp, dst) == true);
 
-    var atomic = new AtomicFile ();
-    assert (atomic.replace (srcTmp, dst) == true);
-
-    assert (Files.exists (srcTmp) == false);
-    assert (Files.readAllText (dst) == "new-content");
-
-    assert (Files.remove (dst) == true);
+        assert (Files.exists (srcTmp) == false);
+        assert (Files.readAllText (dst) == "new-content");
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testReplaceWithBackup () {
-    Vala.Io.Path srcTmp = new Vala.Io.Path ("/tmp/valacore/ut/atomic_src_backup.tmp");
-    Vala.Io.Path dst = new Vala.Io.Path ("/tmp/valacore/ut/atomic_dst_backup.txt");
-    Vala.Io.Path backup = new Vala.Io.Path ("/tmp/valacore/ut/atomic_dst_backup.txt.old");
+    Vala.Io.Path dir = mustTempDir ("atomicfile-replace-backup-");
+    Vala.Io.Path srcTmp = dir.resolve ("atomic_src_backup.tmp");
+    Vala.Io.Path dst = dir.resolve ("atomic_dst_backup.txt");
+    Vala.Io.Path backup = dir.resolve ("atomic_dst_backup.txt.old");
 
-    Files.remove (srcTmp);
-    Files.remove (dst);
-    Files.remove (backup);
+    try {
+        assert (Files.writeText (srcTmp, "next") == true);
+        assert (Files.writeText (dst, "prev") == true);
 
-    assert (Files.writeText (srcTmp, "next") == true);
-    assert (Files.writeText (dst, "prev") == true);
+        var atomic = new AtomicFile ().withBackup (true).backupSuffix (".old");
+        assert (atomic.replace (srcTmp, dst) == true);
 
-    var atomic = new AtomicFile ().withBackup (true).backupSuffix (".old");
-    assert (atomic.replace (srcTmp, dst) == true);
-
-    assert (Files.readAllText (dst) == "next");
-    assert (Files.readAllText (backup) == "prev");
-
-    assert (Files.remove (dst) == true);
-    assert (Files.remove (backup) == true);
+        assert (Files.readAllText (dst) == "next");
+        assert (Files.readAllText (backup) == "prev");
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testWriteWithBackup () {
-    Vala.Io.Path path = new Vala.Io.Path ("/tmp/valacore/ut/atomic_write_backup.txt");
-    Vala.Io.Path backup = new Vala.Io.Path ("/tmp/valacore/ut/atomic_write_backup.txt.prev");
+    Vala.Io.Path dir = mustTempDir ("atomicfile-write-backup-");
+    Vala.Io.Path path = dir.resolve ("atomic_write_backup.txt");
+    Vala.Io.Path backup = dir.resolve ("atomic_write_backup.txt.prev");
 
-    Files.remove (path);
-    Files.remove (backup);
+    try {
+        assert (Files.writeText (path, "before") == true);
 
-    assert (Files.writeText (path, "before") == true);
+        var atomic = new AtomicFile ().withBackup (true).backupSuffix (".prev");
+        assert (atomic.write (path, "after") == true);
 
-    var atomic = new AtomicFile ().withBackup (true).backupSuffix (".prev");
-    assert (atomic.write (path, "after") == true);
-
-    assert (Files.readAllText (path) == "after");
-    assert (Files.readAllText (backup) == "before");
-
-    assert (Files.remove (path) == true);
-    assert (Files.remove (backup) == true);
+        assert (Files.readAllText (path) == "after");
+        assert (Files.readAllText (backup) == "before");
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testReadConsistentMissing () {
-    Vala.Io.Path missing = new Vala.Io.Path ("/tmp/valacore/ut/no_such_atomic_file.txt");
-    Vala.Io.Path dir = new Vala.Io.Path ("/tmp/valacore/ut");
+    Vala.Io.Path dir = mustTempDir ("atomicfile-missing-");
+    Vala.Io.Path missing = dir.resolve ("no_such_atomic_file.txt");
+    Vala.Io.Path existingDir = new Vala.Io.Path (Environment.get_tmp_dir ());
 
-    var atomic = new AtomicFile ();
+    try {
+        var atomic = new AtomicFile ();
 
-    assert (atomic.readConsistent (missing) == null);
-    assert (atomic.readConsistent (dir) == null);
+        assert (atomic.readConsistent (missing) == null);
+        assert (atomic.readConsistent (existingDir) == null);
+    } finally {
+        cleanupTempDir (dir);
+    }
 }
 
 void testReplaceMissingSource () {
-    Vala.Io.Path missing = new Vala.Io.Path ("/tmp/valacore/ut/atomic_no_src.tmp");
-    Vala.Io.Path dst = new Vala.Io.Path ("/tmp/valacore/ut/atomic_dst_missing.txt");
+    Vala.Io.Path dir = mustTempDir ("atomicfile-missing-src-");
+    Vala.Io.Path missing = dir.resolve ("atomic_no_src.tmp");
+    Vala.Io.Path dst = dir.resolve ("atomic_dst_missing.txt");
 
-    Files.remove (missing);
-    Files.remove (dst);
-    assert (Files.writeText (dst, "value") == true);
+    try {
+        assert (Files.writeText (dst, "value") == true);
 
-    var atomic = new AtomicFile ();
-    assert (atomic.replace (missing, dst) == false);
-    assert (Files.readAllText (dst) == "value");
-
-    assert (Files.remove (dst) == true);
+        var atomic = new AtomicFile ();
+        assert (atomic.replace (missing, dst) == false);
+        assert (Files.readAllText (dst) == "value");
+    } finally {
+        cleanupTempDir (dir);
+    }
 }

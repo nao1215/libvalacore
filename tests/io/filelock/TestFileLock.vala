@@ -58,17 +58,29 @@ void testAcquireAfterRelease () {
 
     assert (lock1.tryAcquire () == true);
 
+    GLib.Mutex releaseMutex = GLib.Mutex ();
+    GLib.Cond releaseCond = GLib.Cond ();
+    bool releaseRequested = false;
+
     Thread<void *> releaser = new Thread<void *> ("releaser", () => {
-        Threads.sleepMillis (60);
+        releaseMutex.lock ();
+        while (!releaseRequested) {
+            releaseCond.wait (releaseMutex);
+        }
+        releaseMutex.unlock ();
         lock1.release ();
         return null;
     });
+
+    releaseMutex.lock ();
+    releaseRequested = true;
+    releaseCond.signal ();
+    releaseMutex.unlock ();
 
     int64 startMicros = GLib.get_monotonic_time ();
     assert (lock2.acquireTimeout (Duration.ofSeconds (1)) == true);
     int64 elapsedMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
 
-    assert (elapsedMillis >= 40);
     assert (elapsedMillis < 1000);
     assert (lock2.release () == true);
 

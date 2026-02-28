@@ -14,7 +14,8 @@ void main (string[] args) {
     Test.add_func ("/net/retry/testRetryResult", testRetryResult);
     Test.add_func ("/net/retry/testRetryVoid", testRetryVoid);
     Test.add_func ("/net/retry/testRetryVoidFailure", testRetryVoidFailure);
-    Test.add_func ("/net/retry/testHttpStatusRetry", testHttpStatusRetry);
+    Test.add_func ("/net/retry/testHttpStatusRetry503", testHttpStatusRetry503);
+    Test.add_func ("/net/retry/testHttpStatusRetry404", testHttpStatusRetry404);
     Test.add_func ("/net/retry/testNetworkDefault", testNetworkDefault);
     Test.add_func ("/net/retry/testIoDefault", testIoDefault);
     Test.run ();
@@ -112,7 +113,7 @@ void testRetryVoidFailure () {
     assert (calls == 2);
 }
 
-void testHttpStatusRetry () {
+void testHttpStatusRetry503 () {
     var codes = new ArrayList<int> ();
     codes.add (503);
 
@@ -130,8 +131,17 @@ void testHttpStatusRetry () {
 
     assert (ok == true);
     assert (calls == 2);
+}
 
-    calls = 0;
+void testHttpStatusRetry404 () {
+    var codes = new ArrayList<int> ();
+    codes.add (503);
+
+    Retry retry = new Retry ().withMaxAttempts (3)
+                   .withFixedDelay (Duration.ofSeconds (0))
+                   .httpStatusRetry (codes);
+
+    int calls = 0;
     bool ng = retry.retryVoid (() => {
         calls++;
         throw new RetryTestError.FAIL ("HTTP 404 Not Found");

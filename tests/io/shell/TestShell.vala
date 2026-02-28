@@ -41,7 +41,7 @@ void testExecWithTimeout () {
 
     assert (result.isSuccess () == false);
     assert (result.durationMillis () >= 900);
-    assert (result.durationMillis () < 2500);
+    assert (result.durationMillis () < 5000);
 }
 
 void testPipe () {

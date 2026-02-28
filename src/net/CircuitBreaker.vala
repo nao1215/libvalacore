@@ -1,4 +1,5 @@
 using Vala.Time;
+using Vala.Collections;
 
 namespace Vala.Net {
     /**
@@ -25,9 +26,10 @@ namespace Vala.Net {
     /**
      * Callback executed through circuit breaker.
      *
-     * Return null to indicate failure, non-null to indicate success.
+     * Return Result.ok(...) to indicate success, Result.error(...) to
+     * indicate failure.
      */
-    public delegate T ? CircuitFunc<T> ();
+    public delegate Result<T, string> CircuitFunc<T> ();
 
     /**
      * Circuit breaker for protecting unstable dependencies.
@@ -42,12 +44,26 @@ namespace Vala.Net {
      *         .withFailureThreshold (3)
      *         .withOpenTimeout (Duration.ofSeconds (10));
      *
-     *     string? result = breaker.call<string> (() => {
-     *         return fetch_from_remote ();
+     *     Result<string, string> result = breaker.call<string> (() => {
+     *         string? payload = fetch_from_remote ();
+     *         if (payload == null) {
+     *             return Result.error<string, string> ("remote returned empty payload");
+     *         }
+     *         return Result.ok<string, string> (payload);
      *     });
      * }}}
      */
     public class CircuitBreaker : GLib.Object {
+        private class Transition : GLib.Object {
+            public CircuitState from;
+            public CircuitState to;
+
+            public Transition (CircuitState from, CircuitState to) {
+                this.from = from;
+                this.to = to;
+            }
+        }
+
         private string _name;
         private int _failure_threshold = 5;
         private int _success_threshold = 1;
@@ -141,26 +157,35 @@ namespace Vala.Net {
         /**
          * Executes callback through circuit breaker.
          *
-         * If breaker is OPEN, callback is not executed and null is returned.
-         * On non-null callback result, breaker records success; on null
-         * callback result, breaker records failure.
+         * If breaker is OPEN, callback is not executed and Result.error(...)
+         * is returned. Callback must explicitly return Result.ok(...) or
+         * Result.error(...), and breaker updates counters based on result
+         * state.
          *
          * @param fn callback to execute.
-         * @return callback result or null when short-circuited/failed.
+         * @return callback Result, or error Result when short-circuited.
          */
-        public T ? call<T> (owned CircuitFunc<T> fn) {
+        public Result<T, string> call<T> (owned CircuitFunc<T> fn) {
+            var transitions = new GLib.Queue<Transition> ();
             _mutex.lock ();
-            refreshStateLocked ();
+            refreshStateLocked (transitions);
             if (_state == CircuitState.OPEN) {
                 _mutex.unlock ();
-                return null;
+                notifyTransitions (transitions);
+                return Result.error<T, string> ("circuit breaker is open: " + _name);
             }
             _mutex.unlock ();
+            notifyTransitions (transitions);
 
-            T ? result = fn ();
+            Result<T, string> result = fn ();
             if (result == null) {
                 recordFailure ();
-                return null;
+                return Result.error<T, string> ("circuit callback returned null Result");
+            }
+
+            if (result.isError ()) {
+                recordFailure ();
+                return result;
             }
 
             recordSuccess ();
@@ -174,31 +199,35 @@ namespace Vala.Net {
          * only outcome needs to be reported to breaker.
          */
         public void recordFailure () {
+            var transitions = new GLib.Queue<Transition> ();
             _mutex.lock ();
-            refreshStateLocked ();
+            refreshStateLocked (transitions);
 
             if (_state == CircuitState.HALF_OPEN) {
-                transitionLocked (CircuitState.OPEN);
+                transitionLocked (CircuitState.OPEN, transitions);
                 _failure_count = 0;
                 _half_open_success_count = 0;
                 _opened_at_micros = nowMicros ();
                 _mutex.unlock ();
+                notifyTransitions (transitions);
                 return;
             }
 
             if (_state == CircuitState.OPEN) {
                 _mutex.unlock ();
+                notifyTransitions (transitions);
                 return;
             }
 
             _failure_count++;
             if (_failure_count >= _failure_threshold) {
-                transitionLocked (CircuitState.OPEN);
+                transitionLocked (CircuitState.OPEN, transitions);
                 _failure_count = 0;
                 _half_open_success_count = 0;
                 _opened_at_micros = nowMicros ();
             }
             _mutex.unlock ();
+            notifyTransitions (transitions);
         }
 
         /**
@@ -208,18 +237,20 @@ namespace Vala.Net {
          * only outcome needs to be reported to breaker.
          */
         public void recordSuccess () {
+            var transitions = new GLib.Queue<Transition> ();
             _mutex.lock ();
-            refreshStateLocked ();
+            refreshStateLocked (transitions);
 
             if (_state == CircuitState.HALF_OPEN) {
                 _half_open_success_count++;
                 if (_half_open_success_count >= _success_threshold) {
-                    transitionLocked (CircuitState.CLOSED);
+                    transitionLocked (CircuitState.CLOSED, transitions);
                     _failure_count = 0;
                     _half_open_success_count = 0;
                     _opened_at_micros = 0;
                 }
                 _mutex.unlock ();
+                notifyTransitions (transitions);
                 return;
             }
 
@@ -227,6 +258,7 @@ namespace Vala.Net {
                 _failure_count = 0;
             }
             _mutex.unlock ();
+            notifyTransitions (transitions);
         }
 
         /**
@@ -237,10 +269,12 @@ namespace Vala.Net {
          * @return current state.
          */
         public CircuitState state () {
+            var transitions = new GLib.Queue<Transition> ();
             _mutex.lock ();
-            refreshStateLocked ();
+            refreshStateLocked (transitions);
             CircuitState current = _state;
             _mutex.unlock ();
+            notifyTransitions (transitions);
             return current;
         }
 
@@ -264,12 +298,14 @@ namespace Vala.Net {
          * After reset, state is CLOSED and all counters are zero.
          */
         public void reset () {
+            var transitions = new GLib.Queue<Transition> ();
             _mutex.lock ();
-            transitionLocked (CircuitState.CLOSED);
+            transitionLocked (CircuitState.CLOSED, transitions);
             _failure_count = 0;
             _half_open_success_count = 0;
             _opened_at_micros = 0;
             _mutex.unlock ();
+            notifyTransitions (transitions);
         }
 
         /**
@@ -281,33 +317,42 @@ namespace Vala.Net {
             return _name;
         }
 
-        private void refreshStateLocked () {
+        private void refreshStateLocked (GLib.Queue<Transition> transitions) {
             if (_state != CircuitState.OPEN) {
                 return;
             }
 
             if (_open_timeout_millis == 0) {
-                transitionLocked (CircuitState.HALF_OPEN);
+                transitionLocked (CircuitState.HALF_OPEN, transitions);
                 _half_open_success_count = 0;
                 return;
             }
 
             int64 elapsed_millis = (nowMicros () - _opened_at_micros) / 1000;
             if (elapsed_millis >= _open_timeout_millis) {
-                transitionLocked (CircuitState.HALF_OPEN);
+                transitionLocked (CircuitState.HALF_OPEN, transitions);
                 _half_open_success_count = 0;
             }
         }
 
-        private void transitionLocked (CircuitState next) {
+        private void transitionLocked (CircuitState next, GLib.Queue<Transition> transitions) {
             if (_state == next) {
                 return;
             }
 
             CircuitState previous = _state;
             _state = next;
-            if (_on_state_change != null) {
-                _on_state_change (previous, next);
+            transitions.push_tail (new Transition (previous, next));
+        }
+
+        private void notifyTransitions (GLib.Queue<Transition> transitions) {
+            if (_on_state_change == null) {
+                return;
+            }
+
+            while (!transitions.is_empty ()) {
+                Transition transition = transitions.pop_head ();
+                _on_state_change (transition.from, transition.to);
             }
         }
 

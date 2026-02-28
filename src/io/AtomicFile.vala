@@ -187,7 +187,13 @@ namespace Vala.Io {
             if (firstSize != secondSize) {
                 return null;
             }
-            if ((int64) second.length != secondSize) {
+
+            uint8[] secondData = second.data;
+            int secondByteLength = secondData.length;
+            if (secondByteLength > 0 && secondData[secondByteLength - 1] == '\0') {
+                secondByteLength--;
+            }
+            if ((int64) secondByteLength != secondSize) {
                 return null;
             }
             return second;

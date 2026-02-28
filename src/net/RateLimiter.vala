@@ -180,6 +180,9 @@ namespace Vala.Net {
          * Updates rate.
          *
          * Existing token balance is preserved and clamped by burst rules.
+         * When the new rate is higher than current burst, burst is raised to
+         * the new rate. setRate() never decreases burst; use withBurst() when
+         * explicitly lowering burst capacity is required.
          *
          * @param permitsPerSecond permits generated per second.
          */

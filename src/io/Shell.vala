@@ -85,9 +85,10 @@ namespace Vala.Io {
             var lines = new GLib.List<string> ();
             foreach (string line in text.split ("\n")) {
                 if (line.length > 0) {
-                    lines.append (line);
+                    lines.prepend (line);
                 }
             }
+            lines.reverse ();
             return lines;
         }
     }

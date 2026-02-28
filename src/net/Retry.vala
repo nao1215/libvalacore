@@ -381,7 +381,11 @@ namespace Vala.Net {
 
             if (_jitter_enabled && delay > 1) {
                 int upper = delay > int.MAX ? int.MAX : (int) delay;
-                delay = GLib.Random.int_range (0, upper + 1);
+                int64 end = (int64) upper + 1;
+                if (end > int.MAX) {
+                    end = int.MAX;
+                }
+                delay = GLib.Random.int_range (0, (int) end);
             }
 
             return delay;

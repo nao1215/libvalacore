@@ -76,7 +76,8 @@ namespace Vala.Collections {
          * @param fn the predicate taking key and value.
          * @return a new filtered HashMap.
          */
-        public static HashMap<string, string> filterString (HashMap<string, string> map, owned BiPredicateFunc<string, string> fn) {
+        public static HashMap<string, string> filterString (HashMap<string, string> map,
+                                                            owned BiPredicateFunc<string, string> fn) {
             var result = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             GLib.List<unowned string> keyList = map.keys ();
             foreach (unowned string k in keyList) {
@@ -104,7 +105,8 @@ namespace Vala.Collections {
          * @param fn the value transformation function.
          * @return a new HashMap with transformed values.
          */
-        public static HashMap<string, string> mapValuesString (HashMap<string, string> map, owned MapFunc<string, string> fn) {
+        public static HashMap<string, string> mapValuesString (HashMap<string, string> map,
+                                                               owned MapFunc<string, string> fn) {
             var result = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             GLib.List<unowned string> keyList = map.keys ();
             foreach (unowned string k in keyList) {
@@ -133,7 +135,8 @@ namespace Vala.Collections {
          * @param fn the key transformation function.
          * @return a new HashMap with transformed keys.
          */
-        public static HashMap<string, string> mapKeysString (HashMap<string, string> map, owned MapFunc<string, string> fn) {
+        public static HashMap<string, string> mapKeysString (HashMap<string, string> map,
+                                                             owned MapFunc<string, string> fn) {
             var result = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             GLib.List<unowned string> keyList = map.keys ();
             foreach (unowned string k in keyList) {
@@ -224,7 +227,9 @@ namespace Vala.Collections {
          * @param fn the supplier function to compute the value if absent.
          * @return the existing or newly computed value.
          */
-        public static string computeIfAbsentString (HashMap<string, string> map, string key, owned SupplierFunc<string> fn) {
+        public static string computeIfAbsentString (HashMap<string, string> map,
+                                                    string key,
+                                                    owned SupplierFunc<string> fn) {
             if (map.containsKey (key)) {
                 string ? v = map.get (key);
                 if (v != null) {
