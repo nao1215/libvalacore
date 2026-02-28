@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.6.0
+
+### Added
+- `Vala.Concurrent.WorkerPool` - Fixed-size thread pool with task queue and typed promises (PromiseInt, PromiseString, PromiseBool, PromiseDouble)
+- `Vala.Concurrent.ChannelInt` - Go-style typed int channel with buffered and unbuffered (rendezvous) modes
+- `Vala.Concurrent.ChannelString` - Go-style typed string channel with buffered and unbuffered (rendezvous) modes
+- `Vala.Collections.Stream<T>` - Fluent pipeline API for collection transformations (filter, map, sorted, distinct, limit, skip, takeWhile, dropWhile, peek, reduce, min, max)
+- `Vala.Collections.Lists` - Static utility methods for ArrayList operations (partition, chunk, zip, flatten, groupBy, distinct, reverse, sliding, interleave, frequency)
+- `Vala.Collections.Maps` - Static utility methods for HashMap operations (merge, filter, mapValues, mapKeys, invert, getOrDefault, computeIfAbsent, keys, values, entries, fromPairs)
+- `Vala.Collections.MultiMap<K,V>` - One-key to multiple-values collection
+- `Vala.Collections.ImmutableList<T>` - Immutable list value object
+- `Vala.Collections.LruCache<K,V>` - LRU cache with optional TTL and cache-miss loader
+- `Vala.Math.BigDecimal` - Arbitrary-precision decimal arithmetic
+- `Vala.Math.BigInteger` - Arbitrary-precision integer arithmetic
+- `Vala.Encoding.Csv` - CSV parser and writer utilities
+- `Vala.Io.Filesystem` - Filesystem metadata helpers
+- `Vala.Io.Console` - TTY detection and password input utilities
+- `Vala.Io.Process` - Process execution utilities
+- `Vala.Io.Resource` - Binary resource read helpers
+- `Vala.Io.Temp` - Temporary file/directory helpers with auto-cleanup callbacks
+- `Vala.Time.Dates` - Date utility helpers
+- `Vala.Lang.Exceptions` - Exception utility class
+- `Vala.Lang.ShutdownHooks` - Atexit callback registration
+- `Vala.Lang.Randoms` - Random utility class
+- New delegate types: `BiPredicateFunc<A,B>`, `TaskFunc<T>`, `VoidTaskFunc`
+
+### Changed
+- Expanded `README.md` API reference for all new classes
+- `Lists.distinctString` optimized from O(n²) to O(n) using HashSet
+
+### Fixed
+- `Stream.skip` now guards against negative input
+- Channel unbuffered mode now implements strict rendezvous semantics (one sender in flight at a time)
+- Channel `receive()` on closed empty channel returns immediately via sentinel instead of blocking
+- Channel uses `broadcast()` for delivered condition to prevent deadlock with multiple concurrent senders
+- WorkerPool `enqueue()` is now atomic with shutdown check (queue push inside critical section)
+- WorkerPool promises are always completed with default values when tasks are rejected after shutdown
+- WorkerPool `shutdown()` is idempotent and guards against self-join deadlock
+
+### Infrastructure
+- Added vala-lint integration with Docker-based CI check
+
 ## 0.5.0
 
 ### Added

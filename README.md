@@ -481,6 +481,38 @@ Counting semaphore.
 | `release()` | Releases permit |
 | `availablePermits()` | Returns currently available permits |
 
+### Vala.Concurrent.ChannelInt
+Thread-safe int message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+
+| Method | Description |
+|---|---|
+| `ChannelInt()` | Creates an unbuffered channel |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `send(int value)` | Sends a value, blocking if the buffer is full |
+| `trySend(int value)` | Tries to send without blocking |
+| `receive()` | Receives a value, blocking until available |
+| `tryReceive()` | Tries to receive without blocking, returns IntBox? |
+| `close()` | Closes the channel |
+| `isClosed()` | Returns whether the channel is closed |
+| `size()` | Returns the number of items in the buffer |
+| `capacity()` | Returns the buffer capacity (0 = unbuffered) |
+
+### Vala.Concurrent.ChannelString
+Thread-safe string message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+
+| Method | Description |
+|---|---|
+| `ChannelString()` | Creates an unbuffered channel |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `send(string value)` | Sends a value, blocking if the buffer is full |
+| `trySend(string value)` | Tries to send without blocking |
+| `receive()` | Receives a value, blocking until available |
+| `tryReceive()` | Tries to receive without blocking, returns StringBox? |
+| `close()` | Closes the channel |
+| `isClosed()` | Returns whether the channel is closed |
+| `size()` | Returns the number of items in the buffer |
+| `capacity()` | Returns the buffer capacity (0 = unbuffered) |
+
 ### Vala.Concurrent.CountDownLatch
 One-shot countdown latch for synchronization.
 
@@ -491,6 +523,32 @@ One-shot countdown latch for synchronization.
 | `await()` | Blocks until count reaches zero |
 | `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
 | `getCount()` | Returns current count |
+
+### Vala.Concurrent.WorkerPool
+Fixed-size worker pool for executing tasks concurrently. Manages worker threads and a task queue.
+
+| Method | Description |
+|---|---|
+| `WorkerPool(int poolSize)` | Creates a pool with the specified number of workers |
+| `withDefault()` | Creates a pool sized to CPU core count |
+| `submitInt(TaskFunc<int> task)` | Submits an int-returning task and returns a PromiseInt |
+| `submitString(TaskFunc<string> task)` | Submits a string-returning task and returns a PromiseString |
+| `submitBool(TaskFunc<bool> task)` | Submits a bool-returning task and returns a PromiseBool |
+| `submitDouble(TaskFunc<double?> task)` | Submits a double-returning task and returns a PromiseDouble |
+| `execute(VoidTaskFunc task)` | Executes a void task in the pool |
+| `shutdown()` | Signals shutdown and waits for all tasks to complete |
+| `isShutdown()` | Returns whether the pool has been shut down |
+| `activeCount()` | Returns the number of currently active tasks |
+| `poolSize()` | Returns the number of worker threads |
+| `queueSize()` | Returns the number of tasks waiting in the queue |
+
+### Vala.Concurrent.PromiseInt / PromiseString / PromiseBool / PromiseDouble
+Promise types representing the pending result of an asynchronous computation.
+
+| Method | Description |
+|---|---|
+| `await()` | Blocks until the result is available and returns it |
+| `isDone()` | Returns whether the computation is complete |
 
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
@@ -598,6 +656,34 @@ A container representing either a success value or an error. Inspired by Rust's 
 | `unwrapError()` | Returns the error value, or null if success |
 | `map<U>(MapFunc<T,U> func)` | Transforms the success value |
 | `mapError<F>(MapFunc<E,F> func)` | Transforms the error value |
+
+### Vala.Collections.Stream\<T\>
+A fluent pipeline for transforming and aggregating collection data. Supports filter, map, sort, distinct, limit/skip, and terminal operations.
+
+| Method | Description |
+|---|---|
+| `fromList(ArrayList<T> list)` | Creates a Stream from an ArrayList |
+| `empty()` | Creates an empty Stream |
+| `filter(PredicateFunc<T> fn)` | Returns elements matching the predicate |
+| `map<U>(MapFunc<T, U> fn)` | Transforms each element |
+| `sorted(ComparatorFunc<T> cmp)` | Sorts elements by comparator |
+| `distinct(EqualFunc<T> equal)` | Removes duplicates |
+| `limit(int n)` | Limits to first n elements |
+| `skip(int n)` | Skips first n elements |
+| `takeWhile(PredicateFunc<T> fn)` | Takes elements while predicate is true |
+| `dropWhile(PredicateFunc<T> fn)` | Drops elements while predicate is true |
+| `peek(ConsumerFunc<T> fn)` | Executes action on each element (for debugging) |
+| `toList()` | Collects into an ArrayList |
+| `count()` | Returns element count |
+| `findFirst()` | Returns first element (nullable) |
+| `findLast()` | Returns last element (nullable) |
+| `anyMatch(PredicateFunc<T> fn)` | Returns true if any element matches |
+| `allMatch(PredicateFunc<T> fn)` | Returns true if all elements match |
+| `noneMatch(PredicateFunc<T> fn)` | Returns true if no elements match |
+| `reduce<U>(U init, ReduceFunc<T, U> fn)` | Folds into a single value |
+| `forEach(ConsumerFunc<T> fn)` | Executes action for each element |
+| `min(ComparatorFunc<T> cmp)` | Returns minimum element (nullable) |
+| `max(ComparatorFunc<T> cmp)` | Returns maximum element (nullable) |
 
 ### Vala.Collections.Stack\<T\>
 A LIFO (Last-In-First-Out) stack backed by GLib.Queue.
@@ -737,6 +823,41 @@ A doubly-linked list that supports efficient insertion and removal at both ends.
 | `clear()` | Removes all elements |
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 | `toArray()` | Returns elements as a native array |
+
+### Vala.Collections.Lists
+Static utility methods for ArrayList operations (partition, chunk, zip, flatten, groupBy, etc.).
+
+| Method | Description |
+|---|---|
+| `partitionString(list, fn)` | Splits into (matching, non-matching) Pair |
+| `chunkString(list, size)` | Splits into sub-lists of given size |
+| `zipString(a, b)` | Combines two lists into Pair list |
+| `zipWithIndexString(list)` | Creates (index, element) Pair list |
+| `flattenString(nested)` | Flattens nested lists into a single list |
+| `groupByString(list, keyFn)` | Groups by key into HashMap |
+| `distinctString(list)` | Removes duplicates preserving order |
+| `reverseString(list)` | Returns a reversed copy |
+| `slidingString(list, windowSize)` | Returns sliding windows |
+| `interleaveString(a, b)` | Alternates elements from two lists |
+| `frequencyString(list)` | Counts occurrences of each element |
+
+### Vala.Collections.Maps
+Static utility methods for HashMap operations (merge, filter, mapValues, invert, entries, etc.).
+
+| Method | Description |
+|---|---|
+| `mergeString(a, b)` | Merges two maps; second map takes priority |
+| `filterString(map, fn)` | Returns entries matching a bi-predicate |
+| `mapValuesString(map, fn)` | Transforms all values |
+| `mapKeysString(map, fn)` | Transforms all keys |
+| `invertString(map)` | Swaps keys and values |
+| `getOrDefaultString(map, key, defaultValue)` | Gets value or returns default |
+| `computeIfAbsentString(map, key, fn)` | Computes and stores value if key absent |
+| `keysString(map)` | Returns keys as ArrayList |
+| `valuesString(map)` | Returns values as ArrayList |
+| `entriesString(map)` | Returns Pair list of entries |
+| `fromPairsString(pairs)` | Creates HashMap from Pair list |
+| `isEmptyString(map)` | Returns whether the map is empty |
 
 ### Vala.Collections.LruCache\<K,V\>
 LRU cache with optional TTL and cache-miss loader.
