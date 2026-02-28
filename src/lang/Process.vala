@@ -41,7 +41,11 @@ namespace Vala.Lang {
             }
 
             try {
-                string[] argv = { "/bin/sh", "-c", command, null };
+                string shell = Environment.get_variable ("SHELL") ?? "sh";
+                if (shell.length == 0) {
+                    shell = "sh";
+                }
+                string[] argv = { shell, "-c", command, null };
                 GLib.Subprocess process = new GLib.Subprocess.newv (
                     argv,
                     GLib.SubprocessFlags.STDOUT_PIPE
@@ -106,6 +110,8 @@ namespace Vala.Lang {
 
                 if (_process.get_if_exited ()) {
                     _exit_code = _process.get_exit_status ();
+                } else if (_process.get_if_signaled ()) {
+                    _exit_code = -_process.get_term_sig ();
                 }
                 _completed = true;
                 return true;

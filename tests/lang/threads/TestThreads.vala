@@ -16,7 +16,9 @@ void testSleepMillis () {
 }
 
 void testSleepMillisNoop () {
+    int64 start = GLib.get_monotonic_time ();
     Threads.sleepMillis (0);
     Threads.sleepMillis (-1);
-    assert (true);
+    int64 elapsedMicros = GLib.get_monotonic_time () - start;
+    assert (elapsedMicros < 10000);
 }

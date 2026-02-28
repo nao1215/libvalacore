@@ -16,7 +16,7 @@ void testStartStop () {
     sw.stop ();
 
     int64 elapsed = sw.elapsedMillis ();
-    assert (elapsed >= 10);
+    assert (elapsed >= 40);
     assert (elapsed < 2000);
 }
 

@@ -20,6 +20,7 @@ namespace Vala.Lang {
                     }
                 }
             } catch (GLib.SpawnError e) {
+                GLib.warning ("SystemInfo.osName failed to spawn uname: %s", e.message);
             }
             return "unknown";
         }
