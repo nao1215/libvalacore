@@ -4,7 +4,7 @@
 
 ![logo](./docs/images/logo-small.png)
 
-libvalacore is an ambitious effort to build a **powerful quasi-standard library** for the Vala language.
+libvalacore is an ambitious effort to build a powerful core standard library for the Vala language.
 
 Vala has a solid GLib/GObject foundation, but lacks the kind of rich, batteries-included standard library that developers in Java, Go, Python, or OCaml take for granted. libvalacore fills that gap: it provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
 
@@ -14,6 +14,10 @@ Our goal is to make Vala a language where everyday programming tasks can be acco
 > This library is under active development. The API is not yet stable and may change without notice.
 
 ## API Reference
+
+### Valadoc
+[Click here for libcore's Valadoc.](https://nao1215.github.io/libvalacore/)
+
 
 ### Vala.Io.Files
 File and directory operations. All methods are static and take a `Vala.Io.Path` argument.
@@ -333,9 +337,6 @@ All Vala source code is formatted with [uncrustify](https://github.com/uncrustif
 $ ./scripts/format.sh          # Format all .vala files
 $ ./scripts/format.sh --check  # Check formatting (CI mode)
 ```
-
-## Valadoc
-[Click here for libcore's Valadoc.](https://nao1215.github.io/libvalacore/)
 
 ## Contributing
 Contributions are welcome! Please follow the steps below:

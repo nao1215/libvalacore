@@ -1,4 +1,4 @@
-libvalacore is an ambitious effort to build a powerful quasi-standard library
+libvalacore is an ambitious effort to build a powerful core standard library
 for the Vala language.
 
 Vala has a solid GLib/GObject foundation, but lacks the kind of rich,
