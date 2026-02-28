@@ -92,6 +92,13 @@ An immutable value object representing a file system path. Methods that transfor
 | `match(string pattern)` | Returns whether the basename matches a glob pattern |
 | `relativeTo(Path base)` | Computes the relative path from a base path |
 
+### Vala.Io.Resource
+Resource loading utilities.
+
+| Method | Description |
+|---|---|
+| `readResource(string name)` | Reads resource bytes from a file path (`null` on failure) |
+
 ### Vala.Io.Scanner
 Tokenized input reader inspired by Java's Scanner and Go's bufio.Scanner. Reads from files, strings, or stdin and splits input by a configurable delimiter.
 
