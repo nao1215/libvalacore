@@ -697,6 +697,19 @@ Operating system interface methods.
 | `cwd()` | Returns the current working directory |
 | `chdir(string path)` | Changes the current working directory |
 
+### Vala.Lang.Process
+Wrapper for external process execution.
+
+| Method | Description |
+|---|---|
+| `exec(string command)` | Executes command synchronously |
+| `execAsync(string command)` | Starts command asynchronously |
+| `exitCode()` | Returns process exit code |
+| `stdout()` | Returns captured stdout |
+| `stderr()` | Returns captured stderr |
+| `waitFor()` | Waits for process completion |
+| `kill()` | Forcefully exits process |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
