@@ -578,6 +578,21 @@ A hash table-based map from keys to values. Provides O(1) average-time lookup, i
 | `putIfAbsent(K key, V value)` | Adds only if the key is not present |
 | `merge(HashMap<K,V> other)` | Copies all entries from another map |
 
+### Vala.Collections.MultiMap\<K,V\>
+A map that stores multiple values for the same key.
+
+| Method | Description |
+|---|---|
+| `MultiMap(HashFunc<K>, EqualFunc<K>, EqualFunc<V>?)` | Creates an empty MultiMap |
+| `put(K key, V value)` | Appends a value to the key |
+| `get(K key)` | Returns values for the key (empty list when missing) |
+| `containsKey(K key)` | Returns whether the key exists |
+| `remove(K key, V value)` | Removes the first matching value for the key |
+| `removeAll(K key)` | Removes all values for the key |
+| `size()` | Returns number of keys |
+| `isEmpty()` | Returns whether the map is empty |
+| `clear()` | Removes all entries |
+
 ### Vala.Collections.HashSet\<T\>
 A hash table-based set of unique elements. Provides O(1) average-time add, remove, and contains. Set operations (union, intersection, difference) return new sets. Inspired by Java's HashSet and Python's set.
 
