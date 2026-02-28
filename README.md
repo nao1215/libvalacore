@@ -371,6 +371,17 @@ Immutable UUID value object.
 | `parse(string s)` | Parses UUID text and returns null for invalid input |
 | `toString()` | Returns the canonical UUID string |
 
+### Vala.Collections.Arrays
+Static utility methods for `int[]`.
+
+| Method | Description |
+|---|---|
+| `sort(int[] arr)` | Sorts in ascending order |
+| `binarySearch(int[] arr, int key)` | Binary search in sorted array |
+| `copyOf(int[] arr, int newLen)` | Copies array with new length |
+| `fill(int[] arr, int val)` | Fills all elements with value |
+| `equals(int[] a, int[] b)` | Returns whether arrays are equal |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 

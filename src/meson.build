@@ -6,6 +6,7 @@ conf.set('PROJECT_VERSION', '0.0.1')
 conf.set('API_VERSION', API_VERSION)
 
 valacore_sources = files([
+  'collections/Arrays.vala',
   'collections/ArrayList.vala',
   'collections/BitSet.vala',
   'collections/Deque.vala',

@@ -1,5 +1,6 @@
 test_name = meson.project_name() + '-test'
 
+subdir('collections/arrays')
 subdir('collections/arraylist')
 subdir('collections/bitset')
 subdir('collections/deque')
