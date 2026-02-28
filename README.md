@@ -352,6 +352,17 @@ Counting semaphore.
 | `release()` | Releases permit |
 | `availablePermits()` | Returns currently available permits |
 
+### Vala.Concurrent.CountDownLatch
+One-shot countdown latch for synchronization.
+
+| Method | Description |
+|---|---|
+| `CountDownLatch(int count)` | Creates with initial count |
+| `countDown()` | Decrements count by one |
+| `await()` | Blocks until count reaches zero |
+| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
+| `getCount()` | Returns current count |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
