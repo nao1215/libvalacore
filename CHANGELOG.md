@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.0
+
+### Added
+- `Vala.Collections.HashMap<K,V>` - Hash table with O(1) average lookup, backed by GLib.HashTable
+- `Vala.Collections.HashSet<T>` - Hash-based set with union, intersection, difference, and subset operations
+- `Vala.Collections.LinkedList<T>` - Doubly-linked list backed by GLib.Queue with indexed access
+- `Vala.Collections.Deque<T>` - Double-ended queue with O(1) push/pop at both ends
+- `Vala.Collections.Pair<A,B>` - Immutable two-element value object (Kotlin-style)
+- `Vala.Collections.Triple<A,B,C>` - Immutable three-element value object (Kotlin-style)
+- `Vala.Collections.PriorityQueue<T>` - Binary min-heap with custom comparator
+- `Vala.Collections.BitSet` - Bit manipulation with auto-growing byte array backing
+- `Vala.Collections.TreeMap<K,V>` - Sorted map backed by binary search tree with floorKey, ceilingKey, subMap
+- New delegate type: `BiConsumerFunc<A,B>`
+
+### Fixed
+- Removed stale docs/images directory
+
 ## 0.3.0
 
 ### Added
