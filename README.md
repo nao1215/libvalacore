@@ -268,6 +268,18 @@ Static utility methods for mathematics.
 | `PI` | Circle constant pi |
 | `E` | Euler's number |
 
+### Vala.Math.Random
+Static utility methods for random values.
+
+| Method | Description |
+|---|---|
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
+| `nextIntRange(int min, int max)` | Returns random integer in `[min, max)` |
+| `nextDouble()` | Returns random double in `[0.0, 1.0)` |
+| `nextBool()` | Returns random boolean |
+| `shuffle<T>(T[] array)` | Shuffles array in place |
+| `choice<T>(T[] array)` | Returns random element (null for empty array) |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
