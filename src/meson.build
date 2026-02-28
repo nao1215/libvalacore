@@ -52,6 +52,7 @@ valacore_sources = files([
   'math/Random.vala',
   'net/NetUrl.vala',
   'parser/ArgParser.vala',
+  'regex/Pattern.vala',
   'text/Regex.vala',
   'time/DateTime.vala',
   'time/Duration.vala',

@@ -216,6 +216,20 @@ Static utility methods for regular expressions.
 | `replaceAll(string s, string pattern, string repl)` | Replaces all matches |
 | `split(string s, string pattern)` | Splits text by regex pattern |
 
+### Vala.Regex.Pattern
+Compiled regular expression wrapper for repeated matching and replacements.
+
+| Method | Description |
+|---|---|
+| `compile(string pattern)` | Compiles a regex pattern (`null` on invalid pattern) |
+| `matches(string input)` | Returns true when the entire input matches |
+| `find(string input)` | Returns true when any match exists |
+| `findAll(string input)` | Returns all matched substrings |
+| `replaceFirst(string input, string replacement)` | Replaces the first match |
+| `replaceAll(string input, string replacement)` | Replaces all matches |
+| `split(string input)` | Splits input by the pattern |
+| `groups(string input)` | Returns capture groups from the first match |
+
 ### Vala.Time.DateTime
 Immutable value object for date-time operations.
 
