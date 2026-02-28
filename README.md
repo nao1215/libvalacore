@@ -57,6 +57,44 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `glob(Path dir, string pattern)` | Returns files matching a glob pattern |
 | `deleteRecursive(Path path)` | Recursively deletes a directory and all its contents |
 
+### Vala.Io.Filesystem
+Filesystem metadata utility methods.
+
+| Method | Description |
+|---|---|
+| `getFileAttributes(Path path)` | Returns file attributes (`GLib.FileInfo`) or `null` |
+| `setLastModifiedTime(Path path, DateTime t)` | Sets file modification time |
+| `isReadable(Path path)` | Returns whether file is readable |
+| `isWritable(Path path)` | Returns whether file is writable |
+| `isExecutable(Path path)` | Returns whether file is executable |
+| `getOwner(Path path)` | Returns owner username or `null` |
+| `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
+
+### Vala.Io.Console
+Console utility methods.
+
+| Method | Description |
+|---|---|
+| `isTTY()` | Returns whether standard input is a terminal |
+| `readPassword()` | Reads a password from terminal input without echo (`null` when stdin is not a TTY) |
+
+### Vala.Io.Process
+Process execution helper methods.
+
+| Method | Description |
+|---|---|
+| `exec(string cmd, string[] args)` | Executes an external command and returns true on zero exit status |
+| `execWithOutput(string cmd, string[] args)` | Executes an external command and returns stdout text on success (`null` on failure) |
+| `kill(int pid)` | Sends SIGKILL to the specified process ID (`true` when signal delivery succeeds). POSIX only |
+
+### Vala.Io.Temp
+Temporary resource helpers that auto-clean up after callback execution.
+
+| Method | Description |
+|---|---|
+| `withTempFile(TempFunc func)` | Creates a temporary file, runs callback, and removes the file (`true` on success) |
+| `withTempDir(TempFunc func)` | Creates a temporary directory, runs callback, and removes the directory recursively (`true` on success) |
+
 ### Vala.Io.Path
 An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
 
@@ -83,6 +121,13 @@ An immutable value object representing a file system path. Methods that transfor
 | `toUri()` | Returns the file:// URI representation |
 | `match(string pattern)` | Returns whether the basename matches a glob pattern |
 | `relativeTo(Path base)` | Computes the relative path from a base path |
+
+### Vala.Io.Resource
+Resource loading utilities.
+
+| Method | Description |
+|---|---|
+| `readResource(string name)` | Reads resource bytes from a file path (`null` on failure) |
 
 ### Vala.Io.Scanner
 Tokenized input reader inspired by Java's Scanner and Go's bufio.Scanner. Reads from files, strings, or stdin and splits input by a configurable delimiter.
@@ -253,6 +298,17 @@ Immutable value object for date-time operations.
 
 Examples: `DateTime.parse ("2026-02-28 10:30:00", "%Y-%m-%d %H:%M:%S")`, `DateTime.parse ("2026-02-28T10:30:00", "%Y-%m-%dT%H:%M:%S")`.
 
+### Vala.Time.Dates
+Static date-time helper methods.
+
+| Method | Description |
+|---|---|
+| `now()` | Returns current local date-time |
+| `parse(string s, string fmt)` | Parses text into `DateTime` (`null` on failure) |
+| `format(DateTime t, string fmt)` | Formats a `DateTime` with strftime format |
+| `addDays(DateTime t, int days)` | Returns a new `DateTime` shifted by days |
+| `isLeapYear(int year)` | Returns whether the year is leap year |
+
 ### Vala.Time.Duration
 Immutable value object that represents a duration.
 
@@ -304,6 +360,40 @@ Static utility methods for mathematics.
 | `factorial(int n)` | Returns factorial |
 | `PI` | Circle constant pi |
 | `E` | Euler's number |
+
+### Vala.Math.BigDecimal
+Immutable arbitrary-precision decimal value object.
+
+| Method | Description |
+|---|---|
+| `BigDecimal(string value)` | Creates from decimal text |
+| `parse(string value)` | Parses decimal text and returns null on failure |
+| `toString()` | Returns normalized decimal text |
+| `scale()` | Returns number of fractional digits |
+| `abs()` | Returns absolute value |
+| `negate()` | Returns value with inverted sign |
+| `compareTo(BigDecimal other)` | Compares two values (-1, 0, 1) |
+| `add(BigDecimal other)` | Returns sum |
+| `subtract(BigDecimal other)` | Returns difference |
+| `multiply(BigDecimal other)` | Returns product |
+| `divide(BigDecimal other)` | Returns quotient (truncated, default scale) |
+| `divideWithScale(BigDecimal other, int scale)` | Returns quotient with explicit scale |
+| `mod(BigDecimal other)` | Returns remainder |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
+
+### Vala.Math.BigInteger
+Immutable arbitrary-precision integer value object.
+
+| Method | Description |
+|---|---|
+| `BigInteger(string value)` | Creates from decimal text |
+| `toString()` | Returns normalized decimal text |
+| `add(BigInteger other)` | Returns sum |
+| `subtract(BigInteger other)` | Returns difference |
+| `multiply(BigInteger other)` | Returns product |
+| `divide(BigInteger other)` | Returns integer quotient (truncated toward zero) |
+| `mod(BigInteger other)` | Returns integer remainder |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
 
 ### Vala.Math.Random
 Static utility methods for random values.
@@ -411,6 +501,15 @@ Static utility methods for Base64 encoding and decoding.
 | `decode(string encoded)` | Decodes Base64 text to bytes |
 | `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
 | `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
+
+### Vala.Encoding.Csv
+Static utility methods for CSV parsing and writing.
+
+| Method | Description |
+|---|---|
+| `parse(string csv)` | Parses CSV text into `ArrayList<ArrayList<string>>` |
+| `parseFile(Path path)` | Parses a CSV file into `ArrayList<ArrayList<string>>` |
+| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text and returns the result as a string |
 
 ### Vala.Encoding.Hex
 Static utility methods for hexadecimal encoding and decoding.
@@ -549,6 +648,19 @@ A dynamic array-backed list that grows automatically. Provides O(1) indexed acce
 | `find(PredicateFunc<T> func)` | Returns an Optional with the first matching element |
 | `subList(int from, int to)` | Returns a new list with elements in [from, to) |
 
+### Vala.Collections.ImmutableList\<T\>
+An immutable list value object backed by an internal copied array.
+
+| Method | Description |
+|---|---|
+| `ImmutableList(T[] items)` | Creates immutable list from array copy |
+| `of(T[] items)` | Static factory that returns immutable list |
+| `size()` | Returns number of elements |
+| `isEmpty()` | Returns whether the list is empty |
+| `get(int index)` | Returns element at index (fails fast when out of bounds) |
+| `contains(T value)` | Returns whether value exists in the list |
+| `toArray()` | Returns a copied array of elements |
+
 ### Vala.Collections.HashMap\<K,V\>
 A hash table-based map from keys to values. Provides O(1) average-time lookup, insertion, and deletion. Inspired by Java's HashMap and Go's map.
 
@@ -569,6 +681,21 @@ A hash table-based map from keys to values. Provides O(1) average-time lookup, i
 | `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry |
 | `putIfAbsent(K key, V value)` | Adds only if the key is not present |
 | `merge(HashMap<K,V> other)` | Copies all entries from another map |
+
+### Vala.Collections.MultiMap\<K,V\>
+A map that stores multiple values for the same key.
+
+| Method | Description |
+|---|---|
+| `MultiMap(HashFunc<K>, EqualFunc<K>, EqualFunc<V>?)` | Creates an empty MultiMap |
+| `put(K key, V value)` | Appends a value to the key |
+| `get(K key)` | Returns values for the key (empty list when missing) |
+| `containsKey(K key)` | Returns whether the key exists |
+| `remove(K key, V value)` | Removes the first matching value for the key |
+| `removeAll(K key)` | Removes all values for the key |
+| `size()` | Returns number of keys |
+| `isEmpty()` | Returns whether the map is empty |
+| `clear()` | Removes all entries |
 
 ### Vala.Collections.HashSet\<T\>
 A hash table-based set of unique elements. Provides O(1) average-time add, remove, and contains. Set operations (union, intersection, difference) return new sets. Inspired by Java's HashSet and Python's set.
@@ -610,6 +737,22 @@ A doubly-linked list that supports efficient insertion and removal at both ends.
 | `clear()` | Removes all elements |
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 | `toArray()` | Returns elements as a native array |
+
+### Vala.Collections.LruCache\<K,V\>
+LRU cache with optional TTL and cache-miss loader.
+
+| Method | Description |
+|---|---|
+| `LruCache(int maxEntries, HashFunc<K>, EqualFunc<K>)` | Creates an LRU cache with key hash/equality functions |
+| `withTtl(Duration ttl)` | Sets entry TTL and returns this instance |
+| `withLoader(CacheLoaderFunc<K, V> loader)` | Sets cache-miss loader and returns this instance |
+| `get(K key)` | Returns cached value or loader value; updates LRU order |
+| `put(K key, V value)` | Inserts or replaces an entry |
+| `contains(K key)` | Returns whether a non-expired key exists |
+| `remove(K key)` | Removes an entry by key |
+| `clear()` | Removes all entries |
+| `size()` | Returns current entry count |
+| `stats()` | Returns `(hits, misses)` as `Pair<int, int>` |
 
 ### Vala.Collections.Deque\<T\>
 A double-ended queue (deque) that supports efficient insertion and removal at both ends. Inspired by Java's ArrayDeque.
@@ -814,6 +957,14 @@ Fail-fast precondition checks for arguments and object state.
 | `checkArgument(bool cond, string message)` | Validates method arguments and terminates the process immediately when invalid |
 | `checkState(bool cond, string message)` | Validates object state and terminates the process immediately when invalid |
 
+### Vala.Lang.Exceptions
+Exception utility methods.
+
+| Method | Description |
+|---|---|
+| `sneakyThrow(GLib.Error e)` | Terminates the process immediately with the provided error (does not return) |
+| `getStackTrace(GLib.Error e)` | Returns printable error details |
+
 ### Vala.Lang.SystemInfo
 Utility methods to query host system information.
 
@@ -847,6 +998,22 @@ Thread utility methods.
 | Method | Description |
 |---|---|
 | `sleepMillis(int ms)` | Suspends current thread for milliseconds |
+
+### Vala.Lang.Randoms
+Convenience random utility methods. Prefer `Vala.Math.Random` for the full API.
+
+| Method | Description |
+|---|---|
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
+| `nextDouble()` | Returns random double in `[0.0, 1.0)` |
+| `shuffle<T>(T[] array)` | Shuffles array in place |
+
+### Vala.Lang.ShutdownHooks
+Process shutdown hook registration utilities.
+
+| Method | Description |
+|---|---|
+| `addHook(ShutdownHookFunc func)` | Registers callback executed when process exits normally |
 
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
