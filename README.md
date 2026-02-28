@@ -301,6 +301,20 @@ Static utility methods for random values.
 | `shuffle<T>(T[] array)` | Shuffles array in place |
 | `choice<T>(T[] array)` | Returns random element (null for empty array) |
 
+### Vala.Net.Url
+Immutable URL value object.
+
+| Method | Description |
+|---|---|
+| `parse(string url)` | Parses URL text (returns null when invalid) |
+| `scheme()` | Returns URL scheme |
+| `host()` | Returns host |
+| `port()` | Returns port number (`-1` when not specified) |
+| `path()` | Returns path |
+| `query()` | Returns query string |
+| `fragment()` | Returns fragment |
+| `toString()` | Returns normalized URL string |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
