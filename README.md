@@ -806,6 +806,14 @@ Utility methods to query host system information.
 | `tmpDir()` | Returns temporary directory path |
 | `currentDir()` | Returns current working directory |
 
+### Vala.Lang.SystemEnv
+Environment variable helper methods.
+
+| Method | Description |
+|---|---|
+| `get(string key)` | Returns environment variable value |
+| `set(string key, string value)` | Sets environment variable value |
+
 ### Vala.Lang.StringEscape
 String escaping utilities for HTML, JSON, and XML contexts.
 
