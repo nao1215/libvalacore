@@ -481,6 +481,38 @@ Counting semaphore.
 | `release()` | Releases permit |
 | `availablePermits()` | Returns currently available permits |
 
+### Vala.Concurrent.ChannelInt
+Thread-safe int message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+
+| Method | Description |
+|---|---|
+| `ChannelInt()` | Creates an unbuffered channel |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `send(int value)` | Sends a value, blocking if the buffer is full |
+| `trySend(int value)` | Tries to send without blocking |
+| `receive()` | Receives a value, blocking until available |
+| `tryReceive()` | Tries to receive without blocking, returns IntBox? |
+| `close()` | Closes the channel |
+| `isClosed()` | Returns whether the channel is closed |
+| `size()` | Returns the number of items in the buffer |
+| `capacity()` | Returns the buffer capacity (0 = unbuffered) |
+
+### Vala.Concurrent.ChannelString
+Thread-safe string message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+
+| Method | Description |
+|---|---|
+| `ChannelString()` | Creates an unbuffered channel |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `send(string value)` | Sends a value, blocking if the buffer is full |
+| `trySend(string value)` | Tries to send without blocking |
+| `receive()` | Receives a value, blocking until available |
+| `tryReceive()` | Tries to receive without blocking, returns StringBox? |
+| `close()` | Closes the channel |
+| `isClosed()` | Returns whether the channel is closed |
+| `size()` | Returns the number of items in the buffer |
+| `capacity()` | Returns the buffer capacity (0 = unbuffered) |
+
 ### Vala.Concurrent.CountDownLatch
 One-shot countdown latch for synchronization.
 
