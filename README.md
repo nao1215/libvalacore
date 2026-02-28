@@ -207,6 +207,15 @@ Static utility methods for string manipulation. All methods are null-safe.
 | `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
 | `wrap(string? s, int width)` | Wraps at specified width |
 
+### Vala.Text.Regex
+Static utility methods for regular expressions.
+
+| Method | Description |
+|---|---|
+| `matches(string s, string pattern)` | Returns true when the pattern matches |
+| `replaceAll(string s, string pattern, string repl)` | Replaces all matches |
+| `split(string s, string pattern)` | Splits text by regex pattern |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
