@@ -2,7 +2,8 @@
 [![UnitTest](https://github.com/nao1215/libcore/actions/workflows/unit_test.yml/badge.svg?branch=main)](https://github.com/nao1215/libcore/actions/workflows/unit_test.yml)
 ![GitHub](https://img.shields.io/github/license/nao1215/libcore)
 
-## libvalacore - standard library extension for Vala
+![logo](./docs/images/logo-small.png)
+
 libvalacore provides a rich set of convenient, high-level APIs that complement the Vala standard library.
 
 Inspired by the standard libraries of Java, Go, and OCaml, it offers intuitive and consistent interfaces for file I/O, string manipulation, argument parsing, and more.
@@ -10,9 +11,9 @@ Inspired by the standard libraries of Java, Go, and OCaml, it offers intuitive a
 >[!NOTE]
 > This library is under active development. The API is not yet stable and may change without notice.
 
-# API Reference
+## API Reference
 
-## Vala.Io.Files
+### Vala.Io.Files
 File and directory operations. All methods are static and take a `Vala.Io.Path` argument.
 
 | Method | Description |
@@ -40,7 +41,7 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `tempDir(string prefix)` | Creates a temporary directory |
 | `touch(Path path)` | Creates a file or updates its modification time |
 
-## Vala.Io.Path
+### Vala.Io.Path
 An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
 
 | Method | Description |
@@ -62,7 +63,7 @@ An immutable value object representing a file system path. Methods that transfor
 | `normalize()` | Returns a normalized path (resolves "." and "..") |
 | `abs()` | Returns the absolute, normalized path |
 
-## Vala.Io.StringBuilder
+### Vala.Io.StringBuilder
 A mutable string buffer for efficient string construction. Wraps GLib.StringBuilder with a rich, Java/C#-inspired API.
 
 | Method | Description |
@@ -83,7 +84,7 @@ A mutable string buffer for efficient string construction. Wraps GLib.StringBuil
 | `toString()` | Returns the built string |
 | `capacity()` | Returns the allocated buffer capacity |
 
-## Vala.Io.BufferedWriter
+### Vala.Io.BufferedWriter
 Buffered character-output-stream writer. Wraps GLib.DataOutputStream for convenient string and line writing, similar to Java's BufferedWriter.
 
 | Method | Description |
@@ -96,7 +97,7 @@ Buffered character-output-stream writer. Wraps GLib.DataOutputStream for conveni
 | `flush()` | Flushes any buffered data |
 | `close()` | Closes the underlying stream |
 
-## Vala.Io.BufferedReader
+### Vala.Io.BufferedReader
 Buffered character-input-stream reader. Wraps GLib.DataInputStream for convenient line-by-line or full-text reading, similar to Java's BufferedReader.
 
 | Method | Description |
@@ -109,7 +110,7 @@ Buffered character-input-stream reader. Wraps GLib.DataInputStream for convenien
 | `hasNext()` | Returns whether there is more data to read |
 | `close()` | Closes the underlying stream |
 
-## Vala.Io.StringJoiner
+### Vala.Io.StringJoiner
 Constructs a sequence of characters separated by a delimiter, optionally with a prefix and suffix. Equivalent to Java's StringJoiner.
 
 | Method | Description |
@@ -121,7 +122,7 @@ Constructs a sequence of characters separated by a delimiter, optionally with a 
 | `length()` | Returns the length of the joined string |
 | `toString()` | Returns the joined string with prefix, elements, and suffix |
 
-## Vala.Io.Strings
+### Vala.Io.Strings
 Static utility methods for string manipulation. All methods are null-safe.
 
 | Method | Description |
@@ -176,7 +177,7 @@ Static utility methods for null checking.
 | `isNull<T>(T? obj)` | Returns whether the object is null |
 | `nonNull<T>(T? obj)` | Returns whether the object is not null |
 
-## Vala.Lang.Os
+### Vala.Lang.Os
 Operating system interface methods.
 
 | Method | Description |
@@ -185,7 +186,7 @@ Operating system interface methods.
 | `cwd()` | Returns the current working directory |
 | `chdir(string path)` | Changes the current working directory |
 
-## Vala.Parser.ArgParser
+### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
 | Method | Description |
@@ -198,7 +199,7 @@ Command-line argument parser with Builder pattern.
 | `copyArgWithoutCmdNameAndOptions()` | Returns arguments excluding the command name and options |
 | `parseResult()` | Returns a string summarizing all options and arguments |
 
-### ArgParser.Builder
+#### ArgParser.Builder
 
 | Method | Description |
 |---|---|
@@ -210,7 +211,7 @@ Command-line argument parser with Builder pattern.
 | `contact(string contact)` | Sets the contact information |
 | `build()` | Builds and returns the ArgParser instance |
 
-# How to build (install)
+## How to build (install)
 ```
 $ sudo apt update
 $ sudo apt install valac build-essential meson valadoc libglib2.0-dev ninja-build uncrustify
@@ -222,13 +223,13 @@ $ ninja -C build
 $ sudo ninja -C build install
 ```
 
-# How to test
+## How to test
 ```
 $ meson setup build
 $ meson test -C build
 ```
 
-# Test coverage
+## Test coverage
 We target 80%+ line coverage. CI enforces this threshold automatically.
 ```
 $ sudo apt install lcov
@@ -237,17 +238,17 @@ $ ./scripts/coverage.sh --check  # Check 80% threshold (fails if below)
 $ ./scripts/coverage.sh --html   # Generate HTML report
 ```
 
-# Code formatting
+## Code formatting
 All Vala source code is formatted with [uncrustify](https://github.com/uncrustify/uncrustify) using the config at `etc/uncrustify.cfg`.
 ```
 $ ./scripts/format.sh          # Format all .vala files
 $ ./scripts/format.sh --check  # Check formatting (CI mode)
 ```
 
-# Valadoc
+## Valadoc
 [Click here for libcore's Valadoc.](https://nao1215.github.io/libvalacore/)
 
-# Contributing
+## Contributing
 Contributions are welcome! Please follow the steps below:
 
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md)
@@ -257,6 +258,6 @@ Contributions are welcome! Please follow the steps below:
 5. Submit a pull request
 
 
-# LICENSE
+## LICENSE
 The libvalacore project is licensed under the terms of the Apache License 2.0.
 See [LICENSE](./LICENSE).
