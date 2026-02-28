@@ -1175,6 +1175,24 @@ Unified application configuration from file, environment, and CLI.
 | `require(string key)` | Returns required value, fail-fast when missing |
 | `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` |
 
+## Vala.Distributed.ConsistentHash
+Consistent hash ring with virtual nodes for stable key distribution.
+
+| Method | Description |
+|---|---|
+| `ConsistentHash()` | Creates empty hash ring |
+| `withVirtualNodes(int replicas)` | Sets virtual node count per physical node |
+| `addNode(string nodeId)` | Adds physical node to ring |
+| `removeNode(string nodeId)` | Removes physical node from ring |
+| `containsNode(string nodeId)` | Returns whether node exists |
+| `getNode(string key)` | Returns assigned node for a key |
+| `getNodes(string key, int count)` | Returns distinct replica nodes for a key |
+| `nodeCount()` | Returns physical node count |
+| `virtualNodeCount()` | Returns virtual node count |
+| `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
+| `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
+| `clear()` | Clears all nodes and ring state |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
