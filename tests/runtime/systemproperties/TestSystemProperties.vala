@@ -2,10 +2,16 @@ using Vala.Runtime;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/runtime/systemproperties/testConstruct", testConstruct);
     Test.add_func ("/runtime/systemproperties/testBasicSeparators", testBasicSeparators);
     Test.add_func ("/runtime/systemproperties/testGet", testGet);
     Test.add_func ("/runtime/systemproperties/testTime", testTime);
     Test.run ();
+}
+
+void testConstruct () {
+    SystemProperties properties = new SystemProperties ();
+    assert (properties != null);
 }
 
 void testBasicSeparators () {
@@ -26,6 +32,10 @@ void testGet () {
     string ? cwd = SystemProperties.get ("user.dir");
     assert (cwd != null);
     assert (cwd == Environment.get_current_dir ());
+
+    string key = "LIBVALACORE_SYSTEMPROPERTIES_TEST";
+    assert (Environment.set_variable (key, "ok", true) == true);
+    assert (SystemProperties.get (key) == "ok");
 }
 
 void testTime () {

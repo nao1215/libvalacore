@@ -2,11 +2,17 @@ using Vala.Encoding;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/url/testConstruct", testConstruct);
     Test.add_func ("/url/testEncode", testEncode);
     Test.add_func ("/url/testDecode", testDecode);
     Test.add_func ("/url/testRoundTrip", testRoundTrip);
     Test.add_func ("/url/testInvalidDecode", testInvalidDecode);
     Test.run ();
+}
+
+void testConstruct () {
+    Url url = new Url ();
+    assert (url != null);
 }
 
 void testEncode () {

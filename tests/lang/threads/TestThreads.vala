@@ -2,9 +2,15 @@ using Vala.Lang;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/lang/threads/testConstruct", testConstruct);
     Test.add_func ("/lang/threads/testSleepMillis", testSleepMillis);
     Test.add_func ("/lang/threads/testSleepMillisNoop", testSleepMillisNoop);
     Test.run ();
+}
+
+void testConstruct () {
+    Threads threads = new Threads ();
+    assert (threads != null);
 }
 
 void testSleepMillis () {

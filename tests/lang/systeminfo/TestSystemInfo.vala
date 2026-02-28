@@ -2,9 +2,15 @@ using Vala.Lang;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/lang/systeminfo/testConstruct", testConstruct);
     Test.add_func ("/lang/systeminfo/testPaths", testPaths);
     Test.add_func ("/lang/systeminfo/testOsName", testOsName);
     Test.run ();
+}
+
+void testConstruct () {
+    SystemInfo info = new SystemInfo ();
+    assert (info != null);
 }
 
 void testPaths () {
