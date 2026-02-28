@@ -111,7 +111,9 @@ namespace Vala.Concurrent {
                 int val = captured ();
                 promise.complete (val);
             };
-            enqueue (wrapper);
+            if (!enqueue (wrapper)) {
+                promise.complete (0);
+            }
             return promise;
         }
 
@@ -138,7 +140,9 @@ namespace Vala.Concurrent {
                 string val = captured ();
                 promise.complete (val);
             };
-            enqueue (wrapper);
+            if (!enqueue (wrapper)) {
+                promise.complete ("");
+            }
             return promise;
         }
 
@@ -165,7 +169,9 @@ namespace Vala.Concurrent {
                 bool val = captured ();
                 promise.complete (val);
             };
-            enqueue (wrapper);
+            if (!enqueue (wrapper)) {
+                promise.complete (false);
+            }
             return promise;
         }
 
@@ -192,7 +198,9 @@ namespace Vala.Concurrent {
                 double ? val = captured ();
                 promise.complete (val != null ? val : 0.0);
             };
-            enqueue (wrapper);
+            if (!enqueue (wrapper)) {
+                promise.complete (0.0);
+            }
             return promise;
         }
 
@@ -229,16 +237,23 @@ namespace Vala.Concurrent {
          */
         public void shutdown () {
             _mutex.lock ();
+            if (_shutdown) {
+                _mutex.unlock ();
+                return;
+            }
             _shutdown = true;
-            _mutex.unlock ();
-
             for (int i = 0; i < _poolSize; i++) {
                 var poison = new TaskWrapper ();
                 poison.poison = true;
                 _queue.push (poison);
             }
+            _mutex.unlock ();
 
+            unowned GLib.Thread<void *> self = GLib.Thread.self<void *> ();
             for (int i = 0; i < _poolSize; i++) {
+                if (_workers[i] == self) {
+                    continue;
+                }
                 _workers[i].join ();
             }
         }
@@ -285,15 +300,16 @@ namespace Vala.Concurrent {
             return _queue.length ();
         }
 
-        private void enqueue (TaskWrapper wrapper) {
+        private bool enqueue (TaskWrapper wrapper) {
             _mutex.lock ();
             if (_shutdown) {
                 _mutex.unlock ();
                 warning ("WorkerPool is shut down, task rejected");
-                return;
+                return false;
             }
-            _mutex.unlock ();
             _queue.push (wrapper);
+            _mutex.unlock ();
+            return true;
         }
 
         private void workerLoop () {

@@ -95,6 +95,9 @@ void testLimit () {
 
     var all = Stream.fromList<string> (list).limit (100).toList ();
     assert (all.size () == 5);
+
+    var neg = Stream.fromList<string> (list).limit (-1).toList ();
+    assert (neg.size () == 0);
 }
 
 void testSkip () {

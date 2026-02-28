@@ -15,6 +15,8 @@ void main (string[] args) {
     Test.add_func ("/concurrent/channel/testTryReceiveString", testTryReceiveString);
     Test.add_func ("/concurrent/channel/testCloseString", testCloseString);
     Test.add_func ("/concurrent/channel/testProducerConsumer", testProducerConsumer);
+    Test.add_func ("/concurrent/channel/testReceiveAfterCloseEmpty", testReceiveAfterCloseEmpty);
+    Test.add_func ("/concurrent/channel/testUnbufferedMultiSender", testUnbufferedMultiSender);
     Test.run ();
 }
 
@@ -161,4 +163,43 @@ void testProducerConsumer () {
 
     wg.wait ();
     assert (sum == 55);
+}
+
+void testReceiveAfterCloseEmpty () {
+    var ch = ChannelInt.buffered (5);
+    ch.close ();
+    int val = ch.receive ();
+    assert (val == 0);
+
+    var sch = ChannelString.buffered (5);
+    sch.close ();
+    string sval = sch.receive ();
+    assert (sval == "");
+}
+
+void testUnbufferedMultiSender () {
+    var ch = new ChannelInt ();
+    int total = 0;
+    var mutex = new Vala.Concurrent.Mutex ();
+    var wg = new WaitGroup ();
+
+    wg.add (3);
+    for (int t = 1; t <= 3; t++) {
+        int tid = t;
+        new Thread<void *> ("sender-%d".printf (tid), () => {
+            ch.send (tid * 10);
+            wg.done ();
+            return null;
+        });
+    }
+
+    for (int i = 0; i < 3; i++) {
+        int val = ch.receive ();
+        mutex.withLock (() => {
+            total += val;
+        });
+    }
+
+    wg.wait ();
+    assert (total == 60);
 }

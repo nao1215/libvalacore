@@ -7,7 +7,8 @@ namespace Vala.Concurrent {
      * buffered (asynchronous up to capacity) modes.
      *
      * In unbuffered mode (default), send blocks until a receiver calls
-     * receive, providing true rendezvous semantics.
+     * receive, providing strict rendezvous semantics. Only one sender
+     * can be in flight at a time.
      *
      * Example (unbuffered):
      * {{{
@@ -67,7 +68,7 @@ namespace Vala.Concurrent {
          * Sends a value into the channel.
          * For buffered channels, blocks if the buffer is full.
          * For unbuffered channels, blocks until a receiver calls receive
-         * (rendezvous semantics).
+         * (strict rendezvous: only one sender in flight at a time).
          * Logs a warning and returns if the channel is closed.
          *
          * @param value the value to send.
@@ -93,6 +94,14 @@ namespace Vala.Concurrent {
                 _size++;
                 _mutex.unlock ();
             } else {
+                while (_size > 0 && !_closed) {
+                    _delivered.wait (_mutex);
+                }
+                if (_closed) {
+                    _mutex.unlock ();
+                    warning ("send on closed channel");
+                    return;
+                }
                 _queue.push (new IntBox (value));
                 _size++;
                 while (_size > 0 && !_closed) {
@@ -119,7 +128,7 @@ namespace Vala.Concurrent {
                 _mutex.unlock ();
                 return false;
             }
-            if (_capacity == 0 && _queue.length () > 0) {
+            if (_capacity == 0 && _size > 0) {
                 _mutex.unlock ();
                 return false;
             }
@@ -141,13 +150,17 @@ namespace Vala.Concurrent {
             if (box == null) {
                 return 0;
             }
+            if (box.sentinel) {
+                _queue.push (box);
+                return 0;
+            }
 
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
             } else {
-                _delivered.signal ();
+                _delivered.broadcast ();
             }
             _mutex.unlock ();
 
@@ -164,13 +177,17 @@ namespace Vala.Concurrent {
             if (box == null) {
                 return null;
             }
+            if (box.sentinel) {
+                _queue.push (box);
+                return null;
+            }
 
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
             } else {
-                _delivered.signal ();
+                _delivered.broadcast ();
             }
             _mutex.unlock ();
 
@@ -179,7 +196,8 @@ namespace Vala.Concurrent {
 
         /**
          * Closes the channel. No more values can be sent.
-         * Pending receives will drain remaining values.
+         * Pending receives will drain remaining values, then
+         * return 0 for subsequent calls.
          */
         public void close () {
             _mutex.lock ();
@@ -187,6 +205,10 @@ namespace Vala.Concurrent {
             _notFull.broadcast ();
             _delivered.broadcast ();
             _mutex.unlock ();
+
+            var sentinel = new IntBox (0);
+            sentinel.sentinel = true;
+            _queue.push (sentinel);
         }
 
         /**
@@ -230,6 +252,8 @@ namespace Vala.Concurrent {
     public class IntBox : GLib.Object {
         /** The int value. */
         public int value;
+        /** Whether this is a sentinel for close notification. */
+        public bool sentinel = false;
 
         /**
          * Creates a new IntBox.
@@ -245,7 +269,7 @@ namespace Vala.Concurrent {
      * Thread-safe string message-passing channel.
      *
      * In unbuffered mode (default), send blocks until a receiver calls
-     * receive, providing true rendezvous semantics.
+     * receive, providing strict rendezvous semantics.
      *
      * Example:
      * {{{
@@ -317,6 +341,14 @@ namespace Vala.Concurrent {
                 _size++;
                 _mutex.unlock ();
             } else {
+                while (_size > 0 && !_closed) {
+                    _delivered.wait (_mutex);
+                }
+                if (_closed) {
+                    _mutex.unlock ();
+                    warning ("send on closed channel");
+                    return;
+                }
                 _queue.push (new StringBox (value));
                 _size++;
                 while (_size > 0 && !_closed) {
@@ -343,7 +375,7 @@ namespace Vala.Concurrent {
                 _mutex.unlock ();
                 return false;
             }
-            if (_capacity == 0 && _queue.length () > 0) {
+            if (_capacity == 0 && _size > 0) {
                 _mutex.unlock ();
                 return false;
             }
@@ -364,13 +396,17 @@ namespace Vala.Concurrent {
             if (box == null) {
                 return "";
             }
+            if (box.sentinel) {
+                _queue.push (box);
+                return "";
+            }
 
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
             } else {
-                _delivered.signal ();
+                _delivered.broadcast ();
             }
             _mutex.unlock ();
 
@@ -387,13 +423,17 @@ namespace Vala.Concurrent {
             if (box == null) {
                 return null;
             }
+            if (box.sentinel) {
+                _queue.push (box);
+                return null;
+            }
 
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
                 _notFull.signal ();
             } else {
-                _delivered.signal ();
+                _delivered.broadcast ();
             }
             _mutex.unlock ();
 
@@ -409,6 +449,10 @@ namespace Vala.Concurrent {
             _notFull.broadcast ();
             _delivered.broadcast ();
             _mutex.unlock ();
+
+            var sentinel = new StringBox ("");
+            sentinel.sentinel = true;
+            _queue.push (sentinel);
         }
 
         /**
@@ -451,6 +495,8 @@ namespace Vala.Concurrent {
     public class StringBox : GLib.Object {
         /** The string value. */
         public string value;
+        /** Whether this is a sentinel for close notification. */
+        public bool sentinel = false;
 
         /**
          * Creates a new StringBox.
