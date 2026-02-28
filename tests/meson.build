@@ -1,10 +1,15 @@
 test_name = meson.project_name() + '-test'
 
+subdir('collections/optional')
+subdir('collections/queue')
+subdir('collections/result')
+subdir('collections/stack')
 subdir('io/bufferedreader')
 subdir('io/bufferedwriter')
 subdir('io/files')
 subdir('io/objects')
 subdir('io/paths')
+subdir('io/scanner')
 subdir('io/stringbuilder')
 subdir('io/stringjoiner')
 subdir('io/strings')

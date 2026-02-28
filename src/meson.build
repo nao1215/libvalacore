@@ -6,10 +6,15 @@ conf.set('PROJECT_VERSION', '0.0.1')
 conf.set('API_VERSION', API_VERSION)
 
 valacore_sources = files([
+  'collections/Optional.vala',
+  'collections/Queue.vala',
+  'collections/Result.vala',
+  'collections/Stack.vala',
   'io/BufferedReader.vala',
   'io/BufferedWriter.vala',
   'io/Files.vala',
   'io/Path.vala',
+  'io/Scanner.vala',
   'io/StringBuilder.vala',
   'io/StringJoiner.vala',
   'io/Strings.vala',

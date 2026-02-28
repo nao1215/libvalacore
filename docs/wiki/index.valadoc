@@ -1,13 +1,43 @@
-libvalacore provides a rich set of convenient, high-level APIs that complement
-the Vala standard library. Inspired by the standard libraries of Java, Go, and
-OCaml, it offers intuitive and consistent interfaces for file I/O, string
-manipulation, argument parsing, and more.
+libvalacore is an ambitious effort to build a powerful core standard library
+for the Vala language.
+
+Vala has a solid GLib/GObject foundation, but lacks the kind of rich,
+batteries-included standard library that developers in Java, Go, Python,
+or OCaml take for granted. libvalacore fills that gap: it provides intuitive,
+consistent, and well-tested APIs for file I/O, collections, string processing,
+encoding, cryptography, networking, concurrency, and much more — all designed
+to feel natural in idiomatic Vala.
+
+Our goal is to make Vala a language where everyday programming tasks can be
+accomplished with a single import, without hunting for scattered third-party
+packages or reinventing the wheel.
 
 == Namespaces ==
 
- * [[Vala.Io]] - File I/O, path, and string operations
- * [[Vala.Lang]] - Language-level utilities (Objects, Os)
+ * [[Vala.Io]] - File I/O, path, string, buffered I/O, and scanner operations
+ * [[Vala.Lang]] - Language-level utilities (Objects, Os, Process, Signal)
  * [[Vala.Parser]] - Argument parsing
+ * [[Vala.Collections]] - Collection types, Stream API, and functional utilities
+ * [[Vala.Math]] - Mathematical functions and random number generation
+ * [[Vala.Time]] - Date, time, duration, and stopwatch
+ * [[Vala.Encoding]] - Base64, Hex, JSON, CSV, XML, TOML, YAML
+ * [[Vala.Compress]] - Gzip and Zlib compression
+ * [[Vala.Archive]] - Zip and Tar archive handling
+ * [[Vala.Crypto]] - Hash, HMAC, and UUID
+ * [[Vala.Net]] - HTTP client, socket, URL, and IP address
+ * [[Vala.Concurrent]] - Thread pool, channel, future, mutex, and semaphore
+ * [[Vala.Log]] - Structured logging
+ * [[Vala.Test]] - Test assertions and benchmarking
+ * [[Vala.Regex]] - Regular expression matching
+ * [[Vala.Conv]] - Type conversion utilities
+ * [[Vala.Config]] - Configuration file parsing (Properties, INI)
+ * [[Vala.Event]] - Event emitter and listener pattern
+ * [[Vala.Validation]] - Input validation
+ * [[Vala.Errors]] - Error handling utilities
+ * [[Vala.Unicode]] - Unicode character operations
+ * [[Vala.Text]] - Template engine
+ * [[Vala.Format]] - Number formatting
+ * [[Vala.Runtime]] - Runtime information and system properties
 
 == Links ==
 
