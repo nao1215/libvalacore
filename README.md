@@ -469,6 +469,24 @@ Token-bucket based rate limiter.
 | `setRate(int permitsPerSecond)` | Updates permit generation rate |
 | `reset()` | Refills tokens to burst capacity |
 
+### Vala.Net.CircuitBreaker
+Circuit breaker for protecting unstable dependencies.
+
+| Method | Description |
+|---|---|
+| `CircuitBreaker(string name)` | Creates breaker with the specified name |
+| `withFailureThreshold(int n)` | Sets consecutive failure threshold |
+| `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN |
+| `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout |
+| `onStateChange(StateChangeCallback fn)` | Registers state transition callback |
+| `call<T>(CircuitFunc<T> fn)` | Executes callback through breaker and returns null when blocked/failed |
+| `recordFailure()` | Records one failure |
+| `recordSuccess()` | Records one success |
+| `state()` | Returns current state (`CLOSED`, `OPEN`, `HALF_OPEN`) |
+| `failureCount()` | Returns recent failure count in CLOSED state |
+| `reset()` | Resets breaker state and counters |
+| `name()` | Returns breaker name |
+
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
 
