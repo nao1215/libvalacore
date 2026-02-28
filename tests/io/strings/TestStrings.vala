@@ -42,6 +42,7 @@ void main (string[] args) {
     Test.add_func ("/testWords", testWords);
     Test.add_func ("/testTruncate", testTruncate);
     Test.add_func ("/testWrap", testWrap);
+    Test.add_func ("/testStringsInstantiation", testStringsInstantiation);
     Test.run ();
 }
 
@@ -435,4 +436,10 @@ void testWrap () {
     assert (Strings.wrap ("abcdef", 3) == "abc\ndef");
     assert (Strings.wrap ("ab", 5) == "ab");
     assert (Strings.wrap ("abcdefghi", 3) == "abc\ndef\nghi");
+}
+
+void testStringsInstantiation () {
+    /* Exercises GObject boilerplate (construct, class_init, get_type) */
+    var s = new Strings ();
+    assert (s != null);
 }
