@@ -40,6 +40,16 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `tempFile(string prefix, string suffix)` | Creates a temporary file |
 | `tempDir(string prefix)` | Creates a temporary directory |
 | `touch(Path path)` | Creates a file or updates its modification time |
+| `readBytes(Path path)` | Reads file contents as a byte array |
+| `writeBytes(Path path, uint8[] data)` | Writes a byte array to a file |
+| `chmod(Path path, int mode)` | Changes file permissions |
+| `chown(Path path, int uid, int gid)` | Changes file ownership |
+| `lastModified(Path path)` | Returns the last modification time |
+| `createSymlink(Path target, Path link)` | Creates a symbolic link |
+| `readSymlink(Path path)` | Reads the target of a symbolic link |
+| `isSameFile(Path a, Path b)` | Returns whether two paths refer to the same file |
+| `glob(Path dir, string pattern)` | Returns files matching a glob pattern |
+| `deleteRecursive(Path path)` | Recursively deletes a directory and all its contents |
 
 ### Vala.Io.Path
 An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
@@ -62,6 +72,11 @@ An immutable value object representing a file system path. Methods that transfor
 | `components()` | Returns the path components as a list |
 | `normalize()` | Returns a normalized path (resolves "." and "..") |
 | `abs()` | Returns the absolute, normalized path |
+| `separator()` | Returns the OS path separator (static) |
+| `volumeName()` | Returns the volume name (empty on Linux) |
+| `toUri()` | Returns the file:// URI representation |
+| `match(string pattern)` | Returns whether the basename matches a glob pattern |
+| `relativeTo(Path base)` | Computes the relative path from a base path |
 
 ### Vala.Io.StringBuilder
 A mutable string buffer for efficient string construction. Wraps GLib.StringBuilder with a rich, Java/C#-inspired API.
