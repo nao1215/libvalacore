@@ -696,6 +696,16 @@ Type conversion utilities similar to Go's `strconv`.
 | `intToOctal(int n)` | Converts `int` to octal string |
 | `intToBinary(int n)` | Converts `int` to binary string |
 
+## Vala.Log.LogLevel
+Log level enum for filtering logger output.
+
+| Value | Description |
+|---|---|
+| `DEBUG` | Detailed debug information |
+| `INFO` | General information |
+| `WARN` | Warnings and recoverable issues |
+| `ERROR` | Errors and failures |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
