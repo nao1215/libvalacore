@@ -368,6 +368,29 @@ A double-ended queue (deque) that supports efficient insertion and removal at bo
 | `toArray()` | Returns elements as a native array |
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 
+### Vala.Collections.Pair\<A,B\>
+An immutable pair of two values. A Value Object inspired by Kotlin's Pair.
+
+| Method | Description |
+|---|---|
+| `Pair(A first, B second)` | Creates a Pair with the given values |
+| `first()` | Returns the first value |
+| `second()` | Returns the second value |
+| `equals(Pair other, EqualFunc<A>, EqualFunc<B>)` | Returns whether both values are equal |
+| `toString()` | Returns string representation `(first, second)` |
+
+### Vala.Collections.Triple\<A,B,C\>
+An immutable triple of three values. A Value Object inspired by Kotlin's Triple.
+
+| Method | Description |
+|---|---|
+| `Triple(A first, B second, C third)` | Creates a Triple with the given values |
+| `first()` | Returns the first value |
+| `second()` | Returns the second value |
+| `third()` | Returns the third value |
+| `equals(Triple other, EqualFunc<A>, EqualFunc<B>, EqualFunc<C>)` | Returns whether all values are equal |
+| `toString()` | Returns string representation `(first, second, third)` |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
