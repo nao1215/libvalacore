@@ -262,6 +262,31 @@ A FIFO (First-In-First-Out) queue backed by GLib.Queue.
 | `isEmpty()` | Returns whether the queue is empty |
 | `clear()` | Removes all elements |
 
+### Vala.Collections.ArrayList\<T\>
+A dynamic array-backed list that grows automatically. Provides O(1) indexed access and functional operations like map, filter, and reduce. Inspired by Java's ArrayList and Go's slice.
+
+| Method | Description |
+|---|---|
+| `ArrayList()` | Creates an empty ArrayList |
+| `add(T element)` | Adds an element to the end |
+| `addAll(ArrayList<T> other)` | Adds all elements from another list |
+| `get(int index)` | Returns the element at the index, or null if out of bounds |
+| `set(int index, T element)` | Replaces the element at the index (returns false if out of bounds) |
+| `removeAt(int index)` | Removes and returns the element at the index |
+| `contains(T element)` | Returns whether the element is in the list |
+| `indexOf(T element)` | Returns the first index of the element (-1 if not found) |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the list is empty |
+| `clear()` | Removes all elements |
+| `toArray()` | Returns the elements as a native array |
+| `sort(ComparatorFunc<T> func)` | Sorts the list in-place using a comparator |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+| `map<U>(MapFunc<T,U> func)` | Returns a new list with transformed elements |
+| `filter(PredicateFunc<T> func)` | Returns a new list with matching elements |
+| `reduce<U>(U initial, ReduceFunc<T,U> func)` | Reduces the list to a single value |
+| `find(PredicateFunc<T> func)` | Returns an Optional with the first matching element |
+| `subList(int from, int to)` | Returns a new list with elements in [from, to) |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
