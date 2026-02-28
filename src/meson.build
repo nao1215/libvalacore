@@ -47,6 +47,7 @@ valacore_sources = files([
   'lang/Preconditions.vala',
   'lang/Process.vala',
   'log/LogLevel.vala',
+  'log/Logger.vala',
   'math/Math.vala',
   'math/Random.vala',
   'net/NetUrl.vala',
