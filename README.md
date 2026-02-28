@@ -361,6 +361,20 @@ Static utility methods for mathematics.
 | `PI` | Circle constant pi |
 | `E` | Euler's number |
 
+### Vala.Math.BigInteger
+Immutable arbitrary-precision integer value object.
+
+| Method | Description |
+|---|---|
+| `BigInteger(string value)` | Creates from decimal text |
+| `toString()` | Returns normalized decimal text |
+| `add(BigInteger other)` | Returns sum |
+| `subtract(BigInteger other)` | Returns difference |
+| `multiply(BigInteger other)` | Returns product |
+| `divide(BigInteger other)` | Returns integer quotient (truncated toward zero) |
+| `mod(BigInteger other)` | Returns integer remainder |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
+
 ### Vala.Math.Random
 Static utility methods for random values.
 
