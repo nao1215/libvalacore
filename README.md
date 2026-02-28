@@ -407,6 +407,25 @@ A priority queue backed by a binary min-heap. Elements are ordered by a comparis
 | `clear()` | Removes all elements |
 | `toArray()` | Returns elements as a native array |
 
+### Vala.Collections.BitSet
+A fixed-size or dynamically growing set of bits with bitwise operations. Inspired by Java's BitSet.
+
+| Method | Description |
+|---|---|
+| `BitSet(int size = 64)` | Creates a BitSet with initial capacity in bits |
+| `set(int index)` | Sets the bit at the index to 1 |
+| `clearBit(int index)` | Sets the bit at the index to 0 |
+| `get(int index)` | Returns the value of the bit at the index |
+| `flip(int index)` | Flips the bit at the index |
+| `and(BitSet other)` | Bitwise AND with another BitSet |
+| `or(BitSet other)` | Bitwise OR with another BitSet |
+| `xor(BitSet other)` | Bitwise XOR with another BitSet |
+| `cardinality()` | Returns the number of set bits |
+| `length()` | Returns the index of the highest set bit + 1 |
+| `isEmpty()` | Returns whether all bits are 0 |
+| `toString()` | Returns string representation e.g. `{0, 3, 7}` |
+| `clearAll()` | Sets all bits to 0 |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
