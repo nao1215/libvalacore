@@ -4,9 +4,11 @@
 
 ![logo](./docs/images/logo-small.png)
 
-libvalacore provides a rich set of convenient, high-level APIs that complement the Vala standard library.
+libvalacore is an ambitious effort to build a **powerful quasi-standard library** for the Vala language.
 
-Inspired by the standard libraries of Java, Go, and OCaml, it offers intuitive and consistent interfaces for file I/O, string manipulation, argument parsing, and more.
+Vala has a solid GLib/GObject foundation, but lacks the kind of rich, batteries-included standard library that developers in Java, Go, Python, or OCaml take for granted. libvalacore fills that gap: it provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
+
+Our goal is to make Vala a language where everyday programming tasks can be accomplished with a single import, without hunting for scattered third-party packages or reinventing the wheel.
 
 >[!NOTE]
 > This library is under active development. The API is not yet stable and may change without notice.
