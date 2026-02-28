@@ -1,0 +1,29 @@
+name: Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y valac build-essential meson valadoc libglib2.0-dev ninja-build gcovr
+
+    - name: Build and test with coverage
+      run: |
+        meson setup build -Db_coverage=true
+        ninja -C build test
+
+    - name: Generate coverage report
+      run: ninja -C build coverage-text
+
+    - name: Show coverage summary
+      run: cat build/meson-logs/coverage.txt
