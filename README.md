@@ -325,6 +325,16 @@ Mutex wrapper with utility methods.
 | `tryLock()` | Tries to acquire lock without blocking |
 | `withLock(WithLockFunc func)` | Runs a callback while holding lock |
 
+### Vala.Concurrent.RWMutex
+Reader-writer mutex.
+
+| Method | Description |
+|---|---|
+| `readLock()` | Acquires read lock |
+| `readUnlock()` | Releases read lock |
+| `writeLock()` | Acquires write lock |
+| `writeUnlock()` | Releases write lock |
+
 ### Vala.Concurrent.Once
 Executes a function at most once.
 
