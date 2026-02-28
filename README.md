@@ -815,6 +815,13 @@ String escaping utilities for HTML, JSON, and XML contexts.
 | `escapeJson(string s)` | Escapes JSON special characters |
 | `escapeXml(string s)` | Escapes XML special characters |
 
+### Vala.Lang.Threads
+Thread utility methods.
+
+| Method | Description |
+|---|---|
+| `sleepMillis(int ms)` | Suspends current thread for milliseconds |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
