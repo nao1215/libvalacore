@@ -237,7 +237,7 @@ Immutable value object for date-time operations.
 |---|---|
 | `now()` | Returns current local date-time |
 | `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components |
-| `parse(string s, string format)` | Parses text into date-time (supported formats only) |
+| `parse(string s, string format)` | Parses text using `%Y-%m-%d %H:%M:%S` or `%Y-%m-%dT%H:%M:%S` (returns `null` for unsupported formats) |
 | `format(string format)` | Formats with strftime format |
 | `year()` / `month()` / `day()` | Returns date components |
 | `hour()` / `minute()` / `second()` | Returns time components |
@@ -250,6 +250,8 @@ Immutable value object for date-time operations.
 | `toUnixTimestamp()` | Returns UNIX timestamp |
 | `fromUnixTimestamp(int64 ts)` | Creates date-time from UNIX timestamp |
 | `diff(DateTime other)` | Returns difference as `Duration` |
+
+Examples: `DateTime.parse ("2026-02-28 10:30:00", "%Y-%m-%d %H:%M:%S")`, `DateTime.parse ("2026-02-28T10:30:00", "%Y-%m-%dT%H:%M:%S")`.
 
 ### Vala.Time.Duration
 Immutable value object that represents a duration.
@@ -349,7 +351,7 @@ Mutex wrapper with utility methods.
 |---|---|
 | `lock()` | Acquires lock |
 | `unlock()` | Releases lock |
-| `tryLock()` | Tries to acquire lock without blocking |
+| `tryLock()` | Tries to acquire lock without blocking; returns `true` if acquired |
 | `withLock(WithLockFunc func)` | Runs a callback while holding lock |
 
 ### Vala.Concurrent.RWMutex
@@ -431,9 +433,9 @@ Static utility methods for cryptographic hashes.
 
 | Method | Description |
 |---|---|
-| `md5(string s)` | Returns the MD5 hash of a string |
-| `md5Bytes(uint8[] data)` | Returns the MD5 hash of bytes |
-| `sha1(string s)` | Returns the SHA-1 hash of a string |
+| `md5(string s)` | Returns the MD5 hash of a string (legacy/checksum use only; not secure) |
+| `md5Bytes(uint8[] data)` | Returns the MD5 hash of bytes (legacy/checksum use only; not secure) |
+| `sha1(string s)` | Returns the SHA-1 hash of a string (legacy compatibility only; prefer SHA-256/SHA-512) |
 | `sha256(string s)` | Returns the SHA-256 hash of a string |
 | `sha256Bytes(uint8[] data)` | Returns the SHA-256 hash of bytes |
 | `sha512(string s)` | Returns the SHA-512 hash of a string |
@@ -794,21 +796,23 @@ Wrapper for external process execution.
 
 | Method | Description |
 |---|---|
-| `exec(string command)` | Executes command synchronously |
-| `execAsync(string command)` | Starts command asynchronously |
-| `exitCode()` | Returns process exit code |
+| `exec(string command)` | Executes command synchronously (`null` on spawn failure) |
+| `execAsync(string command)` | Starts command asynchronously (`null` on spawn failure) |
+| `exitCode()` | Returns process exit code (`< 0` means terminated by signal, e.g., `-9`) |
 | `stdout()` | Returns captured stdout |
 | `stderr()` | Returns captured stderr |
-| `waitFor()` | Waits for process completion |
-| `kill()` | Forcefully exits process |
+| `waitFor()` | Waits for process completion and captures stdout/stderr (`false` on wait/IO failure) |
+| `kill()` | Forcefully exits process (`false` only when process is missing) |
+
+Recommended failure checks: verify return value from `exec`/`execAsync`, call `waitFor()` for async runs, then inspect `exitCode()` and `stderr()`.
 
 ### Vala.Lang.Preconditions
 Fail-fast precondition checks for arguments and object state.
 
 | Method | Description |
 |---|---|
-| `checkArgument(bool cond, string message)` | Validates method arguments and aborts when invalid |
-| `checkState(bool cond, string message)` | Validates object state and aborts when invalid |
+| `checkArgument(bool cond, string message)` | Validates method arguments and terminates the process immediately when invalid |
+| `checkState(bool cond, string message)` | Validates object state and terminates the process immediately when invalid |
 
 ### Vala.Lang.SystemInfo
 Utility methods to query host system information.
