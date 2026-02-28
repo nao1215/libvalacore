@@ -856,6 +856,15 @@ Thread utility methods.
 |---|---|
 | `sleepMillis(int ms)` | Suspends current thread for milliseconds |
 
+### Vala.Lang.Randoms
+Random utility methods.
+
+| Method | Description |
+|---|---|
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
+| `nextDouble()` | Returns random double in `[0.0, 1.0)` |
+| `shuffle<T>(T[] array)` | Shuffles array in place |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
