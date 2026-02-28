@@ -31,7 +31,7 @@ void testAcquireBlocks () {
     Vala.Concurrent.Semaphore sem = new Vala.Concurrent.Semaphore (0);
     bool acquired = false;
 
-    Thread<void*> worker = new Thread<void*> ("worker", () => {
+    Thread<void *> worker = new Thread<void *>("worker", () => {
         sem.acquire ();
         acquired = true;
         return null;

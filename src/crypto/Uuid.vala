@@ -26,7 +26,7 @@ namespace Vala.Crypto {
          * @param s UUID string.
          * @return parsed UUID or null.
          */
-        public static Uuid? parse (string s) {
+        public static Uuid ? parse (string s) {
             if (s.length == 0) {
                 return null;
             }

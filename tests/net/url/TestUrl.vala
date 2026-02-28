@@ -9,7 +9,7 @@ void main (string[] args) {
 }
 
 void testParse () {
-    Vala.Net.Url? url = Vala.Net.Url.parse ("https://example.com:8443/path/to?a=1&b=2#top");
+    Vala.Net.Url ? url = Vala.Net.Url.parse ("https://example.com:8443/path/to?a=1&b=2#top");
 
     assert (url != null);
     assert (url.scheme () == "https");
@@ -22,7 +22,7 @@ void testParse () {
 }
 
 void testParseWithoutOptionalParts () {
-    Vala.Net.Url? url = Vala.Net.Url.parse ("http://localhost/test");
+    Vala.Net.Url ? url = Vala.Net.Url.parse ("http://localhost/test");
 
     assert (url != null);
     assert (url.scheme () == "http");

@@ -11,11 +11,11 @@ namespace Vala.Lang {
          */
         public static string escapeHtml (string s) {
             return s
-                .replace ("&", "&amp;")
-                .replace ("<", "&lt;")
-                .replace (">", "&gt;")
-                .replace ("\"", "&quot;")
-                .replace ("'", "&#39;");
+                    .replace ("&", "&amp;")
+                    .replace ("<", "&lt;")
+                    .replace (">", "&gt;")
+                    .replace ("\"", "&quot;")
+                    .replace ("'", "&#39;");
         }
 
         /**
@@ -30,35 +30,35 @@ namespace Vala.Lang {
             for (int i = 0; i < s.length; i++) {
                 char c = s[i];
                 switch (c) {
-                case '\\':
-                    builder.append ("\\\\");
-                    break;
-                case '"':
-                    builder.append ("\\\"");
-                    break;
-                case '\b':
-                    builder.append ("\\b");
-                    break;
-                case '\f':
-                    builder.append ("\\f");
-                    break;
-                case '\n':
-                    builder.append ("\\n");
-                    break;
-                case '\r':
-                    builder.append ("\\r");
-                    break;
-                case '\t':
-                    builder.append ("\\t");
-                    break;
-                default:
-                    if (c < 0x20) {
-                        builder.append ("\\u");
-                        builder.append ("%04x".printf ((int) c));
-                    } else {
-                        builder.append_c (c);
-                    }
-                    break;
+                    case '\\':
+                        builder.append ("\\\\");
+                        break;
+                    case '"':
+                        builder.append ("\\\"");
+                        break;
+                    case '\b':
+                        builder.append ("\\b");
+                        break;
+                    case '\f':
+                        builder.append ("\\f");
+                        break;
+                    case '\n':
+                        builder.append ("\\n");
+                        break;
+                    case '\r':
+                        builder.append ("\\r");
+                        break;
+                    case '\t':
+                        builder.append ("\\t");
+                        break;
+                    default:
+                        if (c < 0x20) {
+                            builder.append ("\\u");
+                            builder.append ("%04x".printf ((int) c));
+                        } else {
+                            builder.append_c (c);
+                        }
+                        break;
                 }
             }
 
@@ -73,11 +73,11 @@ namespace Vala.Lang {
          */
         public static string escapeXml (string s) {
             return s
-                .replace ("&", "&amp;")
-                .replace ("<", "&lt;")
-                .replace (">", "&gt;")
-                .replace ("\"", "&quot;")
-                .replace ("'", "&apos;");
+                    .replace ("&", "&amp;")
+                    .replace ("<", "&lt;")
+                    .replace (">", "&gt;")
+                    .replace ("\"", "&quot;")
+                    .replace ("'", "&apos;");
         }
     }
 }

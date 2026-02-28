@@ -35,12 +35,12 @@ namespace Vala.Time {
                                    int hour,
                                    int min,
                                    int sec) {
-            GLib.DateTime? dt = new GLib.DateTime.local (year,
-                                                         month,
-                                                         day,
-                                                         hour,
-                                                         min,
-                                                         (double) sec);
+            GLib.DateTime ? dt = new GLib.DateTime.local (year,
+                                                          month,
+                                                          day,
+                                                          hour,
+                                                          min,
+                                                          (double) sec);
             if (dt == null) {
                 error ("Invalid date-time components");
             }
@@ -57,7 +57,7 @@ namespace Vala.Time {
          * @param format format text.
          * @return parsed date-time or null.
          */
-        public static DateTime? parse (string s, string format) {
+        public static DateTime ? parse (string s, string format) {
             string iso_text;
             if (format == "%Y-%m-%d %H:%M:%S") {
                 iso_text = s.replace (" ", "T");
@@ -67,10 +67,10 @@ namespace Vala.Time {
                 return null;
             }
 
-            GLib.DateTime? dt = new GLib.DateTime.from_iso8601 (
-                                                                 iso_text,
-                                                                 new GLib.TimeZone.local ()
-                                                                );
+            GLib.DateTime ? dt = new GLib.DateTime.from_iso8601 (
+                iso_text,
+                new GLib.TimeZone.local ()
+            );
             if (dt == null) {
                 return null;
             }

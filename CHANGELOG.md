@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.5.0
+
+### Added
+- `Vala.Encoding.Base64` - Base64 encode/decode helpers
+- `Vala.Encoding.Hex` - Hex encode/decode helpers
+- `Vala.Encoding.Url` - URL percent encode/decode helpers
+- `Vala.Crypto.Hash` - MD5/SHA hash utilities
+- `Vala.Crypto.Hmac` - HMAC utilities
+- `Vala.Crypto.Uuid` - UUID value object and parsing helpers
+- `Vala.Text.Regex` - Regular expression utility methods
+- `Vala.Regex.Pattern` - Compiled regex wrapper with find/replace/group APIs
+- `Vala.Time.DateTime` - Immutable date-time value object
+- `Vala.Time.Duration` - Immutable duration value object
+- `Vala.Time.Stopwatch` - Stopwatch for elapsed-time measurement
+- `Vala.Math.Math` - Extended math utility methods
+- `Vala.Math.Random` - Random number and shuffle helpers
+- `Vala.Net.Url` - Immutable URL value object
+- `Vala.Collections.Arrays` - Array helper methods
+- `Vala.Concurrent.Mutex` - Mutex wrapper utility
+- `Vala.Concurrent.RWMutex` - Read/write lock wrapper utility
+- `Vala.Concurrent.WaitGroup` - WaitGroup synchronization primitive
+- `Vala.Concurrent.Once` - Run-once helper
+- `Vala.Concurrent.Semaphore` - Counting semaphore
+- `Vala.Concurrent.CountDownLatch` - CountDownLatch synchronization primitive
+- `Vala.Lang.Process` - External process execution wrapper
+- `Vala.Lang.Preconditions` - Argument and state validation helpers
+- `Vala.Lang.SystemInfo` - OS/home/tmp/current-directory helpers
+- `Vala.Lang.StringEscape` - HTML/JSON/XML escaping helpers
+- `Vala.Lang.Threads` - Thread sleep helpers
+- `Vala.Lang.SystemEnv` - Environment variable get/set helpers
+- `Vala.Conv.Convert` - String/number/bool conversion helpers
+- `Vala.Log.LogLevel` - Logging level enum
+- `Vala.Log.Logger` - Named logger with level filtering and pluggable handlers
+- `Vala.Format.NumberFormat` - Number/bytes/ordinal formatting helpers
+- `Vala.Runtime.SystemProperties` - System property and time helpers
+- `Vala.Config.Properties` - Java-like key-value configuration loader/saver
+
+### Changed
+- Expanded `README.md` API reference for new namespaces and classes
+- Added Meson source and test targets for all newly introduced classes
+
+### Fixed
+- Updated `etc/uncrustify.cfg` for compatibility with newer uncrustify releases
+- Fixed `scripts/format.sh --check` to report all formatting diffs without aborting on first mismatch
+
 ## 0.4.0
 
 ### Added

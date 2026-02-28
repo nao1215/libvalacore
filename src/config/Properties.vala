@@ -65,7 +65,7 @@ namespace Vala.Config {
         public bool save (Vala.Io.Path path) {
             GLib.StringBuilder builder = new GLib.StringBuilder ();
             foreach (string key in keys ()) {
-                string? value = _values.lookup (key);
+                string ? value = _values.lookup (key);
                 if (value == null) {
                     continue;
                 }
@@ -103,7 +103,7 @@ namespace Vala.Config {
          * @return found value or default.
          */
         public string getOrDefault (string key, string defaultValue) {
-            string? value = get (key);
+            string ? value = get (key);
             return value ?? defaultValue;
         }
 

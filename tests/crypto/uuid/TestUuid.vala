@@ -15,13 +15,13 @@ void testV4 () {
 }
 
 void testParseValid () {
-    Vala.Crypto.Uuid? uuid = Vala.Crypto.Uuid.parse ("550e8400-e29b-41d4-a716-446655440000");
+    Vala.Crypto.Uuid ? uuid = Vala.Crypto.Uuid.parse ("550e8400-e29b-41d4-a716-446655440000");
     assert (uuid != null);
     assert (uuid.toString () == "550e8400-e29b-41d4-a716-446655440000");
 }
 
 void testParseUpperCase () {
-    Vala.Crypto.Uuid? uuid = Vala.Crypto.Uuid.parse ("550E8400-E29B-41D4-A716-446655440000");
+    Vala.Crypto.Uuid ? uuid = Vala.Crypto.Uuid.parse ("550E8400-E29B-41D4-A716-446655440000");
     assert (uuid != null);
     assert (uuid.toString () == "550e8400-e29b-41d4-a716-446655440000");
 }

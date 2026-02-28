@@ -10,7 +10,7 @@ void main (string[] args) {
 }
 
 void testExec () {
-    Vala.Lang.Process? proc = Vala.Lang.Process.exec ("printf 'hello'");
+    Vala.Lang.Process ? proc = Vala.Lang.Process.exec ("printf 'hello'");
     assert (proc != null);
     assert (proc.exitCode () == 0);
     assert (proc.stdout () == "hello");
@@ -18,14 +18,14 @@ void testExec () {
 }
 
 void testExecStderr () {
-    Vala.Lang.Process? proc = Vala.Lang.Process.exec ("echo 'err' 1>&2");
+    Vala.Lang.Process ? proc = Vala.Lang.Process.exec ("echo 'err' 1>&2");
     assert (proc != null);
     assert (proc.exitCode () == 0);
     assert (proc.stderr ().strip () == "err");
 }
 
 void testExecAsync () {
-    Vala.Lang.Process? proc = Vala.Lang.Process.execAsync ("printf 'ok'");
+    Vala.Lang.Process ? proc = Vala.Lang.Process.execAsync ("printf 'ok'");
     assert (proc != null);
     assert (proc.waitFor () == true);
     assert (proc.exitCode () == 0);
@@ -33,7 +33,7 @@ void testExecAsync () {
 }
 
 void testKill () {
-    Vala.Lang.Process? proc = Vala.Lang.Process.execAsync ("sleep 2");
+    Vala.Lang.Process ? proc = Vala.Lang.Process.execAsync ("sleep 2");
     assert (proc != null);
     assert (proc.kill () == true);
     assert (proc.waitFor () == true);

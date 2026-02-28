@@ -3,7 +3,7 @@ namespace Vala.Lang {
      * Wrapper for external process execution.
      */
     public class Process : GLib.Object {
-        private GLib.Subprocess? _process;
+        private GLib.Subprocess ? _process;
         private string _stdout = "";
         private string _stderr = "";
         private int _exit_code = 0;
@@ -18,8 +18,8 @@ namespace Vala.Lang {
          * @param command command line.
          * @return process result object or null on spawn error.
          */
-        public static Process? exec (string command) {
-            Process? proc = execAsync (command);
+        public static Process ? exec (string command) {
+            Process ? proc = execAsync (command);
             if (proc == null) {
                 return null;
             }
@@ -35,7 +35,7 @@ namespace Vala.Lang {
          * @param command command line.
          * @return process object or null on spawn error.
          */
-        public static Process? execAsync (string command) {
+        public static Process ? execAsync (string command) {
             if (command.length == 0) {
                 return null;
             }
@@ -43,10 +43,10 @@ namespace Vala.Lang {
             try {
                 string[] argv = { "/bin/sh", "-c", command, null };
                 GLib.Subprocess process = new GLib.Subprocess.newv (
-                                                                     argv,
-                                                                     GLib.SubprocessFlags.STDOUT_PIPE
-                                                                     | GLib.SubprocessFlags.STDERR_PIPE
-                                                                    );
+                    argv,
+                    GLib.SubprocessFlags.STDOUT_PIPE
+                    | GLib.SubprocessFlags.STDERR_PIPE
+                );
 
                 Process wrapper = new Process ();
                 wrapper._process = process;
@@ -97,8 +97,8 @@ namespace Vala.Lang {
             }
 
             try {
-                string? out_text = null;
-                string? err_text = null;
+                string ? out_text = null;
+                string ? err_text = null;
                 _process.communicate_utf8 (null, null, out out_text, out err_text);
 
                 _stdout = out_text ?? "";

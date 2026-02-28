@@ -17,7 +17,7 @@ namespace Vala.Log {
      * Named logger with level filtering and pluggable handlers.
      */
     public class Logger : GLib.Object {
-        private static GLib.HashTable<string, Logger>? _registry = null;
+        private static GLib.HashTable<string, Logger> ? _registry = null;
 
         private string _name;
         private LogLevel _level = LogLevel.INFO;
@@ -44,7 +44,7 @@ namespace Vala.Log {
                 _registry = new GLib.HashTable<string, Logger>(str_hash, str_equal);
             }
 
-            Logger? existing = _registry.lookup (key);
+            Logger ? existing = _registry.lookup (key);
             if (existing != null) {
                 return existing;
             }
@@ -120,16 +120,16 @@ namespace Vala.Log {
 
         private static string levelToString (LogLevel level) {
             switch (level) {
-            case LogLevel.DEBUG:
-                return "DEBUG";
-            case LogLevel.INFO:
-                return "INFO";
-            case LogLevel.WARN:
-                return "WARN";
-            case LogLevel.ERROR:
-                return "ERROR";
-            default:
-                return "UNKNOWN";
+                case LogLevel.DEBUG :
+                    return "DEBUG";
+                case LogLevel.INFO :
+                    return "INFO";
+                case LogLevel.WARN:
+                    return "WARN";
+                case LogLevel.ERROR:
+                    return "ERROR";
+                default:
+                    return "UNKNOWN";
             }
         }
     }

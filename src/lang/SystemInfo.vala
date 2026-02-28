@@ -9,7 +9,7 @@ namespace Vala.Lang {
          * @return OS name string.
          */
         public static string osName () {
-            string? output = null;
+            string ? output = null;
             int exitStatus = 0;
             try {
                 GLib.Process.spawn_command_line_sync ("uname -s", out output, null, out exitStatus);

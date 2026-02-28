@@ -74,7 +74,7 @@ namespace Vala.Regex {
             }
 
             do {
-                string? match = info.fetch (0);
+                string ? match = info.fetch (0);
                 if (match != null) {
                     results += match;
                 }
@@ -158,7 +158,7 @@ namespace Vala.Regex {
             }
 
             for (int i = 1; i < count; i++) {
-                string? group = info.fetch (i);
+                string ? group = info.fetch (i);
                 result += group ?? "";
             }
             return result;

@@ -121,18 +121,18 @@ namespace Vala.Format {
 
             if (lastTwo < 11 || lastTwo > 13) {
                 switch (absValue % 10) {
-                case 1:
-                    suffix = "st";
-                    break;
-                case 2:
-                    suffix = "nd";
-                    break;
-                case 3:
-                    suffix = "rd";
-                    break;
-                default:
-                    suffix = "th";
-                    break;
+                    case 1:
+                        suffix = "st";
+                        break;
+                    case 2:
+                        suffix = "nd";
+                        break;
+                    case 3:
+                        suffix = "rd";
+                        break;
+                    default:
+                        suffix = "th";
+                        break;
                 }
             }
 

@@ -31,17 +31,17 @@ void testOfAndFields () {
 }
 
 void testParseAndFormat () {
-    Vala.Time.DateTime? dt = Vala.Time.DateTime.parse (
-                                                        "2024-05-10 08:30:45",
-                                                        "%Y-%m-%d %H:%M:%S"
-                                                       );
+    Vala.Time.DateTime ? dt = Vala.Time.DateTime.parse (
+        "2024-05-10 08:30:45",
+        "%Y-%m-%d %H:%M:%S"
+    );
     assert (dt != null);
     assert (dt.format ("%Y-%m-%d %H:%M:%S") == "2024-05-10 08:30:45");
 
-    Vala.Time.DateTime? dt_iso = Vala.Time.DateTime.parse (
-                                                            "2024-05-10T08:30:45",
-                                                            "%Y-%m-%dT%H:%M:%S"
-                                                           );
+    Vala.Time.DateTime ? dt_iso = Vala.Time.DateTime.parse (
+        "2024-05-10T08:30:45",
+        "%Y-%m-%dT%H:%M:%S"
+    );
     assert (dt_iso != null);
     assert (dt_iso.format ("%Y-%m-%dT%H:%M:%S") == "2024-05-10T08:30:45");
 }

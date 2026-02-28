@@ -25,7 +25,7 @@ void testReaderWaitsForWriter () {
     bool reader_entered = false;
 
     rw.writeLock ();
-    Thread<void*> reader = new Thread<void*> ("reader", () => {
+    Thread<void *> reader = new Thread<void *>("reader", () => {
         rw.readLock ();
         reader_entered = true;
         rw.readUnlock ();

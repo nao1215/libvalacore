@@ -19,11 +19,11 @@ void testGet () {
     assert (SystemProperties.get ("file.separator") == "/");
     assert (SystemProperties.get ("path.separator") == ":");
 
-    string? home = SystemProperties.get ("user.home");
+    string ? home = SystemProperties.get ("user.home");
     assert (home != null);
     assert (home == Environment.get_home_dir ());
 
-    string? cwd = SystemProperties.get ("user.dir");
+    string ? cwd = SystemProperties.get ("user.dir");
     assert (cwd != null);
     assert (cwd == Environment.get_current_dir ());
 }

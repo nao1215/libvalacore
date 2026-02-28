@@ -12,15 +12,15 @@ void main (string[] args) {
 }
 
 void testCompile () {
-    Pattern? ok = Pattern.compile ("\\d+");
-    Pattern? ng = Pattern.compile ("(");
+    Pattern ? ok = Pattern.compile ("\\d+");
+    Pattern ? ng = Pattern.compile ("(");
 
     assert (ok != null);
     assert (ng == null);
 }
 
 void testMatchesAndFind () {
-    Pattern? p = Pattern.compile ("[a-z]+");
+    Pattern ? p = Pattern.compile ("[a-z]+");
     assert (p != null);
 
     assert (p.matches ("abc") == true);
@@ -30,7 +30,7 @@ void testMatchesAndFind () {
 }
 
 void testFindAll () {
-    Pattern? p = Pattern.compile ("\\d+");
+    Pattern ? p = Pattern.compile ("\\d+");
     assert (p != null);
 
     string[] matches = p.findAll ("a1b22c333");
@@ -41,7 +41,7 @@ void testFindAll () {
 }
 
 void testReplace () {
-    Pattern? p = Pattern.compile ("\\d+");
+    Pattern ? p = Pattern.compile ("\\d+");
     assert (p != null);
 
     assert (p.replaceFirst ("a1b22", "X") == "aXb22");
@@ -49,7 +49,7 @@ void testReplace () {
 }
 
 void testSplit () {
-    Pattern? p = Pattern.compile (",\\s*");
+    Pattern ? p = Pattern.compile (",\\s*");
     assert (p != null);
 
     string[] values = p.split ("a, b,c");
@@ -60,7 +60,7 @@ void testSplit () {
 }
 
 void testGroups () {
-    Pattern? p = Pattern.compile ("(\\d+)-(\\w+)");
+    Pattern ? p = Pattern.compile ("(\\d+)-(\\w+)");
     assert (p != null);
 
     string[] groups = p.groups ("12-ab");

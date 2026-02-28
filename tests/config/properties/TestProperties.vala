@@ -22,7 +22,7 @@ void testSetGetRemove () {
 }
 
 void testSaveLoad () {
-    Vala.Io.Path? tmp = Files.tempFile ("props", ".txt");
+    Vala.Io.Path ? tmp = Files.tempFile ("props", ".txt");
     assert (tmp != null);
 
     Properties props = new Properties ();
@@ -40,7 +40,7 @@ void testSaveLoad () {
 }
 
 void testLoadWithComments () {
-    Vala.Io.Path? tmp = Files.tempFile ("props-comment", ".txt");
+    Vala.Io.Path ? tmp = Files.tempFile ("props-comment", ".txt");
     assert (tmp != null);
 
     string text = "# comment\n\nfoo = bar\ninvalid-line\nz=9\n";

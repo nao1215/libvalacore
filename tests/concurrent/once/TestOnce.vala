@@ -25,9 +25,9 @@ void testMultiThread () {
     Vala.Concurrent.Once once = new Vala.Concurrent.Once ();
     int count = 0;
 
-    Thread<void*>[] workers = new Thread<void*>[10];
+    Thread<void *>[] workers = new Thread<void *>[10];
     for (int i = 0; i < workers.length; i++) {
-        workers[i] = new Thread<void*> ("worker", () => {
+        workers[i] = new Thread<void *>("worker", () => {
             once.doOnce (() => {
                 count++;
             });

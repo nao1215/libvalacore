@@ -20,22 +20,22 @@ namespace Vala.Runtime {
          */
         public new static string ? get (string key) {
             switch (key) {
-            case "line.separator":
-                return lineSeparator ();
-            case "file.separator":
-                return fileSeparator ();
-            case "path.separator":
-                return pathSeparator ();
-            case "user.home":
-                return Environment.get_home_dir ();
-            case "user.dir":
-                return Environment.get_current_dir ();
-            case "java.io.tmpdir":
-                return Environment.get_tmp_dir ();
-            case "os.name":
-                return osName ();
-            default:
-                return Environment.get_variable (key);
+                case "line.separator":
+                    return lineSeparator ();
+                case "file.separator":
+                    return fileSeparator ();
+                case "path.separator":
+                    return pathSeparator ();
+                case "user.home":
+                    return Environment.get_home_dir ();
+                case "user.dir":
+                    return Environment.get_current_dir ();
+                case "java.io.tmpdir":
+                    return Environment.get_tmp_dir ();
+                case "os.name":
+                    return osName ();
+                default:
+                    return Environment.get_variable (key);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Vala.Runtime {
         }
 
         private static string osName () {
-            string? output = null;
+            string ? output = null;
             int exitStatus = 0;
             try {
                 GLib.Process.spawn_command_line_sync ("uname -s", out output, null, out exitStatus);

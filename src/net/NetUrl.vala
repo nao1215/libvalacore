@@ -15,7 +15,7 @@ namespace Vala.Net {
          * @param url URL text.
          * @return parsed URL object or null.
          */
-        public static Url? parse (string url) {
+        public static Url ? parse (string url) {
             try {
                 GLib.Uri uri = GLib.Uri.parse (url, GLib.UriFlags.NONE);
                 return new Url.from_uri (uri);
@@ -39,7 +39,7 @@ namespace Vala.Net {
          * @return host value or empty string.
          */
         public string host () {
-            string? host = _uri.get_host ();
+            string ? host = _uri.get_host ();
             return host ?? "";
         }
 
@@ -69,7 +69,7 @@ namespace Vala.Net {
          * @return query value or empty string.
          */
         public string query () {
-            string? query = _uri.get_query ();
+            string ? query = _uri.get_query ();
             return query ?? "";
         }
 
@@ -79,7 +79,7 @@ namespace Vala.Net {
          * @return fragment value or empty string.
          */
         public string fragment () {
-            string? fragment = _uri.get_fragment ();
+            string ? fragment = _uri.get_fragment ();
             return fragment ?? "";
         }
 
