@@ -27,6 +27,18 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `isHiddenFile(Path path)` | Returns whether the path is a hidden file (starts with `.`) |
 | `makeDirs(Path path)` | Creates a directory including parent directories |
 | `makeDir(Path path)` | Creates a single directory |
+| `copy(Path src, Path dst)` | Copies a file from source to destination |
+| `move(Path src, Path dst)` | Moves (renames) a file |
+| `remove(Path path)` | Deletes a file or empty directory |
+| `readAllText(Path path)` | Reads the entire file as a string |
+| `readAllLines(Path path)` | Reads the file as a list of lines |
+| `writeText(Path path, string text)` | Writes a string to a file |
+| `appendText(Path path, string text)` | Appends a string to a file |
+| `size(Path path)` | Returns the file size in bytes |
+| `listDir(Path path)` | Lists directory entries |
+| `tempFile(string prefix, string suffix)` | Creates a temporary file |
+| `tempDir(string prefix)` | Creates a temporary directory |
+| `touch(Path path)` | Creates a file or updates its modification time |
 
 ## Vala.Io.Path
 An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
