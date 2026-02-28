@@ -287,6 +287,27 @@ A dynamic array-backed list that grows automatically. Provides O(1) indexed acce
 | `find(PredicateFunc<T> func)` | Returns an Optional with the first matching element |
 | `subList(int from, int to)` | Returns a new list with elements in [from, to) |
 
+### Vala.Collections.HashMap\<K,V\>
+A hash table-based map from keys to values. Provides O(1) average-time lookup, insertion, and deletion. Inspired by Java's HashMap and Go's map.
+
+| Method | Description |
+|---|---|
+| `HashMap(HashFunc<K>, EqualFunc<K>)` | Creates an empty HashMap with hash and equality functions |
+| `put(K key, V value)` | Associates a value with a key (overwrites if exists) |
+| `get(K key)` | Returns the value for the key, or null if not found |
+| `getOrDefault(K key, V defaultValue)` | Returns the value for the key, or the default |
+| `containsKey(K key)` | Returns whether the key exists |
+| `containsValue(V value, EqualFunc<V>)` | Returns whether the value exists |
+| `remove(K key)` | Removes the entry and returns true if found |
+| `size()` | Returns the number of entries |
+| `isEmpty()` | Returns whether the map is empty |
+| `clear()` | Removes all entries |
+| `keys()` | Returns a list of all keys |
+| `values()` | Returns a list of all values |
+| `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry |
+| `putIfAbsent(K key, V value)` | Adds only if the key is not present |
+| `merge(HashMap<K,V> other)` | Copies all entries from another map |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
