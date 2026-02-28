@@ -24,6 +24,16 @@ void main (string[] args) {
     Test.add_func ("/testTempFile", testTempFile);
     Test.add_func ("/testTempDir", testTempDir);
     Test.add_func ("/testTouch", testTouch);
+    Test.add_func ("/testReadBytes", testReadBytes);
+    Test.add_func ("/testWriteBytes", testWriteBytes);
+    Test.add_func ("/testChmod", testChmod);
+    Test.add_func ("/testChown", testChown);
+    Test.add_func ("/testLastModified", testLastModified);
+    Test.add_func ("/testCreateSymlink", testCreateSymlink);
+    Test.add_func ("/testReadSymlink", testReadSymlink);
+    Test.add_func ("/testIsSameFile", testIsSameFile);
+    Test.add_func ("/testGlob", testGlob);
+    Test.add_func ("/testDeleteRecursive", testDeleteRecursive);
     Test.run ();
 }
 
@@ -323,4 +333,242 @@ void testTouch () {
 
     /* Cleanup */
     Posix.system ("rm -f " + path);
+}
+
+void testReadBytes () {
+    string path = "/tmp/valacore/ut/test_readbytes.bin";
+    Files.writeText (new Vala.Io.Path (path), "Hello");
+
+    uint8[] ? data = Files.readBytes (new Vala.Io.Path (path));
+    assert (data != null);
+    assert (data.length == 5);
+    assert (data[0] == 'H');
+    assert (data[4] == 'o');
+
+    /* Non-existent file returns null */
+    assert (Files.readBytes (new Vala.Io.Path ("/tmp/valacore/ut/no_such")) == null);
+
+    /* Directory returns null */
+    assert (Files.readBytes (new Vala.Io.Path ("/tmp/valacore/ut")) == null);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + path);
+}
+
+void testWriteBytes () {
+    string path = "/tmp/valacore/ut/test_writebytes.bin";
+    Posix.system ("rm -f " + path);
+
+    uint8[] data = { 0x48, 0x65, 0x6C, 0x6C, 0x6F };
+    assert (Files.writeBytes (new Vala.Io.Path (path), data) == true);
+
+    /* Read back and verify */
+    string ? text = Files.readAllText (new Vala.Io.Path (path));
+    assert (text == "Hello");
+
+    /* Write empty byte array */
+    uint8[] empty = {};
+    assert (Files.writeBytes (new Vala.Io.Path (path), empty) == true);
+    assert (Files.size (new Vala.Io.Path (path)) == 0);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + path);
+}
+
+void testChmod () {
+    string path = "/tmp/valacore/ut/test_chmod.txt";
+    Files.writeText (new Vala.Io.Path (path), "chmod test");
+
+    /* Make read-only */
+    assert (Files.chmod (new Vala.Io.Path (path), 0444) == true);
+    assert (Files.canWrite (new Vala.Io.Path (path)) == false);
+
+    /* Restore write permission */
+    assert (Files.chmod (new Vala.Io.Path (path), 0644) == true);
+    assert (Files.canWrite (new Vala.Io.Path (path)) == true);
+
+    /* Make executable */
+    assert (Files.chmod (new Vala.Io.Path (path), 0755) == true);
+    assert (Files.canExec (new Vala.Io.Path (path)) == true);
+
+    /* Non-existent file returns false */
+    assert (Files.chmod (new Vala.Io.Path ("/tmp/valacore/ut/no_such"), 0644) == false);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + path);
+}
+
+void testChown () {
+    string path = "/tmp/valacore/ut/test_chown.txt";
+    Files.writeText (new Vala.Io.Path (path), "chown test");
+
+    /* Chown to current user (should succeed without root) */
+    int uid = (int) Posix.getuid ();
+    int gid = (int) Posix.getgid ();
+    assert (Files.chown (new Vala.Io.Path (path), uid, gid) == true);
+
+    /* Non-existent file returns false */
+    assert (Files.chown (new Vala.Io.Path ("/tmp/valacore/ut/no_such"), uid, gid) == false);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + path);
+}
+
+void testLastModified () {
+    string path = "/tmp/valacore/ut/test_lastmod.txt";
+    Files.writeText (new Vala.Io.Path (path), "lastmod test");
+
+    GLib.DateTime ? mtime = Files.lastModified (new Vala.Io.Path (path));
+    assert (mtime != null);
+    /* Should be a reasonable year */
+    assert (mtime.get_year () >= 2024);
+
+    /* Non-existent file returns null */
+    assert (Files.lastModified (new Vala.Io.Path ("/tmp/valacore/ut/no_such")) == null);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + path);
+}
+
+void testCreateSymlink () {
+    string target = "/tmp/valacore/ut/test_symlink_target.txt";
+    string link = "/tmp/valacore/ut/test_symlink_link.txt";
+    Posix.system ("rm -f " + target + " " + link);
+
+    Files.writeText (new Vala.Io.Path (target), "symlink target");
+
+    /* Create symlink succeeds */
+    assert (Files.createSymlink (new Vala.Io.Path (target), new Vala.Io.Path (link)) == true);
+    assert (Files.isSymbolicFile (new Vala.Io.Path (link)) == true);
+    assert (Files.readAllText (new Vala.Io.Path (link)) == "symlink target");
+
+    /* Create symlink to existing link path fails */
+    assert (Files.createSymlink (new Vala.Io.Path (target), new Vala.Io.Path (link)) == false);
+
+    /* Dangling symlink (target doesn't exist) succeeds */
+    string dangling = "/tmp/valacore/ut/test_dangling_link.txt";
+    Posix.system ("rm -f " + dangling);
+    assert (Files.createSymlink (new Vala.Io.Path ("/tmp/valacore/ut/no_such"), new Vala.Io.Path (dangling)) == true);
+    assert (Files.isSymbolicFile (new Vala.Io.Path (dangling)) == true);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + target + " " + link + " " + dangling);
+}
+
+void testReadSymlink () {
+    /* Use existing fixture symlink */
+    var target = Files.readSymlink (new Vala.Io.Path ("/tmp/valacore/ut/symbolic.txt"));
+    assert (target != null);
+
+    /* Create a new symlink and read it */
+    string src = "/tmp/valacore/ut/test_readlink_target.txt";
+    string lnk = "/tmp/valacore/ut/test_readlink_link.txt";
+    Posix.system ("rm -f " + src + " " + lnk);
+    Files.writeText (new Vala.Io.Path (src), "read link");
+    Files.createSymlink (new Vala.Io.Path (src), new Vala.Io.Path (lnk));
+
+    var result = Files.readSymlink (new Vala.Io.Path (lnk));
+    assert (result != null);
+    assert (result.toString () == src);
+
+    /* Regular file returns null */
+    assert (Files.readSymlink (new Vala.Io.Path (src)) == null);
+
+    /* Non-existent path returns null */
+    assert (Files.readSymlink (new Vala.Io.Path ("/tmp/valacore/ut/no_such")) == null);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + src + " " + lnk);
+}
+
+void testIsSameFile () {
+    string path = "/tmp/valacore/ut/test_samefile.txt";
+    Files.writeText (new Vala.Io.Path (path), "same file");
+
+    /* Same path is same file */
+    assert (Files.isSameFile (new Vala.Io.Path (path), new Vala.Io.Path (path)) == true);
+
+    /* Symlink points to same file */
+    string link = "/tmp/valacore/ut/test_samefile_link.txt";
+    Posix.system ("rm -f " + link);
+    Files.createSymlink (new Vala.Io.Path (path), new Vala.Io.Path (link));
+    assert (Files.isSameFile (new Vala.Io.Path (path), new Vala.Io.Path (link)) == true);
+
+    /* Different files are not same */
+    string other = "/tmp/valacore/ut/test_samefile_other.txt";
+    Files.writeText (new Vala.Io.Path (other), "different");
+    assert (Files.isSameFile (new Vala.Io.Path (path), new Vala.Io.Path (other)) == false);
+
+    /* Non-existent file returns false */
+    assert (Files.isSameFile (new Vala.Io.Path (path), new Vala.Io.Path ("/tmp/valacore/ut/no_such")) == false);
+
+    /* Cleanup */
+    Posix.system ("rm -f " + path + " " + link + " " + other);
+}
+
+void testGlob () {
+    string dir = "/tmp/valacore/ut/test_glob";
+    Posix.system ("rm -rf " + dir);
+    Files.makeDirs (new Vala.Io.Path (dir));
+    Files.writeText (new Vala.Io.Path (dir + "/a.txt"), "a");
+    Files.writeText (new Vala.Io.Path (dir + "/b.txt"), "b");
+    Files.writeText (new Vala.Io.Path (dir + "/c.log"), "c");
+
+    /* Match *.txt returns 2 entries */
+    var matches = Files.glob (new Vala.Io.Path (dir), "*.txt");
+    assert (matches != null);
+    assert (matches.length () == 2);
+
+    /* Match *.log returns 1 entry */
+    matches = Files.glob (new Vala.Io.Path (dir), "*.log");
+    assert (matches != null);
+    assert (matches.length () == 1);
+
+    /* Match * returns all entries */
+    matches = Files.glob (new Vala.Io.Path (dir), "*");
+    assert (matches != null);
+    assert (matches.length () == 3);
+
+    /* No match returns null (empty GLib.List is null) */
+    matches = Files.glob (new Vala.Io.Path (dir), "*.xyz");
+    assert (matches == null);
+
+    /* Non-existent directory returns null */
+    assert (Files.glob (new Vala.Io.Path ("/tmp/valacore/ut/no_such"), "*.txt") == null);
+
+    /* Empty pattern returns null */
+    assert (Files.glob (new Vala.Io.Path (dir), "") == null);
+
+    /* Cleanup */
+    Posix.system ("rm -rf " + dir);
+}
+
+void testDeleteRecursive () {
+    string dir = "/tmp/valacore/ut/test_delrec";
+    Posix.system ("rm -rf " + dir);
+
+    /* Create nested directory structure */
+    Files.makeDirs (new Vala.Io.Path (dir + "/a/b"));
+    Files.writeText (new Vala.Io.Path (dir + "/file1.txt"), "file1");
+    Files.writeText (new Vala.Io.Path (dir + "/a/file2.txt"), "file2");
+    Files.writeText (new Vala.Io.Path (dir + "/a/b/file3.txt"), "file3");
+
+    /* Recursive delete succeeds */
+    assert (Files.deleteRecursive (new Vala.Io.Path (dir)) == true);
+    assert (Files.exists (new Vala.Io.Path (dir)) == false);
+
+    /* Non-existent path returns false */
+    assert (Files.deleteRecursive (new Vala.Io.Path (dir)) == false);
+
+    /* Single file works */
+    string single = "/tmp/valacore/ut/test_delrec_single.txt";
+    Files.writeText (new Vala.Io.Path (single), "single");
+    assert (Files.deleteRecursive (new Vala.Io.Path (single)) == true);
+    assert (Files.exists (new Vala.Io.Path (single)) == false);
+
+    /* Empty directory works */
+    string emptyDir = "/tmp/valacore/ut/test_delrec_empty";
+    Files.makeDirs (new Vala.Io.Path (emptyDir));
+    assert (Files.deleteRecursive (new Vala.Io.Path (emptyDir)) == true);
+    assert (Files.exists (new Vala.Io.Path (emptyDir)) == false);
 }
