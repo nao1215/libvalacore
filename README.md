@@ -796,6 +796,16 @@ Fail-fast precondition checks for arguments and object state.
 | `checkArgument(bool cond, string message)` | Validates method arguments and aborts when invalid |
 | `checkState(bool cond, string message)` | Validates object state and aborts when invalid |
 
+### Vala.Lang.SystemInfo
+Utility methods to query host system information.
+
+| Method | Description |
+|---|---|
+| `osName()` | Returns operating system name |
+| `userHome()` | Returns user home directory |
+| `tmpDir()` | Returns temporary directory path |
+| `currentDir()` | Returns current working directory |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
