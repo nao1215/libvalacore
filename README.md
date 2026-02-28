@@ -245,6 +245,15 @@ Static utility methods for cryptographic hashes.
 | `sha256Bytes(uint8[] data)` | Returns the SHA-256 hash of bytes |
 | `sha512(string s)` | Returns the SHA-512 hash of a string |
 
+### Vala.Crypto.Hmac
+Static utility methods for keyed hash message authentication.
+
+| Method | Description |
+|---|---|
+| `sha256(string key, string message)` | Returns HMAC-SHA256 |
+| `sha512(string key, string message)` | Returns HMAC-SHA512 |
+| `verify(string expected, string actual)` | Compares two hashes in a timing-safe way |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 
