@@ -646,6 +646,33 @@ Fixed-size worker pool for executing tasks concurrently. Manages worker threads 
 | `poolSize()` | Returns the number of worker threads |
 | `queueSize()` | Returns the number of tasks waiting in the queue |
 
+### Vala.Concurrent.ThreadPool
+Generic fixed-size thread pool that integrates with `Future<T>`.
+
+| Method | Description |
+|---|---|
+| `ThreadPool(int poolSize)` | Creates a pool with the specified worker count |
+| `withDefault()` | Creates a pool sized to CPU core count |
+| `submit<T>(TaskFunc<T> task)` | Submits task and returns `Future<T>` |
+| `execute(VoidTaskFunc task)` | Executes a fire-and-forget task |
+| `invokeAll<T>(ArrayList<ThreadPoolTaskFunc<T>> tasks)` | Submits wrapped tasks and returns futures |
+| `shutdown()` | Stops accepting new tasks and waits running workers |
+| `shutdownNow()` | Requests immediate stop and drops queued tasks |
+| `awaitTermination(Duration timeout)` | Waits for worker termination with timeout |
+| `isShutdown()` | Returns whether shutdown has been requested |
+| `activeCount()` | Returns number of executing tasks |
+| `queueSize()` | Returns queued task count |
+| `global()` | Returns process-wide shared thread pool |
+| `go(VoidTaskFunc task)` | Runs task on global pool |
+
+### Vala.Concurrent.ThreadPoolTaskFunc\<T\>
+Task wrapper used by `ThreadPool.invokeAll`.
+
+| Method | Description |
+|---|---|
+| `ThreadPoolTaskFunc(TaskFunc<T> task)` | Wraps a task function |
+| `run()` | Executes wrapped task |
+
 ### Vala.Concurrent.Future\<T\>
 Represents the eventual result of an asynchronous computation.
 

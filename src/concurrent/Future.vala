@@ -88,6 +88,15 @@ namespace Vala.Concurrent {
         }
 
         /**
+         * Creates a pending future for internal producer-side completion.
+         *
+         * @return pending future.
+         */
+        internal static Future<T> pending<T> () {
+            return new Future<T> ();
+        }
+
+        /**
          * Waits until completion and returns success value.
          *
          * Returns null when this future is failed or cancelled.
@@ -523,6 +532,14 @@ namespace Vala.Concurrent {
          */
         public static Future<T> race<T> (ArrayList<Future<T> > futures) {
             return any<T> (futures);
+        }
+
+        internal void completeSuccess (owned T ? value) {
+            completeSuccessInternal ((owned) value);
+        }
+
+        internal void completeFailure (string message) {
+            completeFailureInternal (message);
         }
 
         private void completeSuccessInternal (owned T ? value) {
