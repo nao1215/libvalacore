@@ -1,45 +1,99 @@
-libvalacore is an ambitious effort to build a powerful core standard library
-for the Vala language.
+= Valacore Reference Manual =
 
-Vala has a solid GLib/GObject foundation, but lacks the kind of rich,
-batteries-included standard library that developers in Java, Go, Python,
-or OCaml take for granted. libvalacore fills that gap: it provides intuitive,
-consistent, and well-tested APIs for file I/O, collections, string processing,
-encoding, cryptography, networking, concurrency, and much more — all designed
-to feel natural in idiomatic Vala.
+libvalacore is a batteries-included core library for Vala.
+It provides practical APIs inspired by Java, Go, and modern utility libraries,
+while keeping GLib compatibility and idiomatic Vala design.
 
-Our goal is to make Vala a language where everyday programming tasks can be
-accomplished with a single import, without hunting for scattered third-party
-packages or reinventing the wheel.
+The goal is simple: reduce boilerplate for daily tasks such as file I/O,
+collections, encoding, concurrency, process execution, and configuration.
 
-== Namespaces ==
+== Design Goals ==
 
- * [[Vala.Io]] - File I/O, path, string, buffered I/O, and scanner operations
- * [[Vala.Lang]] - Language-level utilities (Objects, Os, Process, Signal)
- * [[Vala.Parser]] - Argument parsing
- * [[Vala.Collections]] - Collection types, Stream API, and functional utilities
- * [[Vala.Math]] - Mathematical functions and random number generation
- * [[Vala.Time]] - Date, time, duration, and stopwatch
- * [[Vala.Encoding]] - Base64, Hex, JSON, CSV, XML, TOML, YAML
- * [[Vala.Compress]] - Gzip and Zlib compression
- * [[Vala.Archive]] - Zip and Tar archive handling
- * [[Vala.Crypto]] - Hash, HMAC, and UUID
- * [[Vala.Net]] - HTTP client, socket, URL, and IP address
- * [[Vala.Concurrent]] - Thread pool, channel, future, mutex, and semaphore
- * [[Vala.Log]] - Structured logging
- * [[Vala.Test]] - Test assertions and benchmarking
- * [[Vala.Regex]] - Regular expression matching
- * [[Vala.Conv]] - Type conversion utilities
- * [[Vala.Config]] - Configuration file parsing (Properties, INI)
- * [[Vala.Event]] - Event emitter and listener pattern
- * [[Vala.Validation]] - Input validation
- * [[Vala.Errors]] - Error handling utilities
- * [[Vala.Unicode]] - Unicode character operations
- * [[Vala.Text]] - Template engine
- * [[Vala.Format]] - Number formatting
- * [[Vala.Runtime]] - Runtime information and system properties
+ * **Productivity first**: frequently needed tasks should be one or two API calls.
+ * **Defensive behavior**: public APIs validate inputs and return explicit failure signals (`bool`/nullable).
+ * **Consistency**: method naming and return semantics are aligned across namespaces.
+ * **Testability**: APIs are designed to be easy to unit-test and compose.
+
+== Quick Start ==
+
+Build and run tests:
+
+{{{
+meson setup build
+meson test -C build
+}}}
+
+Install:
+
+{{{
+sudo ninja -C build install
+}}}
+
+Example usage:
+
+{{{
+using Vala.Io;
+using Vala.Collections;
+
+void main () {
+    Files.writeText (new Path ("/tmp/example.txt"), "hello");
+
+    var list = new ArrayList<int> ();
+    list.add (3);
+    list.add (1);
+    list.add (2);
+    list.sort ();
+}
+}}}
+
+== Namespace Guide ==
+
+Only namespaces currently implemented in this version are listed below.
+
+ * [[Vala.Collections]] - Generic collections and utility algorithms (ArrayList, HashMap, Stream, Optional, etc.)
+ * [[Vala.Concurrent]] - Concurrency primitives (Channel, ThreadPool, Mutex, Semaphore, WaitGroup)
+ * [[Vala.Config]] - Configuration models and loaders ([[Vala.Config.Properties]])
+ * [[Vala.Conv]] - Type conversion helpers ([[Vala.Conv.Convert]])
+ * [[Vala.Crypto]] - Hash/HMAC/UUID utilities ([[Vala.Crypto.Hash]], [[Vala.Crypto.Hmac]], [[Vala.Crypto.Uuid]])
+ * [[Vala.Encoding]] - Base64/CSV/Hex/URL encoding and decoding
+ * [[Vala.Format]] - Number formatting helpers ([[Vala.Format.NumberFormat]])
+ * [[Vala.Io]] - File system, path, buffered I/O, scanner, atomic write, file lock, shell/process helpers
+ * [[Vala.Lang]] - Language-level helpers (process, environment, preconditions, random, threads)
+ * [[Vala.Log]] - Logging APIs ([[Vala.Log.Logger]], [[Vala.Log.LogLevel]])
+ * [[Vala.Math]] - Math and random APIs, plus big number value objects
+ * [[Vala.Net]] - URL and resilience primitives ([[Vala.Net.NetUrl]], [[Vala.Net.Retry]], [[Vala.Net.RateLimiter]], [[Vala.Net.CircuitBreaker]])
+ * [[Vala.Parser]] - Command-line parser ([[Vala.Parser.ArgParser]])
+ * [[Vala.Regex]] - Compiled regex wrapper ([[Vala.Regex.Pattern]])
+ * [[Vala.Runtime]] - Runtime/system property helpers ([[Vala.Runtime.SystemProperties]])
+ * [[Vala.Text]] - Text utility APIs ([[Vala.Text.Regex]])
+ * [[Vala.Time]] - Date/time and duration APIs ([[Vala.Time.DateTime]], [[Vala.Time.Duration]], [[Vala.Time.Stopwatch]])
+
+== Recommended Entry Points ==
+
+ * File operations: [[Vala.Io.Files]], [[Vala.Io.Path]]
+ * Safe updates: [[Vala.Io.AtomicFile]], [[Vala.Io.FileLock]]
+ * Command execution: [[Vala.Io.Shell]], [[Vala.Lang.Process]]
+ * Collection processing: [[Vala.Collections.ArrayList]], [[Vala.Collections.Stream]], [[Vala.Collections.Maps]]
+ * Resilience: [[Vala.Net.Retry]], [[Vala.Net.RateLimiter]], [[Vala.Net.CircuitBreaker]]
+
+== Guides ==
+
+ * [[getting-started|Getting Started]]
+ * [[io-guide|I/O and Process Guide]]
+ * [[resilience-guide|Resilience Guide]]
+
+== Documentation Notes ==
+
+Each public class and method includes Valadoc comments with:
+
+ * purpose and behavior
+ * parameter and return descriptions
+ * practical examples for common use cases
+
+The API is under active development and may evolve between releases.
 
 == Links ==
 
  * [[https://github.com/nao1215/libvalacore|GitHub Repository]]
+ * [[https://github.com/nao1215/libvalacore/blob/main/README.md|README]]
  * [[https://github.com/nao1215/libvalacore/blob/main/LICENSE|License (Apache 2.0)]]

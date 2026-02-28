@@ -1,0 +1,48 @@
+= I/O and Process Guide =
+
+This guide focuses on the [[Vala.Io]] namespace.
+
+== Safe File Writes ==
+
+Use [[Vala.Io.AtomicFile]] when data must not be partially written.
+
+{{{
+var atomic = new AtomicFile ().withBackup (true);
+atomic.write (new Path ("/tmp/state.json"), "{}\n");
+}}}
+
+== Inter-Process Locking ==
+
+Use [[Vala.Io.FileLock]] to prevent concurrent workers from entering the same critical section.
+
+{{{
+var lock = new FileLock (new Path ("/tmp/job.lock"));
+if (lock.acquireTimeout (Vala.Time.Duration.ofSeconds (5))) {
+    try {
+        // critical section
+    } finally {
+        lock.release ();
+    }
+}
+}}}
+
+== Command Execution ==
+
+[[Vala.Io.Shell]] captures output and exit status in one object.
+
+{{{
+ShellResult res = Shell.pipe ({ "printf 'a\\nb\\n'", "wc -l" });
+if (res.isSuccess ()) {
+    print ("lines=%s\n", res.stdout ().strip ());
+}
+}}}
+
+== Path and Files ==
+
+[[Vala.Io.Path]] is a value object. Prefer composing paths instead of string concatenation.
+
+{{{
+var root = new Path ("/tmp/app");
+var config = root.resolve ("config.ini");
+Files.writeText (config, "mode=dev\n");
+}}}

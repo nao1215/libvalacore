@@ -1,0 +1,86 @@
+= Getting Started =
+
+This page provides practical usage patterns for libvalacore.
+
+== 1. File I/O ==
+
+{{{
+using Vala.Io;
+
+void main () {
+    var path = new Path ("/tmp/app.conf");
+
+    Files.writeText (path, "name=demo\n");
+    string? content = Files.readAllText (path);
+
+    if (content != null) {
+        print ("%s", content);
+    }
+}
+}}}
+
+== 2. Collections ==
+
+{{{
+using Vala.Collections;
+
+void main () {
+    var users = new ArrayList<string> ();
+    users.add ("alice");
+    users.add ("bob");
+    users.add ("alice");
+
+    var unique = Lists.distinct<string> (users);
+    assert (unique.size () == 2);
+}
+}}}
+
+== 3. Process and Shell ==
+
+{{{
+using Vala.Io;
+
+void main () {
+    ShellResult result = Shell.exec ("echo hello");
+    if (result.isSuccess ()) {
+        print ("%s", result.stdout ());
+    }
+}
+}}}
+
+== 4. Retry and Rate Limit ==
+
+{{{
+using Vala.Net;
+using Vala.Time;
+
+void main () {
+    var limiter = new RateLimiter (10).withBurst (20);
+    var retry = Retry.networkDefault ()
+        .withMaxAttempts (3)
+        .withFixedDelay (Duration.ofSeconds (1));
+
+    bool ok = retry.retry (() => {
+        if (!limiter.allow ()) {
+            return false;
+        }
+        return true;
+    });
+
+    print ("ok=%s\n", ok.to_string ());
+}
+}}}
+
+== 5. Atomic File Update ==
+
+{{{
+using Vala.Io;
+
+void main () {
+    var atomic = new AtomicFile ()
+        .withBackup (true)
+        .backupSuffix (".bak");
+
+    atomic.write (new Path ("/tmp/settings.ini"), "enabled=true\n");
+}
+}}}
