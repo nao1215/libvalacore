@@ -65,6 +65,7 @@ valacore_sources = files([
   'lang/Threads.vala',
   'log/LogLevel.vala',
   'log/Logger.vala',
+  'math/BigDecimal.vala',
   'math/BigInteger.vala',
   'math/Math.vala',
   'math/Random.vala',
