@@ -426,6 +426,27 @@ A fixed-size or dynamically growing set of bits with bitwise operations. Inspire
 | `toString()` | Returns string representation e.g. `{0, 3, 7}` |
 | `clearAll()` | Sets all bits to 0 |
 
+### Vala.Collections.TreeMap\<K,V\>
+A sorted map backed by a binary search tree. Keys are ordered by a comparison function. Inspired by Java's TreeMap.
+
+| Method | Description |
+|---|---|
+| `TreeMap(ComparatorFunc<K>)` | Creates an empty TreeMap with comparator |
+| `put(K key, V value)` | Associates the value with the key |
+| `get(K key)` | Returns the value for the key |
+| `containsKey(K key)` | Returns whether the key exists |
+| `remove(K key)` | Removes the entry with the key |
+| `firstKey()` | Returns the smallest key |
+| `lastKey()` | Returns the largest key |
+| `floorKey(K key)` | Returns the greatest key <= the given key |
+| `ceilingKey(K key)` | Returns the smallest key >= the given key |
+| `subMap(K from, K to)` | Returns entries in range [from, to) |
+| `size()` | Returns the number of entries |
+| `isEmpty()` | Returns whether the map is empty |
+| `clear()` | Removes all entries |
+| `keys()` | Returns all keys in sorted order |
+| `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry in key order |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
