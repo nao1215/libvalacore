@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 bufferedwriter_test_sources = files(
   './TestBufferedWriter.vala'
 )

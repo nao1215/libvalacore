@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 queue_test_sources = files(
   './TestQueue.vala'
 )

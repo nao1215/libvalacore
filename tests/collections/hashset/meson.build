@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 hashset_test_sources = files(
   './TestHashSet.vala'
 )

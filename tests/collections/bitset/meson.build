@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 bitset_test_sources = files(
   './TestBitSet.vala'
 )

@@ -30,13 +30,12 @@ EXIT_CODE=0
 
 for file in ${VALA_FILES}; do
     if [ "${CHECK_MODE}" = true ]; then
-        diff <(uncrustify -c "${CONFIG}" -l VALA -f "${file}") "${file}" > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
+        if ! diff <(uncrustify -c "${CONFIG}" -l VALA -f "${file}" 2>/dev/null) "${file}" > /dev/null 2>&1; then
             echo "Format diff: ${file}"
             EXIT_CODE=1
         fi
     else
-        uncrustify -c "${CONFIG}" -l VALA --no-backup "${file}"
+        uncrustify -c "${CONFIG}" -l VALA --no-backup "${file}" 2>/dev/null
     fi
 done
 

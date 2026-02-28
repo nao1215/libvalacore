@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 priorityqueue_test_sources = files(
   './TestPriorityQueue.vala'
 )

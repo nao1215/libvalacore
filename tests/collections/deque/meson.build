@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 deque_test_sources = files(
   './TestDeque.vala'
 )

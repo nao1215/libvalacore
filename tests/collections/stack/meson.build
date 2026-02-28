@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 stack_test_sources = files(
   './TestStack.vala'
 )

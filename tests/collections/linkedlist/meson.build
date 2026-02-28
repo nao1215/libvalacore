@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 linkedlist_test_sources = files(
   './TestLinkedList.vala'
 )

@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 argparser_test_sources = files(
   './TestArgParser.vala'
 )

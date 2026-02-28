@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 treemap_test_sources = files(
   './TestTreeMap.vala'
 )

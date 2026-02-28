@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 arraylist_test_sources = files(
   './TestArrayList.vala'
 )

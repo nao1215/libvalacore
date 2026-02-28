@@ -207,6 +207,268 @@ Static utility methods for string manipulation. All methods are null-safe.
 | `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
 | `wrap(string? s, int width)` | Wraps at specified width |
 
+### Vala.Text.Regex
+Static utility methods for regular expressions.
+
+| Method | Description |
+|---|---|
+| `matches(string s, string pattern)` | Returns true when the pattern matches |
+| `replaceAll(string s, string pattern, string repl)` | Replaces all matches |
+| `split(string s, string pattern)` | Splits text by regex pattern |
+
+### Vala.Regex.Pattern
+Compiled regular expression wrapper for repeated matching and replacements.
+
+| Method | Description |
+|---|---|
+| `compile(string pattern)` | Compiles a regex pattern (`null` on invalid pattern) |
+| `matches(string input)` | Returns true when the entire input matches |
+| `find(string input)` | Returns true when any match exists |
+| `findAll(string input)` | Returns all matched substrings |
+| `replaceFirst(string input, string replacement)` | Replaces the first match |
+| `replaceAll(string input, string replacement)` | Replaces all matches |
+| `split(string input)` | Splits input by the pattern |
+| `groups(string input)` | Returns capture groups from the first match |
+
+### Vala.Time.DateTime
+Immutable value object for date-time operations.
+
+| Method | Description |
+|---|---|
+| `now()` | Returns current local date-time |
+| `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components |
+| `parse(string s, string format)` | Parses text using `%Y-%m-%d %H:%M:%S` or `%Y-%m-%dT%H:%M:%S` (returns `null` for unsupported formats) |
+| `format(string format)` | Formats with strftime format |
+| `year()` / `month()` / `day()` | Returns date components |
+| `hour()` / `minute()` / `second()` | Returns time components |
+| `dayOfWeek()` | Returns day of week (`1`=Mon, `7`=Sun) |
+| `plusDays(int days)` | Returns shifted date-time by days |
+| `plusHours(int hours)` | Returns shifted date-time by hours |
+| `minusDays(int days)` | Returns shifted date-time by negative days |
+| `isBefore(DateTime other)` | Returns whether this is before other |
+| `isAfter(DateTime other)` | Returns whether this is after other |
+| `toUnixTimestamp()` | Returns UNIX timestamp |
+| `fromUnixTimestamp(int64 ts)` | Creates date-time from UNIX timestamp |
+| `diff(DateTime other)` | Returns difference as `Duration` |
+
+Examples: `DateTime.parse ("2026-02-28 10:30:00", "%Y-%m-%d %H:%M:%S")`, `DateTime.parse ("2026-02-28T10:30:00", "%Y-%m-%dT%H:%M:%S")`.
+
+### Vala.Time.Duration
+Immutable value object that represents a duration.
+
+| Method | Description |
+|---|---|
+| `ofSeconds(int64 secs)` | Creates duration from seconds |
+| `ofMinutes(int64 mins)` | Creates duration from minutes |
+| `ofHours(int64 hours)` | Creates duration from hours |
+| `ofDays(int64 days)` | Creates duration from days |
+| `toSeconds()` | Returns duration in seconds |
+| `toMillis()` | Returns duration in milliseconds |
+| `plus(Duration other)` | Returns sum of durations |
+| `minus(Duration other)` | Returns difference of durations |
+| `toString()` | Returns human-readable string (e.g. `2h30m`) |
+
+### Vala.Time.Stopwatch
+Mutable stopwatch for elapsed-time measurement.
+
+| Method | Description |
+|---|---|
+| `start()` | Starts measurement |
+| `stop()` | Stops measurement |
+| `reset()` | Resets elapsed time to zero |
+| `elapsed()` | Returns elapsed time as `Duration` |
+| `elapsedMillis()` | Returns elapsed milliseconds |
+
+### Vala.Math.Math
+Static utility methods for mathematics.
+
+| Method | Description |
+|---|---|
+| `abs(double x)` | Returns absolute value |
+| `max(double a, double b)` | Returns larger value |
+| `min(double a, double b)` | Returns smaller value |
+| `clamp(double x, double lo, double hi)` | Clamps value into `[lo, hi]` |
+| `floor(double x)` | Returns floor value |
+| `ceil(double x)` | Returns ceil value |
+| `round(double x)` | Returns rounded value |
+| `pow(double base, double exp)` | Returns base raised to exponent |
+| `sqrt(double x)` | Returns square root |
+| `log(double x)` | Returns natural logarithm |
+| `log10(double x)` | Returns base-10 logarithm |
+| `sin(double x)` | Returns sine |
+| `cos(double x)` | Returns cosine |
+| `tan(double x)` | Returns tangent |
+| `gcd(int64 a, int64 b)` | Returns greatest common divisor |
+| `lcm(int64 a, int64 b)` | Returns least common multiple |
+| `isPrime(int64 n)` | Returns whether n is prime |
+| `factorial(int n)` | Returns factorial |
+| `PI` | Circle constant pi |
+| `E` | Euler's number |
+
+### Vala.Math.Random
+Static utility methods for random values.
+
+| Method | Description |
+|---|---|
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
+| `nextIntRange(int min, int max)` | Returns random integer in `[min, max)` |
+| `nextDouble()` | Returns random double in `[0.0, 1.0)` |
+| `nextBool()` | Returns random boolean |
+| `shuffle<T>(T[] array)` | Shuffles array in place |
+| `choice<T>(T[] array)` | Returns random element (null for empty array) |
+
+### Vala.Format.NumberFormat
+Number formatting utilities for display-friendly output.
+
+| Method | Description |
+|---|---|
+| `formatInt(int64 n)` | Formats integer with thousand separators |
+| `formatDouble(double d, int precision)` | Formats floating point with separators and precision |
+| `formatPercent(double d)` | Formats ratio as percent text |
+| `formatCurrency(double d, string symbol)` | Formats value as currency |
+| `formatBytes(int64 bytes)` | Formats bytes as human-readable units |
+| `formatDuration(Duration d)` | Formats duration as human-readable text |
+| `ordinal(int n)` | Formats ordinal text (`1st`, `2nd`, `3rd`, ...) |
+
+### Vala.Net.Url
+Immutable URL value object.
+
+| Method | Description |
+|---|---|
+| `parse(string url)` | Parses URL text (returns null when invalid) |
+| `scheme()` | Returns URL scheme |
+| `host()` | Returns host |
+| `port()` | Returns port number (`-1` when not specified) |
+| `path()` | Returns path |
+| `query()` | Returns query string |
+| `fragment()` | Returns fragment |
+| `toString()` | Returns normalized URL string |
+
+### Vala.Concurrent.Mutex
+Mutex wrapper with utility methods.
+
+| Method | Description |
+|---|---|
+| `lock()` | Acquires lock |
+| `unlock()` | Releases lock |
+| `tryLock()` | Tries to acquire lock without blocking; returns `true` if acquired |
+| `withLock(WithLockFunc func)` | Runs a callback while holding lock |
+
+### Vala.Concurrent.RWMutex
+Reader-writer mutex.
+
+| Method | Description |
+|---|---|
+| `readLock()` | Acquires read lock |
+| `readUnlock()` | Releases read lock |
+| `writeLock()` | Acquires write lock |
+| `writeUnlock()` | Releases write lock |
+
+### Vala.Concurrent.Once
+Executes a function at most once.
+
+| Method | Description |
+|---|---|
+| `doOnce(OnceFunc func)` | Runs callback only once, even across threads |
+
+### Vala.Concurrent.WaitGroup
+Waits for a collection of tasks to complete.
+
+| Method | Description |
+|---|---|
+| `add(int delta)` | Adds delta to task counter |
+| `done()` | Decrements task counter by one |
+| `wait()` | Blocks until counter reaches zero |
+
+### Vala.Concurrent.Semaphore
+Counting semaphore.
+
+| Method | Description |
+|---|---|
+| `Semaphore(int permits)` | Creates with initial permit count |
+| `acquire()` | Acquires permit, blocking if necessary |
+| `tryAcquire()` | Tries non-blocking permit acquisition |
+| `release()` | Releases permit |
+| `availablePermits()` | Returns currently available permits |
+
+### Vala.Concurrent.CountDownLatch
+One-shot countdown latch for synchronization.
+
+| Method | Description |
+|---|---|
+| `CountDownLatch(int count)` | Creates with initial count |
+| `countDown()` | Decrements count by one |
+| `await()` | Blocks until count reaches zero |
+| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
+| `getCount()` | Returns current count |
+
+### Vala.Encoding.Base64
+Static utility methods for Base64 encoding and decoding.
+
+| Method | Description |
+|---|---|
+| `encode(uint8[] data)` | Encodes bytes to Base64 text |
+| `decode(string encoded)` | Decodes Base64 text to bytes |
+| `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
+| `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
+
+### Vala.Encoding.Hex
+Static utility methods for hexadecimal encoding and decoding.
+
+| Method | Description |
+|---|---|
+| `encode(uint8[] data)` | Encodes bytes to lower-case hexadecimal text |
+| `decode(string hex)` | Decodes hexadecimal text to bytes |
+
+### Vala.Encoding.Url
+Static utility methods for URL percent-encoding.
+
+| Method | Description |
+|---|---|
+| `encode(string s)` | Encodes a URL component with percent-encoding |
+| `decode(string s)` | Decodes a percent-encoded URL component |
+
+### Vala.Crypto.Hash
+Static utility methods for cryptographic hashes.
+
+| Method | Description |
+|---|---|
+| `md5(string s)` | Returns the MD5 hash of a string (legacy/checksum use only; not secure) |
+| `md5Bytes(uint8[] data)` | Returns the MD5 hash of bytes (legacy/checksum use only; not secure) |
+| `sha1(string s)` | Returns the SHA-1 hash of a string (legacy compatibility only; prefer SHA-256/SHA-512) |
+| `sha256(string s)` | Returns the SHA-256 hash of a string |
+| `sha256Bytes(uint8[] data)` | Returns the SHA-256 hash of bytes |
+| `sha512(string s)` | Returns the SHA-512 hash of a string |
+
+### Vala.Crypto.Hmac
+Static utility methods for keyed hash message authentication.
+
+| Method | Description |
+|---|---|
+| `sha256(string key, string message)` | Returns HMAC-SHA256 |
+| `sha512(string key, string message)` | Returns HMAC-SHA512 |
+| `verify(string expected, string actual)` | Compares two hashes in a timing-safe way |
+
+### Vala.Crypto.Uuid
+Immutable UUID value object.
+
+| Method | Description |
+|---|---|
+| `v4()` | Generates a random UUID v4 |
+| `parse(string s)` | Parses UUID text and returns null for invalid input |
+| `toString()` | Returns the canonical UUID string |
+
+### Vala.Collections.Arrays
+Static utility methods for `int[]`.
+
+| Method | Description |
+|---|---|
+| `sort(int[] arr)` | Sorts in ascending order |
+| `binarySearch(int[] arr, int key)` | Binary search in sorted array |
+| `copyOf(int[] arr, int newLen)` | Copies array with new length |
+| `fill(int[] arr, int val)` | Fills all elements with value |
+| `equals(int[] a, int[] b)` | Returns whether arrays are equal |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 
@@ -447,6 +709,71 @@ A sorted map backed by a binary search tree. Keys are ordered by a comparison fu
 | `keys()` | Returns all keys in sorted order |
 | `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry in key order |
 
+## Vala.Config.Properties
+Java-like key-value configuration file utility.
+
+| Method | Description |
+|---|---|
+| `load(Path path)` | Loads properties from file |
+| `save(Path path)` | Saves properties to file |
+| `get(string key)` | Returns value by key |
+| `getOrDefault(string key, string defaultValue)` | Returns value or fallback |
+| `set(string key, string value)` | Sets key-value pair |
+| `remove(string key)` | Removes key |
+| `keys()` | Returns all keys |
+| `size()` | Returns number of entries |
+
+## Vala.Conv.Convert
+Type conversion utilities similar to Go's `strconv`.
+
+| Method | Description |
+|---|---|
+| `toInt(string s)` | Converts text to `int` (`null` on parse failure) |
+| `toInt64(string s)` | Converts text to `int64` (`null` on parse failure) |
+| `toDouble(string s)` | Converts text to `double` (`null` on parse failure) |
+| `toBool(string s)` | Converts text to `bool` (`true/false/1/0`, else `null`) |
+| `intToString(int n)` | Converts `int` to string |
+| `doubleToString(double d, int precision)` | Converts `double` with fixed precision |
+| `boolToString(bool b)` | Converts bool to `"true"` / `"false"` |
+| `intToHex(int n)` | Converts `int` to hexadecimal string |
+| `intToOctal(int n)` | Converts `int` to octal string |
+| `intToBinary(int n)` | Converts `int` to binary string |
+
+## Vala.Log.Logger
+Named logger with level filtering and pluggable handlers.
+
+| Method | Description |
+|---|---|
+| `getLogger(string name)` | Returns a shared logger instance for the name |
+| `setLevel(LogLevel level)` | Sets the minimum level to output |
+| `addHandler(LogHandler handler)` | Registers a handler callback |
+| `debug(string msg)` | Logs at DEBUG level |
+| `info(string msg)` | Logs at INFO level |
+| `warn(string msg)` | Logs at WARN level |
+| `error(string msg)` | Logs at ERROR level |
+
+## Vala.Log.LogLevel
+Log level enum for filtering logger output.
+
+| Value | Description |
+|---|---|
+| `DEBUG` | Detailed debug information |
+| `INFO` | General information |
+| `WARN` | Warnings and recoverable issues |
+| `ERROR` | Errors and failures |
+
+## Vala.Runtime.SystemProperties
+System property utility methods similar to Java `System` properties.
+
+| Method | Description |
+|---|---|
+| `get(string key)` | Returns known system property or environment value |
+| `lineSeparator()` | Returns line separator |
+| `fileSeparator()` | Returns file separator |
+| `pathSeparator()` | Returns path separator |
+| `nanoTime()` | Returns monotonic time in nanoseconds |
+| `currentTimeMillis()` | Returns current UNIX time in milliseconds |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
@@ -463,6 +790,63 @@ Operating system interface methods.
 | `get_env(string env)` | Returns the value of an environment variable (null if not set) |
 | `cwd()` | Returns the current working directory |
 | `chdir(string path)` | Changes the current working directory |
+
+### Vala.Lang.Process
+Wrapper for external process execution.
+
+| Method | Description |
+|---|---|
+| `exec(string command)` | Executes command synchronously (`null` on spawn failure) |
+| `execAsync(string command)` | Starts command asynchronously (`null` on spawn failure) |
+| `exitCode()` | Returns process exit code (`< 0` means terminated by signal, e.g., `-9`) |
+| `stdout()` | Returns captured stdout |
+| `stderr()` | Returns captured stderr |
+| `waitFor()` | Waits for process completion and captures stdout/stderr (`false` on wait/IO failure) |
+| `kill()` | Forcefully exits process (`false` only when process is missing) |
+
+Recommended failure checks: verify return value from `exec`/`execAsync`, call `waitFor()` for async runs, then inspect `exitCode()` and `stderr()`.
+
+### Vala.Lang.Preconditions
+Fail-fast precondition checks for arguments and object state.
+
+| Method | Description |
+|---|---|
+| `checkArgument(bool cond, string message)` | Validates method arguments and terminates the process immediately when invalid |
+| `checkState(bool cond, string message)` | Validates object state and terminates the process immediately when invalid |
+
+### Vala.Lang.SystemInfo
+Utility methods to query host system information.
+
+| Method | Description |
+|---|---|
+| `osName()` | Returns operating system name |
+| `userHome()` | Returns user home directory |
+| `tmpDir()` | Returns temporary directory path |
+| `currentDir()` | Returns current working directory |
+
+### Vala.Lang.SystemEnv
+Environment variable helper methods.
+
+| Method | Description |
+|---|---|
+| `get(string key)` | Returns environment variable value |
+| `set(string key, string value)` | Sets environment variable value |
+
+### Vala.Lang.StringEscape
+String escaping utilities for HTML, JSON, and XML contexts.
+
+| Method | Description |
+|---|---|
+| `escapeHtml(string s)` | Escapes HTML special characters |
+| `escapeJson(string s)` | Escapes JSON special characters |
+| `escapeXml(string s)` | Escapes XML special characters |
+
+### Vala.Lang.Threads
+Thread utility methods.
+
+| Method | Description |
+|---|---|
+| `sleepMillis(int ms)` | Suspends current thread for milliseconds |
 
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
