@@ -2,7 +2,15 @@ namespace Vala.Lang {
     /**
      * Utility methods for precondition checks.
      *
-     * Methods in this class fail-fast when a condition is violated.
+     * Methods in this class fail-fast when a condition is violated. Use these
+     * checks for programmer errors (invalid arguments or illegal state), not
+     * for recoverable runtime conditions.
+     *
+     * Example:
+     * {{{
+     *     Preconditions.checkArgument (port > 0, "port must be positive");
+     *     Preconditions.checkState (is_initialized, "not initialized");
+     * }}}
      */
     public class Preconditions : GLib.Object {
         private static void validate (bool cond, string message, string defaultMessage) {

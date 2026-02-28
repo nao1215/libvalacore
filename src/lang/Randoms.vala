@@ -1,6 +1,18 @@
 namespace Vala.Lang {
     /**
      * Random utility methods.
+     *
+     * This class offers common random operations for quick application logic:
+     * bounded integers, doubles, and in-place array shuffling.
+     *
+     * Example:
+     * {{{
+     *     int id = Randoms.nextInt (1000);
+     *     double ratio = Randoms.nextDouble ();
+     *
+     *     int[] values = { 1, 2, 3, 4 };
+     *     Randoms.shuffle<int> (values);
+     * }}}
      */
     public class Randoms : GLib.Object {
         /**

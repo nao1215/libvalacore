@@ -1,6 +1,16 @@
 namespace Vala.Io {
     /**
      * Console utility methods.
+     *
+     * Console provides simple terminal-aware input behavior such as TTY
+     * detection and password prompt handling without echo.
+     *
+     * Example:
+     * {{{
+     *     if (Console.isTTY ()) {
+     *         string? password = Console.readPassword ();
+     *     }
+     * }}}
      */
     public class Console : GLib.Object {
         /**

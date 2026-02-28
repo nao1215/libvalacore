@@ -1,6 +1,15 @@
 namespace Vala.Lang {
     /**
      * String escaping utilities.
+     *
+     * Use this class when rendering user input in formats where reserved
+     * characters must be escaped (HTML, JSON, XML).
+     *
+     * Example:
+     * {{{
+     *     string html = StringEscape.escapeHtml ("<b>safe</b>");
+     *     string json = StringEscape.escapeJson ("line1\nline2");
+     * }}}
      */
     public class StringEscape : GLib.Object {
         /**

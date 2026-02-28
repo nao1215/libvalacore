@@ -6,6 +6,17 @@ namespace Vala.Concurrent {
 
     /**
      * Mutex wrapper with utility methods.
+     *
+     * This class wraps GLib.Mutex and provides a safer withLock() helper to
+     * avoid unlock leaks when exceptions or early returns happen.
+     *
+     * Example:
+     * {{{
+     *     var mutex = new Mutex ();
+     *     mutex.withLock (() => {
+     *         // critical section
+     *     });
+     * }}}
      */
     public class Mutex : GLib.Object {
         private GLib.Mutex _mutex;

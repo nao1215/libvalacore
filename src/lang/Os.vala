@@ -1,7 +1,18 @@
 using Posix;
 namespace Vala.Lang {
     /**
-     * Os class is operating system interfaces.
+     * Operating-system utility methods.
+     *
+     * Os provides simple wrappers for frequently used environment and working
+     * directory operations. These helpers are convenient in CLI tools and
+     * scripts where process context must be inspected or changed.
+     *
+     * Example:
+     * {{{
+     *     string? oldCwd = Os.cwd ();
+     *     Os.chdir ("/tmp");
+     *     string? path = Os.get_env ("PATH");
+     * }}}
      */
     public class Os : GLib.Object {
         /**

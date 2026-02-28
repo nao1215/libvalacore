@@ -11,6 +11,16 @@ namespace Vala.Lang {
 
     /**
      * Utilities for registering callbacks executed at process shutdown.
+     *
+     * Hooks are executed in reverse registration order (LIFO), matching common
+     * stack-style cleanup semantics.
+     *
+     * Example:
+     * {{{
+     *     ShutdownHooks.addHook (() => {
+     *         print ("flush logs\n");
+     *     });
+     * }}}
      */
     public class ShutdownHooks : GLib.Object {
         private static GLib.Mutex _mutex;

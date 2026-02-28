@@ -1,6 +1,15 @@
 namespace Vala.Lang {
     /**
      * System information helper methods.
+     *
+     * This class collects host-level process context such as OS name, home
+     * directory, temporary directory, and current directory.
+     *
+     * Example:
+     * {{{
+     *     print ("os=%s\n", SystemInfo.osName ());
+     *     print ("home=%s\n", SystemInfo.userHome ());
+     * }}}
      */
     public class SystemInfo : GLib.Object {
         /**

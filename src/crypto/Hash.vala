@@ -1,6 +1,16 @@
 namespace Vala.Crypto {
     /**
      * Static utility methods for cryptographic hashes.
+     *
+     * This class provides one-shot digest helpers that return lowercase
+     * hexadecimal strings. Prefer SHA-256/SHA-512 for security-sensitive use
+     * cases; MD5/SHA-1 are kept for compatibility and non-security checksums.
+     *
+     * Example:
+     * {{{
+     *     string digest = Hash.sha256 ("payload");
+     *     print ("%s\n", digest);
+     * }}}
      */
     public class Hash : GLib.Object {
         /**

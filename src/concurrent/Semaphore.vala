@@ -1,6 +1,20 @@
 namespace Vala.Concurrent {
     /**
      * Counting semaphore.
+     *
+     * Semaphore controls concurrent access with permit counters. acquire()
+     * blocks when no permits are available; release() returns a permit.
+     *
+     * Example:
+     * {{{
+     *     var sem = new Semaphore (3);
+     *     sem.acquire ();
+     *     try {
+     *         // bounded concurrency section
+     *     } finally {
+     *         sem.release ();
+     *     }
+     * }}}
      */
     public class Semaphore : GLib.Object {
         private GLib.Mutex _mutex;

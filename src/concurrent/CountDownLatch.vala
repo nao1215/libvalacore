@@ -1,6 +1,17 @@
 namespace Vala.Concurrent {
     /**
      * Countdown latch for one-shot synchronization.
+     *
+     * CountDownLatch starts with a fixed counter. Worker threads call
+     * countDown(), and waiting thread(s) block in await() until the counter
+     * reaches zero.
+     *
+     * Example:
+     * {{{
+     *     var latch = new CountDownLatch (2);
+     *     // Two workers call latch.countDown()
+     *     latch.@await ();
+     * }}}
      */
     public class CountDownLatch : GLib.Object {
         private GLib.Mutex _mutex;

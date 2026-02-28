@@ -1,6 +1,15 @@
 namespace Vala.Math {
     /**
      * Static utility methods for random values.
+     *
+     * Provides convenience generators for primitive random values and helper
+     * operations such as in-place shuffle and random choice.
+     *
+     * Example:
+     * {{{
+     *     int x = Random.nextIntRange (10, 20);
+     *     bool coin = Random.nextBool ();
+     * }}}
      */
     public class Random : GLib.Object {
         /**

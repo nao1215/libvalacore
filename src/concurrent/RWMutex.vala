@@ -1,6 +1,17 @@
 namespace Vala.Concurrent {
     /**
      * Reader-writer mutex.
+     *
+     * RWMutex allows concurrent readers while still supporting exclusive
+     * writers. Use readLock()/readUnlock() for read-only sections and
+     * writeLock()/writeUnlock() for mutations.
+     *
+     * Example:
+     * {{{
+     *     var rw = new RWMutex ();
+     *     rw.readLock ();
+     *     rw.readUnlock ();
+     * }}}
      */
     public class RWMutex : GLib.Object {
         private GLib.RWLock _lock;

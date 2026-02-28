@@ -1,6 +1,17 @@
 namespace Vala.Concurrent {
     /**
      * Waits for a collection of tasks to complete.
+     *
+     * WaitGroup tracks in-flight task count via add()/done() and blocks with
+     * wait() until all tasks complete.
+     *
+     * Example:
+     * {{{
+     *     var wg = new WaitGroup ();
+     *     wg.add (2);
+     *     // workers call wg.done ()
+     *     wg.wait ();
+     * }}}
      */
     public class WaitGroup : GLib.Object {
         private GLib.Mutex _mutex;

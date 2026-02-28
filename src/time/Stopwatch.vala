@@ -1,6 +1,18 @@
 namespace Vala.Time {
     /**
      * Mutable stopwatch for elapsed-time measurement.
+     *
+     * Stopwatch measures elapsed monotonic time across start/stop intervals.
+     * Repeated start/stop calls accumulate elapsed duration until reset().
+     *
+     * Example:
+     * {{{
+     *     var sw = new Stopwatch ();
+     *     sw.start ();
+     *     Posix.usleep (50000);
+     *     sw.stop ();
+     *     print ("elapsed=%" + int64.FORMAT + "ms\n", sw.elapsedMillis ());
+     * }}}
      */
     public class Stopwatch : GLib.Object {
         private int64 _start_us;
