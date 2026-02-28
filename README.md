@@ -285,6 +285,17 @@ Immutable value object for date-time operations.
 
 Examples: `DateTime.parse ("2026-02-28 10:30:00", "%Y-%m-%d %H:%M:%S")`, `DateTime.parse ("2026-02-28T10:30:00", "%Y-%m-%dT%H:%M:%S")`.
 
+### Vala.Time.Dates
+Static date-time helper methods.
+
+| Method | Description |
+|---|---|
+| `now()` | Returns current local date-time |
+| `parse(string s, string fmt)` | Parses text into `DateTime` (`null` on failure) |
+| `format(DateTime t, string fmt)` | Formats a `DateTime` with strftime format |
+| `addDays(DateTime t, int days)` | Returns a new `DateTime` shifted by days |
+| `isLeapYear(int year)` | Returns whether the year is leap year |
+
 ### Vala.Time.Duration
 Immutable value object that represents a duration.
 
