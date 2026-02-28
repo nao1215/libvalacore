@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<book xmlns="http://www.devhelp.net/book" title="Valacore Reference Manual" language="vala" name="Valacore" version="" author="" link="index.htm">
+  <chapters><sub name="Vala" link="Vala.html"><sub name="Io" link="Vala.Io.html"><sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub>
+        <sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub><sub name="Files" link="Vala.Io.Files.html"></sub>
+        <sub name="Path" link="Vala.Io.Path.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
+        <sub name="StringJoiner" link="Vala.Io.StringJoiner.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
+      <sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html"></sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub>
+      </sub><sub name="Parser" link="Vala.Parser.html"><sub name="ArgParser" link="Vala.Parser.ArgParser.html">
+          <sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub></sub>
+  </chapters><functions><keyword type="function" name="Vala.Io.BufferedReader.readLine" link="Vala.Io.BufferedReader.readLine.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.readChar" link="Vala.Io.BufferedReader.readChar.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.readAll" link="Vala.Io.BufferedReader.readAll.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.hasNext" link="Vala.Io.BufferedReader.hasNext.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.close" link="Vala.Io.BufferedReader.close.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.fromFile" link="Vala.Io.BufferedReader.fromFile.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.fromString" link="Vala.Io.BufferedReader.fromString.html"/>
+    <keyword type="" name="Vala.Io.BufferedReader" link="Vala.Io.BufferedReader.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.write" link="Vala.Io.BufferedWriter.write.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.writeLine" link="Vala.Io.BufferedWriter.writeLine.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.newLine" link="Vala.Io.BufferedWriter.newLine.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.flush" link="Vala.Io.BufferedWriter.flush.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.close" link="Vala.Io.BufferedWriter.close.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.fromFile" link="Vala.Io.BufferedWriter.fromFile.html"/>
+    <keyword type="function" name="Vala.Io.BufferedWriter.fromFileAppend" link="Vala.Io.BufferedWriter.fromFileAppend.html"/>
+    <keyword type="" name="Vala.Io.BufferedWriter" link="Vala.Io.BufferedWriter.html"/>
+    <keyword type="function" name="Vala.Io.Files.makeDir" link="Vala.Io.Files.makeDir.html"/>
+    <keyword type="function" name="Vala.Io.Files.Files" link="Vala.Io.Files.Files.html"/>
+    <keyword type="function" name="Vala.Io.Files.isFile" link="Vala.Io.Files.isFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.isDir" link="Vala.Io.Files.isDir.html"/>
+    <keyword type="function" name="Vala.Io.Files.exists" link="Vala.Io.Files.exists.html"/>
+    <keyword type="function" name="Vala.Io.Files.canRead" link="Vala.Io.Files.canRead.html"/>
+    <keyword type="function" name="Vala.Io.Files.canWrite" link="Vala.Io.Files.canWrite.html"/>
+    <keyword type="function" name="Vala.Io.Files.canExec" link="Vala.Io.Files.canExec.html"/>
+    <keyword type="function" name="Vala.Io.Files.isSymbolicFile" link="Vala.Io.Files.isSymbolicFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.isHiddenFile" link="Vala.Io.Files.isHiddenFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.makeDirs" link="Vala.Io.Files.makeDirs.html"/>
+    <keyword type="function" name="Vala.Io.Files.copy" link="Vala.Io.Files.copy.html"/>
+    <keyword type="function" name="Vala.Io.Files.move" link="Vala.Io.Files.move.html"/>
+    <keyword type="function" name="Vala.Io.Files.remove" link="Vala.Io.Files.remove.html"/>
+    <keyword type="function" name="Vala.Io.Files.readAllText" link="Vala.Io.Files.readAllText.html"/>
+    <keyword type="function" name="Vala.Io.Files.readAllLines" link="Vala.Io.Files.readAllLines.html"/>
+    <keyword type="function" name="Vala.Io.Files.writeText" link="Vala.Io.Files.writeText.html"/>
+    <keyword type="function" name="Vala.Io.Files.appendText" link="Vala.Io.Files.appendText.html"/>
+    <keyword type="function" name="Vala.Io.Files.size" link="Vala.Io.Files.size.html"/>
+    <keyword type="function" name="Vala.Io.Files.listDir" link="Vala.Io.Files.listDir.html"/>
+    <keyword type="function" name="Vala.Io.Files.tempFile" link="Vala.Io.Files.tempFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.tempDir" link="Vala.Io.Files.tempDir.html"/>
+    <keyword type="function" name="Vala.Io.Files.touch" link="Vala.Io.Files.touch.html"/>
+    <keyword type="" name="Vala.Io.Files" link="Vala.Io.Files.html"/>
+    <keyword type="function" name="Vala.Io.Path.toString" link="Vala.Io.Path.toString.html"/>
+    <keyword type="function" name="Vala.Io.Path.basename" link="Vala.Io.Path.basename.html"/>
+    <keyword type="function" name="Vala.Io.Path.dirname" link="Vala.Io.Path.dirname.html"/>
+    <keyword type="function" name="Vala.Io.Path.extension" link="Vala.Io.Path.extension.html"/>
+    <keyword type="function" name="Vala.Io.Path.withoutExtension" link="Vala.Io.Path.withoutExtension.html"/>
+    <keyword type="function" name="Vala.Io.Path.isAbsolute" link="Vala.Io.Path.isAbsolute.html"/>
+    <keyword type="function" name="Vala.Io.Path.parent" link="Vala.Io.Path.parent.html"/>
+    <keyword type="function" name="Vala.Io.Path.resolve" link="Vala.Io.Path.resolve.html"/>
+    <keyword type="function" name="Vala.Io.Path.join" link="Vala.Io.Path.join.html"/>
+    <keyword type="function" name="Vala.Io.Path.equals" link="Vala.Io.Path.equals.html"/>
+    <keyword type="function" name="Vala.Io.Path.startsWith" link="Vala.Io.Path.startsWith.html"/>
+    <keyword type="function" name="Vala.Io.Path.endsWith" link="Vala.Io.Path.endsWith.html"/>
+    <keyword type="function" name="Vala.Io.Path.components" link="Vala.Io.Path.components.html"/>
+    <keyword type="function" name="Vala.Io.Path.normalize" link="Vala.Io.Path.normalize.html"/>
+    <keyword type="function" name="Vala.Io.Path.abs" link="Vala.Io.Path.abs.html"/>
+    <keyword type="function" name="Vala.Io.Path.Path" link="Vala.Io.Path.Path.html"/><keyword type="" name="Vala.Io.Path" link="Vala.Io.Path.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.append" link="Vala.Io.StringBuilder.append.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.appendLine" link="Vala.Io.StringBuilder.appendLine.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.appendChar" link="Vala.Io.StringBuilder.appendChar.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.insert" link="Vala.Io.StringBuilder.insert.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.deleteRange" link="Vala.Io.StringBuilder.deleteRange.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.replaceRange" link="Vala.Io.StringBuilder.replaceRange.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.reverse" link="Vala.Io.StringBuilder.reverse.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.length" link="Vala.Io.StringBuilder.length.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.charAt" link="Vala.Io.StringBuilder.charAt.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.clear" link="Vala.Io.StringBuilder.clear.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.toString" link="Vala.Io.StringBuilder.toString.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.capacity" link="Vala.Io.StringBuilder.capacity.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.StringBuilder" link="Vala.Io.StringBuilder.StringBuilder.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.StringBuilder.withString" link="Vala.Io.StringBuilder.StringBuilder.withString.html"/>
+    <keyword type="function" name="Vala.Io.StringBuilder.StringBuilder.sized" link="Vala.Io.StringBuilder.StringBuilder.sized.html"/>
+    <keyword type="" name="Vala.Io.StringBuilder" link="Vala.Io.StringBuilder.html"/>
+    <keyword type="function" name="Vala.Io.StringJoiner.add" link="Vala.Io.StringJoiner.add.html"/>
+    <keyword type="function" name="Vala.Io.StringJoiner.merge" link="Vala.Io.StringJoiner.merge.html"/>
+    <keyword type="function" name="Vala.Io.StringJoiner.setEmptyValue" link="Vala.Io.StringJoiner.setEmptyValue.html"/>
+    <keyword type="function" name="Vala.Io.StringJoiner.length" link="Vala.Io.StringJoiner.length.html"/>
+    <keyword type="function" name="Vala.Io.StringJoiner.toString" link="Vala.Io.StringJoiner.toString.html"/>
+    <keyword type="function" name="Vala.Io.StringJoiner.StringJoiner" link="Vala.Io.StringJoiner.StringJoiner.html"/>
+    <keyword type="" name="Vala.Io.StringJoiner" link="Vala.Io.StringJoiner.html"/>
+    <keyword type="function" name="Vala.Io.Strings.Strings" link="Vala.Io.Strings.Strings.html"/>
+    <keyword type="function" name="Vala.Io.Strings.isNullOrEmpty" link="Vala.Io.Strings.isNullOrEmpty.html"/>
+    <keyword type="function" name="Vala.Io.Strings.isBlank" link="Vala.Io.Strings.isBlank.html"/>
+    <keyword type="function" name="Vala.Io.Strings.isNumeric" link="Vala.Io.Strings.isNumeric.html"/>
+    <keyword type="function" name="Vala.Io.Strings.isAlpha" link="Vala.Io.Strings.isAlpha.html"/>
+    <keyword type="function" name="Vala.Io.Strings.isAlphaNumeric" link="Vala.Io.Strings.isAlphaNumeric.html"/>
+    <keyword type="function" name="Vala.Io.Strings.trimSpace" link="Vala.Io.Strings.trimSpace.html"/>
+    <keyword type="function" name="Vala.Io.Strings.trimLeft" link="Vala.Io.Strings.trimLeft.html"/>
+    <keyword type="function" name="Vala.Io.Strings.trimRight" link="Vala.Io.Strings.trimRight.html"/>
+    <keyword type="function" name="Vala.Io.Strings.trimPrefix" link="Vala.Io.Strings.trimPrefix.html"/>
+    <keyword type="function" name="Vala.Io.Strings.trimSuffix" link="Vala.Io.Strings.trimSuffix.html"/>
+    <keyword type="function" name="Vala.Io.Strings.contains" link="Vala.Io.Strings.contains.html"/>
+    <keyword type="function" name="Vala.Io.Strings.startsWith" link="Vala.Io.Strings.startsWith.html"/>
+    <keyword type="function" name="Vala.Io.Strings.endsWith" link="Vala.Io.Strings.endsWith.html"/>
+    <keyword type="function" name="Vala.Io.Strings.toUpperCase" link="Vala.Io.Strings.toUpperCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.toLowerCase" link="Vala.Io.Strings.toLowerCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.replace" link="Vala.Io.Strings.replace.html"/>
+    <keyword type="function" name="Vala.Io.Strings.repeat" link="Vala.Io.Strings.repeat.html"/>
+    <keyword type="function" name="Vala.Io.Strings.reverse" link="Vala.Io.Strings.reverse.html"/>
+    <keyword type="function" name="Vala.Io.Strings.padLeft" link="Vala.Io.Strings.padLeft.html"/>
+    <keyword type="function" name="Vala.Io.Strings.padRight" link="Vala.Io.Strings.padRight.html"/>
+    <keyword type="function" name="Vala.Io.Strings.center" link="Vala.Io.Strings.center.html"/>
+    <keyword type="function" name="Vala.Io.Strings.indexOf" link="Vala.Io.Strings.indexOf.html"/>
+    <keyword type="function" name="Vala.Io.Strings.lastIndexOf" link="Vala.Io.Strings.lastIndexOf.html"/>
+    <keyword type="function" name="Vala.Io.Strings.count" link="Vala.Io.Strings.count.html"/>
+    <keyword type="function" name="Vala.Io.Strings.join" link="Vala.Io.Strings.join.html"/>
+    <keyword type="function" name="Vala.Io.Strings.split" link="Vala.Io.Strings.split.html"/>
+    <keyword type="function" name="Vala.Io.Strings.splitByNum" link="Vala.Io.Strings.splitByNum.html"/>
+    <keyword type="function" name="Vala.Io.Strings.substring" link="Vala.Io.Strings.substring.html"/>
+    <keyword type="function" name="Vala.Io.Strings.capitalize" link="Vala.Io.Strings.capitalize.html"/>
+    <keyword type="function" name="Vala.Io.Strings.toCamelCase" link="Vala.Io.Strings.toCamelCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.toSnakeCase" link="Vala.Io.Strings.toSnakeCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.toKebabCase" link="Vala.Io.Strings.toKebabCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.toPascalCase" link="Vala.Io.Strings.toPascalCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.title" link="Vala.Io.Strings.title.html"/>
+    <keyword type="function" name="Vala.Io.Strings.compareTo" link="Vala.Io.Strings.compareTo.html"/>
+    <keyword type="function" name="Vala.Io.Strings.compareIgnoreCase" link="Vala.Io.Strings.compareIgnoreCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.equalsIgnoreCase" link="Vala.Io.Strings.equalsIgnoreCase.html"/>
+    <keyword type="function" name="Vala.Io.Strings.lines" link="Vala.Io.Strings.lines.html"/>
+    <keyword type="function" name="Vala.Io.Strings.words" link="Vala.Io.Strings.words.html"/>
+    <keyword type="function" name="Vala.Io.Strings.truncate" link="Vala.Io.Strings.truncate.html"/>
+    <keyword type="function" name="Vala.Io.Strings.wrap" link="Vala.Io.Strings.wrap.html"/>
+    <keyword type="" name="Vala.Io.Strings" link="Vala.Io.Strings.html"/><keyword type="" name="Vala.Io" link="Vala.Io.html"/>
+    <keyword type="function" name="Vala.Lang.Os.Os" link="Vala.Lang.Os.Os.html"/>
+    <keyword type="function" name="Vala.Lang.Os.get_env" link="Vala.Lang.Os.get_env.html"/>
+    <keyword type="function" name="Vala.Lang.Os.cwd" link="Vala.Lang.Os.cwd.html"/>
+    <keyword type="function" name="Vala.Lang.Os.chdir" link="Vala.Lang.Os.chdir.html"/><keyword type="" name="Vala.Lang.Os" link="Vala.Lang.Os.html"/>
+    <keyword type="function" name="Vala.Lang.Objects.Objects" link="Vala.Lang.Objects.Objects.html"/>
+    <keyword type="function" name="Vala.Lang.Objects.isNull" link="Vala.Lang.Objects.isNull.html"/>
+    <keyword type="function" name="Vala.Lang.Objects.nonNull" link="Vala.Lang.Objects.nonNull.html"/>
+    <keyword type="" name="Vala.Lang.Objects" link="Vala.Lang.Objects.html"/><keyword type="" name="Vala.Lang" link="Vala.Lang.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.addOption" link="Vala.Parser.ArgParser.addOption.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.usage" link="Vala.Parser.ArgParser.usage.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.showVersion" link="Vala.Parser.ArgParser.showVersion.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.parse" link="Vala.Parser.ArgParser.parse.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.hasOption" link="Vala.Parser.ArgParser.hasOption.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.copyArgWithoutCmdNameAndOptions" link="Vala.Parser.ArgParser.copyArgWithoutCmdNameAndOptions.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.parseResult" link="Vala.Parser.ArgParser.parseResult.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.applicationName" link="Vala.Parser.ArgParser.Builder.applicationName.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.applicationArgument" link="Vala.Parser.ArgParser.Builder.applicationArgument.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.description" link="Vala.Parser.ArgParser.Builder.description.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.version" link="Vala.Parser.ArgParser.Builder.version.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.author" link="Vala.Parser.ArgParser.Builder.author.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.contact" link="Vala.Parser.ArgParser.Builder.contact.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.build" link="Vala.Parser.ArgParser.Builder.build.html"/>
+    <keyword type="function" name="Vala.Parser.ArgParser.Builder.Builder" link="Vala.Parser.ArgParser.Builder.Builder.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appName" link="Vala.Parser.ArgParser.Builder.appName.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appArg" link="Vala.Parser.ArgParser.Builder.appArg.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.desc" link="Vala.Parser.ArgParser.Builder.desc.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.ver" link="Vala.Parser.ArgParser.Builder.ver.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appAuthor" link="Vala.Parser.ArgParser.Builder.appAuthor.html"/>
+    <keyword type="property" name="Vala.Parser.ArgParser.Builder.appContact" link="Vala.Parser.ArgParser.Builder.appContact.html"/>
+    <keyword type="" name="Vala.Parser.ArgParser.Builder" link="Vala.Parser.ArgParser.Builder.html"/>
+    <keyword type="" name="Vala.Parser.ArgParser" link="Vala.Parser.ArgParser.html"/><keyword type="" name="Vala.Parser" link="Vala.Parser.html"/>
+    <keyword type="" name="Vala" link="Vala.html"/>
+  </functions>
+</book>
