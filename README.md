@@ -203,6 +203,61 @@ Static utility methods for string manipulation. All methods are null-safe.
 | `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
 | `wrap(string? s, int width)` | Wraps at specified width |
 
+### Vala.Collections.Optional\<T\>
+A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
+
+| Method | Description |
+|---|---|
+| `Optional.of<T>(T value)` | Creates an Optional containing the value |
+| `Optional.empty<T>()` | Creates an empty Optional |
+| `Optional.ofNullable<T>(T? value)` | Creates an Optional from a nullable value |
+| `isPresent()` | Returns whether a value is present |
+| `isEmpty()` | Returns whether this Optional is empty |
+| `get()` | Returns the value, or null if empty |
+| `orElse(T other)` | Returns the value, or the default if empty |
+| `orElseGet(SupplierFunc<T> func)` | Returns the value, or invokes the supplier if empty |
+| `ifPresent(ConsumerFunc<T> func)` | Invokes the function if a value is present |
+| `filter(PredicateFunc<T> func)` | Returns this Optional if matching, otherwise empty |
+
+### Vala.Collections.Result\<T,E\>
+A container representing either a success value or an error. Inspired by Rust's Result and OCaml's result.
+
+| Method | Description |
+|---|---|
+| `Result.ok<T,E>(T value)` | Creates a successful Result |
+| `Result.error<T,E>(E err)` | Creates a failed Result |
+| `isOk()` | Returns whether this is a success |
+| `isError()` | Returns whether this is an error |
+| `unwrap()` | Returns the success value, or null if error |
+| `unwrapOr(T defaultValue)` | Returns the success value, or the default on error |
+| `unwrapError()` | Returns the error value, or null if success |
+| `map<U>(MapFunc<T,U> func)` | Transforms the success value |
+| `mapError<F>(MapFunc<E,F> func)` | Transforms the error value |
+
+### Vala.Collections.Stack\<T\>
+A LIFO (Last-In-First-Out) stack backed by GLib.Queue.
+
+| Method | Description |
+|---|---|
+| `push(T element)` | Pushes an element onto the top |
+| `pop()` | Removes and returns the top element |
+| `peek()` | Returns the top element without removing it |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the stack is empty |
+| `clear()` | Removes all elements |
+
+### Vala.Collections.Queue\<T\>
+A FIFO (First-In-First-Out) queue backed by GLib.Queue.
+
+| Method | Description |
+|---|---|
+| `enqueue(T element)` | Adds an element to the end |
+| `dequeue()` | Removes and returns the front element |
+| `peek()` | Returns the front element without removing it |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the queue is empty |
+| `clear()` | Removes all elements |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
