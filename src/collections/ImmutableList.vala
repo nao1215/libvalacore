@@ -1,0 +1,95 @@
+namespace Vala.Collections {
+    /**
+     * Immutable list value object.
+     */
+    public class ImmutableList<T>: GLib.Object {
+        private GLib.GenericArray<T> _items;
+        private GLib.EqualFunc<T> ? _equal_func;
+
+        /**
+         * Creates an immutable list from input array.
+         *
+         * @param items source items.
+         */
+        public ImmutableList (T[] items, GLib.EqualFunc<T> ? equal_func = null) {
+            _items = new GLib.GenericArray<T> ();
+            for (int i = 0; i < items.length; i++) {
+                _items.add (items[i]);
+            }
+            _equal_func = equal_func;
+        }
+
+        /**
+         * Creates an immutable list from an array.
+         *
+         * @param items source items.
+         * @return immutable list.
+         */
+        public static ImmutableList<G> of<G>(G[] items, GLib.EqualFunc<G> ? equal_func = null) {
+            return new ImmutableList<G>(items, equal_func);
+        }
+
+        /**
+         * Returns element count.
+         *
+         * @return list size.
+         */
+        public int size () {
+            return (int) _items.length;
+        }
+
+        /**
+         * Returns whether list has no elements.
+         *
+         * @return true when list is empty.
+         */
+        public bool isEmpty () {
+            return _items.length == 0;
+        }
+
+        /**
+         * Returns element at index.
+         *
+         * @param index target index.
+         * @return element at index.
+         */
+        public new T get (int index) {
+            if (index < 0 || index >= (int) _items.length) {
+                error ("index out of bounds: %d", index);
+            }
+            return _items[index];
+        }
+
+        /**
+         * Returns whether list contains value.
+         *
+         * @param value value to search.
+         * @return true when value exists.
+         */
+        public bool contains (T value) {
+            for (int i = 0; i < (int) _items.length; i++) {
+                T item = _items[i];
+                if (_equal_func != null && _equal_func (item, value)) {
+                    return true;
+                }
+                if (_equal_func == null && item == value) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Returns a copy of internal array.
+         *
+         * @return copied array.
+         */
+        public T[] toArray () {
+            T[] copied = new T[(int) _items.length];
+            for (int i = 0; i < (int) _items.length; i++) {
+                copied[i] = _items[i];
+            }
+            return copied;
+        }
+    }
+}

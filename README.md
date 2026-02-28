@@ -572,6 +572,19 @@ A dynamic array-backed list that grows automatically. Provides O(1) indexed acce
 | `find(PredicateFunc<T> func)` | Returns an Optional with the first matching element |
 | `subList(int from, int to)` | Returns a new list with elements in [from, to) |
 
+### Vala.Collections.ImmutableList\<T\>
+An immutable list value object backed by an internal copied array.
+
+| Method | Description |
+|---|---|
+| `ImmutableList(T[] items)` | Creates immutable list from array copy |
+| `of(T[] items)` | Static factory that returns immutable list |
+| `size()` | Returns number of elements |
+| `isEmpty()` | Returns whether the list is empty |
+| `get(int index)` | Returns element at index (fails fast when out of bounds) |
+| `contains(T value)` | Returns whether value exists in the list |
+| `toArray()` | Returns a copied array of elements |
+
 ### Vala.Collections.HashMap\<K,V\>
 A hash table-based map from keys to values. Provides O(1) average-time lookup, insertion, and deletion. Inspired by Java's HashMap and Go's map.
 

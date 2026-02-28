@@ -12,6 +12,7 @@ valacore_sources = files([
   'collections/Deque.vala',
   'collections/HashMap.vala',
   'collections/HashSet.vala',
+  'collections/ImmutableList.vala',
   'collections/LinkedList.vala',
   'collections/MultiMap.vala',
   'collections/Optional.vala',
