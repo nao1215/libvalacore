@@ -83,6 +83,19 @@ A mutable string buffer for efficient string construction. Wraps GLib.StringBuil
 | `toString()` | Returns the built string |
 | `capacity()` | Returns the allocated buffer capacity |
 
+## Vala.Io.BufferedReader
+Buffered character-input-stream reader. Wraps GLib.DataInputStream for convenient line-by-line or full-text reading, similar to Java's BufferedReader.
+
+| Method | Description |
+|---|---|
+| `BufferedReader.fromFile(Path path)` | Creates a reader from a file (returns null on error) |
+| `BufferedReader.fromString(string s)` | Creates a reader from a string |
+| `readLine()` | Reads a single line (null at EOF) |
+| `readChar()` | Reads a single byte as a character |
+| `readAll()` | Reads the remaining stream as a string |
+| `hasNext()` | Returns whether there is more data to read |
+| `close()` | Closes the underlying stream |
+
 ## Vala.Io.StringJoiner
 Constructs a sequence of characters separated by a delimiter, optionally with a prefix and suffix. Equivalent to Java's StringJoiner.
 
