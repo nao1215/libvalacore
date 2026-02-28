@@ -50,6 +50,7 @@ valacore_sources = files([
   'io/Strings.vala',
   'lang/Os.vala',
   'lang/Objects.vala',
+  'lang/Exceptions.vala',
   'lang/Preconditions.vala',
   'lang/Process.vala',
   'lang/Randoms.vala',

@@ -852,6 +852,14 @@ Fail-fast precondition checks for arguments and object state.
 | `checkArgument(bool cond, string message)` | Validates method arguments and terminates the process immediately when invalid |
 | `checkState(bool cond, string message)` | Validates object state and terminates the process immediately when invalid |
 
+### Vala.Lang.Exceptions
+Exception utility methods.
+
+| Method | Description |
+|---|---|
+| `sneakyThrow(GLib.Error e)` | Terminates the process with the provided error |
+| `getStackTrace(GLib.Error e)` | Returns printable error details |
+
 ### Vala.Lang.SystemInfo
 Utility methods to query host system information.
 
