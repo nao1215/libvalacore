@@ -453,6 +453,22 @@ Retry policy utility for transient failures.
 | `retryResult<T>(RetryResultFunc<T> fn)` | Retries nullable callback until non-null result |
 | `retryVoid(RetryVoidFunc fn)` | Retries callback that may throw `GLib.Error` |
 
+### Vala.Net.RateLimiter
+Token-bucket based rate limiter.
+
+| Method | Description |
+|---|---|
+| `RateLimiter(int permitsPerSecond)` | Creates limiter with permits generated per second |
+| `withBurst(int permits)` | Sets burst capacity and returns this limiter |
+| `allow()` | Tries to acquire one permit immediately |
+| `allowN(int permits)` | Tries to acquire multiple permits immediately |
+| `wait()` | Waits until one permit is available |
+| `waitN(int permits)` | Waits until multiple permits are available |
+| `reserve()` | Returns estimated wait milliseconds for one permit |
+| `availableTokens()` | Returns currently available permits (floored) |
+| `setRate(int permitsPerSecond)` | Updates permit generation rate |
+| `reset()` | Refills tokens to burst capacity |
+
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
 
