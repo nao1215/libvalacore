@@ -57,6 +57,14 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `glob(Path dir, string pattern)` | Returns files matching a glob pattern |
 | `deleteRecursive(Path path)` | Recursively deletes a directory and all its contents |
 
+### Vala.Io.Temp
+Temporary resource helpers that auto-clean up after callback execution.
+
+| Method | Description |
+|---|---|
+| `withTempFile(TempFunc func)` | Creates a temporary file, runs callback, and removes the file (`true` on success) |
+| `withTempDir(TempFunc func)` | Creates a temporary directory, runs callback, and removes the directory recursively (`true` on success) |
+
 ### Vala.Io.Path
 An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
 
