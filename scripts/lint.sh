@@ -7,5 +7,10 @@ set -euo pipefail
 #
 # Requires Docker to be installed.
 
+if ! command -v docker &> /dev/null; then
+    echo "Error: Docker is not installed or not in PATH" >&2
+    exit 1
+fi
+
 docker run --rm -v "$(pwd):/src" -w /src valalang/lint \
     io.elementary.vala-lint -c vala-lint.conf -d .

@@ -1076,8 +1076,8 @@ $ ./scripts/format.sh --check  # Check formatting (CI mode)
 
 ## Linting
 All Vala source code is checked with [vala-lint](https://github.com/vala-lang/vala-lint) using the config at `vala-lint.conf`.
-```
-$ ./scripts/lint.sh            # Run vala-lint (requires Docker)
+```bash
+./scripts/lint.sh              # Run vala-lint (requires Docker)
 ```
 
 ## Contributing

@@ -23,11 +23,15 @@ namespace Vala.Io {
             }
 
             Posix.termios old_termios = {};
-            Posix.tcgetattr (Posix.STDIN_FILENO, out old_termios);
+            if (Posix.tcgetattr (Posix.STDIN_FILENO, out old_termios) != 0) {
+                return null;
+            }
 
             Posix.termios new_termios = old_termios;
             new_termios.c_lflag &= ~Posix.ECHO;
-            Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, new_termios);
+            if (Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, new_termios) != 0) {
+                return null;
+            }
 
             string ? line = stdin.read_line ();
 
