@@ -15,13 +15,13 @@ void main (string[] args) {
 }
 
 void testConstructor () {
-    var pair = new Pair<string, string>("hello", "world");
+    var pair = new Pair<string, string> ("hello", "world");
     assert (pair.first () == "hello");
     assert (pair.second () == "world");
 }
 
 void testFirst () {
-    var pair = new Pair<string, string>("alpha", "beta");
+    var pair = new Pair<string, string> ("alpha", "beta");
     assert (pair.first () == "alpha");
 
     // calling first() multiple times returns same value
@@ -29,7 +29,7 @@ void testFirst () {
 }
 
 void testSecond () {
-    var pair = new Pair<string, string>("alpha", "beta");
+    var pair = new Pair<string, string> ("alpha", "beta");
     assert (pair.second () == "beta");
 
     // calling second() multiple times returns same value
@@ -37,8 +37,8 @@ void testSecond () {
 }
 
 void testEquals () {
-    var a = new Pair<string, string>("x", "y");
-    var b = new Pair<string, string>("x", "y");
+    var a = new Pair<string, string> ("x", "y");
+    var b = new Pair<string, string> ("x", "y");
     assert (a.equals (b, GLib.str_equal, GLib.str_equal));
 
     // self equality
@@ -46,28 +46,28 @@ void testEquals () {
 }
 
 void testEqualsNotEqual () {
-    var a = new Pair<string, string>("x", "y");
+    var a = new Pair<string, string> ("x", "y");
 
     // different first
-    var b = new Pair<string, string>("z", "y");
+    var b = new Pair<string, string> ("z", "y");
     assert (!a.equals (b, GLib.str_equal, GLib.str_equal));
 
     // different second
-    var c = new Pair<string, string>("x", "z");
+    var c = new Pair<string, string> ("x", "z");
     assert (!a.equals (c, GLib.str_equal, GLib.str_equal));
 
     // both different
-    var d = new Pair<string, string>("a", "b");
+    var d = new Pair<string, string> ("a", "b");
     assert (!a.equals (d, GLib.str_equal, GLib.str_equal));
 }
 
 void testToString () {
-    var pair = new Pair<string, string>("hello", "world");
+    var pair = new Pair<string, string> ("hello", "world");
     assert (pair.toString () == "(hello, world)");
 }
 
 void testImmutability () {
-    var pair = new Pair<string, string>("a", "b");
+    var pair = new Pair<string, string> ("a", "b");
 
     // original values unchanged after multiple accesses
     string f = pair.first ();

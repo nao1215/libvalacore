@@ -40,8 +40,8 @@ namespace Vala.Collections {
          * @param value the success value.
          * @return a successful Result.
          */
-        public static Result<T, E> ok<T, E>(owned T value) {
-            return new Result<T, E>((owned) value, null, true);
+        public static Result<T, E> ok<T, E> (owned T value) {
+            return new Result<T, E> ((owned) value, null, true);
         }
 
         /**
@@ -56,8 +56,8 @@ namespace Vala.Collections {
          * @param err the error value.
          * @return a failed Result.
          */
-        public static Result<T, E> error<T, E>(owned E err) {
-            return new Result<T, E>(null, (owned) err, false);
+        public static Result<T, E> error<T, E> (owned E err) {
+            return new Result<T, E> (null, (owned) err, false);
         }
 
         /**
@@ -149,11 +149,11 @@ namespace Vala.Collections {
          * @param func the transformation function.
          * @return a new Result with the transformed value.
          */
-        public Result<U, E> map<U>(owned MapFunc<T, U> func) {
+        public Result<U, E> map<U> (owned MapFunc<T, U> func) {
             if (_ok) {
-                return Result.ok<U, E>(func (_value));
+                return Result.ok<U, E> (func (_value));
             }
-            return Result.error<U, E>(_error);
+            return Result.error<U, E> (_error);
         }
 
         /**
@@ -171,16 +171,16 @@ namespace Vala.Collections {
          * @param func the error transformation function.
          * @return a new Result with the transformed error.
          */
-        public Result<T, F> mapError<F>(owned MapFunc<E, F> func) {
+        public Result<T, F> mapError<F> (owned MapFunc<E, F> func) {
             if (!_ok) {
-                return Result.error<T, F>(func (_error));
+                return Result.error<T, F> (func (_error));
             }
-            return Result.ok<T, F>(_value);
+            return Result.ok<T, F> (_value);
         }
     }
 
     /**
      * A function that transforms a value of type T to type U.
      */
-    public delegate U MapFunc<T, U>(T value);
+    public delegate U MapFunc<T, U> (T value);
 }

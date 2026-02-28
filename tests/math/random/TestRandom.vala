@@ -43,7 +43,7 @@ void testNextBool () {
 
 void testShuffle () {
     string[] values = { "a", "b", "c", "d", "e" };
-    Vala.Math.Random.shuffle<string>(values);
+    Vala.Math.Random.shuffle<string> (values);
 
     int count_a = 0;
     int count_b = 0;
@@ -74,7 +74,7 @@ void testShuffle () {
 
 void testChoice () {
     string[] values = { "a", "b", "c" };
-    string ? pick = Vala.Math.Random.choice<string>(values);
+    string ? pick = Vala.Math.Random.choice<string> (values);
 
     assert (pick != null);
     assert (pick == "a" || pick == "b" || pick == "c");
@@ -82,5 +82,5 @@ void testChoice () {
 
 void testChoiceEmpty () {
     string[] values = {};
-    assert (Vala.Math.Random.choice<string>(values) == null);
+    assert (Vala.Math.Random.choice<string> (values) == null);
 }

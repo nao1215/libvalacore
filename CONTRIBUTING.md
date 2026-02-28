@@ -17,6 +17,7 @@ Let's make Vala's standard library truly world-class together.
 ### 3. Run checks before opening a PR
 ```shell
 ./scripts/format.sh            # Format code with uncrustify
+./scripts/lint.sh              # Run vala-lint (requires Docker)
 meson setup build              # Configure (if not done)
 meson test -C build            # Run all tests
 ./scripts/format.sh --check    # Verify formatting
@@ -28,6 +29,7 @@ All code must follow the conventions in [CLAUDE.md](./CLAUDE.md):
 - Write code comments and Valadoc in English to accept international contributors
 - Write detailed Valadoc with `@param`, `@return`, and example code for all public methods
 - Format with uncrustify (`etc/uncrustify.cfg`) before committing
+- Pass vala-lint checks (`vala-lint.conf`) before committing
 
 ## Contributing Outside of Coding
 You can still make a huge impact even if you are not writing code:

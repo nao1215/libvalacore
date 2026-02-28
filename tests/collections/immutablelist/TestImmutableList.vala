@@ -10,12 +10,12 @@ void main (string[] args) {
 }
 
 void testConstruct () {
-    ImmutableList<string> list = new ImmutableList<string>({ "a" });
+    ImmutableList<string> list = new ImmutableList<string> ({ "a" });
     assert (list != null);
 }
 
 void testBasicRead () {
-    ImmutableList<string> list = ImmutableList.of<string>({ "a", "b", "c" });
+    ImmutableList<string> list = ImmutableList.of<string> ({ "a", "b", "c" });
 
     assert (list.size () == 3);
     assert (list.get (0) == "a");
@@ -24,13 +24,13 @@ void testBasicRead () {
 }
 
 void testContainsAndEmpty () {
-    ImmutableList<string> list = new ImmutableList<string>({ "1", "3", "5" }, GLib.str_equal);
+    ImmutableList<string> list = new ImmutableList<string> ({ "1", "3", "5" }, GLib.str_equal);
 
     assert (list.isEmpty () == false);
     assert (list.contains ("3") == true);
     assert (list.contains ("2") == false);
 
-    ImmutableList<string> empty = new ImmutableList<string>({});
+    ImmutableList<string> empty = new ImmutableList<string> ({});
 
     assert (empty.isEmpty () == true);
     assert (empty.size () == 0);
@@ -38,7 +38,7 @@ void testContainsAndEmpty () {
 
 void testToArrayReturnsCopy () {
     string[] source = { "x", "y" };
-    ImmutableList<string> list = new ImmutableList<string>(source);
+    ImmutableList<string> list = new ImmutableList<string> (source);
 
     source[0] = "changed";
     assert (list.get (0) == "x");

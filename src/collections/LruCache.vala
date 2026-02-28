@@ -4,7 +4,7 @@ namespace Vala.Collections {
     /**
      * Loader function for cache misses.
      */
-    public delegate V ? CacheLoaderFunc<K, V>(K key);
+    public delegate V ? CacheLoaderFunc<K, V> (K key);
 
     private class LruNode<K, V>: GLib.Object {
         public K key;
@@ -50,7 +50,7 @@ namespace Vala.Collections {
             }
 
             _max_entries = max_entries;
-            _entries = new GLib.HashTable<K, LruNode<K, V> >(hash_func, equal_func);
+            _entries = new GLib.HashTable<K, LruNode<K, V> > (hash_func, equal_func);
         }
 
         /**
@@ -73,8 +73,8 @@ namespace Vala.Collections {
          * @param loader loader callback.
          * @return this cache instance.
          */
-        public LruCache<K, V> withLoader (CacheLoaderFunc<K, V> loader) {
-            _loader = loader;
+        public LruCache<K, V> withLoader (owned CacheLoaderFunc<K, V> loader) {
+            _loader = (owned) loader;
             return this;
         }
 
@@ -128,7 +128,7 @@ namespace Vala.Collections {
                 return;
             }
 
-            var created = new LruNode<K, V>(key, value, now_millis ());
+            var created = new LruNode<K, V> (key, value, now_millis ());
             addToFront (created);
             _entries.replace (key, created);
             evictIfNeeded ();
@@ -193,7 +193,7 @@ namespace Vala.Collections {
          * @return pair where first=hits, second=misses.
          */
         public Pair<int, int> stats () {
-            return new Pair<int, int>(_hits, _misses);
+            return new Pair<int, int> (_hits, _misses);
         }
 
         private bool isExpired (LruNode<K, V> node) {

@@ -40,7 +40,7 @@ namespace Vala.Collections {
         public HashMap (GLib.HashFunc<K> hash_func, GLib.EqualFunc<K> equal_func) {
             _hash_func = hash_func;
             _equal_func = equal_func;
-            _table = new GLib.HashTable<K, V>(hash_func, equal_func);
+            _table = new GLib.HashTable<K, V> (hash_func, equal_func);
         }
 
         /**
@@ -306,5 +306,5 @@ namespace Vala.Collections {
      * @param a the first argument.
      * @param b the second argument.
      */
-    public delegate void BiConsumerFunc<A, B>(A a, B b);
+    public delegate void BiConsumerFunc<A, B> (A a, B b);
 }

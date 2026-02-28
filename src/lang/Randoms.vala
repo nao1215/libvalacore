@@ -30,7 +30,7 @@ namespace Vala.Lang {
          *
          * @param array target array.
          */
-        public static void shuffle<T>(T[] array) {
+        public static void shuffle<T> (T[] array) {
             for (int i = array.length - 1; i > 0; i--) {
                 int j = GLib.Random.int_range (0, i + 1);
                 T tmp = array[i];

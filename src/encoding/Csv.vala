@@ -32,7 +32,7 @@ namespace Vala.Encoding {
                 return rows;
             }
 
-            var currentRow = new Vala.Collections.ArrayList<string>(GLib.str_equal);
+            var currentRow = new Vala.Collections.ArrayList<string> (GLib.str_equal);
             var currentField = new GLib.StringBuilder ();
             bool inQuotes = false;
 
@@ -70,7 +70,7 @@ namespace Vala.Encoding {
                     }
                     currentRow.add (currentField.str);
                     rows.add (currentRow);
-                    currentRow = new Vala.Collections.ArrayList<string>(GLib.str_equal);
+                    currentRow = new Vala.Collections.ArrayList<string> (GLib.str_equal);
                     currentField = new GLib.StringBuilder ();
                     continue;
                 }

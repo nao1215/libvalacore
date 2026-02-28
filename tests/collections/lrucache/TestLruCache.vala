@@ -14,7 +14,7 @@ void main (string[] args) {
 }
 
 void testPutGet () {
-    var cache = new LruCache<string, string>(2, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("b", "2");
 
@@ -24,7 +24,7 @@ void testPutGet () {
 }
 
 void testEviction () {
-    var cache = new LruCache<string, string>(2, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("b", "2");
 
@@ -37,7 +37,7 @@ void testEviction () {
 }
 
 void testUpdateExisting () {
-    var cache = new LruCache<string, string>(2, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("a", "2");
 
@@ -46,7 +46,7 @@ void testUpdateExisting () {
 }
 
 void testRemoveAndClear () {
-    var cache = new LruCache<string, string>(3, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (3, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("b", "2");
 
@@ -60,7 +60,7 @@ void testRemoveAndClear () {
 }
 
 void testTtlExpiration () {
-    var cache = new LruCache<string, string>(2, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.withTtl (Duration.ofSeconds (1));
 
     cache.put ("a", "1");
@@ -71,7 +71,7 @@ void testTtlExpiration () {
 }
 
 void testLoader () {
-    var cache = new LruCache<string, string>(2, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     int load_calls = 0;
 
     cache.withLoader ((key) => {
@@ -85,7 +85,7 @@ void testLoader () {
 }
 
 void testStats () {
-    var cache = new LruCache<string, string>(2, GLib.str_hash, GLib.str_equal);
+    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
 
     assert (cache.get ("a") == "1"); // hit

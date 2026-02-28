@@ -9,7 +9,7 @@ namespace Vala.Config {
          * Creates an empty Properties object.
          */
         public Properties () {
-            _values = new GLib.HashTable<string, string>(str_hash, str_equal);
+            _values = new GLib.HashTable<string, string> (str_hash, str_equal);
         }
 
         /**
@@ -151,7 +151,7 @@ namespace Vala.Config {
          */
         public string[] keys () {
             string[] result = {};
-            GLib.HashTableIter<string, string> iter = GLib.HashTableIter<string, string>(_values);
+            GLib.HashTableIter<string, string> iter = GLib.HashTableIter<string, string> (_values);
             unowned string key;
             unowned string value;
             while (iter.next (out key, out value)) {

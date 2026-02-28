@@ -125,9 +125,9 @@ namespace Vala.Collections {
          * @return the string representation.
          */
         public string toString () {
-            string a_str = _value_to_string<A>(_first);
-            string b_str = _value_to_string<B>(_second);
-            string c_str = _value_to_string<C>(_third);
+            string a_str = _value_to_string<A> (_first);
+            string b_str = _value_to_string<B> (_second);
+            string c_str = _value_to_string<C> (_third);
             return "(%s, %s, %s)".printf (a_str, b_str, c_str);
         }
     }

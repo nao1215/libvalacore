@@ -16,7 +16,7 @@ namespace Vala.Collections {
         public MultiMap (GLib.HashFunc<K> hash_func,
                          GLib.EqualFunc<K> key_equal,
                          GLib.EqualFunc<V> ? value_equal = null) {
-            _map = new HashMap<K, ArrayList<V> >(hash_func, key_equal);
+            _map = new HashMap<K, ArrayList<V> > (hash_func, key_equal);
             _value_equal = value_equal;
         }
 
@@ -29,7 +29,7 @@ namespace Vala.Collections {
         public void put (owned K key, owned V value) {
             ArrayList<V> ? list = _map.get (key);
             if (list == null) {
-                list = new ArrayList<V>(_value_equal);
+                list = new ArrayList<V> (_value_equal);
                 list.add ((owned) value);
                 _map.put ((owned) key, list);
                 return;
@@ -43,12 +43,12 @@ namespace Vala.Collections {
          * @param key lookup key.
          * @return values list, or an empty list when missing.
          */
-        public ArrayList<V> get (K key) {
+        public new ArrayList<V> get (K key) {
             ArrayList<V> ? list = _map.get (key);
             if (list != null) {
                 return list;
             }
-            return new ArrayList<V>(_value_equal);
+            return new ArrayList<V> (_value_equal);
         }
 
         /**

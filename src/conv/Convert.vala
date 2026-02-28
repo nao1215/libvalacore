@@ -135,7 +135,7 @@ namespace Vala.Conv {
             }
 
             bool negative = n < 0;
-            uint64 value = negative ? (uint64) (-(int64) n) : (uint64) n;
+            uint64 value = negative ? (uint64) (-(int64) n) : (uint64) n; // vala-lint=space-before-paren
             GLib.StringBuilder builder = new GLib.StringBuilder ();
 
             while (value > 0) {

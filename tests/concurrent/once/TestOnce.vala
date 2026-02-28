@@ -27,7 +27,7 @@ void testMultiThread () {
 
     Thread<void *>[] workers = new Thread<void *>[10];
     for (int i = 0; i < workers.length; i++) {
-        workers[i] = new Thread<void *>("worker", () => {
+        workers[i] = new Thread<void *> ("worker", () => {
             once.doOnce (() => {
                 count++;
             });

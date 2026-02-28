@@ -13,14 +13,14 @@ void testBasic () {
 
     wg.add (2);
 
-    Thread<void *> t1 = new Thread<void *>("worker1", () => {
+    Thread<void *> t1 = new Thread<void *> ("worker1", () => {
         Posix.usleep (20000);
         completed++;
         wg.done ();
         return null;
     });
 
-    Thread<void *> t2 = new Thread<void *>("worker2", () => {
+    Thread<void *> t2 = new Thread<void *> ("worker2", () => {
         Posix.usleep (20000);
         completed++;
         wg.done ();
@@ -40,7 +40,7 @@ void testWaitBlocksUntilDone () {
 
     wg.add (1);
 
-    Thread<void *> worker = new Thread<void *>("worker", () => {
+    Thread<void *> worker = new Thread<void *> ("worker", () => {
         Posix.usleep (50000);
         worker_done = true;
         wg.done ();

@@ -24,7 +24,7 @@ void main (string[] args) {
 }
 
 void testPutAndGet () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("name", "Alice");
     assert (map.get ("name") == "Alice");
 
@@ -33,7 +33,7 @@ void testPutAndGet () {
 }
 
 void testGetMissing () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (map.get ("missing") == null);
 
     map.put ("key", "value");
@@ -41,7 +41,7 @@ void testGetMissing () {
 }
 
 void testGetOrDefault () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (map.getOrDefault ("missing", "fallback") == "fallback");
 
     map.put ("key", "value");
@@ -49,7 +49,7 @@ void testGetOrDefault () {
 }
 
 void testPutOverwrite () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("key", "first");
     assert (map.get ("key") == "first");
 
@@ -59,7 +59,7 @@ void testPutOverwrite () {
 }
 
 void testContainsKey () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (!map.containsKey ("key"));
 
     map.put ("key", "value");
@@ -68,7 +68,7 @@ void testContainsKey () {
 }
 
 void testContainsValue () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (!map.containsValue ("value", GLib.str_equal));
 
     map.put ("key", "value");
@@ -77,7 +77,7 @@ void testContainsValue () {
 }
 
 void testRemove () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("a", "1");
     map.put ("b", "2");
 
@@ -87,7 +87,7 @@ void testRemove () {
 }
 
 void testRemoveMissing () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (!map.remove ("missing"));
 
     map.put ("key", "value");
@@ -95,7 +95,7 @@ void testRemoveMissing () {
 }
 
 void testSize () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (map.size () == 0);
 
     map.put ("a", "1");
@@ -109,7 +109,7 @@ void testSize () {
 }
 
 void testIsEmpty () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     assert (map.isEmpty ());
 
     map.put ("key", "value");
@@ -117,7 +117,7 @@ void testIsEmpty () {
 }
 
 void testClear () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("a", "1");
     map.put ("b", "2");
     map.put ("c", "3");
@@ -128,7 +128,7 @@ void testClear () {
 }
 
 void testKeys () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("a", "1");
     map.put ("b", "2");
 
@@ -137,7 +137,7 @@ void testKeys () {
 }
 
 void testValues () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("a", "1");
     map.put ("b", "2");
 
@@ -146,7 +146,7 @@ void testValues () {
 }
 
 void testForEach () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map.put ("a", "1");
     map.put ("b", "2");
 
@@ -158,7 +158,7 @@ void testForEach () {
 }
 
 void testPutIfAbsent () {
-    var map = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
 
     assert (map.putIfAbsent ("key", "first"));
     assert (map.get ("key") == "first");
@@ -168,11 +168,11 @@ void testPutIfAbsent () {
 }
 
 void testMerge () {
-    var map1 = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map1 = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map1.put ("a", "1");
     map1.put ("b", "2");
 
-    var map2 = new HashMap<string, string>(GLib.str_hash, GLib.str_equal);
+    var map2 = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     map2.put ("c", "3");
     map2.put ("b", "overwritten");
 

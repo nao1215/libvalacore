@@ -20,7 +20,7 @@ void testTryLock () {
     mutex.lock ();
 
     bool acquired = true;
-    Thread<void *> worker = new Thread<void *>("trylock", () => {
+    Thread<void *> worker = new Thread<void *> ("trylock", () => {
         acquired = mutex.tryLock ();
         if (acquired) {
             mutex.unlock ();
@@ -48,7 +48,7 @@ void testConcurrentIncrement () {
     Vala.Concurrent.Mutex mutex = new Vala.Concurrent.Mutex ();
     int value = 0;
 
-    Thread<void *> t1 = new Thread<void *>("worker1", () => {
+    Thread<void *> t1 = new Thread<void *> ("worker1", () => {
         for (int i = 0; i < 1000; i++) {
             mutex.withLock (() => {
                 value++;
@@ -57,7 +57,7 @@ void testConcurrentIncrement () {
         return null;
     });
 
-    Thread<void *> t2 = new Thread<void *>("worker2", () => {
+    Thread<void *> t2 = new Thread<void *> ("worker2", () => {
         for (int i = 0; i < 1000; i++) {
             mutex.withLock (() => {
                 value++;

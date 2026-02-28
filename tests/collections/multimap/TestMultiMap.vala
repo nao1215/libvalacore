@@ -9,7 +9,7 @@ void main (string[] args) {
 }
 
 void testPutGet () {
-    MultiMap<string, string> map = new MultiMap<string, string>(
+    MultiMap<string, string> map = new MultiMap<string, string> (
         GLib.str_hash,
         GLib.str_equal,
         GLib.str_equal
@@ -34,7 +34,7 @@ void testPutGet () {
 }
 
 void testRemove () {
-    MultiMap<string, string> map = new MultiMap<string, string>(
+    MultiMap<string, string> map = new MultiMap<string, string> (
         GLib.str_hash,
         GLib.str_equal,
         GLib.str_equal
@@ -56,7 +56,7 @@ void testRemove () {
 }
 
 void testClear () {
-    MultiMap<string, string> map = new MultiMap<string, string>(
+    MultiMap<string, string> map = new MultiMap<string, string> (
         GLib.str_hash,
         GLib.str_equal,
         GLib.str_equal

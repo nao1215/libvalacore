@@ -438,11 +438,15 @@ namespace Vala.Io {
          */
         public static Vala.Io.Path ? tempDir (string prefix) {
             string template = prefix + "XXXXXX";
-            string ? path = DirUtils.make_tmp (template);
-            if (path == null) {
+            try {
+                string ? path = DirUtils.make_tmp (template);
+                if (path == null) {
+                    return null;
+                }
+                return new Vala.Io.Path (path);
+            } catch (FileError e) {
                 return null;
             }
-            return new Vala.Io.Path (path);
         }
 
         /**
@@ -719,12 +723,11 @@ namespace Vala.Io {
                 return null;
             }
             var result = new GLib.List<Vala.Io.Path> ();
-            var spec = new GLib.PatternSpec (pattern);
             try {
                 var d = GLib.Dir.open (dir.toString ());
                 string ? name = null;
                 while ((name = d.read_name ()) != null) {
-                    if (spec.match_string (name)) {
+                    if (GLib.PatternSpec.match_simple (pattern, name)) {
                         result.append (new Vala.Io.Path (dir.toString () + "/" + name));
                     }
                 }

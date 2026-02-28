@@ -14,14 +14,14 @@ void testAwait () {
     bool done1 = false;
     bool done2 = false;
 
-    Thread<void *> t1 = new Thread<void *>("worker1", () => {
+    Thread<void *> t1 = new Thread<void *> ("worker1", () => {
         Posix.usleep (20000);
         done1 = true;
         latch.countDown ();
         return null;
     });
 
-    Thread<void *> t2 = new Thread<void *>("worker2", () => {
+    Thread<void *> t2 = new Thread<void *> ("worker2", () => {
         Posix.usleep (30000);
         done2 = true;
         latch.countDown ();

@@ -29,7 +29,7 @@ void main (string[] args) {
 }
 
 void testAddFirst () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addFirst ("a");
     list.addFirst ("b");
     list.addFirst ("c");
@@ -40,7 +40,7 @@ void testAddFirst () {
 }
 
 void testAddLast () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -51,7 +51,7 @@ void testAddLast () {
 }
 
 void testRemoveFirst () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -64,12 +64,12 @@ void testRemoveFirst () {
 }
 
 void testRemoveFirstEmpty () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.removeFirst () == null);
 }
 
 void testRemoveLast () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -82,12 +82,12 @@ void testRemoveLast () {
 }
 
 void testRemoveLastEmpty () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.removeLast () == null);
 }
 
 void testPeekFirst () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
 
@@ -96,12 +96,12 @@ void testPeekFirst () {
 }
 
 void testPeekFirstEmpty () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.peekFirst () == null);
 }
 
 void testPeekLast () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
 
@@ -110,12 +110,12 @@ void testPeekLast () {
 }
 
 void testPeekLastEmpty () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.peekLast () == null);
 }
 
 void testSize () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.size () == 0);
 
     list.addLast ("a");
@@ -129,7 +129,7 @@ void testSize () {
 }
 
 void testIsEmpty () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.isEmpty ());
 
     list.addLast ("a");
@@ -140,7 +140,7 @@ void testIsEmpty () {
 }
 
 void testClear () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -152,7 +152,7 @@ void testClear () {
 }
 
 void testContains () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("apple");
     list.addLast ("banana");
     list.addLast ("cherry");
@@ -163,12 +163,12 @@ void testContains () {
     assert (!list.contains ("grape"));
 
     // empty list
-    var empty = new LinkedList<string>(GLib.str_equal);
+    var empty = new LinkedList<string> (GLib.str_equal);
     assert (!empty.contains ("x"));
 }
 
 void testIndexOf () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -180,12 +180,12 @@ void testIndexOf () {
     assert (list.indexOf ("z") == -1);
 
     // empty list
-    var empty = new LinkedList<string>(GLib.str_equal);
+    var empty = new LinkedList<string> (GLib.str_equal);
     assert (empty.indexOf ("x") == -1);
 }
 
 void testGet () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -196,7 +196,7 @@ void testGet () {
 }
 
 void testGetOutOfBounds () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     assert (list.get (0) == null);
     assert (list.get (-1) == null);
 
@@ -206,12 +206,12 @@ void testGetOutOfBounds () {
 }
 
 void testForEach () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
 
-    var collected = new ArrayList<string>(GLib.str_equal);
+    var collected = new ArrayList<string> (GLib.str_equal);
     list.forEach ((s) => {
         collected.add (s);
     });
@@ -223,7 +223,7 @@ void testForEach () {
 }
 
 void testToArray () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -235,13 +235,13 @@ void testToArray () {
     assert (arr[2] == "c");
 
     // empty list
-    var empty = new LinkedList<string>(GLib.str_equal);
+    var empty = new LinkedList<string> (GLib.str_equal);
     string[] emptyArr = empty.toArray ();
     assert (emptyArr.length == 0);
 }
 
 void testUsedAsQueue () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addLast ("a");
     list.addLast ("b");
     list.addLast ("c");
@@ -253,7 +253,7 @@ void testUsedAsQueue () {
 }
 
 void testUsedAsStack () {
-    var list = new LinkedList<string>(GLib.str_equal);
+    var list = new LinkedList<string> (GLib.str_equal);
     list.addFirst ("a");
     list.addFirst ("b");
     list.addFirst ("c");
