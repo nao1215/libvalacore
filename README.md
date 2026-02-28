@@ -287,6 +287,166 @@ A dynamic array-backed list that grows automatically. Provides O(1) indexed acce
 | `find(PredicateFunc<T> func)` | Returns an Optional with the first matching element |
 | `subList(int from, int to)` | Returns a new list with elements in [from, to) |
 
+### Vala.Collections.HashMap\<K,V\>
+A hash table-based map from keys to values. Provides O(1) average-time lookup, insertion, and deletion. Inspired by Java's HashMap and Go's map.
+
+| Method | Description |
+|---|---|
+| `HashMap(HashFunc<K>, EqualFunc<K>)` | Creates an empty HashMap with hash and equality functions |
+| `put(K key, V value)` | Associates a value with a key (overwrites if exists) |
+| `get(K key)` | Returns the value for the key, or null if not found |
+| `getOrDefault(K key, V defaultValue)` | Returns the value for the key, or the default |
+| `containsKey(K key)` | Returns whether the key exists |
+| `containsValue(V value, EqualFunc<V>)` | Returns whether the value exists |
+| `remove(K key)` | Removes the entry and returns true if found |
+| `size()` | Returns the number of entries |
+| `isEmpty()` | Returns whether the map is empty |
+| `clear()` | Removes all entries |
+| `keys()` | Returns a list of all keys |
+| `values()` | Returns a list of all values |
+| `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry |
+| `putIfAbsent(K key, V value)` | Adds only if the key is not present |
+| `merge(HashMap<K,V> other)` | Copies all entries from another map |
+
+### Vala.Collections.HashSet\<T\>
+A hash table-based set of unique elements. Provides O(1) average-time add, remove, and contains. Set operations (union, intersection, difference) return new sets. Inspired by Java's HashSet and Python's set.
+
+| Method | Description |
+|---|---|
+| `HashSet(HashFunc<T>, EqualFunc<T>)` | Creates an empty HashSet with hash and equality functions |
+| `add(T element)` | Adds an element; returns false if already present |
+| `remove(T element)` | Removes an element; returns false if not found |
+| `contains(T element)` | Returns whether the element is in the set |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the set is empty |
+| `clear()` | Removes all elements |
+| `union(HashSet<T> other)` | Returns a new set with elements from both sets |
+| `intersection(HashSet<T> other)` | Returns a new set with elements in both sets |
+| `difference(HashSet<T> other)` | Returns a new set with elements only in this set |
+| `isSubsetOf(HashSet<T> other)` | Returns whether this set is a subset of the other |
+| `toArray()` | Returns elements as a native array |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+| `addAll(HashSet<T> other)` | Adds all elements from another set |
+
+### Vala.Collections.LinkedList\<T\>
+A doubly-linked list that supports efficient insertion and removal at both ends. Can be used as a queue, stack, or deque. Inspired by Java's LinkedList and Go's container/list.
+
+| Method | Description |
+|---|---|
+| `LinkedList(EqualFunc<T>?)` | Creates an empty LinkedList with optional equality function |
+| `addFirst(T element)` | Adds an element to the front |
+| `addLast(T element)` | Adds an element to the end |
+| `removeFirst()` | Removes and returns the first element |
+| `removeLast()` | Removes and returns the last element |
+| `peekFirst()` | Returns the first element without removing |
+| `peekLast()` | Returns the last element without removing |
+| `get(int index)` | Returns the element at the index (O(n)) |
+| `contains(T element)` | Returns whether the element is in the list |
+| `indexOf(T element)` | Returns the index of the element (-1 if not found) |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the list is empty |
+| `clear()` | Removes all elements |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+| `toArray()` | Returns elements as a native array |
+
+### Vala.Collections.Deque\<T\>
+A double-ended queue (deque) that supports efficient insertion and removal at both ends. Inspired by Java's ArrayDeque.
+
+| Method | Description |
+|---|---|
+| `Deque(EqualFunc<T>?)` | Creates an empty Deque with optional equality function |
+| `addFirst(T element)` | Adds an element to the front |
+| `addLast(T element)` | Adds an element to the end |
+| `removeFirst()` | Removes and returns the first element |
+| `removeLast()` | Removes and returns the last element |
+| `peekFirst()` | Returns the first element without removing |
+| `peekLast()` | Returns the last element without removing |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the deque is empty |
+| `contains(T element)` | Returns whether the element is in the deque |
+| `clear()` | Removes all elements |
+| `toArray()` | Returns elements as a native array |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+
+### Vala.Collections.Pair\<A,B\>
+An immutable pair of two values. A Value Object inspired by Kotlin's Pair.
+
+| Method | Description |
+|---|---|
+| `Pair(A first, B second)` | Creates a Pair with the given values |
+| `first()` | Returns the first value |
+| `second()` | Returns the second value |
+| `equals(Pair other, EqualFunc<A>, EqualFunc<B>)` | Returns whether both values are equal |
+| `toString()` | Returns string representation `(first, second)` |
+
+### Vala.Collections.Triple\<A,B,C\>
+An immutable triple of three values. A Value Object inspired by Kotlin's Triple.
+
+| Method | Description |
+|---|---|
+| `Triple(A first, B second, C third)` | Creates a Triple with the given values |
+| `first()` | Returns the first value |
+| `second()` | Returns the second value |
+| `third()` | Returns the third value |
+| `equals(Triple other, EqualFunc<A>, EqualFunc<B>, EqualFunc<C>)` | Returns whether all values are equal |
+| `toString()` | Returns string representation `(first, second, third)` |
+
+### Vala.Collections.PriorityQueue\<T\>
+A priority queue backed by a binary min-heap. Elements are ordered by a comparison function. Inspired by Java's PriorityQueue and Go's container/heap.
+
+| Method | Description |
+|---|---|
+| `PriorityQueue(ComparatorFunc<T>, EqualFunc<T>?)` | Creates a PriorityQueue with comparator and optional equality function |
+| `add(T element)` | Adds an element |
+| `poll()` | Removes and returns the highest-priority element |
+| `peek()` | Returns the highest-priority element without removing |
+| `remove(T element)` | Removes the first occurrence of the element |
+| `contains(T element)` | Returns whether the element is in the queue |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the queue is empty |
+| `clear()` | Removes all elements |
+| `toArray()` | Returns elements as a native array |
+
+### Vala.Collections.BitSet
+A fixed-size or dynamically growing set of bits with bitwise operations. Inspired by Java's BitSet.
+
+| Method | Description |
+|---|---|
+| `BitSet(int size = 64)` | Creates a BitSet with initial capacity in bits |
+| `set(int index)` | Sets the bit at the index to 1 |
+| `clearBit(int index)` | Sets the bit at the index to 0 |
+| `get(int index)` | Returns the value of the bit at the index |
+| `flip(int index)` | Flips the bit at the index |
+| `and(BitSet other)` | Bitwise AND with another BitSet |
+| `or(BitSet other)` | Bitwise OR with another BitSet |
+| `xor(BitSet other)` | Bitwise XOR with another BitSet |
+| `cardinality()` | Returns the number of set bits |
+| `length()` | Returns the index of the highest set bit + 1 |
+| `isEmpty()` | Returns whether all bits are 0 |
+| `toString()` | Returns string representation e.g. `{0, 3, 7}` |
+| `clearAll()` | Sets all bits to 0 |
+
+### Vala.Collections.TreeMap\<K,V\>
+A sorted map backed by a binary search tree. Keys are ordered by a comparison function. Inspired by Java's TreeMap.
+
+| Method | Description |
+|---|---|
+| `TreeMap(ComparatorFunc<K>)` | Creates an empty TreeMap with comparator |
+| `put(K key, V value)` | Associates the value with the key |
+| `get(K key)` | Returns the value for the key |
+| `containsKey(K key)` | Returns whether the key exists |
+| `remove(K key)` | Removes the entry with the key |
+| `firstKey()` | Returns the smallest key |
+| `lastKey()` | Returns the largest key |
+| `floorKey(K key)` | Returns the greatest key <= the given key |
+| `ceilingKey(K key)` | Returns the smallest key >= the given key |
+| `subMap(K from, K to)` | Returns entries in range [from, to) |
+| `size()` | Returns the number of entries |
+| `isEmpty()` | Returns whether the map is empty |
+| `clear()` | Removes all entries |
+| `keys()` | Returns all keys in sorted order |
+| `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry in key order |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
