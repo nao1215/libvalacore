@@ -36,16 +36,14 @@ jobs:
         # Copy new generated files
         cp -rf "${VALADOC_DIR}"/* docs/
 
-    - name: Check for changes
-      id: check
-      run: |
-        git diff --quiet docs/ && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
-
     - name: Commit and push docs
-      if: steps.check.outputs.changed == 'true'
       run: |
+        git add docs/
+        if git diff --cached --quiet; then
+          echo "No changes to docs/"
+          exit 0
+        fi
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add docs/
         git commit -m "docs: update Valadoc for ${GITHUB_REF_NAME}"
         git push origin HEAD:main
