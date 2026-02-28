@@ -10,6 +10,7 @@ valacore_sources = files([
   'io/BufferedWriter.vala',
   'io/Files.vala',
   'io/Path.vala',
+  'io/Scanner.vala',
   'io/StringBuilder.vala',
   'io/StringJoiner.vala',
   'io/Strings.vala',
