@@ -76,6 +76,7 @@ valacore_sources = files([
   'math/Math.vala',
   'math/Random.vala',
   'net/NetUrl.vala',
+  'net/Retry.vala',
   'parser/ArgParser.vala',
   'regex/Pattern.vala',
   'runtime/SystemProperties.vala',

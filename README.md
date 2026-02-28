@@ -434,6 +434,25 @@ Immutable URL value object.
 | `fragment()` | Returns fragment |
 | `toString()` | Returns normalized URL string |
 
+### Vala.Net.Retry
+Retry policy utility for transient failures.
+
+| Method | Description |
+|---|---|
+| `Retry()` | Creates a retry policy with default settings |
+| `networkDefault()` | Creates recommended retry policy for network operations |
+| `ioDefault()` | Creates recommended retry policy for short I/O contention |
+| `withMaxAttempts(int n)` | Sets maximum attempts |
+| `withBackoff(Duration initial, Duration max)` | Sets exponential backoff strategy |
+| `withFixedDelay(Duration delay)` | Sets fixed delay strategy |
+| `withJitter(bool enabled)` | Enables or disables jitter |
+| `withRetryOn(RetryOnFunc shouldRetry)` | Sets retry predicate by failure reason |
+| `onRetry(RetryCallback fn)` | Registers callback before each retry wait |
+| `httpStatusRetry(ArrayList<int> statusCodes)` | Retries only for matching HTTP status codes in failure reason text |
+| `retry(RetryFunc fn)` | Retries bool callback until success or attempts exhausted |
+| `retryResult<T>(RetryResultFunc<T> fn)` | Retries nullable callback until non-null result |
+| `retryVoid(RetryVoidFunc fn)` | Retries callback that may throw `GLib.Error` |
+
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
 
