@@ -216,6 +216,21 @@ Static utility methods for regular expressions.
 | `replaceAll(string s, string pattern, string repl)` | Replaces all matches |
 | `split(string s, string pattern)` | Splits text by regex pattern |
 
+### Vala.Time.Duration
+Immutable value object that represents a duration.
+
+| Method | Description |
+|---|---|
+| `ofSeconds(int64 secs)` | Creates duration from seconds |
+| `ofMinutes(int64 mins)` | Creates duration from minutes |
+| `ofHours(int64 hours)` | Creates duration from hours |
+| `ofDays(int64 days)` | Creates duration from days |
+| `toSeconds()` | Returns duration in seconds |
+| `toMillis()` | Returns duration in milliseconds |
+| `plus(Duration other)` | Returns sum of durations |
+| `minus(Duration other)` | Returns difference of durations |
+| `toString()` | Returns human-readable string (e.g. `2h30m`) |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
