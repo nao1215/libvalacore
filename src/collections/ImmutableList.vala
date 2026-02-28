@@ -63,16 +63,18 @@ namespace Vala.Collections {
         /**
          * Returns whether list contains value.
          *
+         * When no equal_func was provided at construction, this uses
+         * reference equality (==). Provide a custom EqualFunc for
+         * value-based comparison of object types.
+         *
          * @param value value to search.
          * @return true when value exists.
          */
         public bool contains (T value) {
             for (int i = 0; i < (int) _items.length; i++) {
                 T item = _items[i];
-                if (_equal_func != null && _equal_func (item, value)) {
-                    return true;
-                }
-                if (_equal_func == null && item == value) {
+                bool eq = (_equal_func != null) ? _equal_func (item, value) : (item == value);
+                if (eq) {
                     return true;
                 }
             }

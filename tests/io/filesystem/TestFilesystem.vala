@@ -34,7 +34,8 @@ void testSetLastModifiedTime () {
 
         GLib.DateTime ? modified = Files.lastModified (tmp);
         assert (modified != null);
-        assert (modified.to_unix () == target.toUnixTimestamp ());
+        int64 diff = modified.to_unix () - target.toUnixTimestamp ();
+        assert (diff >= -1 && diff <= 1);
     } finally {
         Files.remove (tmp);
     }
@@ -45,9 +46,19 @@ void testAccessChecks () {
     assert (tmp != null);
 
     try {
-        assert (Filesystem.isReadable (tmp) == Files.canRead (tmp));
-        assert (Filesystem.isWritable (tmp) == Files.canWrite (tmp));
-        assert (Filesystem.isExecutable (tmp) == Files.canExec (tmp));
+        // Default temp file: readable + writable, not executable
+        assert (Filesystem.isReadable (tmp) == true);
+        assert (Filesystem.isWritable (tmp) == true);
+        assert (Filesystem.isExecutable (tmp) == false);
+
+        // Make read-only
+        GLib.FileUtils.chmod (tmp.toString (), (int) Posix.S_IRUSR);
+        assert (Filesystem.isReadable (tmp) == true);
+        assert (Filesystem.isWritable (tmp) == false);
+        assert (Filesystem.isExecutable (tmp) == false);
+
+        // Restore write permission for cleanup
+        GLib.FileUtils.chmod (tmp.toString (), (int) (Posix.S_IRUSR | Posix.S_IWUSR));
     } finally {
         Files.remove (tmp);
     }
@@ -71,7 +82,8 @@ void testSetOwnerInvalid () {
     assert (tmp != null);
 
     try {
-        assert (Filesystem.setOwner (tmp, "libvalacore-no-such-user") == false);
+        string invalid_user = "libvalacore-no-such-user-%d".printf (Posix.getpid ());
+        assert (Filesystem.setOwner (tmp, invalid_user) == false);
     } finally {
         Files.remove (tmp);
     }

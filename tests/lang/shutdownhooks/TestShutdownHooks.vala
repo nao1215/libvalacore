@@ -31,27 +31,36 @@ void testSingleHookRunsAtExit () {
     Vala.Io.Path ? tmp = Files.tempFile ("shutdownhooks", ".txt");
     assert (tmp != null);
 
-    bool spawned = runChild ("--shutdownhooks-child-single", tmp.toString ());
-    assert (spawned == true);
+    try {
+        bool spawned = runChild ("--shutdownhooks-child-single", tmp.toString ());
+        assert (spawned == true);
 
-    string ? text = Files.readAllText (tmp);
-    assert (text == "done");
-
-    assert (Files.remove (tmp) == true);
+        string ? text = Files.readAllText (tmp);
+        assert (text == "done");
+    } finally {
+        if (Files.exists (tmp)) {
+            Files.remove (tmp);
+        }
+    }
 }
 
 void testHooksRunInReverseOrder () {
     Vala.Io.Path ? tmp = Files.tempFile ("shutdownhooks-order", ".txt");
     assert (tmp != null);
-    assert (Files.writeText (tmp, "") == true);
 
-    bool spawned = runChild ("--shutdownhooks-child-order", tmp.toString ());
-    assert (spawned == true);
+    try {
+        assert (Files.writeText (tmp, "") == true);
 
-    string ? text = Files.readAllText (tmp);
-    assert (text == "second-first");
+        bool spawned = runChild ("--shutdownhooks-child-order", tmp.toString ());
+        assert (spawned == true);
 
-    assert (Files.remove (tmp) == true);
+        string ? text = Files.readAllText (tmp);
+        assert (text == "second-first");
+    } finally {
+        if (Files.exists (tmp)) {
+            Files.remove (tmp);
+        }
+    }
 }
 
 bool runChild (string mode, string outputPath) {
@@ -59,7 +68,7 @@ bool runChild (string mode, string outputPath) {
         return false;
     }
 
-    string[] argv = { test_program_path, mode, outputPath, null };
+    string[] argv = { test_program_path, mode, outputPath };
     int waitStatus = 0;
     try {
         GLib.Process.spawn_sync (null, argv, null, SpawnFlags.SEARCH_PATH, null, null, null, out waitStatus);

@@ -1,6 +1,10 @@
 namespace Vala.Lang {
     /**
      * Callback delegate for shutdown hook handlers.
+     *
+     * This delegate uses [CCode (has_target = false)] for Posix.atexit
+     * compatibility. Closures that capture local variables are not supported;
+     * use module-level variables or static state instead.
      */
     [CCode (has_target = false)]
     public delegate void ShutdownHookFunc ();
@@ -65,7 +69,9 @@ namespace Vala.Lang {
                 hook = _hooks.pop_head ();
                 _mutex.unlock ();
 
-                hook ();
+                if (hook != null) {
+                    hook ();
+                }
             }
         }
     }

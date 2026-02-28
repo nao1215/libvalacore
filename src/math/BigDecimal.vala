@@ -92,10 +92,11 @@ namespace Vala.Math {
          * @return absolute value.
          */
         public BigDecimal abs () {
-            if (_unscaled.toString ().has_prefix ("-")) {
-                return fromComponents (new BigInteger (_unscaled.toString ().substring (1)), _scale);
+            string text = _unscaled.toString ();
+            if (text.has_prefix ("-")) {
+                return fromComponents (new BigInteger (text.substring (1)), _scale);
             }
-            return fromComponents (new BigInteger (_unscaled.toString ()), _scale);
+            return fromComponents (new BigInteger (text), _scale);
         }
 
         /**
@@ -160,6 +161,9 @@ namespace Vala.Math {
          * @return computed product.
          */
         public BigDecimal multiply (BigDecimal other) {
+            if (_scale > int.MAX - other._scale) {
+                error ("scale overflow in multiply");
+            }
             BigInteger product = _unscaled.multiply (other._unscaled);
             return fromComponents (product, _scale + other._scale);
         }
@@ -191,6 +195,9 @@ namespace Vala.Math {
             }
             if (other._unscaled.toString () == "0") {
                 error ("division by zero");
+            }
+            if (scale > int.MAX - other._scale) {
+                error ("scale overflow in divideWithScale");
             }
 
             BigInteger numerator = _unscaled.multiply (pow10 (scale + other._scale));
@@ -226,6 +233,9 @@ namespace Vala.Math {
         public BigDecimal pow (int exponent) {
             if (exponent < 0) {
                 error ("exponent must be non-negative");
+            }
+            if (_scale != 0 && exponent != 0 && _scale > int.MAX / exponent) {
+                error ("scale overflow in pow");
             }
             return fromComponents (_unscaled.pow (exponent), _scale * exponent);
         }

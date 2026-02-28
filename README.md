@@ -67,8 +67,8 @@ Filesystem metadata utility methods.
 | `isReadable(Path path)` | Returns whether file is readable |
 | `isWritable(Path path)` | Returns whether file is writable |
 | `isExecutable(Path path)` | Returns whether file is executable |
-| `getOwner(Path path)` | Returns owner user name or `null` |
-| `setOwner(Path path, string owner)` | Sets owner by user name (`true` on success) |
+| `getOwner(Path path)` | Returns owner username or `null` |
+| `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
 
 ### Vala.Io.Console
 Console utility methods.
@@ -85,7 +85,7 @@ Process execution helper methods.
 |---|---|
 | `exec(string cmd, string[] args)` | Executes an external command and returns true on zero exit status |
 | `execWithOutput(string cmd, string[] args)` | Executes an external command and returns stdout text on success (`null` on failure) |
-| `kill(int pid)` | Sends SIGKILL to the specified process ID (`true` when signal delivery succeeds) |
+| `kill(int pid)` | Sends SIGKILL to the specified process ID (`true` when signal delivery succeeds). POSIX only |
 
 ### Vala.Io.Temp
 Temporary resource helpers that auto-clean up after callback execution.
@@ -509,7 +509,7 @@ Static utility methods for CSV parsing and writing.
 |---|---|
 | `parse(string csv)` | Parses CSV text into `ArrayList<ArrayList<string>>` |
 | `parseFile(Path path)` | Parses a CSV file into `ArrayList<ArrayList<string>>` |
-| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text |
+| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text and returns the result as a string |
 
 ### Vala.Encoding.Hex
 Static utility methods for hexadecimal encoding and decoding.
@@ -962,7 +962,7 @@ Exception utility methods.
 
 | Method | Description |
 |---|---|
-| `sneakyThrow(GLib.Error e)` | Terminates the process with the provided error |
+| `sneakyThrow(GLib.Error e)` | Terminates the process immediately with the provided error (does not return) |
 | `getStackTrace(GLib.Error e)` | Returns printable error details |
 
 ### Vala.Lang.SystemInfo
@@ -1000,7 +1000,7 @@ Thread utility methods.
 | `sleepMillis(int ms)` | Suspends current thread for milliseconds |
 
 ### Vala.Lang.Randoms
-Random utility methods.
+Convenience random utility methods. Prefer `Vala.Math.Random` for the full API.
 
 | Method | Description |
 |---|---|

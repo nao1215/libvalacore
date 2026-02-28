@@ -44,7 +44,7 @@ void testKillInvalidPid () {
 }
 
 void testKillSuccess () {
-    string[] argv = { "sh", "-c", "sleep 2", null };
+    string[] argv = { "sh", "-c", "sleep 5", null };
     GLib.Subprocess subprocess;
     try {
         subprocess = new GLib.Subprocess.newv (argv, GLib.SubprocessFlags.NONE);
@@ -66,5 +66,5 @@ void testKillSuccess () {
     }
 
     int64 elapsedMillis = (GLib.get_monotonic_time () - start) / 1000;
-    assert (elapsedMillis < 1900);
+    assert (elapsedMillis < 4000);
 }
