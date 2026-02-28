@@ -1193,6 +1193,23 @@ Consistent hash ring with virtual nodes for stable key distribution.
 | `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
 | `clear()` | Clears all nodes and ring state |
 
+## Vala.Distributed.RendezvousHash
+Weighted highest-random-weight hash for routing and replica selection.
+
+| Method | Description |
+|---|---|
+| `RendezvousHash()` | Creates empty node set |
+| `addNode(string nodeId)` | Adds node |
+| `removeNode(string nodeId)` | Removes node |
+| `containsNode(string nodeId)` | Returns whether node exists |
+| `getNode(string key)` | Returns assigned node for a key |
+| `getTopNodes(string key, int n)` | Returns top-N nodes by score |
+| `setWeight(string nodeId, double weight)` | Sets node weight |
+| `nodeCount()` | Returns number of nodes |
+| `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
+| `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
+| `clear()` | Clears all nodes and weights |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
