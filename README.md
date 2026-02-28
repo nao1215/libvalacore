@@ -746,6 +746,18 @@ Log level enum for filtering logger output.
 | `WARN` | Warnings and recoverable issues |
 | `ERROR` | Errors and failures |
 
+## Vala.Runtime.SystemProperties
+System property utility methods similar to Java `System` properties.
+
+| Method | Description |
+|---|---|
+| `get(string key)` | Returns known system property or environment value |
+| `lineSeparator()` | Returns line separator |
+| `fileSeparator()` | Returns file separator |
+| `pathSeparator()` | Returns path separator |
+| `nanoTime()` | Returns monotonic time in nanoseconds |
+| `currentTimeMillis()` | Returns current UNIX time in milliseconds |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
