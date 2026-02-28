@@ -9,6 +9,7 @@ valacore_sources = files([
   'collections/ArrayList.vala',
   'collections/HashMap.vala',
   'collections/HashSet.vala',
+  'collections/LinkedList.vala',
   'collections/Optional.vala',
   'collections/Queue.vala',
   'collections/Result.vala',

@@ -3,6 +3,7 @@ test_name = meson.project_name() + '-test'
 subdir('collections/arraylist')
 subdir('collections/hashmap')
 subdir('collections/hashset')
+subdir('collections/linkedlist')
 subdir('collections/optional')
 subdir('collections/queue')
 subdir('collections/result')

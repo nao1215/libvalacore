@@ -328,6 +328,27 @@ A hash table-based set of unique elements. Provides O(1) average-time add, remov
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 | `addAll(HashSet<T> other)` | Adds all elements from another set |
 
+### Vala.Collections.LinkedList\<T\>
+A doubly-linked list that supports efficient insertion and removal at both ends. Can be used as a queue, stack, or deque. Inspired by Java's LinkedList and Go's container/list.
+
+| Method | Description |
+|---|---|
+| `LinkedList(EqualFunc<T>?)` | Creates an empty LinkedList with optional equality function |
+| `addFirst(T element)` | Adds an element to the front |
+| `addLast(T element)` | Adds an element to the end |
+| `removeFirst()` | Removes and returns the first element |
+| `removeLast()` | Removes and returns the last element |
+| `peekFirst()` | Returns the first element without removing |
+| `peekLast()` | Returns the last element without removing |
+| `get(int index)` | Returns the element at the index (O(n)) |
+| `contains(T element)` | Returns whether the element is in the list |
+| `indexOf(T element)` | Returns the index of the element (-1 if not found) |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the list is empty |
+| `clear()` | Removes all elements |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+| `toArray()` | Returns elements as a native array |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
