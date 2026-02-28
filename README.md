@@ -657,6 +657,34 @@ A container representing either a success value or an error. Inspired by Rust's 
 | `map<U>(MapFunc<T,U> func)` | Transforms the success value |
 | `mapError<F>(MapFunc<E,F> func)` | Transforms the error value |
 
+### Vala.Collections.Stream\<T\>
+A fluent pipeline for transforming and aggregating collection data. Supports filter, map, sort, distinct, limit/skip, and terminal operations.
+
+| Method | Description |
+|---|---|
+| `fromList(ArrayList<T> list)` | Creates a Stream from an ArrayList |
+| `empty()` | Creates an empty Stream |
+| `filter(PredicateFunc<T> fn)` | Returns elements matching the predicate |
+| `map<U>(MapFunc<T, U> fn)` | Transforms each element |
+| `sorted(ComparatorFunc<T> cmp)` | Sorts elements by comparator |
+| `distinct(EqualFunc<T> equal)` | Removes duplicates |
+| `limit(int n)` | Limits to first n elements |
+| `skip(int n)` | Skips first n elements |
+| `takeWhile(PredicateFunc<T> fn)` | Takes elements while predicate is true |
+| `dropWhile(PredicateFunc<T> fn)` | Drops elements while predicate is true |
+| `peek(ConsumerFunc<T> fn)` | Executes action on each element (for debugging) |
+| `toList()` | Collects into an ArrayList |
+| `count()` | Returns element count |
+| `findFirst()` | Returns first element (nullable) |
+| `findLast()` | Returns last element (nullable) |
+| `anyMatch(PredicateFunc<T> fn)` | Returns true if any element matches |
+| `allMatch(PredicateFunc<T> fn)` | Returns true if all elements match |
+| `noneMatch(PredicateFunc<T> fn)` | Returns true if no elements match |
+| `reduce<U>(U init, ReduceFunc<T, U> fn)` | Folds into a single value |
+| `forEach(ConsumerFunc<T> fn)` | Executes action for each element |
+| `min(ComparatorFunc<T> cmp)` | Returns minimum element (nullable) |
+| `max(ComparatorFunc<T> cmp)` | Returns maximum element (nullable) |
+
 ### Vala.Collections.Stack\<T\>
 A LIFO (Last-In-First-Out) stack backed by GLib.Queue.
 

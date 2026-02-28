@@ -22,6 +22,7 @@ valacore_sources = files([
   'collections/Queue.vala',
   'collections/Result.vala',
   'collections/Stack.vala',
+  'collections/Stream.vala',
   'collections/TreeMap.vala',
   'collections/Triple.vala',
   'concurrent/Channel.vala',
