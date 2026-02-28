@@ -315,6 +315,19 @@ Static utility methods for random values.
 | `shuffle<T>(T[] array)` | Shuffles array in place |
 | `choice<T>(T[] array)` | Returns random element (null for empty array) |
 
+### Vala.Format.NumberFormat
+Number formatting utilities for display-friendly output.
+
+| Method | Description |
+|---|---|
+| `formatInt(int64 n)` | Formats integer with thousand separators |
+| `formatDouble(double d, int precision)` | Formats floating point with separators and precision |
+| `formatPercent(double d)` | Formats ratio as percent text |
+| `formatCurrency(double d, string symbol)` | Formats value as currency |
+| `formatBytes(int64 bytes)` | Formats bytes as human-readable units |
+| `formatDuration(Duration d)` | Formats duration as human-readable text |
+| `ordinal(int n)` | Formats ordinal text (`1st`, `2nd`, `3rd`, ...) |
+
 ### Vala.Net.Url
 Immutable URL value object.
 
