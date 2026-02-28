@@ -233,6 +233,18 @@ Static utility methods for URL percent-encoding.
 | `encode(string s)` | Encodes a URL component with percent-encoding |
 | `decode(string s)` | Decodes a percent-encoded URL component |
 
+### Vala.Crypto.Hash
+Static utility methods for cryptographic hashes.
+
+| Method | Description |
+|---|---|
+| `md5(string s)` | Returns the MD5 hash of a string |
+| `md5Bytes(uint8[] data)` | Returns the MD5 hash of bytes |
+| `sha1(string s)` | Returns the SHA-1 hash of a string |
+| `sha256(string s)` | Returns the SHA-256 hash of a string |
+| `sha256Bytes(uint8[] data)` | Returns the SHA-256 hash of bytes |
+| `sha512(string s)` | Returns the SHA-512 hash of a string |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 
