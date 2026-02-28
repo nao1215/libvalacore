@@ -492,6 +492,32 @@ One-shot countdown latch for synchronization.
 | `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
 | `getCount()` | Returns current count |
 
+### Vala.Concurrent.WorkerPool
+Fixed-size worker pool for executing tasks concurrently. Manages worker threads and a task queue.
+
+| Method | Description |
+|---|---|
+| `WorkerPool(int poolSize)` | Creates a pool with the specified number of workers |
+| `withDefault()` | Creates a pool sized to CPU core count |
+| `submitInt(TaskFunc<int> task)` | Submits an int-returning task and returns a PromiseInt |
+| `submitString(TaskFunc<string> task)` | Submits a string-returning task and returns a PromiseString |
+| `submitBool(TaskFunc<bool> task)` | Submits a bool-returning task and returns a PromiseBool |
+| `submitDouble(TaskFunc<double?> task)` | Submits a double-returning task and returns a PromiseDouble |
+| `execute(VoidTaskFunc task)` | Executes a void task in the pool |
+| `shutdown()` | Signals shutdown and waits for all tasks to complete |
+| `isShutdown()` | Returns whether the pool has been shut down |
+| `activeCount()` | Returns the number of currently active tasks |
+| `poolSize()` | Returns the number of worker threads |
+| `queueSize()` | Returns the number of tasks waiting in the queue |
+
+### Vala.Concurrent.PromiseInt / PromiseString / PromiseBool / PromiseDouble
+Promise types representing the pending result of an asynchronous computation.
+
+| Method | Description |
+|---|---|
+| `await()` | Blocks until the result is available and returns it |
+| `isDone()` | Returns whether the computation is complete |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 

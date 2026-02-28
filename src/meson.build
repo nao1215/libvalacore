@@ -29,6 +29,7 @@ valacore_sources = files([
   'concurrent/Once.vala',
   'concurrent/RWMutex.vala',
   'concurrent/Semaphore.vala',
+  'concurrent/ThreadPool.vala',
   'concurrent/WaitGroup.vala',
   'config/Properties.vala',
   'conv/Convert.vala',
