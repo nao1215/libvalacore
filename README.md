@@ -887,6 +887,13 @@ Random utility methods.
 | `nextDouble()` | Returns random double in `[0.0, 1.0)` |
 | `shuffle<T>(T[] array)` | Shuffles array in place |
 
+### Vala.Lang.ShutdownHooks
+Process shutdown hook registration utilities.
+
+| Method | Description |
+|---|---|
+| `addHook(ShutdownHookFunc func)` | Registers callback executed when process exits normally |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 
