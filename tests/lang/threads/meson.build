@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 threads_test_sources = files(
   './TestThreads.vala'
 )

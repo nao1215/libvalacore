@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 random_test_sources = files(
   './TestRandom.vala'
 )

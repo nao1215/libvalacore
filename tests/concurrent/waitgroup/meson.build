@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 waitgroup_test_sources = files(
   './TestWaitGroup.vala'
 )

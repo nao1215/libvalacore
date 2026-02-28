@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 numberformat_test_sources = files(
   './TestNumberFormat.vala'
 )

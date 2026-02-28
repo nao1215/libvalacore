@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 process_test_sources = files(
   './TestProcess.vala'
 )

@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 scanner_test_sources = files(
   './TestScanner.vala'
 )

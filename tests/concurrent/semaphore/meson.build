@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 semaphore_test_sources = files(
   './TestSemaphore.vala'
 )

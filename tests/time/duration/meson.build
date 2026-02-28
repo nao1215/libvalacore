@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 duration_test_sources = files(
   './TestDuration.vala'
 )

@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 convert_test_sources = files(
   './TestConvert.vala'
 )

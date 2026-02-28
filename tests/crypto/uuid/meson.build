@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 uuid_test_sources = files(
   './TestUuid.vala'
 )

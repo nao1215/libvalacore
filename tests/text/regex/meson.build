@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 regex_test_sources = files(
   './TestRegex.vala'
 )

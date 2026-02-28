@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 rwmutex_test_sources = files(
   './TestRWMutex.vala'
 )

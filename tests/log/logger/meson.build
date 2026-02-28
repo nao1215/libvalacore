@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 logger_test_sources = files(
   './TestLogger.vala'
 )

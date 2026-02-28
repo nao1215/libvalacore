@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 url_test_sources = files(
   './TestUrl.vala'
 )

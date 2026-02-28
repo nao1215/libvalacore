@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 countdownlatch_test_sources = files(
   './TestCountDownLatch.vala'
 )

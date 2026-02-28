@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 mutex_test_sources = files(
   './TestMutex.vala'
 )

@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 datetime_test_sources = files(
   './TestDateTime.vala'
 )

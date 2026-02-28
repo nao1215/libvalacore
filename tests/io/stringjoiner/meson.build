@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 stringjoiner_test_sources = files(
   './TestStringJoiner.vala'
 )

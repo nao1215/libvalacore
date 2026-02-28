@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 math_test_sources = files(
   './TestMath.vala'
 )

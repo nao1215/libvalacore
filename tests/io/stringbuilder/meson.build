@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 stringbuilder_test_sources = files(
   './TestStringBuilder.vala'
 )

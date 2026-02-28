@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 triple_test_sources = files(
   './TestTriple.vala'
 )

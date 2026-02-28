@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 preconditions_test_sources = files(
   './TestPreconditions.vala'
 )

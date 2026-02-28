@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 hex_test_sources = files(
   './TestHex.vala'
 )

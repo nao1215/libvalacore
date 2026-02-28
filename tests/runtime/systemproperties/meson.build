@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 systemproperties_test_sources = files(
   './TestSystemProperties.vala'
 )

@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 pair_test_sources = files(
   './TestPair.vala'
 )

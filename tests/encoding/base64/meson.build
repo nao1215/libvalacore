@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 base64_test_sources = files(
   './TestBase64.vala'
 )

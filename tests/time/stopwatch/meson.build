@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 stopwatch_test_sources = files(
   './TestStopwatch.vala'
 )

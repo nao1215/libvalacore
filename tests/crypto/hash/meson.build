@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 hash_test_sources = files(
   './TestHash.vala'
 )

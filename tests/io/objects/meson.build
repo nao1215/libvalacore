@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 objects_test_sources = files(
   './TestObjects.vala'
 )

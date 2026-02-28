@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 hmac_test_sources = files(
   './TestHmac.vala'
 )

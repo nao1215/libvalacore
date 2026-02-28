@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 bufferedreader_test_sources = files(
   './TestBufferedReader.vala'
 )

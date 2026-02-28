@@ -1,5 +1,3 @@
-test_name = meson.project_name() + '-test'
-
 stringescape_test_sources = files(
   './TestStringEscape.vala'
 )
