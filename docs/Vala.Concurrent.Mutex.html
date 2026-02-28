@@ -24,6 +24,9 @@
         </div>
         <div class="description">
           <p>Mutex wrapper with utility methods.</p>
+          <p>This class wraps GLib.Mutex and provides a safer withLock() helper to avoid unlock leaks when exceptions or early returns happen.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> mutex = <span class="main_keyword">new</span> Mutex ();<br/>    mutex.withLock (() =&gt; {<br/>        <span class="main_comment">// critical section</span><br/>    });</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
         </div>

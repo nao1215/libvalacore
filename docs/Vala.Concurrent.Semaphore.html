@@ -24,6 +24,10 @@
         </div>
         <div class="description">
           <p>Counting semaphore.</p>
+          <p>Semaphore controls concurrent access with permit counters. acquire() blocks when no permits are available; release() returns a permit.
+          </p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> sem = <span class="main_keyword">new</span> Semaphore (<span class="main_literal">3</span>);<br/>    sem.acquire ();<br/>    <span class="main_keyword">try</span> {<br/>        <span class="main_comment">// bounded concurrency section</span><br/>    } <span class="main_keyword">finally</span> {<br/>        sem.release ();<br/>    }</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
         </div>

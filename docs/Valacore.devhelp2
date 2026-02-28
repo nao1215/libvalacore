@@ -28,9 +28,11 @@
         <sub name="Hex" link="Vala.Encoding.Hex.html"></sub><sub name="Url" link="Vala.Encoding.Url.html"></sub></sub>
       <sub name="Format" link="Vala.Format.html"><sub name="NumberFormat" link="Vala.Format.NumberFormat.html"></sub></sub>
       <sub name="Io" link="Vala.Io.html"><sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub>
-        <sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub><sub name="Console" link="Vala.Io.Console.html"></sub>
-        <sub name="Filesystem" link="Vala.Io.Filesystem.html"></sub><sub name="Files" link="Vala.Io.Files.html"></sub>
+        <sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub><sub name="AtomicFile" link="Vala.Io.AtomicFile.html"></sub>
+        <sub name="Console" link="Vala.Io.Console.html"></sub><sub name="Filesystem" link="Vala.Io.Filesystem.html"></sub>
+        <sub name="Files" link="Vala.Io.Files.html"></sub><sub name="FileLock" link="Vala.Io.FileLock.html"></sub>
         <sub name="Path" link="Vala.Io.Path.html"></sub><sub name="Process" link="Vala.Io.Process.html"></sub>
+        <sub name="ShellResult" link="Vala.Io.ShellResult.html"></sub><sub name="Shell" link="Vala.Io.Shell.html"></sub>
         <sub name="Resource" link="Vala.Io.Resource.html"></sub><sub name="Scanner" link="Vala.Io.Scanner.html"></sub>
         <sub name="Temp" link="Vala.Io.Temp.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
         <sub name="StringJoiner" link="Vala.Io.StringJoiner.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
@@ -44,11 +46,14 @@
         <sub name="LogHandler" link="Vala.Log.LogHandler.html"></sub></sub><sub name="Math" link="Vala.Math.html">
         <sub name="BigDecimal" link="Vala.Math.BigDecimal.html"></sub><sub name="BigInteger" link="Vala.Math.BigInteger.html"></sub>
         <sub name="Math" link="Vala.Math.Math.html"></sub><sub name="Random" link="Vala.Math.Random.html"></sub></sub>
-      <sub name="Net" link="Vala.Net.html"><sub name="Url" link="Vala.Net.Url.html"></sub></sub><sub name="Parser" link="Vala.Parser.html">
-        <sub name="ArgParser" link="Vala.Parser.ArgParser.html"><sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub>
-      <sub name="Regex" link="Vala.Regex.html"><sub name="Pattern" link="Vala.Regex.Pattern.html"></sub></sub>
-      <sub name="Runtime" link="Vala.Runtime.html"><sub name="SystemProperties" link="Vala.Runtime.SystemProperties.html"></sub></sub>
-      <sub name="Text" link="Vala.Text.html"><sub name="Regex" link="Vala.Text.Regex.html"></sub></sub><sub name="Time" link="Vala.Time.html">
+      <sub name="Net" link="Vala.Net.html"><sub name="CircuitBreaker" link="Vala.Net.CircuitBreaker.html"></sub>
+        <sub name="Url" link="Vala.Net.Url.html"></sub><sub name="RateLimiter" link="Vala.Net.RateLimiter.html"></sub>
+        <sub name="Retry" link="Vala.Net.Retry.html"></sub><sub name="CircuitState" link="Vala.Net.CircuitState.html"></sub></sub>
+      <sub name="Parser" link="Vala.Parser.html"><sub name="ArgParser" link="Vala.Parser.ArgParser.html">
+          <sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub><sub name="Regex" link="Vala.Regex.html">
+        <sub name="Pattern" link="Vala.Regex.Pattern.html"></sub></sub><sub name="Runtime" link="Vala.Runtime.html">
+        <sub name="SystemProperties" link="Vala.Runtime.SystemProperties.html"></sub></sub><sub name="Text" link="Vala.Text.html">
+        <sub name="Regex" link="Vala.Text.Regex.html"></sub></sub><sub name="Time" link="Vala.Time.html">
         <sub name="DateTime" link="Vala.Time.DateTime.html"></sub><sub name="Dates" link="Vala.Time.Dates.html"></sub>
         <sub name="Duration" link="Vala.Time.Duration.html"></sub><sub name="Stopwatch" link="Vala.Time.Stopwatch.html"></sub></sub></sub>
   </chapters><functions><keyword type="function" name="Vala.Collections.Arrays.Arrays" link="Vala.Collections.Arrays.Arrays.html"/>
@@ -499,6 +504,15 @@
     <keyword type="function" name="Vala.Io.BufferedWriter.fromFile" link="Vala.Io.BufferedWriter.fromFile.html"/>
     <keyword type="function" name="Vala.Io.BufferedWriter.fromFileAppend" link="Vala.Io.BufferedWriter.fromFileAppend.html"/>
     <keyword type="" name="Vala.Io.BufferedWriter" link="Vala.Io.BufferedWriter.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.withBackup" link="Vala.Io.AtomicFile.withBackup.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.backupSuffix" link="Vala.Io.AtomicFile.backupSuffix.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.write" link="Vala.Io.AtomicFile.write.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.writeBytes" link="Vala.Io.AtomicFile.writeBytes.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.append" link="Vala.Io.AtomicFile.append.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.replace" link="Vala.Io.AtomicFile.replace.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.readConsistent" link="Vala.Io.AtomicFile.readConsistent.html"/>
+    <keyword type="function" name="Vala.Io.AtomicFile.AtomicFile" link="Vala.Io.AtomicFile.AtomicFile.html"/>
+    <keyword type="" name="Vala.Io.AtomicFile" link="Vala.Io.AtomicFile.html"/>
     <keyword type="function" name="Vala.Io.Console.Console" link="Vala.Io.Console.Console.html"/>
     <keyword type="function" name="Vala.Io.Console.isTTY" link="Vala.Io.Console.isTTY.html"/>
     <keyword type="function" name="Vala.Io.Console.readPassword" link="Vala.Io.Console.readPassword.html"/>
@@ -546,6 +560,15 @@
     <keyword type="function" name="Vala.Io.Files.glob" link="Vala.Io.Files.glob.html"/>
     <keyword type="function" name="Vala.Io.Files.deleteRecursive" link="Vala.Io.Files.deleteRecursive.html"/>
     <keyword type="" name="Vala.Io.Files" link="Vala.Io.Files.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.acquire" link="Vala.Io.FileLock.acquire.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.acquireTimeout" link="Vala.Io.FileLock.acquireTimeout.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.tryAcquire" link="Vala.Io.FileLock.tryAcquire.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.release" link="Vala.Io.FileLock.release.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.isHeld" link="Vala.Io.FileLock.isHeld.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.withLock" link="Vala.Io.FileLock.withLock.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.ownerPid" link="Vala.Io.FileLock.ownerPid.html"/>
+    <keyword type="function" name="Vala.Io.FileLock.FileLock" link="Vala.Io.FileLock.FileLock.html"/>
+    <keyword type="" name="Vala.Io.FileLock" link="Vala.Io.FileLock.html"/>
     <keyword type="function" name="Vala.Io.Path.toString" link="Vala.Io.Path.toString.html"/>
     <keyword type="function" name="Vala.Io.Path.basename" link="Vala.Io.Path.basename.html"/>
     <keyword type="function" name="Vala.Io.Path.dirname" link="Vala.Io.Path.dirname.html"/>
@@ -573,6 +596,21 @@
     <keyword type="function" name="Vala.Io.Process.execWithOutput" link="Vala.Io.Process.execWithOutput.html"/>
     <keyword type="function" name="Vala.Io.Process.kill" link="Vala.Io.Process.kill.html"/>
     <keyword type="" name="Vala.Io.Process" link="Vala.Io.Process.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.exitCode" link="Vala.Io.ShellResult.exitCode.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.stdout" link="Vala.Io.ShellResult.stdout.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.stderr" link="Vala.Io.ShellResult.stderr.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.isSuccess" link="Vala.Io.ShellResult.isSuccess.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.stdoutLines" link="Vala.Io.ShellResult.stdoutLines.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.stderrLines" link="Vala.Io.ShellResult.stderrLines.html"/>
+    <keyword type="function" name="Vala.Io.ShellResult.durationMillis" link="Vala.Io.ShellResult.durationMillis.html"/>
+    <keyword type="" name="Vala.Io.ShellResult" link="Vala.Io.ShellResult.html"/>
+    <keyword type="function" name="Vala.Io.Shell.Shell" link="Vala.Io.Shell.Shell.html"/>
+    <keyword type="function" name="Vala.Io.Shell.exec" link="Vala.Io.Shell.exec.html"/>
+    <keyword type="function" name="Vala.Io.Shell.execQuiet" link="Vala.Io.Shell.execQuiet.html"/>
+    <keyword type="function" name="Vala.Io.Shell.execWithTimeout" link="Vala.Io.Shell.execWithTimeout.html"/>
+    <keyword type="function" name="Vala.Io.Shell.pipe" link="Vala.Io.Shell.pipe.html"/>
+    <keyword type="function" name="Vala.Io.Shell.which" link="Vala.Io.Shell.which.html"/>
+    <keyword type="" name="Vala.Io.Shell" link="Vala.Io.Shell.html"/>
     <keyword type="function" name="Vala.Io.Resource.Resource" link="Vala.Io.Resource.Resource.html"/>
     <keyword type="function" name="Vala.Io.Resource.readResource" link="Vala.Io.Resource.readResource.html"/>
     <keyword type="" name="Vala.Io.Resource" link="Vala.Io.Resource.html"/>
@@ -657,8 +695,10 @@
     <keyword type="function" name="Vala.Io.Strings.words" link="Vala.Io.Strings.words.html"/>
     <keyword type="function" name="Vala.Io.Strings.truncate" link="Vala.Io.Strings.truncate.html"/>
     <keyword type="function" name="Vala.Io.Strings.wrap" link="Vala.Io.Strings.wrap.html"/>
-    <keyword type="" name="Vala.Io.Strings" link="Vala.Io.Strings.html"/><keyword type="" name="Vala.Io.TempFunc" link="Vala.Io.TempFunc.html"/>
-    <keyword type="" name="Vala.Io" link="Vala.Io.html"/><keyword type="function" name="Vala.Lang.Os.Os" link="Vala.Lang.Os.Os.html"/>
+    <keyword type="" name="Vala.Io.Strings" link="Vala.Io.Strings.html"/>
+    <keyword type="" name="Vala.Io.WithFileLockFunc" link="Vala.Io.WithFileLockFunc.html"/>
+    <keyword type="" name="Vala.Io.TempFunc" link="Vala.Io.TempFunc.html"/><keyword type="" name="Vala.Io" link="Vala.Io.html"/>
+    <keyword type="function" name="Vala.Lang.Os.Os" link="Vala.Lang.Os.Os.html"/>
     <keyword type="function" name="Vala.Lang.Os.get_env" link="Vala.Lang.Os.get_env.html"/>
     <keyword type="function" name="Vala.Lang.Os.cwd" link="Vala.Lang.Os.cwd.html"/>
     <keyword type="function" name="Vala.Lang.Os.chdir" link="Vala.Lang.Os.chdir.html"/><keyword type="" name="Vala.Lang.Os" link="Vala.Lang.Os.html"/>
@@ -779,6 +819,19 @@
     <keyword type="function" name="Vala.Math.Random.shuffle" link="Vala.Math.Random.shuffle.html"/>
     <keyword type="function" name="Vala.Math.Random.choice" link="Vala.Math.Random.choice.html"/>
     <keyword type="" name="Vala.Math.Random" link="Vala.Math.Random.html"/><keyword type="" name="Vala.Math" link="Vala.Math.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.withFailureThreshold" link="Vala.Net.CircuitBreaker.withFailureThreshold.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.withSuccessThreshold" link="Vala.Net.CircuitBreaker.withSuccessThreshold.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.withOpenTimeout" link="Vala.Net.CircuitBreaker.withOpenTimeout.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.onStateChange" link="Vala.Net.CircuitBreaker.onStateChange.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.call" link="Vala.Net.CircuitBreaker.call.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.recordFailure" link="Vala.Net.CircuitBreaker.recordFailure.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.recordSuccess" link="Vala.Net.CircuitBreaker.recordSuccess.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.state" link="Vala.Net.CircuitBreaker.state.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.failureCount" link="Vala.Net.CircuitBreaker.failureCount.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.reset" link="Vala.Net.CircuitBreaker.reset.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.name" link="Vala.Net.CircuitBreaker.name.html"/>
+    <keyword type="function" name="Vala.Net.CircuitBreaker.CircuitBreaker" link="Vala.Net.CircuitBreaker.CircuitBreaker.html"/>
+    <keyword type="" name="Vala.Net.CircuitBreaker" link="Vala.Net.CircuitBreaker.html"/>
     <keyword type="function" name="Vala.Net.Url.scheme" link="Vala.Net.Url.scheme.html"/>
     <keyword type="function" name="Vala.Net.Url.host" link="Vala.Net.Url.host.html"/>
     <keyword type="function" name="Vala.Net.Url.port" link="Vala.Net.Url.port.html"/>
@@ -788,7 +841,42 @@
     <keyword type="function" name="Vala.Net.Url.toString" link="Vala.Net.Url.toString.html"/>
     <keyword type="function" name="Vala.Net.Url.Url" link="Vala.Net.Url.Url.html"/>
     <keyword type="function" name="Vala.Net.Url.parse" link="Vala.Net.Url.parse.html"/><keyword type="" name="Vala.Net.Url" link="Vala.Net.Url.html"/>
-    <keyword type="" name="Vala.Net" link="Vala.Net.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.withBurst" link="Vala.Net.RateLimiter.withBurst.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.allow" link="Vala.Net.RateLimiter.allow.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.allowN" link="Vala.Net.RateLimiter.allowN.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.wait" link="Vala.Net.RateLimiter.wait.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.waitN" link="Vala.Net.RateLimiter.waitN.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.reserve" link="Vala.Net.RateLimiter.reserve.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.availableTokens" link="Vala.Net.RateLimiter.availableTokens.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.setRate" link="Vala.Net.RateLimiter.setRate.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.reset" link="Vala.Net.RateLimiter.reset.html"/>
+    <keyword type="function" name="Vala.Net.RateLimiter.RateLimiter" link="Vala.Net.RateLimiter.RateLimiter.html"/>
+    <keyword type="" name="Vala.Net.RateLimiter" link="Vala.Net.RateLimiter.html"/>
+    <keyword type="function" name="Vala.Net.Retry.withMaxAttempts" link="Vala.Net.Retry.withMaxAttempts.html"/>
+    <keyword type="function" name="Vala.Net.Retry.withBackoff" link="Vala.Net.Retry.withBackoff.html"/>
+    <keyword type="function" name="Vala.Net.Retry.withFixedDelay" link="Vala.Net.Retry.withFixedDelay.html"/>
+    <keyword type="function" name="Vala.Net.Retry.withJitter" link="Vala.Net.Retry.withJitter.html"/>
+    <keyword type="function" name="Vala.Net.Retry.withRetryOn" link="Vala.Net.Retry.withRetryOn.html"/>
+    <keyword type="function" name="Vala.Net.Retry.onRetry" link="Vala.Net.Retry.onRetry.html"/>
+    <keyword type="function" name="Vala.Net.Retry.httpStatusRetry" link="Vala.Net.Retry.httpStatusRetry.html"/>
+    <keyword type="function" name="Vala.Net.Retry.retry" link="Vala.Net.Retry.retry.html"/>
+    <keyword type="function" name="Vala.Net.Retry.retryResult" link="Vala.Net.Retry.retryResult.html"/>
+    <keyword type="function" name="Vala.Net.Retry.retryVoid" link="Vala.Net.Retry.retryVoid.html"/>
+    <keyword type="function" name="Vala.Net.Retry.Retry" link="Vala.Net.Retry.Retry.html"/>
+    <keyword type="function" name="Vala.Net.Retry.networkDefault" link="Vala.Net.Retry.networkDefault.html"/>
+    <keyword type="function" name="Vala.Net.Retry.ioDefault" link="Vala.Net.Retry.ioDefault.html"/>
+    <keyword type="" name="Vala.Net.Retry" link="Vala.Net.Retry.html"/>
+    <keyword type="" name="Vala.Net.StateChangeCallback" link="Vala.Net.StateChangeCallback.html"/>
+    <keyword type="" name="Vala.Net.CircuitFunc" link="Vala.Net.CircuitFunc.html"/>
+    <keyword type="" name="Vala.Net.RetryFunc" link="Vala.Net.RetryFunc.html"/>
+    <keyword type="" name="Vala.Net.RetryResultFunc" link="Vala.Net.RetryResultFunc.html"/>
+    <keyword type="" name="Vala.Net.RetryVoidFunc" link="Vala.Net.RetryVoidFunc.html"/>
+    <keyword type="" name="Vala.Net.RetryOnFunc" link="Vala.Net.RetryOnFunc.html"/>
+    <keyword type="" name="Vala.Net.RetryCallback" link="Vala.Net.RetryCallback.html"/>
+    <keyword type="" name="Vala.Net.CircuitState.CLOSED" link="Vala.Net.CircuitState.CLOSED.html"/>
+    <keyword type="" name="Vala.Net.CircuitState.OPEN" link="Vala.Net.CircuitState.OPEN.html"/>
+    <keyword type="" name="Vala.Net.CircuitState.HALF_OPEN" link="Vala.Net.CircuitState.HALF_OPEN.html"/>
+    <keyword type="enum" name="Vala.Net.CircuitState" link="Vala.Net.CircuitState.html"/><keyword type="" name="Vala.Net" link="Vala.Net.html"/>
     <keyword type="function" name="Vala.Parser.ArgParser.addOption" link="Vala.Parser.ArgParser.addOption.html"/>
     <keyword type="function" name="Vala.Parser.ArgParser.usage" link="Vala.Parser.ArgParser.usage.html"/>
     <keyword type="function" name="Vala.Parser.ArgParser.showVersion" link="Vala.Parser.ArgParser.showVersion.html"/>

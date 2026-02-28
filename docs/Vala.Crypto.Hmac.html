@@ -24,6 +24,10 @@
         </div>
         <div class="description">
           <p>Static utility methods for HMAC.</p>
+          <p>HMAC helpers support message authentication with SHA-256/SHA-512 and a timing-safe verification helper for comparing expected and actual 
+            digests.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">string</span> sig = Hmac.sha<span class="main_literal">256</span> (<span class="main_literal">"secret"</span>, <span class="main_literal">"message"</span>);<br/>    <span class="main_basic_type">bool</span> ok = Hmac.verify (sig, sig);</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Crypto.html">Vala.Crypto</a>
         </div>

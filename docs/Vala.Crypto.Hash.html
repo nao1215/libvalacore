@@ -24,6 +24,10 @@
         </div>
         <div class="description">
           <p>Static utility methods for cryptographic hashes.</p>
+          <p>This class provides one-shot digest helpers that return lowercase hexadecimal strings. Prefer SHA-256/SHA-512 for security-sensitive use 
+            cases; MD5/SHA-1 are kept for compatibility and non-security checksums.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">string</span> digest = Hash.sha<span class="main_literal">256</span> (<span class="main_literal">"payload"</span>);<br/>    print (<span class="main_literal">"</span><span class="main_escape">%s</span><span class="main_literal"></span><span class="main_escape">\n</span><span class="main_literal">"</span>, digest);</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Crypto.html">Vala.Crypto</a>
         </div>

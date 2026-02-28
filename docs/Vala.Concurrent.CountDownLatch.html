@@ -26,6 +26,10 @@
         </div>
         <div class="description">
           <p>Countdown latch for one-shot synchronization.</p>
+          <p>CountDownLatch starts with a fixed counter. Worker threads call countDown(), and waiting thread(s) block in await() until the counter 
+            reaches zero.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> latch = <span class="main_keyword">new</span> CountDownLatch (<span class="main_literal">2</span>);<br/>    <span class="main_comment">// Two workers call latch.countDown()</span><br/>    latch.@await ();</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
         </div>

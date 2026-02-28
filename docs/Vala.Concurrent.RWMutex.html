@@ -24,6 +24,10 @@
         </div>
         <div class="description">
           <p>Reader-writer mutex.</p>
+          <p>RWMutex allows concurrent readers while still supporting exclusive writers. Use readLock()/readUnlock() for read-only sections and 
+            writeLock()/writeUnlock() for mutations.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> rw = <span class="main_keyword">new</span> RWMutex ();<br/>    rw.readLock ();<br/>    rw.readUnlock ();</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
         </div>

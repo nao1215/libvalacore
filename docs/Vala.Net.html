@@ -22,7 +22,51 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Classes:</h3>
         <ul class="navi_inline">
+          <li class="class"><a href="Vala.Net.CircuitBreaker.html">CircuitBreaker</a> - <span class="brief_description">Circuit breaker for protecting
+              unstable dependencies.</span></li>
+          <li class="class"><a href="Vala.Net.RateLimiter.html">RateLimiter</a> - <span class="brief_description">Thread-safe token-bucket rate 
+              limiter.</span></li>
+          <li class="class"><a href="Vala.Net.Retry.html">Retry</a> - <span class="brief_description">Retry policy for resilient operations such as 
+              HTTP calls or lock acquisition.</span></li>
           <li class="class"><a href="Vala.Net.Url.html">Url</a> - <span class="brief_description">Immutable URL value object.</span></li>
+        </ul>
+        <h3 class="main_title">Enums:</h3>
+        <ul class="navi_inline">
+          <li class="enum"><a href="Vala.Net.CircuitState.html">CircuitState</a> - <span class="brief_description">Circuit breaker state.</span></li>
+        </ul>
+        <h3 class="main_title">Delegates:</h3>
+        <ul class="navi_inline">
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Net.CircuitFunc.html" class="delegate">CircuitFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback executed through circuit breaker.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RetryCallback.html" class="delegate">RetryCallback</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> attempt, <span class="main_basic_type"><span class="class">string</span></span> reason, <span class="main_basic_type"><span class="struct">int64</span></span> delayMillis)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback invoked before sleeping for the next retry attempt.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.RetryFunc.html" class="delegate">RetryFunc</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback invoked by retry loop and interpreted as success/failure.
+              </span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.RetryOnFunc.html" class="delegate">RetryOnFunc</a></b> (<span class="main_basic_type"><span class="class">string</span></span> reason)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Predicate used to decide whether retry should continue.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Net.RetryResultFunc.html" class="delegate">RetryResultFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback invoked by retry loop and interpreted as nullable result.
+              </span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RetryVoidFunc.html" class="delegate">RetryVoidFunc</a></b> () <span class="main_keyword">throws</span> <span class="main_type"><span class="class">Error</span></span>
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback invoked by retry loop that may throw recoverable GLib.Error.
+              </span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.StateChangeCallback.html" class="delegate">StateChangeCallback</a></b> (<span class="main_type"><a href="Vala.Net.CircuitState.html" class="enum">CircuitState</a></span> from, <span class="main_type"><a href="Vala.Net.CircuitState.html" class="enum">CircuitState</a></span> to)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback invoked when breaker state changes.</span>
+            </div></li>
         </ul>
       </div>
     </div><br/>

@@ -24,6 +24,9 @@
         </div>
         <div class="description">
           <p>String escaping utilities.</p>
+          <p>Use this class when rendering user input in formats where reserved characters must be escaped (HTML, JSON, XML).</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">string</span> html = StringEscape.escapeHtml (<span class="main_literal">"&lt;b&gt;safe&lt;/b&gt;"</span>);<br/>    <span class="main_basic_type">string</span> json = StringEscape.escapeJson (<span class="main_literal">"line1</span><span class="main_escape">\n</span><span class="main_literal">line2"</span>);</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Lang.html">Vala.Lang</a>
         </div>
@@ -54,8 +57,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-67')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-67">
+          <div class="headline" onclick="toggle_box (this, 'box-content-71')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-71">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>

@@ -24,6 +24,9 @@
         </div>
         <div class="description">
           <p>Static utility methods for regular expressions.</p>
+          <p>This helper provides lightweight one-shot regex operations without manually managing GLib.Regex instances.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">bool</span> ok = Regex.matches (<span class="main_literal">"abc-123"</span>, <span class="main_literal">"^[a-z]+-[0-9]+$"</span>);<br/>    <span class="main_basic_type">string</span> replaced = Regex.replaceAll (<span class="main_literal">"a,b,c"</span>, <span class="main_literal">","</span>, <span class="main_literal">"|"</span>);</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Text.html">Vala.Text</a>
         </div>
@@ -54,8 +57,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-81')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-81">
+          <div class="headline" onclick="toggle_box (this, 'box-content-88')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-88">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>

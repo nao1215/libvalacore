@@ -25,6 +25,7 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Classes:</h3>
         <ul class="navi_inline">
+          <li class="class"><a href="Vala.Io.AtomicFile.html">AtomicFile</a> - <span class="brief_description">Atomic file update helper.</span></li>
           <li class="class"><a href="Vala.Io.BufferedReader.html">BufferedReader</a> - <span class="brief_description">BufferedReader provides 
               buffered character-input-stream reading. It wraps a GLib.DataInputStream and offers convenient line-by-line or full-text reading similar
               to Java's BufferedReader and Go's bufio.Scanner.</span></li>
@@ -32,6 +33,7 @@
               buffered character-output-stream writing. It wraps a GLib.DataOutputStream and offers convenient methods for writing strings and lines, 
               similar to Java's BufferedWriter.</span></li>
           <li class="class"><a href="Vala.Io.Console.html">Console</a> - <span class="brief_description">Console utility methods.</span></li>
+          <li class="class"><a href="Vala.Io.FileLock.html">FileLock</a> - <span class="brief_description">File-based inter-process lock.</span></li>
           <li class="class"><a href="Vala.Io.Files.html">Files</a> - <span class="brief_description">Files class provides static utility methods for 
               common file and directory operations.</span></li>
           <li class="class"><a href="Vala.Io.Filesystem.html">Filesystem</a> - <span class="brief_description">Filesystem metadata utility methods.
@@ -44,6 +46,10 @@
           </li>
           <li class="class"><a href="Vala.Io.Scanner.html">Scanner</a> - <span class="brief_description">Scanner splits input into tokens and provides
               typed parsing.</span></li>
+          <li class="class"><a href="Vala.Io.Shell.html">Shell</a> - <span class="brief_description">Shell command helper for quick command execution 
+              and output capture.</span></li>
+          <li class="class"><a href="Vala.Io.ShellResult.html">ShellResult</a> - <span class="brief_description">Result of shell command execution.
+            </span></li>
           <li class="class"><a href="Vala.Io.StringBuilder.html">StringBuilder</a> - <span class="brief_description">StringBuilder is a mutable string
               buffer for efficient string construction. It wraps GLib.StringBuilder and provides a rich, Java/C#-inspired API.</span></li>
           <li class="class"><a href="Vala.Io.StringJoiner.html">StringJoiner</a> - <span class="brief_description">StringJoiner constructs a sequence 
@@ -58,6 +64,10 @@
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Io.TempFunc.html" class="delegate">TempFunc</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Callback delegate used by temporary resource helpers.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.WithFileLockFunc.html" class="delegate">WithFileLockFunc</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Callback executed while lock is held.</span>
             </div></li>
         </ul>
       </div>

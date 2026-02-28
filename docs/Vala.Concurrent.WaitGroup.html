@@ -24,6 +24,9 @@
         </div>
         <div class="description">
           <p>Waits for a collection of tasks to complete.</p>
+          <p>WaitGroup tracks in-flight task count via add()/done() and blocks with wait() until all tasks complete.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> wg = <span class="main_keyword">new</span> WaitGroup ();<br/>    wg.add (<span class="main_literal">2</span>);<br/>    <span class="main_comment">// workers call wg.done ()</span><br/>    wg.wait ();</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
         </div>

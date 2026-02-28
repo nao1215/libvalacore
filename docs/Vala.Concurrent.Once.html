@@ -24,6 +24,9 @@
         </div>
         <div class="description">
           <p>Executes a function at most once.</p>
+          <p>This class is useful for lazy one-time initialization in concurrent environments.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> once = <span class="main_keyword">new</span> Once ();<br/>    once.doOnce (() =&gt; {<br/>        <span class="main_comment">// initialize shared resource exactly once</span><br/>    });</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
         </div>

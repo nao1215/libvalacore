@@ -24,6 +24,9 @@
         </div>
         <div class="description">
           <p>Immutable UUID value object.</p>
+          <p>Uuid wraps validated canonical UUID strings and exposes factory methods for generation and parsing.</p>
+          <p>Example: <pre class="main_source"><code>    Uuid generated = Uuid.v<span class="main_literal">4</span> ();<br/>    Uuid? parsed = Uuid.parse (generated.toString ());<br/>    <span class="main_keyword">assert</span> (parsed != <span class="main_literal">null</span>);</code></pre>
+          </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Crypto.html">Vala.Crypto</a>
         </div>
