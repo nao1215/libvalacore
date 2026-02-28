@@ -23,8 +23,12 @@ void testToInt64 () {
 }
 
 void testToDouble () {
-    assert (Convert.toDouble ("3.14") == 3.14);
-    assert (Convert.toDouble ("-2.5") == -2.5);
+    double ? pi = Convert.toDouble ("3.14");
+    double ? minus = Convert.toDouble ("-2.5");
+    assert (pi != null);
+    assert (minus != null);
+    assert (GLib.Math.fabs ((double) pi - 3.14) < 1e-9);
+    assert (GLib.Math.fabs ((double) minus + 2.5) < 1e-9);
     assert (Convert.toDouble ("abc") == null);
 }
 
@@ -45,7 +49,9 @@ void testToString () {
 
 void testToBase () {
     assert (Convert.intToHex (255) == "ff");
+    assert (Convert.intToHex (-255) == "-ff");
     assert (Convert.intToOctal (8) == "10");
+    assert (Convert.intToOctal (-8) == "-10");
     assert (Convert.intToBinary (5) == "101");
     assert (Convert.intToBinary (-5) == "-101");
     assert (Convert.intToBinary (0) == "0");

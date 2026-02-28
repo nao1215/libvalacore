@@ -103,20 +103,20 @@ namespace Vala.Conv {
          * Converts int to hexadecimal string.
          *
          * @param n source value.
-         * @return lowercase hexadecimal string.
+         * @return lowercase hexadecimal string (signed for negative values).
          */
         public static string intToHex (int n) {
-            return "%x".printf (n);
+            return intToBase (n, 16, "0123456789abcdef");
         }
 
         /**
          * Converts int to octal string.
          *
          * @param n source value.
-         * @return octal string.
+         * @return octal string (signed for negative values).
          */
         public static string intToOctal (int n) {
-            return "%o".printf (n);
+            return intToBase (n, 8, "01234567");
         }
 
         /**
@@ -126,23 +126,28 @@ namespace Vala.Conv {
          * @return binary string.
          */
         public static string intToBinary (int n) {
+            return intToBase (n, 2, "01");
+        }
+
+        private static string intToBase (int n, uint64 radix, string digits) {
             if (n == 0) {
                 return "0";
             }
 
             bool negative = n < 0;
             uint64 value = negative ? (uint64) (-(int64) n) : (uint64) n;
-            string result = "";
+            GLib.StringBuilder builder = new GLib.StringBuilder ();
 
             while (value > 0) {
-                result = ((value % 2) == 0 ? "0" : "1") + result;
-                value /= 2;
+                builder.prepend_c ((char) digits[(int) (value % radix)]);
+                value /= radix;
             }
 
             if (negative) {
-                return "-" + result;
+                builder.prepend_c ('-');
             }
-            return result;
+
+            return builder.str;
         }
     }
 }

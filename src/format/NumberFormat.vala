@@ -74,12 +74,11 @@ namespace Vala.Format {
          * @return formatted text.
          */
         public static string formatBytes (int64 bytes) {
-            if (bytes < 0) {
-                return "-" + formatBytes (-bytes);
-            }
-
             string[] units = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-            double value = (double) bytes;
+            bool negative = bytes < 0;
+            uint64 absBytes = negative ? ((uint64) (~bytes) + 1) : (uint64) bytes;
+
+            double value = (double) absBytes;
             int index = 0;
 
             while (value >= 1024.0 && index < units.length - 1) {
@@ -87,15 +86,18 @@ namespace Vala.Format {
                 index++;
             }
 
+            string text;
             if (index == 0) {
-                return bytes.to_string () + " " + units[index];
+                text = absBytes.to_string () + " " + units[index];
+                return negative ? "-" + text : text;
             }
 
             string formatted = "%.1f".printf (value);
             if (formatted.has_suffix (".0")) {
                 formatted = formatted.substring (0, formatted.length - 2);
             }
-            return "%s %s".printf (formatted, units[index]);
+            text = "%s %s".printf (formatted, units[index]);
+            return negative ? "-" + text : text;
         }
 
         /**
@@ -115,12 +117,12 @@ namespace Vala.Format {
          * @return ordinal text (e.g. 1st, 2nd).
          */
         public static string ordinal (int n) {
-            int absValue = n < 0 ? -n : n;
-            int lastTwo = absValue % 100;
+            int64 absValue = n < 0 ? -((int64) n) : (int64) n;
+            int lastTwo = (int) (absValue % 100);
             string suffix = "th";
 
             if (lastTwo < 11 || lastTwo > 13) {
-                switch (absValue % 10) {
+                switch ((int) (absValue % 10)) {
                     case 1:
                         suffix = "st";
                         break;

@@ -14,7 +14,7 @@ void main (string[] args) {
 }
 
 void assertClose (double actual, double expected, double eps = 1e-9) {
-    assert (Vala.Math.Math.abs (actual - expected) < eps);
+    assert (Vala.Math.Math.abs (actual - expected) <= eps);
 }
 
 void testConstants () {

@@ -35,6 +35,7 @@ void testFormatBytes () {
     assert (NumberFormat.formatBytes (1024) == "1 KB");
     assert (NumberFormat.formatBytes (1536) == "1.5 KB");
     assert (NumberFormat.formatBytes (1024 * 1024) == "1 MB");
+    assert (NumberFormat.formatBytes (int64.MIN) == "-8 EB");
 }
 
 void testFormatDuration () {
@@ -50,4 +51,5 @@ void testOrdinal () {
     assert (NumberFormat.ordinal (12) == "12th");
     assert (NumberFormat.ordinal (13) == "13th");
     assert (NumberFormat.ordinal (21) == "21st");
+    assert (NumberFormat.ordinal (int.MIN) == "-2147483648th");
 }
