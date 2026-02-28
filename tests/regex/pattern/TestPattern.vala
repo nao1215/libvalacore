@@ -6,6 +6,7 @@ void main (string[] args) {
     Test.add_func ("/regex/pattern/testMatchesAndFind", testMatchesAndFind);
     Test.add_func ("/regex/pattern/testFindAll", testFindAll);
     Test.add_func ("/regex/pattern/testReplace", testReplace);
+    Test.add_func ("/regex/pattern/testReplaceNamedGroup", testReplaceNamedGroup);
     Test.add_func ("/regex/pattern/testSplit", testSplit);
     Test.add_func ("/regex/pattern/testGroups", testGroups);
     Test.run ();
@@ -51,6 +52,13 @@ void testReplace () {
     assert (groups != null);
     assert (groups.replaceFirst ("a1b22", "[\\1]") == "a[1]b22");
     assert (groups.replaceAll ("a1b22", "[\\1]") == "a[1]b[22]");
+}
+
+void testReplaceNamedGroup () {
+    Pattern ? p = Pattern.compile ("(?P<num>\\d+)");
+    assert (p != null);
+    assert (p.replaceFirst ("a1b22", "[\\g<num>]") == "a[1]b22");
+    assert (p.replaceAll ("a1b22", "[\\g<num>]") == "a[1]b[22]");
 }
 
 void testSplit () {

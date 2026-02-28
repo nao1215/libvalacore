@@ -6,6 +6,7 @@ void main (string[] args) {
     Test.add_func ("/config/properties/testSetGetRemove", testSetGetRemove);
     Test.add_func ("/config/properties/testSaveLoad", testSaveLoad);
     Test.add_func ("/config/properties/testLoadWithComments", testLoadWithComments);
+    Test.add_func ("/config/properties/testSaveOrderAndEdgeCases", testSaveOrderAndEdgeCases);
     Test.run ();
 }
 
@@ -56,6 +57,33 @@ void testLoadWithComments () {
         assert (props.size () == 2);
         assert (props.get ("foo") == "bar");
         assert (props.get ("z") == "9");
+    } finally {
+        if (tmp != null) {
+            Files.remove (tmp);
+        }
+    }
+}
+
+void testSaveOrderAndEdgeCases () {
+    Properties props = new Properties ();
+    assert (props.get ("") == null);
+    assert (props.getOrDefault ("missing", "default") == "default");
+    assert (props.remove ("") == false);
+
+    props.set ("z", "3");
+    props.set ("a", "1");
+    props.set ("m", "2");
+    props.set ("", "ignored");
+    assert (props.size () == 3);
+
+    Vala.Io.Path ? tmp = Files.tempFile ("props-order", ".txt");
+    assert (tmp != null);
+
+    try {
+        assert (props.save (tmp) == true);
+        string ? content = Files.readAllText (tmp);
+        assert (content != null);
+        assert (content == "a=1\nm=2\nz=3\n");
     } finally {
         if (tmp != null) {
             Files.remove (tmp);

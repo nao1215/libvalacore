@@ -6,6 +6,9 @@ void main (string[] args) {
     Test.add_func ("/lang/process/testExecStderr", testExecStderr);
     Test.add_func ("/lang/process/testExecFailure", testExecFailure);
     Test.add_func ("/lang/process/testExecAsync", testExecAsync);
+    Test.add_func ("/lang/process/testExecAsyncInvalid", testExecAsyncInvalid);
+    Test.add_func ("/lang/process/testExecAsyncShellFallback", testExecAsyncShellFallback);
+    Test.add_func ("/lang/process/testExecAsyncSpawnError", testExecAsyncSpawnError);
     Test.add_func ("/lang/process/testKill", testKill);
     Test.run ();
 }
@@ -35,8 +38,46 @@ void testExecAsync () {
     Vala.Lang.Process ? proc = Vala.Lang.Process.execAsync ("printf 'ok'");
     assert (proc != null);
     assert (proc.waitFor () == true);
+    assert (proc.waitFor () == true);
     assert (proc.exitCode () == 0);
     assert (proc.stdout () == "ok");
+}
+
+void testExecAsyncInvalid () {
+    assert (Vala.Lang.Process.execAsync ("") == null);
+}
+
+void testExecAsyncShellFallback () {
+    string ? oldShell = Environment.get_variable ("SHELL");
+    Environment.set_variable ("SHELL", "", true);
+
+    try {
+        Vala.Lang.Process ? proc = Vala.Lang.Process.exec ("printf 'fallback'");
+        assert (proc != null);
+        assert (proc.exitCode () == 0);
+        assert (proc.stdout () == "fallback");
+    } finally {
+        if (oldShell == null) {
+            Environment.unset_variable ("SHELL");
+        } else {
+            Environment.set_variable ("SHELL", oldShell, true);
+        }
+    }
+}
+
+void testExecAsyncSpawnError () {
+    string ? oldShell = Environment.get_variable ("SHELL");
+    Environment.set_variable ("SHELL", "/definitely/missing/sh", true);
+
+    try {
+        assert (Vala.Lang.Process.execAsync ("echo test") == null);
+    } finally {
+        if (oldShell == null) {
+            Environment.unset_variable ("SHELL");
+        } else {
+            Environment.set_variable ("SHELL", oldShell, true);
+        }
+    }
 }
 
 void testKill () {
