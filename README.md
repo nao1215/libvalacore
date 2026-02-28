@@ -325,6 +325,13 @@ Mutex wrapper with utility methods.
 | `tryLock()` | Tries to acquire lock without blocking |
 | `withLock(WithLockFunc func)` | Runs a callback while holding lock |
 
+### Vala.Concurrent.Once
+Executes a function at most once.
+
+| Method | Description |
+|---|---|
+| `doOnce(OnceFunc func)` | Runs callback only once, even across threads |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
