@@ -24,7 +24,7 @@ void main (string[] args) {
 }
 
 void testAdd () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (set.add ("apple"));
     assert (set.size () == 1);
     assert (set.contains ("apple"));
@@ -34,14 +34,14 @@ void testAdd () {
 }
 
 void testAddDuplicate () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (set.add ("apple"));
     assert (!set.add ("apple"));
     assert (set.size () == 1);
 }
 
 void testRemove () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     set.add ("apple");
     set.add ("banana");
 
@@ -54,7 +54,7 @@ void testRemove () {
 }
 
 void testRemoveMissing () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (!set.remove ("nothing"));
 
     set.add ("apple");
@@ -63,7 +63,7 @@ void testRemoveMissing () {
 }
 
 void testContains () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (!set.contains ("apple"));
 
     set.add ("apple");
@@ -74,7 +74,7 @@ void testContains () {
 }
 
 void testSize () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (set.size () == 0);
 
     set.add ("a");
@@ -88,7 +88,7 @@ void testSize () {
 }
 
 void testIsEmpty () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (set.isEmpty ());
 
     set.add ("a");
@@ -99,7 +99,7 @@ void testIsEmpty () {
 }
 
 void testClear () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     set.add ("a");
     set.add ("b");
     set.add ("c");
@@ -111,11 +111,11 @@ void testClear () {
 }
 
 void testUnion () {
-    var a = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var a = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     a.add ("1");
     a.add ("2");
 
-    var b = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var b = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     b.add ("2");
     b.add ("3");
 
@@ -131,12 +131,12 @@ void testUnion () {
 }
 
 void testIntersection () {
-    var a = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var a = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     a.add ("1");
     a.add ("2");
     a.add ("3");
 
-    var b = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var b = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     b.add ("2");
     b.add ("3");
     b.add ("4");
@@ -150,12 +150,12 @@ void testIntersection () {
 }
 
 void testDifference () {
-    var a = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var a = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     a.add ("1");
     a.add ("2");
     a.add ("3");
 
-    var b = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var b = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     b.add ("2");
     b.add ("4");
 
@@ -167,11 +167,11 @@ void testDifference () {
 }
 
 void testIsSubsetOf () {
-    var a = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var a = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     a.add ("1");
     a.add ("2");
 
-    var b = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var b = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     b.add ("1");
     b.add ("2");
     b.add ("3");
@@ -180,20 +180,20 @@ void testIsSubsetOf () {
     assert (!b.isSubsetOf (a));
 
     // equal sets
-    var c = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var c = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     c.add ("1");
     c.add ("2");
     assert (a.isSubsetOf (c));
     assert (c.isSubsetOf (a));
 
     // empty set is subset of any set
-    var empty = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var empty = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     assert (empty.isSubsetOf (a));
     assert (empty.isSubsetOf (empty));
 }
 
 void testToArray () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     set.add ("a");
     set.add ("b");
     set.add ("c");
@@ -202,7 +202,7 @@ void testToArray () {
     assert (arr.length == 3);
 
     // verify all elements present (order not guaranteed)
-    var check = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var check = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     for (int i = 0; i < arr.length; i++) {
         check.add (arr[i]);
     }
@@ -211,18 +211,18 @@ void testToArray () {
     assert (check.contains ("c"));
 
     // empty set
-    var empty = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var empty = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     string[] emptyArr = empty.toArray ();
     assert (emptyArr.length == 0);
 }
 
 void testForEach () {
-    var set = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var set = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     set.add ("a");
     set.add ("b");
     set.add ("c");
 
-    var collected = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var collected = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     set.forEach ((s) => {
         collected.add (s);
     });
@@ -234,10 +234,10 @@ void testForEach () {
 }
 
 void testAddAll () {
-    var a = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var a = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     a.add ("1");
 
-    var b = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var b = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     b.add ("2");
     b.add ("3");
 
@@ -248,7 +248,7 @@ void testAddAll () {
     assert (a.contains ("3"));
 
     // addAll with overlapping elements
-    var c = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var c = new HashSet<string> (GLib.str_hash, GLib.str_equal);
     c.add ("1");
     c.add ("4");
     a.addAll (c);
@@ -256,8 +256,8 @@ void testAddAll () {
 }
 
 void testEmptySetOperations () {
-    var a = new HashSet<string>(GLib.str_hash, GLib.str_equal);
-    var b = new HashSet<string>(GLib.str_hash, GLib.str_equal);
+    var a = new HashSet<string> (GLib.str_hash, GLib.str_equal);
+    var b = new HashSet<string> (GLib.str_hash, GLib.str_equal);
 
     // union of empty sets
     var u = a.union (b);

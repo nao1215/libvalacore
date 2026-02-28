@@ -22,12 +22,18 @@ namespace Vala.Io {
                 return null;
             }
 
-            unowned string ? password = Posix.getpass ("");
-            if (password == null) {
-                return null;
-            }
+            Posix.termios old_termios = {};
+            Posix.tcgetattr (Posix.STDIN_FILENO, out old_termios);
 
-            return "%s".printf (password);
+            Posix.termios new_termios = old_termios;
+            new_termios.c_lflag &= ~Posix.ECHO;
+            Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, new_termios);
+
+            string ? line = stdin.read_line ();
+
+            Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, old_termios);
+
+            return line;
         }
     }
 }

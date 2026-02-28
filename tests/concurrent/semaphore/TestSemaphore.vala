@@ -34,7 +34,7 @@ void testAcquireBlocks () {
     bool entered_wait = false;
     bool acquired = false;
 
-    Thread<void *> worker = new Thread<void *>("worker", () => {
+    Thread<void *> worker = new Thread<void *> ("worker", () => {
         stateMutex.lock ();
         entered_wait = true;
         stateCond.signal ();

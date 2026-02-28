@@ -117,7 +117,7 @@ namespace Vala.Format {
          * @return ordinal text (e.g. 1st, 2nd).
          */
         public static string ordinal (int n) {
-            int64 absValue = n < 0 ? -((int64) n) : (int64) n;
+            int64 absValue = n < 0 ? -((int64) n) : (int64) n; // vala-lint=space-before-paren
             int lastTwo = (int) (absValue % 100);
             string suffix = "th";
 

@@ -25,8 +25,8 @@ namespace Vala.Collections {
          * @param items source items.
          * @return immutable list.
          */
-        public static ImmutableList<G> of<G>(G[] items, GLib.EqualFunc<G> ? equal_func = null) {
-            return new ImmutableList<G>(items, equal_func);
+        public static ImmutableList<G> of<G> (G[] items, GLib.EqualFunc<G> ? equal_func = null) {
+            return new ImmutableList<G> (items, equal_func);
         }
 
         /**

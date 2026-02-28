@@ -106,13 +106,13 @@ namespace Vala.Collections {
          * @return the string representation.
          */
         public string toString () {
-            string a_str = _value_to_string<A>(_first);
-            string b_str = _value_to_string<B>(_second);
+            string a_str = _value_to_string<A> (_first);
+            string b_str = _value_to_string<B> (_second);
             return "(%s, %s)".printf (a_str, b_str);
         }
     }
 
-    internal string _value_to_string<T>(T value) {
+    internal string _value_to_string<T> (T value) {
         if (value == null) {
             return "null";
         }

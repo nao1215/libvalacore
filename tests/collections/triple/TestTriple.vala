@@ -16,33 +16,33 @@ void main (string[] args) {
 }
 
 void testConstructor () {
-    var triple = new Triple<string, string, string>("a", "b", "c");
+    var triple = new Triple<string, string, string> ("a", "b", "c");
     assert (triple.first () == "a");
     assert (triple.second () == "b");
     assert (triple.third () == "c");
 }
 
 void testFirst () {
-    var triple = new Triple<string, string, string>("a", "b", "c");
+    var triple = new Triple<string, string, string> ("a", "b", "c");
     assert (triple.first () == "a");
     assert (triple.first () == "a");
 }
 
 void testSecond () {
-    var triple = new Triple<string, string, string>("a", "b", "c");
+    var triple = new Triple<string, string, string> ("a", "b", "c");
     assert (triple.second () == "b");
     assert (triple.second () == "b");
 }
 
 void testThird () {
-    var triple = new Triple<string, string, string>("a", "b", "c");
+    var triple = new Triple<string, string, string> ("a", "b", "c");
     assert (triple.third () == "c");
     assert (triple.third () == "c");
 }
 
 void testEquals () {
-    var a = new Triple<string, string, string>("x", "y", "z");
-    var b = new Triple<string, string, string>("x", "y", "z");
+    var a = new Triple<string, string, string> ("x", "y", "z");
+    var b = new Triple<string, string, string> ("x", "y", "z");
     assert (a.equals (b, GLib.str_equal, GLib.str_equal, GLib.str_equal));
 
     // self equality
@@ -50,32 +50,32 @@ void testEquals () {
 }
 
 void testEqualsNotEqual () {
-    var a = new Triple<string, string, string>("x", "y", "z");
+    var a = new Triple<string, string, string> ("x", "y", "z");
 
     // different first
-    var b = new Triple<string, string, string>("a", "y", "z");
+    var b = new Triple<string, string, string> ("a", "y", "z");
     assert (!a.equals (b, GLib.str_equal, GLib.str_equal, GLib.str_equal));
 
     // different second
-    var c = new Triple<string, string, string>("x", "a", "z");
+    var c = new Triple<string, string, string> ("x", "a", "z");
     assert (!a.equals (c, GLib.str_equal, GLib.str_equal, GLib.str_equal));
 
     // different third
-    var d = new Triple<string, string, string>("x", "y", "a");
+    var d = new Triple<string, string, string> ("x", "y", "a");
     assert (!a.equals (d, GLib.str_equal, GLib.str_equal, GLib.str_equal));
 
     // all different
-    var e = new Triple<string, string, string>("a", "b", "c");
+    var e = new Triple<string, string, string> ("a", "b", "c");
     assert (!a.equals (e, GLib.str_equal, GLib.str_equal, GLib.str_equal));
 }
 
 void testToString () {
-    var triple = new Triple<string, string, string>("a", "b", "c");
+    var triple = new Triple<string, string, string> ("a", "b", "c");
     assert (triple.toString () == "(a, b, c)");
 }
 
 void testImmutability () {
-    var triple = new Triple<string, string, string>("a", "b", "c");
+    var triple = new Triple<string, string, string> ("a", "b", "c");
 
     string f = triple.first ();
     string s = triple.second ();

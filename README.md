@@ -1074,14 +1074,21 @@ $ ./scripts/format.sh          # Format all .vala files
 $ ./scripts/format.sh --check  # Check formatting (CI mode)
 ```
 
+## Linting
+All Vala source code is checked with [vala-lint](https://github.com/vala-lang/vala-lint) using the config at `vala-lint.conf`.
+```
+$ ./scripts/lint.sh            # Run vala-lint (requires Docker)
+```
+
 ## Contributing
 Contributions are welcome! Please follow the steps below:
 
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md)
 2. Fork the repository and create a feature branch
 3. Format your code: `./scripts/format.sh`
-4. Add tests and make sure they pass: `meson setup build && meson test -C build`
-5. Submit a pull request
+4. Run the linter: `./scripts/lint.sh`
+5. Add tests and make sure they pass: `meson setup build && meson test -C build`
+6. Submit a pull request
 
 
 ## LICENSE

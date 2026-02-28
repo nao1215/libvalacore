@@ -27,7 +27,7 @@ void main (string[] args) {
 }
 
 void testAddFirst () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addFirst ("a");
     deque.addFirst ("b");
     deque.addFirst ("c");
@@ -38,7 +38,7 @@ void testAddFirst () {
 }
 
 void testAddLast () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
     deque.addLast ("c");
@@ -49,7 +49,7 @@ void testAddLast () {
 }
 
 void testRemoveFirst () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
     deque.addLast ("c");
@@ -62,12 +62,12 @@ void testRemoveFirst () {
 }
 
 void testRemoveFirstEmpty () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (deque.removeFirst () == null);
 }
 
 void testRemoveLast () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
     deque.addLast ("c");
@@ -80,12 +80,12 @@ void testRemoveLast () {
 }
 
 void testRemoveLastEmpty () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (deque.removeLast () == null);
 }
 
 void testPeekFirst () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
 
@@ -94,12 +94,12 @@ void testPeekFirst () {
 }
 
 void testPeekFirstEmpty () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (deque.peekFirst () == null);
 }
 
 void testPeekLast () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
 
@@ -108,12 +108,12 @@ void testPeekLast () {
 }
 
 void testPeekLastEmpty () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (deque.peekLast () == null);
 }
 
 void testSize () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (deque.size () == 0);
 
     deque.addLast ("a");
@@ -127,7 +127,7 @@ void testSize () {
 }
 
 void testIsEmpty () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (deque.isEmpty ());
 
     deque.addLast ("a");
@@ -138,7 +138,7 @@ void testIsEmpty () {
 }
 
 void testContains () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("apple");
     deque.addLast ("banana");
     deque.addLast ("cherry");
@@ -150,12 +150,12 @@ void testContains () {
 }
 
 void testContainsEmpty () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     assert (!deque.contains ("anything"));
 }
 
 void testClear () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
     deque.addLast ("c");
@@ -167,7 +167,7 @@ void testClear () {
 }
 
 void testToArray () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
     deque.addLast ("c");
@@ -179,18 +179,18 @@ void testToArray () {
     assert (arr[2] == "c");
 
     // empty deque
-    var empty = new Deque<string>(GLib.str_equal);
+    var empty = new Deque<string> (GLib.str_equal);
     string[] emptyArr = empty.toArray ();
     assert (emptyArr.length == 0);
 }
 
 void testForEach () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("a");
     deque.addLast ("b");
     deque.addLast ("c");
 
-    var collected = new ArrayList<string>(GLib.str_equal);
+    var collected = new ArrayList<string> (GLib.str_equal);
     deque.forEach ((s) => {
         collected.add (s);
     });
@@ -202,7 +202,7 @@ void testForEach () {
 }
 
 void testFifoPattern () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addLast ("1");
     deque.addLast ("2");
     deque.addLast ("3");
@@ -213,7 +213,7 @@ void testFifoPattern () {
 }
 
 void testLifoPattern () {
-    var deque = new Deque<string>(GLib.str_equal);
+    var deque = new Deque<string> (GLib.str_equal);
     deque.addFirst ("1");
     deque.addFirst ("2");
     deque.addFirst ("3");

@@ -28,7 +28,7 @@ void testReaderWaitsForWriter () {
     bool reader_entered = false;
 
     rw.writeLock ();
-    Thread<void *> reader = new Thread<void *>("reader", () => {
+    Thread<void *> reader = new Thread<void *> ("reader", () => {
         stateMutex.lock ();
         reader_ready = true;
         stateCond.signal ();

@@ -16,7 +16,7 @@ void main (string[] args) {
 }
 
 void testOf () {
-    var opt = Optional.of<string>("hello");
+    var opt = Optional.of<string> ("hello");
     assert (opt.isPresent ());
     assert (opt.get () == "hello");
 }
@@ -30,28 +30,28 @@ void testEmpty () {
 void testOfNullable () {
     /* Non-null value */
     string ? name = "Alice";
-    var opt = Optional.ofNullable<string>(name);
+    var opt = Optional.ofNullable<string> (name);
     assert (opt.isPresent ());
     assert (opt.get () == "Alice");
 
     /* Null value */
     string ? nothing = null;
-    var empty = Optional.ofNullable<string>(nothing);
+    var empty = Optional.ofNullable<string> (nothing);
     assert (empty.isEmpty ());
 }
 
 void testIsPresent () {
-    assert (Optional.of<string>("x").isPresent () == true);
+    assert (Optional.of<string> ("x").isPresent () == true);
     assert (Optional.empty<string> ().isPresent () == false);
 }
 
 void testIsEmpty () {
-    assert (Optional.of<string>("x").isEmpty () == false);
+    assert (Optional.of<string> ("x").isEmpty () == false);
     assert (Optional.empty<string> ().isEmpty () == true);
 }
 
 void testGet () {
-    var opt = Optional.of<string>("value");
+    var opt = Optional.of<string> ("value");
     assert (opt.get () == "value");
 
     /* Empty returns null */
@@ -60,7 +60,7 @@ void testGet () {
 }
 
 void testOrElse () {
-    var opt = Optional.of<string>("present");
+    var opt = Optional.of<string> ("present");
     assert (opt.orElse ("fallback") == "present");
 
     var empty = Optional.empty<string> ();
@@ -68,7 +68,7 @@ void testOrElse () {
 }
 
 void testOrElseGet () {
-    var opt = Optional.of<string>("present");
+    var opt = Optional.of<string> ("present");
     assert (opt.orElseGet (() => { return "computed"; }) == "present");
 
     var empty = Optional.empty<string> ();
@@ -77,7 +77,7 @@ void testOrElseGet () {
 
 void testIfPresent () {
     string result = "";
-    Optional.of<string>("hello").ifPresent ((v) => {
+    Optional.of<string> ("hello").ifPresent ((v) => {
         result = v;
     });
     assert (result == "hello");
@@ -91,7 +91,7 @@ void testIfPresent () {
 }
 
 void testFilter () {
-    var opt = Optional.of<string>("hello");
+    var opt = Optional.of<string> ("hello");
 
     /* Matching predicate keeps the value */
     var filtered = opt.filter ((s) => { return s == "hello"; });

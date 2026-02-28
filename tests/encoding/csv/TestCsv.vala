@@ -78,13 +78,13 @@ void testParseFile () {
 void testWrite () {
     ArrayList<ArrayList<string> > rows = new ArrayList<ArrayList<string> > ();
 
-    var row1 = new ArrayList<string>(GLib.str_equal);
+    var row1 = new ArrayList<string> (GLib.str_equal);
     row1.add ("a");
     row1.add ("b,c");
     row1.add ("d\"e");
     rows.add (row1);
 
-    var row2 = new ArrayList<string>(GLib.str_equal);
+    var row2 = new ArrayList<string> (GLib.str_equal);
     row2.add ("1");
     row2.add ("2");
     row2.add ("3");
@@ -97,13 +97,13 @@ void testWrite () {
 void testRoundTrip () {
     ArrayList<ArrayList<string> > rows = new ArrayList<ArrayList<string> > ();
 
-    var row1 = new ArrayList<string>(GLib.str_equal);
+    var row1 = new ArrayList<string> (GLib.str_equal);
     row1.add ("hello");
     row1.add ("a,b");
     row1.add ("line1\nline2");
     rows.add (row1);
 
-    var row2 = new ArrayList<string>(GLib.str_equal);
+    var row2 = new ArrayList<string> (GLib.str_equal);
     row2.add ("");
     row2.add ("plain");
     row2.add ("\"q\"");

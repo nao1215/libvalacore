@@ -141,7 +141,4 @@ if get_option('enable_valadoc')
       '--force'
     ],
     output: 'Valacore-' + API_VERSION)
-
-  install_subdir(meson.current_build_dir() / 'Valacore-' + API_VERSION / 'Valacore-' + API_VERSION,
-    install_dir: get_option('datadir') / 'devhelp' / 'books')
 endif

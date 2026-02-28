@@ -43,7 +43,7 @@ namespace Vala.Collections {
         public HashSet (GLib.HashFunc<T> hash_func, GLib.EqualFunc<T> equal_func) {
             _hash_func = hash_func;
             _equal_func = equal_func;
-            _table = new GLib.HashTable<T, bool>(hash_func, equal_func);
+            _table = new GLib.HashTable<T, bool> (hash_func, equal_func);
         }
 
         /**
@@ -175,7 +175,7 @@ namespace Vala.Collections {
          * @return a new set representing the union.
          */
         public HashSet<T> union (HashSet<T> other) {
-            var result = new HashSet<T>(_hash_func, _equal_func);
+            var result = new HashSet<T> (_hash_func, _equal_func);
             _table.foreach ((k, v) => {
                 result.add (k);
             });
@@ -206,7 +206,7 @@ namespace Vala.Collections {
          * @return a new set representing the intersection.
          */
         public HashSet<T> intersection (HashSet<T> other) {
-            var result = new HashSet<T>(_hash_func, _equal_func);
+            var result = new HashSet<T> (_hash_func, _equal_func);
             _table.foreach ((k, v) => {
                 if (other.contains (k)) {
                     result.add (k);
@@ -236,7 +236,7 @@ namespace Vala.Collections {
          * @return a new set representing the difference.
          */
         public HashSet<T> difference (HashSet<T> other) {
-            var result = new HashSet<T>(_hash_func, _equal_func);
+            var result = new HashSet<T> (_hash_func, _equal_func);
             _table.foreach ((k, v) => {
                 if (!other.contains (k)) {
                     result.add (k);

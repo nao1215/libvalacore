@@ -32,7 +32,7 @@ void main (string[] args) {
 }
 
 void testAdd () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("hello");
     assert (list.size () == 1);
     assert (list.get (0) == "hello");
@@ -43,11 +43,11 @@ void testAdd () {
 }
 
 void testAddAll () {
-    var list1 = new ArrayList<string>(GLib.str_equal);
+    var list1 = new ArrayList<string> (GLib.str_equal);
     list1.add ("a");
     list1.add ("b");
 
-    var list2 = new ArrayList<string>(GLib.str_equal);
+    var list2 = new ArrayList<string> (GLib.str_equal);
     list2.add ("c");
     list2.add ("d");
 
@@ -60,7 +60,7 @@ void testAddAll () {
 }
 
 void testGet () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("first");
     list.add ("second");
     list.add ("third");
@@ -71,7 +71,7 @@ void testGet () {
 }
 
 void testGetOutOfBounds () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     assert (list.get (0) == null);
     assert (list.get (-1) == null);
 
@@ -81,7 +81,7 @@ void testGetOutOfBounds () {
 }
 
 void testSet () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
 
@@ -93,7 +93,7 @@ void testSet () {
 }
 
 void testSetOutOfBounds () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     assert (!list.set (0, "x"));
     assert (!list.set (-1, "x"));
 
@@ -103,7 +103,7 @@ void testSetOutOfBounds () {
 }
 
 void testRemoveAt () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
@@ -119,7 +119,7 @@ void testRemoveAt () {
 }
 
 void testRemoveAtOutOfBounds () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     assert (list.removeAt (0) == null);
     assert (list.removeAt (-1) == null);
 
@@ -129,7 +129,7 @@ void testRemoveAtOutOfBounds () {
 }
 
 void testContains () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("apple");
     list.add ("banana");
     list.add ("cherry");
@@ -141,7 +141,7 @@ void testContains () {
 }
 
 void testIndexOf () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
@@ -153,7 +153,7 @@ void testIndexOf () {
 }
 
 void testIndexOfNotFound () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     assert (list.indexOf ("x") == -1);
 
     list.add ("a");
@@ -161,7 +161,7 @@ void testIndexOfNotFound () {
 }
 
 void testSize () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     assert (list.size () == 0);
 
     list.add ("a");
@@ -175,7 +175,7 @@ void testSize () {
 }
 
 void testIsEmpty () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     assert (list.isEmpty ());
 
     list.add ("a");
@@ -183,7 +183,7 @@ void testIsEmpty () {
 }
 
 void testClear () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
@@ -195,7 +195,7 @@ void testClear () {
 }
 
 void testToArray () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
@@ -207,13 +207,13 @@ void testToArray () {
     assert (arr[2] == "c");
 
     // empty list
-    var empty = new ArrayList<string>(GLib.str_equal);
+    var empty = new ArrayList<string> (GLib.str_equal);
     string[] emptyArr = empty.toArray ();
     assert (emptyArr.length == 0);
 }
 
 void testSort () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("cherry");
     list.add ("apple");
     list.add ("banana");
@@ -228,12 +228,12 @@ void testSort () {
 }
 
 void testForEach () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
 
-    var result = new ArrayList<string>(GLib.str_equal);
+    var result = new ArrayList<string> (GLib.str_equal);
     list.forEach ((s) => {
         result.add (s);
     });
@@ -245,11 +245,11 @@ void testForEach () {
 }
 
 void testMap () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("hello");
     list.add ("world");
 
-    var upper = list.map<string>((s) => {
+    var upper = list.map<string> ((s) => {
         return s.up ();
     });
 
@@ -259,7 +259,7 @@ void testMap () {
 }
 
 void testFilter () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("apple");
     list.add ("banana");
     list.add ("avocado");
@@ -275,26 +275,26 @@ void testFilter () {
 }
 
 void testReduce () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
 
-    var joined = list.reduce<string>("", (acc, s) => {
+    var joined = list.reduce<string> ("", (acc, s) => {
         return acc + s;
     });
     assert (joined == "abc");
 
     // empty list reduces to initial value
-    var empty = new ArrayList<string>(GLib.str_equal);
-    var result = empty.reduce<string>("init", (acc, s) => {
+    var empty = new ArrayList<string> (GLib.str_equal);
+    var result = empty.reduce<string> ("init", (acc, s) => {
         return acc + s;
     });
     assert (result == "init");
 }
 
 void testFind () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("apple");
     list.add ("banana");
     list.add ("cherry");
@@ -307,7 +307,7 @@ void testFind () {
 }
 
 void testFindNotFound () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("apple");
     list.add ("banana");
 
@@ -317,7 +317,7 @@ void testFindNotFound () {
     assert (found.isEmpty ());
 
     // empty list
-    var empty = new ArrayList<string>(GLib.str_equal);
+    var empty = new ArrayList<string> (GLib.str_equal);
     var emptyResult = empty.find ((s) => {
         return true;
     });
@@ -325,7 +325,7 @@ void testFindNotFound () {
 }
 
 void testSubList () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
@@ -348,7 +348,7 @@ void testSubList () {
 }
 
 void testSubListBoundary () {
-    var list = new ArrayList<string>(GLib.str_equal);
+    var list = new ArrayList<string> (GLib.str_equal);
     list.add ("a");
     list.add ("b");
     list.add ("c");
@@ -369,7 +369,7 @@ void testSubListBoundary () {
     assert (sub3.size () == 0);
 
     // empty list
-    var empty = new ArrayList<string>(GLib.str_equal);
+    var empty = new ArrayList<string> (GLib.str_equal);
     var sub4 = empty.subList (0, 0);
     assert (sub4.size () == 0);
 }

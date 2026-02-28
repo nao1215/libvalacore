@@ -24,7 +24,7 @@ void main (string[] args) {
 }
 
 PriorityQueue<string> make_str_pq () {
-    return new PriorityQueue<string>((a, b) => {
+    return new PriorityQueue<string> ((a, b) => {
         return strcmp (a, b);
     }, GLib.str_equal);
 }
@@ -205,7 +205,7 @@ void testSingleElement () {
 
 void testReverseOrder () {
     // max-heap using reversed comparator
-    var pq = new PriorityQueue<string>((a, b) => {
+    var pq = new PriorityQueue<string> ((a, b) => {
         return strcmp (b, a);
     }, GLib.str_equal);
 

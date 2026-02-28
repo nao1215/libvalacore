@@ -421,8 +421,7 @@ namespace Vala.Io {
             if (Strings.isNullOrEmpty (pattern)) {
                 return false;
             }
-            var spec = new GLib.PatternSpec (pattern);
-            return spec.match_string (basename ());
+            return GLib.PatternSpec.match_simple (pattern, basename ());
         }
 
         /**

@@ -39,7 +39,7 @@ namespace Vala.Parser {
             this.author = builder.appAuthor;
             this.contact = builder.appContact;
             this.optionList = new List<Option> ();
-            this.argListWithoutOptions = new List<string>();
+            this.argListWithoutOptions = new List<string> ();
         }
 
         /**

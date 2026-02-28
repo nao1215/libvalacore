@@ -240,7 +240,9 @@ namespace Vala.Collections {
          * @return a new TreeMap with the sub-range.
          */
         public TreeMap<K, V> subMap (K from, K to) {
-            var result = new TreeMap<K, V>(_comparator);
+            var result = new TreeMap<K, V> ((a, b) => {
+                return _comparator (a, b);
+            });
             _collect_range (_root, from, to, result);
             return result;
         }
@@ -309,7 +311,7 @@ namespace Vala.Collections {
                                            owned K key, owned V value) {
             if (node == null) {
                 _size++;
-                return new _TreeNode<K, V>((owned) key, (owned) value);
+                return new _TreeNode<K, V> ((owned) key, (owned) value);
             }
             int cmp = _comparator (key, node.key);
             if (cmp < 0) {

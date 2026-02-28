@@ -41,7 +41,7 @@ namespace Vala.Log {
             }
 
             if (_registry == null) {
-                _registry = new GLib.HashTable<string, Logger>(str_hash, str_equal);
+                _registry = new GLib.HashTable<string, Logger> (str_hash, str_equal);
             }
 
             Logger ? existing = _registry.lookup (key);

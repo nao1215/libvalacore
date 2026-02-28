@@ -26,7 +26,7 @@ void main (string[] args) {
 }
 
 TreeMap<string, string> make_map () {
-    return new TreeMap<string, string>((a, b) => {
+    return new TreeMap<string, string> ((a, b) => {
         return strcmp (a, b);
     });
 }
@@ -238,7 +238,7 @@ void testForEach () {
     map.put ("a", "1");
     map.put ("b", "2");
 
-    var collected = new ArrayList<string>(GLib.str_equal);
+    var collected = new ArrayList<string> (GLib.str_equal);
     map.forEach ((k, v) => {
         collected.add (k);
     });

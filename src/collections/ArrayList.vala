@@ -336,7 +336,7 @@ namespace Vala.Collections {
          * @param func the transformation function.
          * @return a new ArrayList with the transformed elements.
          */
-        public ArrayList<U> map<U>(owned MapFunc<T, U> func) {
+        public ArrayList<U> map<U> (owned MapFunc<T, U> func) {
             var result = new ArrayList<U> ();
             for (int i = 0; i < (int) _array.length; i++) {
                 result.add (func (_array[i]));
@@ -361,7 +361,7 @@ namespace Vala.Collections {
          * @return a new ArrayList with matching elements.
          */
         public ArrayList<T> filter (owned PredicateFunc<T> func) {
-            var result = new ArrayList<T>(_equal_func);
+            var result = new ArrayList<T> (_equal_func);
             for (int i = 0; i < (int) _array.length; i++) {
                 if (func (_array[i])) {
                     result.add (_array[i]);
@@ -390,7 +390,7 @@ namespace Vala.Collections {
          * @param func the reduction function.
          * @return the final accumulated value.
          */
-        public U reduce<U>(U initial, owned ReduceFunc<T, U> func) {
+        public U reduce<U> (U initial, owned ReduceFunc<T, U> func) {
             U result = initial;
             for (int i = 0; i < (int) _array.length; i++) {
                 result = func (result, _array[i]);
@@ -419,7 +419,7 @@ namespace Vala.Collections {
         public Optional<T> find (owned PredicateFunc<T> func) {
             for (int i = 0; i < (int) _array.length; i++) {
                 if (func (_array[i])) {
-                    return Optional.of<T>(_array[i]);
+                    return Optional.of<T> (_array[i]);
                 }
             }
             return Optional.empty<T> ();
@@ -448,7 +448,7 @@ namespace Vala.Collections {
          * @return a new ArrayList containing the sub-range.
          */
         public ArrayList<T> subList (int from, int to) {
-            var result = new ArrayList<T>(_equal_func);
+            var result = new ArrayList<T> (_equal_func);
             int len = (int) _array.length;
             int start = from < 0 ? 0 : from;
             int end = to > len ? len : to;
@@ -467,7 +467,7 @@ namespace Vala.Collections {
      * @param element the current element.
      * @return the new accumulated value.
      */
-    public delegate U ReduceFunc<T, U>(U accumulator, T element);
+    public delegate U ReduceFunc<T, U> (U accumulator, T element);
 
     /**
      * A function that compares two values for ordering.
@@ -476,5 +476,5 @@ namespace Vala.Collections {
      * @param b the second value.
      * @return negative if a < b, zero if equal, positive if a > b.
      */
-    public delegate int ComparatorFunc<T>(T a, T b);
+    public delegate int ComparatorFunc<T> (T a, T b);
 }

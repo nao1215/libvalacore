@@ -39,8 +39,8 @@ namespace Vala.Collections {
          * @param value the value to wrap.
          * @return an Optional containing the value.
          */
-        public static Optional<T> of<T>(owned T value) {
-            return new Optional<T>((owned) value, true);
+        public static Optional<T> of<T> (owned T value) {
+            return new Optional<T> ((owned) value, true);
         }
 
         /**
@@ -55,7 +55,7 @@ namespace Vala.Collections {
          * @return an empty Optional.
          */
         public static Optional<T> empty<T> () {
-            return new Optional<T>(null, false);
+            return new Optional<T> (null, false);
         }
 
         /**
@@ -72,11 +72,11 @@ namespace Vala.Collections {
          * @param value the possibly-null value.
          * @return an Optional containing the value, or empty if null.
          */
-        public static Optional<T> ofNullable<T>(owned T ? value) {
+        public static Optional<T> ofNullable<T> (owned T ? value) {
             if (value == null) {
                 return empty<T> ();
             }
-            return new Optional<T>((owned) value, true);
+            return new Optional<T> ((owned) value, true);
         }
 
         /**
@@ -109,7 +109,7 @@ namespace Vala.Collections {
          *
          * @return the value, or null if empty.
          */
-        public T ? get () {
+        public new T ? get () {
             if (!_present) {
                 return null;
             }
@@ -208,10 +208,10 @@ namespace Vala.Collections {
     /**
      * A function that takes a value and returns nothing.
      */
-    public delegate void ConsumerFunc<T>(T value);
+    public delegate void ConsumerFunc<T> (T value);
 
     /**
      * A function that takes a value and returns a boolean.
      */
-    public delegate bool PredicateFunc<T>(T value);
+    public delegate bool PredicateFunc<T> (T value);
 }
