@@ -1,6 +1,20 @@
 namespace Vala.Lang {
     /**
      * Exception utility methods.
+     *
+     * This helper provides explicit formatting and fail-fast forwarding of
+     * GLib.Error values. It is useful when you need consistent crash logs in
+     * unrecoverable situations.
+     *
+     * Example:
+     * {{{
+     *     try {
+     *         might_fail ();
+     *     } catch (GLib.Error e) {
+     *         string trace = Exceptions.getStackTrace (e);
+     *         print ("%s\n", trace);
+     *     }
+     * }}}
      */
     public class Exceptions : GLib.Object {
         /**

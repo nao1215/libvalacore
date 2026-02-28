@@ -6,6 +6,17 @@ namespace Vala.Concurrent {
 
     /**
      * Executes a function at most once.
+     *
+     * This class is useful for lazy one-time initialization in concurrent
+     * environments.
+     *
+     * Example:
+     * {{{
+     *     var once = new Once ();
+     *     once.doOnce (() => {
+     *         // initialize shared resource exactly once
+     *     });
+     * }}}
      */
     public class Once : GLib.Object {
         private GLib.Mutex _mutex;

@@ -1,6 +1,15 @@
 namespace Vala.Text {
     /**
      * Static utility methods for regular expressions.
+     *
+     * This helper provides lightweight one-shot regex operations without
+     * manually managing GLib.Regex instances.
+     *
+     * Example:
+     * {{{
+     *     bool ok = Regex.matches ("abc-123", "^[a-z]+-[0-9]+$");
+     *     string replaced = Regex.replaceAll ("a,b,c", ",", "|");
+     * }}}
      */
     public class Regex : GLib.Object {
         /**

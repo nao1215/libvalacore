@@ -6,6 +6,10 @@ namespace Vala.Io {
 
     /**
      * Temporary file and directory helpers.
+     *
+     * These helpers create temporary resources, pass their paths into a
+     * callback, and always remove resources afterward (even when callback
+     * throws/fails), making cleanup deterministic.
      */
     public class Temp : GLib.Object {
         /**

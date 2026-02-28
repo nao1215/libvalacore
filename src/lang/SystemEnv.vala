@@ -1,6 +1,16 @@
 namespace Vala.Lang {
     /**
      * Environment variable helper methods.
+     *
+     * SystemEnv wraps GLib environment APIs with lightweight input
+     * validation and nullable semantics. Use this class when application
+     * behavior depends on runtime environment variables.
+     *
+     * Example:
+     * {{{
+     *     string? home = SystemEnv.get ("HOME");
+     *     SystemEnv.set ("APP_MODE", "dev");
+     * }}}
      */
     public class SystemEnv : GLib.Object {
         /**

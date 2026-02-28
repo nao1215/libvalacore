@@ -3,7 +3,19 @@
  */
 namespace Vala.Lang {
     /**
-     * Objects class is a collection of static APIs for manipulating objects
+     * Utility methods for nullable object checks.
+     *
+     * This class mirrors common helper methods such as java.util.Objects for
+     * null testing and improves readability in guard clauses.
+     *
+     * Example:
+     * {{{
+     *     string? name = get_name ();
+     *     if (Objects.isNull (name)) {
+     *         return;
+     *     }
+     *     assert (Objects.nonNull (name));
+     * }}}
      */
     public class Objects : GLib.Object {
         /**

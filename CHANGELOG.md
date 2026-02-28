@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.0
+
+### Added
+- `Vala.Net.Retry` - Configurable retry policy with fixed/exponential backoff, jitter, retry predicates, and HTTP status-based retry filtering
+- `Vala.Net.RateLimiter` - Token-bucket rate limiter with non-blocking (`allow`) and blocking (`wait`) permit acquisition
+- `Vala.Net.CircuitBreaker` - Circuit breaker state machine (`CLOSED`/`OPEN`/`HALF_OPEN`) for unstable dependency protection
+- `Vala.Io.AtomicFile` - Atomic file update helper with optional backup support and consistency-read helper
+- `Vala.Io.FileLock` - Lock-file based inter-process synchronization utility with timeout and callback execution helper
+- `Vala.Io.Shell` and `Vala.Io.ShellResult` - Shell command execution utility with captured output, timeout execution, pipelines, and `which` resolution
+- New Valadoc wiki guides:
+  - `docs/wiki/getting-started.valadoc`
+  - `docs/wiki/io-guide.valadoc`
+  - `docs/wiki/resilience-guide.valadoc`
+
+### Changed
+- Expanded Valadoc class-level documentation across core namespaces (`Vala.Lang`, `Vala.Io`, `Vala.Concurrent`, `Vala.Crypto`, `Vala.Math`, `Vala.Time`, `Vala.Text`) with usage-oriented descriptions and examples
+- Reworked `docs/wiki/index.valadoc` to include:
+  - design goals
+  - quick start
+  - implemented namespace guide
+  - recommended entry points
+  - links to practical guides
+
 ## 0.6.0
 
 ### Added

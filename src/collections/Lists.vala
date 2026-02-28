@@ -38,7 +38,8 @@ namespace Vala.Collections {
          * @param fn the predicate.
          * @return a Pair of (matching, non-matching) lists.
          */
-        public static Pair<ArrayList<string>, ArrayList<string> > partitionString (ArrayList<string> list, owned PredicateFunc<string> fn) {
+        public static Pair<ArrayList<string>, ArrayList<string> > partitionString (ArrayList<string> list,
+                                                                                   owned PredicateFunc<string> fn) {
             var matching = new ArrayList<string> (GLib.str_equal);
             var rest = new ArrayList<string> (GLib.str_equal);
             for (int i = 0; i < (int) list.size (); i++) {
@@ -162,7 +163,8 @@ namespace Vala.Collections {
          * @param keyFn the key extraction function.
          * @return a HashMap of key to grouped list.
          */
-        public static HashMap<string, ArrayList<string> > groupByString (ArrayList<string> list, owned MapFunc<string, string> keyFn) {
+        public static HashMap<string, ArrayList<string> > groupByString (ArrayList<string> list,
+                                                                         owned MapFunc<string, string> keyFn) {
             var result = new HashMap<string, ArrayList<string> > (GLib.str_hash, GLib.str_equal);
             for (int i = 0; i < (int) list.size (); i++) {
                 string key = keyFn (list.get (i));

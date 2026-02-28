@@ -1,0 +1,50 @@
+= Resilience Guide =
+
+This guide explains how to combine [[Vala.Net.Retry]], [[Vala.Net.RateLimiter]], and [[Vala.Net.CircuitBreaker]].
+
+== Retry ==
+
+{{{
+var retry = Retry.networkDefault ()
+    .withMaxAttempts (5)
+    .onRetry ((attempt, reason, delayMillis) => {
+        print ("retry=%d reason=%s delay=%" + int64.FORMAT + "\n", attempt, reason, delayMillis);
+    });
+}}}
+
+== Rate Limiter ==
+
+{{{
+var limiter = new RateLimiter (100).withBurst (200);
+if (limiter.allow ()) {
+    // send request
+}
+}}}
+
+== Circuit Breaker ==
+
+{{{
+var breaker = new CircuitBreaker ("backend")
+    .withFailureThreshold (3)
+    .withOpenTimeout (Vala.Time.Duration.ofSeconds (10));
+
+Result<string, string> body = breaker.call<string> (() => {
+    return Result.ok<string, string> ("ok");
+});
+}}}
+
+== Combined Pattern ==
+
+{{{
+bool ok = retry.retry (() => {
+    if (!limiter.allow ()) {
+        return false;
+    }
+
+    Result<string, string> result = breaker.call<string> (() => {
+        return Result.ok<string, string> ("ok");
+    });
+
+    return result.isOk ();
+});
+}}}

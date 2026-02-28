@@ -1,6 +1,15 @@
 namespace Vala.Crypto {
     /**
      * Static utility methods for HMAC.
+     *
+     * HMAC helpers support message authentication with SHA-256/SHA-512 and a
+     * timing-safe verification helper for comparing expected and actual digests.
+     *
+     * Example:
+     * {{{
+     *     string sig = Hmac.sha256 ("secret", "message");
+     *     bool ok = Hmac.verify (sig, sig);
+     * }}}
      */
     public class Hmac : GLib.Object {
         /**

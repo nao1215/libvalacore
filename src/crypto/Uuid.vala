@@ -1,6 +1,16 @@
 namespace Vala.Crypto {
     /**
      * Immutable UUID value object.
+     *
+     * Uuid wraps validated canonical UUID strings and exposes factory methods
+     * for generation and parsing.
+     *
+     * Example:
+     * {{{
+     *     Uuid generated = Uuid.v4 ();
+     *     Uuid? parsed = Uuid.parse (generated.toString ());
+     *     assert (parsed != null);
+     * }}}
      */
     public class Uuid : GLib.Object {
         private string _value;

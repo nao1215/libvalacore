@@ -1,6 +1,17 @@
 namespace Vala.Io {
     /**
      * Resource loading helper methods.
+     *
+     * This helper currently reads binary resources from a filesystem path and
+     * returns the whole content as a byte array.
+     *
+     * Example:
+     * {{{
+     *     uint8[]? bytes = Resource.readResource ("./assets/logo.bin");
+     *     if (bytes != null) {
+     *         print ("loaded=%u\n", bytes.length);
+     *     }
+     * }}}
      */
     public class Resource : GLib.Object {
         /**

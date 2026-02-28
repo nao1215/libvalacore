@@ -70,6 +70,34 @@ Filesystem metadata utility methods.
 | `getOwner(Path path)` | Returns owner username or `null` |
 | `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
 
+### Vala.Io.AtomicFile
+Atomic update helper for safe file replacement with optional backup.
+
+| Method | Description |
+|---|---|
+| `AtomicFile()` | Creates an atomic writer with default settings |
+| `withBackup(bool enabled)` | Enables/disables backup creation before replacement |
+| `backupSuffix(string suffix)` | Sets backup suffix (default: `.bak`) |
+| `write(Path path, string text)` | Atomically replaces file with text content |
+| `writeBytes(Path path, uint8[] data)` | Atomically replaces file with binary content |
+| `append(Path path, string text)` | Appends by reading current content then atomically replacing |
+| `replace(Path srcTmp, Path dst)` | Replaces destination file with source temp file |
+| `readConsistent(Path path)` | Reads text twice and returns `null` if contents changed between reads |
+
+### Vala.Io.FileLock
+Lock-file based process coordination utility.
+
+| Method | Description |
+|---|---|
+| `FileLock(Path path)` | Creates a lock bound to the given lock-file path |
+| `acquire()` | Blocks until lock is acquired |
+| `acquireTimeout(Duration timeout)` | Tries to acquire lock within timeout |
+| `tryAcquire()` | Attempts lock acquisition without blocking |
+| `release()` | Releases the lock (removes lock file) |
+| `isHeld()` | Returns whether this instance currently holds the lock |
+| `withLock(WithFileLockFunc fn)` | Runs callback while holding lock |
+| `ownerPid()` | Returns PID written in lock file (`null` when unavailable) |
+
 ### Vala.Io.Console
 Console utility methods.
 
@@ -86,6 +114,29 @@ Process execution helper methods.
 | `exec(string cmd, string[] args)` | Executes an external command and returns true on zero exit status |
 | `execWithOutput(string cmd, string[] args)` | Executes an external command and returns stdout text on success (`null` on failure) |
 | `kill(int pid)` | Sends SIGKILL to the specified process ID (`true` when signal delivery succeeds). POSIX only |
+
+### Vala.Io.Shell
+Shell command utility with captured output and pipeline helpers.
+
+| Method | Description |
+|---|---|
+| `exec(string command)` | Executes shell command and returns `ShellResult` |
+| `execQuiet(string command)` | Executes command and returns result with output fields cleared |
+| `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound |
+| `pipe(string[] commands)` | Executes commands as a pipeline (`cmd1 \| cmd2 \| ...`) |
+| `which(string binary)` | Resolves command path from `PATH` (`null` if not found) |
+
+#### Vala.Io.ShellResult
+
+| Method | Description |
+|---|---|
+| `exitCode()` | Process exit code |
+| `stdout()` | Captured standard output |
+| `stderr()` | Captured standard error |
+| `isSuccess()` | `true` when `exitCode() == 0` |
+| `stdoutLines()` | Non-empty stdout lines |
+| `stderrLines()` | Non-empty stderr lines |
+| `durationMillis()` | Execution duration in milliseconds |
 
 ### Vala.Io.Temp
 Temporary resource helpers that auto-clean up after callback execution.
@@ -433,6 +484,59 @@ Immutable URL value object.
 | `query()` | Returns query string |
 | `fragment()` | Returns fragment |
 | `toString()` | Returns normalized URL string |
+
+### Vala.Net.Retry
+Retry policy utility for transient failures.
+
+| Method | Description |
+|---|---|
+| `Retry()` | Creates a retry policy with default settings |
+| `networkDefault()` | Creates recommended retry policy for network operations |
+| `ioDefault()` | Creates recommended retry policy for short I/O contention |
+| `withMaxAttempts(int n)` | Sets maximum attempts |
+| `withBackoff(Duration initial, Duration max)` | Sets exponential backoff strategy |
+| `withFixedDelay(Duration delay)` | Sets fixed delay strategy |
+| `withJitter(bool enabled)` | Enables or disables jitter |
+| `withRetryOn(RetryOnFunc shouldRetry)` | Sets retry predicate by failure reason |
+| `onRetry(RetryCallback fn)` | Registers callback before each retry wait |
+| `httpStatusRetry(ArrayList<int> statusCodes)` | Retries only for matching HTTP status codes in failure reason text |
+| `retry(RetryFunc fn)` | Retries bool callback until success or attempts exhausted |
+| `retryResult<T>(RetryResultFunc<T> fn)` | Retries nullable callback until non-null result |
+| `retryVoid(RetryVoidFunc fn)` | Retries callback that may throw `GLib.Error` |
+
+### Vala.Net.RateLimiter
+Token-bucket based rate limiter.
+
+| Method | Description |
+|---|---|
+| `RateLimiter(int permitsPerSecond)` | Creates limiter with permits generated per second |
+| `withBurst(int permits)` | Sets burst capacity and returns this limiter |
+| `allow()` | Tries to acquire one permit immediately |
+| `allowN(int permits)` | Tries to acquire multiple permits immediately |
+| `wait()` | Waits until one permit is available |
+| `waitN(int permits)` | Waits until multiple permits are available |
+| `reserve()` | Returns estimated wait milliseconds for one permit |
+| `availableTokens()` | Returns currently available permits (floored) |
+| `setRate(int permitsPerSecond)` | Updates permit generation rate |
+| `reset()` | Refills tokens to burst capacity |
+
+### Vala.Net.CircuitBreaker
+Circuit breaker for protecting unstable dependencies.
+
+| Method | Description |
+|---|---|
+| `CircuitBreaker(string name)` | Creates breaker with the specified name |
+| `withFailureThreshold(int n)` | Sets consecutive failure threshold |
+| `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN |
+| `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout |
+| `onStateChange(StateChangeCallback fn)` | Registers state transition callback |
+| `call<T>(CircuitFunc<T> fn)` | Executes callback through breaker and returns `Result<T,string>` (error when blocked/failed) |
+| `recordFailure()` | Records one failure |
+| `recordSuccess()` | Records one success |
+| `state()` | Returns current state (`CLOSED`, `OPEN`, `HALF_OPEN`) |
+| `failureCount()` | Returns recent failure count in CLOSED state |
+| `reset()` | Resets breaker state and counters |
+| `name()` | Returns breaker name |
 
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
