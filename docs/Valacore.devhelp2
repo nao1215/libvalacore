@@ -1,13 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <book xmlns="http://www.devhelp.net/book" title="Valacore Reference Manual" language="vala" name="Valacore" version="" author="" link="index.htm">
-  <chapters><sub name="Vala" link="Vala.html"><sub name="Io" link="Vala.Io.html"><sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub>
-        <sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub><sub name="Files" link="Vala.Io.Files.html"></sub>
-        <sub name="Path" link="Vala.Io.Path.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
+  <chapters><sub name="Vala" link="Vala.html"><sub name="Collections" link="Vala.Collections.html">
+        <sub name="ArrayList" link="Vala.Collections.ArrayList.html"></sub><sub name="Optional" link="Vala.Collections.Optional.html"></sub>
+        <sub name="Queue" link="Vala.Collections.Queue.html"></sub><sub name="Result" link="Vala.Collections.Result.html"></sub>
+        <sub name="Stack" link="Vala.Collections.Stack.html"></sub></sub><sub name="Io" link="Vala.Io.html">
+        <sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub><sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub>
+        <sub name="Files" link="Vala.Io.Files.html"></sub><sub name="Path" link="Vala.Io.Path.html"></sub>
+        <sub name="Scanner" link="Vala.Io.Scanner.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
         <sub name="StringJoiner" link="Vala.Io.StringJoiner.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
       <sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html"></sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub>
       </sub><sub name="Parser" link="Vala.Parser.html"><sub name="ArgParser" link="Vala.Parser.ArgParser.html">
           <sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub></sub>
-  </chapters><functions><keyword type="function" name="Vala.Io.BufferedReader.readLine" link="Vala.Io.BufferedReader.readLine.html"/>
+  </chapters><functions><keyword type="function" name="Vala.Collections.ArrayList.add" link="Vala.Collections.ArrayList.add.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.addAll" link="Vala.Collections.ArrayList.addAll.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.@get" link="Vala.Collections.ArrayList.@get.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.@set" link="Vala.Collections.ArrayList.@set.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.removeAt" link="Vala.Collections.ArrayList.removeAt.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.contains" link="Vala.Collections.ArrayList.contains.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.indexOf" link="Vala.Collections.ArrayList.indexOf.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.size" link="Vala.Collections.ArrayList.size.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.isEmpty" link="Vala.Collections.ArrayList.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.clear" link="Vala.Collections.ArrayList.clear.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.toArray" link="Vala.Collections.ArrayList.toArray.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.sort" link="Vala.Collections.ArrayList.sort.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.forEach" link="Vala.Collections.ArrayList.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.map" link="Vala.Collections.ArrayList.map.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.filter" link="Vala.Collections.ArrayList.filter.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.reduce" link="Vala.Collections.ArrayList.reduce.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.find" link="Vala.Collections.ArrayList.find.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.subList" link="Vala.Collections.ArrayList.subList.html"/>
+    <keyword type="function" name="Vala.Collections.ArrayList.ArrayList" link="Vala.Collections.ArrayList.ArrayList.html"/>
+    <keyword type="" name="Vala.Collections.ArrayList" link="Vala.Collections.ArrayList.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.isPresent" link="Vala.Collections.Optional.isPresent.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.isEmpty" link="Vala.Collections.Optional.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.@get" link="Vala.Collections.Optional.@get.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.orElse" link="Vala.Collections.Optional.orElse.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.orElseGet" link="Vala.Collections.Optional.orElseGet.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.ifPresent" link="Vala.Collections.Optional.ifPresent.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.filter" link="Vala.Collections.Optional.filter.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.of" link="Vala.Collections.Optional.of.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.empty" link="Vala.Collections.Optional.empty.html"/>
+    <keyword type="function" name="Vala.Collections.Optional.ofNullable" link="Vala.Collections.Optional.ofNullable.html"/>
+    <keyword type="" name="Vala.Collections.Optional" link="Vala.Collections.Optional.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.enqueue" link="Vala.Collections.Queue.enqueue.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.dequeue" link="Vala.Collections.Queue.dequeue.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.peek" link="Vala.Collections.Queue.peek.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.size" link="Vala.Collections.Queue.size.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.isEmpty" link="Vala.Collections.Queue.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.clear" link="Vala.Collections.Queue.clear.html"/>
+    <keyword type="function" name="Vala.Collections.Queue.Queue" link="Vala.Collections.Queue.Queue.html"/>
+    <keyword type="" name="Vala.Collections.Queue" link="Vala.Collections.Queue.html"/>
+    <keyword type="function" name="Vala.Collections.Result.isOk" link="Vala.Collections.Result.isOk.html"/>
+    <keyword type="function" name="Vala.Collections.Result.isError" link="Vala.Collections.Result.isError.html"/>
+    <keyword type="function" name="Vala.Collections.Result.unwrap" link="Vala.Collections.Result.unwrap.html"/>
+    <keyword type="function" name="Vala.Collections.Result.unwrapOr" link="Vala.Collections.Result.unwrapOr.html"/>
+    <keyword type="function" name="Vala.Collections.Result.unwrapError" link="Vala.Collections.Result.unwrapError.html"/>
+    <keyword type="function" name="Vala.Collections.Result.map" link="Vala.Collections.Result.map.html"/>
+    <keyword type="function" name="Vala.Collections.Result.mapError" link="Vala.Collections.Result.mapError.html"/>
+    <keyword type="function" name="Vala.Collections.Result.ok" link="Vala.Collections.Result.ok.html"/>
+    <keyword type="function" name="Vala.Collections.Result.error" link="Vala.Collections.Result.error.html"/>
+    <keyword type="" name="Vala.Collections.Result" link="Vala.Collections.Result.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.push" link="Vala.Collections.Stack.push.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.pop" link="Vala.Collections.Stack.pop.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.peek" link="Vala.Collections.Stack.peek.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.size" link="Vala.Collections.Stack.size.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.isEmpty" link="Vala.Collections.Stack.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.clear" link="Vala.Collections.Stack.clear.html"/>
+    <keyword type="function" name="Vala.Collections.Stack.Stack" link="Vala.Collections.Stack.Stack.html"/>
+    <keyword type="" name="Vala.Collections.Stack" link="Vala.Collections.Stack.html"/>
+    <keyword type="" name="Vala.Collections.ReduceFunc" link="Vala.Collections.ReduceFunc.html"/>
+    <keyword type="" name="Vala.Collections.ComparatorFunc" link="Vala.Collections.ComparatorFunc.html"/>
+    <keyword type="" name="Vala.Collections.SupplierFunc" link="Vala.Collections.SupplierFunc.html"/>
+    <keyword type="" name="Vala.Collections.ConsumerFunc" link="Vala.Collections.ConsumerFunc.html"/>
+    <keyword type="" name="Vala.Collections.PredicateFunc" link="Vala.Collections.PredicateFunc.html"/>
+    <keyword type="" name="Vala.Collections.MapFunc" link="Vala.Collections.MapFunc.html"/>
+    <keyword type="" name="Vala.Collections" link="Vala.Collections.html"/>
+    <keyword type="function" name="Vala.Io.BufferedReader.readLine" link="Vala.Io.BufferedReader.readLine.html"/>
     <keyword type="function" name="Vala.Io.BufferedReader.readChar" link="Vala.Io.BufferedReader.readChar.html"/>
     <keyword type="function" name="Vala.Io.BufferedReader.readAll" link="Vala.Io.BufferedReader.readAll.html"/>
     <keyword type="function" name="Vala.Io.BufferedReader.hasNext" link="Vala.Io.BufferedReader.hasNext.html"/>
@@ -46,6 +114,16 @@
     <keyword type="function" name="Vala.Io.Files.tempFile" link="Vala.Io.Files.tempFile.html"/>
     <keyword type="function" name="Vala.Io.Files.tempDir" link="Vala.Io.Files.tempDir.html"/>
     <keyword type="function" name="Vala.Io.Files.touch" link="Vala.Io.Files.touch.html"/>
+    <keyword type="function" name="Vala.Io.Files.readBytes" link="Vala.Io.Files.readBytes.html"/>
+    <keyword type="function" name="Vala.Io.Files.writeBytes" link="Vala.Io.Files.writeBytes.html"/>
+    <keyword type="function" name="Vala.Io.Files.chmod" link="Vala.Io.Files.chmod.html"/>
+    <keyword type="function" name="Vala.Io.Files.chown" link="Vala.Io.Files.chown.html"/>
+    <keyword type="function" name="Vala.Io.Files.lastModified" link="Vala.Io.Files.lastModified.html"/>
+    <keyword type="function" name="Vala.Io.Files.createSymlink" link="Vala.Io.Files.createSymlink.html"/>
+    <keyword type="function" name="Vala.Io.Files.readSymlink" link="Vala.Io.Files.readSymlink.html"/>
+    <keyword type="function" name="Vala.Io.Files.isSameFile" link="Vala.Io.Files.isSameFile.html"/>
+    <keyword type="function" name="Vala.Io.Files.glob" link="Vala.Io.Files.glob.html"/>
+    <keyword type="function" name="Vala.Io.Files.deleteRecursive" link="Vala.Io.Files.deleteRecursive.html"/>
     <keyword type="" name="Vala.Io.Files" link="Vala.Io.Files.html"/>
     <keyword type="function" name="Vala.Io.Path.toString" link="Vala.Io.Path.toString.html"/>
     <keyword type="function" name="Vala.Io.Path.basename" link="Vala.Io.Path.basename.html"/>
@@ -61,8 +139,26 @@
     <keyword type="function" name="Vala.Io.Path.endsWith" link="Vala.Io.Path.endsWith.html"/>
     <keyword type="function" name="Vala.Io.Path.components" link="Vala.Io.Path.components.html"/>
     <keyword type="function" name="Vala.Io.Path.normalize" link="Vala.Io.Path.normalize.html"/>
+    <keyword type="function" name="Vala.Io.Path.volumeName" link="Vala.Io.Path.volumeName.html"/>
+    <keyword type="function" name="Vala.Io.Path.toUri" link="Vala.Io.Path.toUri.html"/>
+    <keyword type="function" name="Vala.Io.Path.match" link="Vala.Io.Path.match.html"/>
+    <keyword type="function" name="Vala.Io.Path.relativeTo" link="Vala.Io.Path.relativeTo.html"/>
     <keyword type="function" name="Vala.Io.Path.abs" link="Vala.Io.Path.abs.html"/>
-    <keyword type="function" name="Vala.Io.Path.Path" link="Vala.Io.Path.Path.html"/><keyword type="" name="Vala.Io.Path" link="Vala.Io.Path.html"/>
+    <keyword type="function" name="Vala.Io.Path.Path" link="Vala.Io.Path.Path.html"/>
+    <keyword type="function" name="Vala.Io.Path.separator" link="Vala.Io.Path.separator.html"/>
+    <keyword type="" name="Vala.Io.Path" link="Vala.Io.Path.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.nextLine" link="Vala.Io.Scanner.nextLine.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.nextInt" link="Vala.Io.Scanner.nextInt.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.nextDouble" link="Vala.Io.Scanner.nextDouble.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.next" link="Vala.Io.Scanner.next.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.hasNextLine" link="Vala.Io.Scanner.hasNextLine.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.hasNextInt" link="Vala.Io.Scanner.hasNextInt.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.setDelimiter" link="Vala.Io.Scanner.setDelimiter.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.close" link="Vala.Io.Scanner.close.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.fromFile" link="Vala.Io.Scanner.fromFile.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.fromString" link="Vala.Io.Scanner.fromString.html"/>
+    <keyword type="function" name="Vala.Io.Scanner.fromStdin" link="Vala.Io.Scanner.fromStdin.html"/>
+    <keyword type="" name="Vala.Io.Scanner" link="Vala.Io.Scanner.html"/>
     <keyword type="function" name="Vala.Io.StringBuilder.append" link="Vala.Io.StringBuilder.append.html"/>
     <keyword type="function" name="Vala.Io.StringBuilder.appendLine" link="Vala.Io.StringBuilder.appendLine.html"/>
     <keyword type="function" name="Vala.Io.StringBuilder.appendChar" link="Vala.Io.StringBuilder.appendChar.html"/>

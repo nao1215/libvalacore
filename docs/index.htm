@@ -13,14 +13,39 @@
         <h1 class="main_title" id="Valacore">Valacore</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <p>libvalacore provides a rich set of convenient, high-level APIs that complement the Vala standard library. Inspired by the standard 
-          libraries of Java, Go, and OCaml, it offers intuitive and consistent interfaces for file I/O, string manipulation, argument parsing, and 
-          more.</p>
+        <p>libvalacore is an ambitious effort to build a powerful core standard library for the Vala language.</p>
+        <p>Vala has a solid GLib/GObject foundation, but lacks the kind of rich, batteries-included standard library that developers in Java, Go, 
+          Python, or OCaml take for granted. libvalacore fills that gap: it provides intuitive, consistent, and well-tested APIs for file I/O, 
+          collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic
+          Vala.</p>
+        <p>Our goal is to make Vala a language where everyday programming tasks can be accomplished with a single import, without hunting for 
+          scattered third-party packages or reinventing the wheel.</p>
         <h2>Namespaces </h2>
         <ul>
-          <li><a href="Vala.Io">Vala.Io</a> - File I/O, path, and string operations</li>
-          <li><a href="Vala.Lang">Vala.Lang</a> - Language-level utilities (Objects, Os)</li>
+          <li><a href="Vala.Io">Vala.Io</a> - File I/O, path, string, buffered I/O, and scanner operations</li>
+          <li><a href="Vala.Lang">Vala.Lang</a> - Language-level utilities (Objects, Os, Process, Signal)</li>
           <li><a href="Vala.Parser">Vala.Parser</a> - Argument parsing</li>
+          <li><a href="Vala.Collections">Vala.Collections</a> - Collection types, Stream API, and functional utilities</li>
+          <li><a href="Vala.Math">Vala.Math</a> - Mathematical functions and random number generation</li>
+          <li><a href="Vala.Time">Vala.Time</a> - Date, time, duration, and stopwatch</li>
+          <li><a href="Vala.Encoding">Vala.Encoding</a> - Base64, Hex, JSON, CSV, XML, TOML, YAML</li>
+          <li><a href="Vala.Compress">Vala.Compress</a> - Gzip and Zlib compression</li>
+          <li><a href="Vala.Archive">Vala.Archive</a> - Zip and Tar archive handling</li>
+          <li><a href="Vala.Crypto">Vala.Crypto</a> - Hash, HMAC, and UUID</li>
+          <li><a href="Vala.Net">Vala.Net</a> - HTTP client, socket, URL, and IP address</li>
+          <li><a href="Vala.Concurrent">Vala.Concurrent</a> - Thread pool, channel, future, mutex, and semaphore</li>
+          <li><a href="Vala.Log">Vala.Log</a> - Structured logging</li>
+          <li><a href="Vala.Test">Vala.Test</a> - Test assertions and benchmarking</li>
+          <li><a href="Vala.Regex">Vala.Regex</a> - Regular expression matching</li>
+          <li><a href="Vala.Conv">Vala.Conv</a> - Type conversion utilities</li>
+          <li><a href="Vala.Config">Vala.Config</a> - Configuration file parsing (Properties, INI)</li>
+          <li><a href="Vala.Event">Vala.Event</a> - Event emitter and listener pattern</li>
+          <li><a href="Vala.Validation">Vala.Validation</a> - Input validation</li>
+          <li><a href="Vala.Errors">Vala.Errors</a> - Error handling utilities</li>
+          <li><a href="Vala.Unicode">Vala.Unicode</a> - Unicode character operations</li>
+          <li><a href="Vala.Text">Vala.Text</a> - Template engine</li>
+          <li><a href="Vala.Format">Vala.Format</a> - Number formatting</li>
+          <li><a href="Vala.Runtime">Vala.Runtime</a> - Runtime information and system properties</li>
         </ul>
         <h2>Links </h2>
         <ul>
@@ -31,6 +56,48 @@
         <h3 class="main_title">Namespaces:</h3>
         <ul class="navi_inline">
           <li class="namespace"><a href="Vala.html">Vala</a></li>
+          <li class="namespace"><a href="Vala.Collections.html">Collections</a></li>
+          <h3 class="main_title">Classes:</h3>
+          <ul class="navi_inline">
+            <li class="class"><a href="Vala.Collections.ArrayList.html">ArrayList</a> - <span class="brief_description">A dynamic array-backed list 
+                that grows automatically as elements are added.</span></li>
+            <li class="class"><a href="Vala.Collections.Optional.html">Optional</a> - <span class="brief_description">A container object that may or 
+                may not contain a value.</span></li>
+            <li class="class"><a href="Vala.Collections.Queue.html">Queue</a> - <span class="brief_description">A FIFO (First-In-First-Out) queue 
+                backed by a GLib.Queue.</span></li>
+            <li class="class"><a href="Vala.Collections.Result.html">Result</a> - <span class="brief_description">A container representing either a 
+                success value or an error.</span></li>
+            <li class="class"><a href="Vala.Collections.Stack.html">Stack</a> - <span class="brief_description">A LIFO (Last-In-First-Out) stack 
+                backed by a GLib.Queue.</span></li>
+          </ul>
+          <h3 class="main_title">Delegates:</h3>
+          <ul class="navi_inline">
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Collections.ComparatorFunc.html" class="delegate">ComparatorFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> a, <span class="main_type"><span>T</span></span> b)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that compares two values for ordering.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.ConsumerFunc.html" class="delegate">ConsumerFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> value)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that takes a value and returns nothing.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>U</span></span> <b><a href="Vala.Collections.MapFunc.html" class="delegate">MapFunc</a></b>&lt;<b><span>T</span></b>,<b><span>U</span></b>&gt; (<span class="main_type"><span>T</span></span> value)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that transforms a value of type T to type U.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> value)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that takes a value and returns a boolean.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>U</span></span> <b><a href="Vala.Collections.ReduceFunc.html" class="delegate">ReduceFunc</a></b>&lt;<b><span>T</span></b>,<b><span>U</span></b>&gt; (<span class="main_type"><span>U</span></span> accumulator, <span class="main_type"><span>T</span></span> element)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that accumulates a value by combining an accumulator with
+                  each element.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.SupplierFunc.html" class="delegate">SupplierFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that takes no arguments and returns a value.</span>
+              </div></li>
+          </ul>
           <li class="namespace"><a href="Vala.Io.html">Io</a> - <span class="brief_description">Vala.Io namespace provides file I/O, path 
               manipulation, and string utility APIs.</span></li>
           <h3 class="main_title">Classes:</h3>
@@ -45,6 +112,8 @@
                 common file and directory operations.</span></li>
             <li class="class"><a href="Vala.Io.Path.html">Path</a> - <span class="brief_description">Path class is a value object that represents a 
                 file system path.</span></li>
+            <li class="class"><a href="Vala.Io.Scanner.html">Scanner</a> - <span class="brief_description">Scanner splits input into tokens and 
+                provides typed parsing.</span></li>
             <li class="class"><a href="Vala.Io.StringBuilder.html">StringBuilder</a> - <span class="brief_description">StringBuilder is a mutable 
                 string buffer for efficient string construction. It wraps GLib.StringBuilder and provides a rich, Java/C#-inspired API.</span></li>
             <li class="class"><a href="Vala.Io.StringJoiner.html">StringJoiner</a> - <span class="brief_description">StringJoiner constructs a 

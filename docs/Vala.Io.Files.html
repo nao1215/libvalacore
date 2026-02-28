@@ -49,14 +49,35 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether the file can write in the specified path.</span>
             </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.chmod.html" class="static_method">chmod</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path, <span class="main_basic_type"><span class="struct">int</span></span> mode)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Changes the file mode (permissions) of the specified path.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.chown.html" class="static_method">chown</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path, <span class="main_basic_type"><span class="struct">int</span></span> uid, <span class="main_basic_type"><span class="struct">int</span></span> gid)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Changes the owner and group of the specified path.</span>
+            </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.copy.html" class="static_method">copy</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> src, <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> dst)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Copies a file from source to destination.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.createSymlink.html" class="static_method">createSymlink</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> target, <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> link)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates a symbolic link that points to the target path.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.deleteRecursive.html" class="static_method">deleteRecursive</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Recursively deletes a directory and all its contents.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.exists.html" class="static_method">exists</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether the file or directory exists in the specified path.
               </span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">List</span></span>&lt;<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span>&gt;? <b><a href="Vala.Io.Files.glob.html" class="static_method">glob</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> dir, <span class="main_basic_type"><span class="class">string</span></span> pattern)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a list of file paths in the directory that match the given 
+                glob pattern.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.isDir.html" class="static_method">isDir</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
@@ -70,9 +91,17 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether the hidden file exists in the specified path.</span>
             </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.isSameFile.html" class="static_method">isSameFile</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> a, <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> b)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether two paths refer to the same file on disk.</span>
+            </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.isSymbolicFile.html" class="static_method">isSymbolicFile</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether the symbolic file exists in the specified path.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">DateTime</span></span>? <b><a href="Vala.Io.Files.lastModified.html" class="static_method">lastModified</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the last modification time of a file or directory.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">List</span></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt;? <b><a href="Vala.Io.Files.listDir.html" class="static_method">listDir</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
@@ -93,6 +122,14 @@
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Io.Files.readAllText.html" class="static_method">readAllText</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Reads the entire contents of a file as a string.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">uint8</span></span>[]? <b><a href="Vala.Io.Files.readBytes.html" class="static_method">readBytes</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Reads the entire contents of a file as a byte array.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span>? <b><a href="Vala.Io.Files.readSymlink.html" class="static_method">readSymlink</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Reads the target path of a symbolic link.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.remove.html" class="static_method">remove</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
@@ -115,6 +152,10 @@
             <div class="leaf_brief_description"><span class="brief_description">Creates a file if it does not exist, or updates its modification time 
                 if it does.</span>
             </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.writeBytes.html" class="static_method">writeBytes</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path, <span class="main_basic_type"><span class="struct">uint8</span></span>[] data)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Writes a byte array to a file, replacing any existing content.</span>
+            </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Files.writeText.html" class="static_method">writeText</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path, <span class="main_basic_type"><span class="class">string</span></span> text)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Writes a string to a file, replacing any existing content.</span>
@@ -136,8 +177,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-2')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-2">
+          <div class="headline" onclick="toggle_box (this, 'box-content-7')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-7">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>

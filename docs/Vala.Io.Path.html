@@ -33,6 +33,13 @@
         <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
         </div>
         <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Io.Path.separator.html" class="static_method">separator</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the OS-specific path separator character.</span>
+            </div></li>
+        </ul>
         <h3 class="main_title">Creation methods:</h3>
         <ul class="navi_inline">
           <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Io.Path.Path.html" class="creation_method">Path</a></b> (<span class="main_basic_type"><span class="class">string</span></span> path)
@@ -81,6 +88,11 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Joins multiple path components to this path.</span>
             </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.Path.match.html" class="method">match</a></b> (<span class="main_basic_type"><span class="class">string</span></span> pattern)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether this path's basename matches the given glob pattern.
+              </span>
+            </div></li>
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Path</span></span> <b><a href="Vala.Io.Path.normalize.html" class="method">normalize</a></b> ()
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns a normalized path by resolving "." and ".." segments.</span>
@@ -88,6 +100,11 @@
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Path</span></span> <b><a href="Vala.Io.Path.parent.html" class="method">parent</a></b> ()
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns a new Path representing the parent directory.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Path</span></span>? <b><a href="Vala.Io.Path.relativeTo.html" class="method">relativeTo</a></b> (<span class="main_type"><span class="class">Path</span></span> base_path)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Computes the relative path from the given base path to this path.
+              </span>
             </div></li>
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Path</span></span> <b><a href="Vala.Io.Path.resolve.html" class="method">resolve</a></b> (<span class="main_basic_type"><span class="class">string</span></span> other)
             </span>
@@ -102,6 +119,14 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns Path as a string.</span>
             </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Io.Path.toUri.html" class="method">toUri</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the file URI representation of this path.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Io.Path.volumeName.html" class="method">volumeName</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the volume name component of the path.</span>
+            </div></li>
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Io.Path.withoutExtension.html" class="method">withoutExtension</a></b> ()
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns the path without the file extension.</span>
@@ -109,8 +134,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-3')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-3">
+          <div class="headline" onclick="toggle_box (this, 'box-content-8')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-8">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>

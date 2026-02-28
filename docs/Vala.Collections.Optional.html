@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Collections.Optional &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Collections.Optional &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">Optional</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Collections.Optional" alt="Object hierarchy for Optional" src="img/Vala.Collections.Optional.png"/>
+
+      <map id="Vala.Collections.Optional" name="Vala.Collections.Optional">
+<area shape="rect" id="node1" href="Vala.Collections.Optional.html" title="Vala.Collections.Optional" alt="" coords="5,101,215,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Optional</span></b>&lt;<b><span>T</span></b>&gt; : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>A container object that may or may not contain a value.</p>
+          <p>Optional is a type-safe alternative to null. Instead of returning null, methods can return Optional to explicitly indicate that a value 
+            may be absent. Inspired by Java's Optional, OCaml's option, and Rust's Option.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> opt = Optional.of&lt;<span class="main_basic_type">string</span>&gt; (<span class="main_literal">"hello"</span>);<br/>    <span class="main_keyword">assert</span> (opt.isPresent ());<br/>    <span class="main_keyword">assert</span> (opt.<span class="main_keyword">get</span> () == <span class="main_literal">"hello"</span>);<br/><br/>    <span class="main_keyword">var</span> empty = Optional.empty&lt;<span class="main_basic_type">string</span>&gt; ();<br/>    <span class="main_keyword">assert</span> (empty.isEmpty ());<br/>    <span class="main_keyword">assert</span> (empty.orElse (<span class="main_literal">"default"</span>) == <span class="main_literal">"default"</span>);</code></pre>
+          </p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Collections.html">Vala.Collections</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Optional</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Optional.empty.html" class="static_method">empty</a></b>&lt;<b><span>T</span></b>&gt; ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates an empty Optional with no value.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Optional</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Optional.of.html" class="static_method">of</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_keyword">owned</span> <span class="main_type"><span>T</span></span> value)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates an Optional containing the given value.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Optional</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Optional.ofNullable.html" class="static_method">ofNullable</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_keyword">owned</span> <span class="main_type"><span>T</span></span> value)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates an Optional from a nullable value. If the value is null, 
+                returns an empty Optional; otherwise wraps the value.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Optional.@get.html" class="method">@get</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the contained value. Returns null if no value is present.
+              </span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Optional</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Collections.Optional.filter.html" class="method">filter</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.PredicateFunc.html" class="delegate">PredicateFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; predicate)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">If a value is present and matches the predicate, returns this 
+                Optional; otherwise returns an empty Optional.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.Optional.ifPresent.html" class="method">ifPresent</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ConsumerFunc.html" class="delegate">ConsumerFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; func)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">If a value is present, invokes the given function with the value.
+              </span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.Optional.isEmpty.html" class="method">isEmpty</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether this Optional is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.Optional.isPresent.html" class="method">isPresent</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether a value is present.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Optional.orElse.html" class="method">orElse</a></b> (<span class="main_type"><span>T</span></span> other)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the value if present, otherwise returns the given default 
+                value.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.Optional.orElseGet.html" class="method">orElseGet</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.SupplierFunc.html" class="delegate">SupplierFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; supplier)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the value if present, otherwise invokes the supplier function 
+                and returns its result.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-1')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-1">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>
