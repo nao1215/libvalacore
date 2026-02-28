@@ -11,15 +11,61 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      BUILD_DIR: build
+      DIST_DIR: dist
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Extract tag name
+      - name: Extract tag and version
         id: tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG_NAME#v}"
+          echo "TAG_NAME=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify tag consistency
+        run: |
+          LATEST_TAG="$(git describe --tags --abbrev=0)"
+          if [ "$LATEST_TAG" != "${{ steps.tag.outputs.TAG_NAME }}" ]; then
+            echo "Tag mismatch: expected ${{ steps.tag.outputs.TAG_NAME }}, got $LATEST_TAG"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y valac build-essential meson valadoc libglib2.0-dev ninja-build
+
+      - name: Build
+        run: meson setup "${BUILD_DIR}" --buildtype=release && ninja -C "${BUILD_DIR}"
+
+      - name: Test
+        run: meson test -C "${BUILD_DIR}" --print-errorlogs
+
+      - name: Package install tree
+        id: package
+        run: |
+          set -eu
+          VERSION="${{ steps.tag.outputs.VERSION }}"
+          ARCH="$(uname -m)"
+          STAGE_DIR="${PWD}/${DIST_DIR}/stage"
+          OUTPUT_DIR="${PWD}/${DIST_DIR}/artifacts"
+          ARCHIVE_NAME="valacore-${VERSION}-linux-${ARCH}.tar.gz"
+
+          rm -rf "$STAGE_DIR" "$OUTPUT_DIR"
+          mkdir -p "$STAGE_DIR" "$OUTPUT_DIR"
+
+          meson install -C "${BUILD_DIR}" --destdir "$STAGE_DIR"
+          tar -C "$STAGE_DIR" -czf "${OUTPUT_DIR}/${ARCHIVE_NAME}" .
+          (cd "$OUTPUT_DIR" && sha256sum "${ARCHIVE_NAME}" > "${ARCHIVE_NAME}.sha256")
+          find "$STAGE_DIR" -type f | sort > "${OUTPUT_DIR}/installed-files.txt"
+
+          echo "ARCHIVE=${OUTPUT_DIR}/${ARCHIVE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "CHECKSUM=${OUTPUT_DIR}/${ARCHIVE_NAME}.sha256" >> "$GITHUB_OUTPUT"
+          echo "INSTALLED_FILES=${OUTPUT_DIR}/installed-files.txt" >> "$GITHUB_OUTPUT"
 
       - name: Extract changelog for this version
         id: changelog
@@ -66,5 +112,9 @@ jobs:
           draft: false
           prerelease: ${{ contains(steps.tag.outputs.TAG_NAME, '-alpha') || contains(steps.tag.outputs.TAG_NAME, '-beta') || contains(steps.tag.outputs.TAG_NAME, '-rc') }}
           generate_release_notes: false
+          files: |
+            ${{ steps.package.outputs.ARCHIVE }}
+            ${{ steps.package.outputs.CHECKSUM }}
+            ${{ steps.package.outputs.INSTALLED_FILES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
