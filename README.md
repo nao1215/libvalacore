@@ -391,6 +391,22 @@ An immutable triple of three values. A Value Object inspired by Kotlin's Triple.
 | `equals(Triple other, EqualFunc<A>, EqualFunc<B>, EqualFunc<C>)` | Returns whether all values are equal |
 | `toString()` | Returns string representation `(first, second, third)` |
 
+### Vala.Collections.PriorityQueue\<T\>
+A priority queue backed by a binary min-heap. Elements are ordered by a comparison function. Inspired by Java's PriorityQueue and Go's container/heap.
+
+| Method | Description |
+|---|---|
+| `PriorityQueue(ComparatorFunc<T>, EqualFunc<T>?)` | Creates a PriorityQueue with comparator and optional equality function |
+| `add(T element)` | Adds an element |
+| `poll()` | Removes and returns the highest-priority element |
+| `peek()` | Returns the highest-priority element without removing |
+| `remove(T element)` | Removes the first occurrence of the element |
+| `contains(T element)` | Returns whether the element is in the queue |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the queue is empty |
+| `clear()` | Removes all elements |
+| `toArray()` | Returns elements as a native array |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 

@@ -13,6 +13,7 @@ valacore_sources = files([
   'collections/LinkedList.vala',
   'collections/Optional.vala',
   'collections/Pair.vala',
+  'collections/PriorityQueue.vala',
   'collections/Queue.vala',
   'collections/Result.vala',
   'collections/Stack.vala',
