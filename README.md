@@ -341,6 +341,17 @@ Waits for a collection of tasks to complete.
 | `done()` | Decrements task counter by one |
 | `wait()` | Blocks until counter reaches zero |
 
+### Vala.Concurrent.Semaphore
+Counting semaphore.
+
+| Method | Description |
+|---|---|
+| `Semaphore(int permits)` | Creates with initial permit count |
+| `acquire()` | Acquires permit, blocking if necessary |
+| `tryAcquire()` | Tries non-blocking permit acquisition |
+| `release()` | Releases permit |
+| `availablePermits()` | Returns currently available permits |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
