@@ -1159,6 +1159,22 @@ Java-like key-value configuration file utility.
 | `keys()` | Returns all keys |
 | `size()` | Returns number of entries |
 
+## Vala.Config.AppConfig
+Unified application configuration from file, environment, and CLI.
+
+| Method | Description |
+|---|---|
+| `load(string appName)` | Loads from standard app config paths |
+| `loadFile(Path path)` | Loads from explicit file |
+| `withEnvPrefix(string prefix)` | Sets env prefix like `MYAPP_` |
+| `withCliArgs(string[] args)` | Parses CLI overrides (`--k=v`, `--k v`, `--flag`) |
+| `getString(string key, string fallback = "")` | Returns string value or fallback |
+| `getInt(string key, int fallback = 0)` | Returns int value or fallback |
+| `getBool(string key, bool fallback = false)` | Returns bool value or fallback |
+| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback |
+| `require(string key)` | Returns required value, fail-fast when missing |
+| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
