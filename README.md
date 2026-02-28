@@ -680,6 +680,22 @@ A sorted map backed by a binary search tree. Keys are ordered by a comparison fu
 | `keys()` | Returns all keys in sorted order |
 | `forEach(BiConsumerFunc<K,V> func)` | Applies a function to each entry in key order |
 
+## Vala.Conv.Convert
+Type conversion utilities similar to Go's `strconv`.
+
+| Method | Description |
+|---|---|
+| `toInt(string s)` | Converts text to `int` (`null` on parse failure) |
+| `toInt64(string s)` | Converts text to `int64` (`null` on parse failure) |
+| `toDouble(string s)` | Converts text to `double` (`null` on parse failure) |
+| `toBool(string s)` | Converts text to `bool` (`true/false/1/0`, else `null`) |
+| `intToString(int n)` | Converts `int` to string |
+| `doubleToString(double d, int precision)` | Converts `double` with fixed precision |
+| `boolToString(bool b)` | Converts bool to `"true"` / `"false"` |
+| `intToHex(int n)` | Converts `int` to hexadecimal string |
+| `intToOctal(int n)` | Converts `int` to octal string |
+| `intToBinary(int n)` | Converts `int` to binary string |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 

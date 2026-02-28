@@ -27,6 +27,7 @@ valacore_sources = files([
   'concurrent/RWMutex.vala',
   'concurrent/Semaphore.vala',
   'concurrent/WaitGroup.vala',
+  'conv/Convert.vala',
   'crypto/Hash.vala',
   'crypto/Hmac.vala',
   'crypto/Uuid.vala',
