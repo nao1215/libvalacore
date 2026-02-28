@@ -70,6 +70,20 @@ Filesystem metadata utility methods.
 | `getOwner(Path path)` | Returns owner username or `null` |
 | `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
 
+### Vala.Io.AtomicFile
+Atomic update helper for safe file replacement with optional backup.
+
+| Method | Description |
+|---|---|
+| `AtomicFile()` | Creates an atomic writer with default settings |
+| `withBackup(bool enabled)` | Enables/disables backup creation before replacement |
+| `backupSuffix(string suffix)` | Sets backup suffix (default: `.bak`) |
+| `write(Path path, string text)` | Atomically replaces file with text content |
+| `writeBytes(Path path, uint8[] data)` | Atomically replaces file with binary content |
+| `append(Path path, string text)` | Appends by reading current content then atomically replacing |
+| `replace(Path srcTmp, Path dst)` | Replaces destination file with source temp file |
+| `readConsistent(Path path)` | Reads text twice and returns `null` if contents changed between reads |
+
 ### Vala.Io.Console
 Console utility methods.
 
