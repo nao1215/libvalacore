@@ -824,6 +824,23 @@ A doubly-linked list that supports efficient insertion and removal at both ends.
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 | `toArray()` | Returns elements as a native array |
 
+### Vala.Collections.Lists
+Static utility methods for ArrayList operations (partition, chunk, zip, flatten, groupBy, etc.).
+
+| Method | Description |
+|---|---|
+| `partitionString(list, fn)` | Splits into (matching, non-matching) Pair |
+| `chunkString(list, size)` | Splits into sub-lists of given size |
+| `zipString(a, b)` | Combines two lists into Pair list |
+| `zipWithIndexString(list)` | Creates (index, element) Pair list |
+| `flattenString(nested)` | Flattens nested lists into a single list |
+| `groupByString(list, keyFn)` | Groups by key into HashMap |
+| `distinctString(list)` | Removes duplicates preserving order |
+| `reverseString(list)` | Returns a reversed copy |
+| `slidingString(list, windowSize)` | Returns sliding windows |
+| `interleaveString(a, b)` | Alternates elements from two lists |
+| `frequencyString(list)` | Counts occurrences of each element |
+
 ### Vala.Collections.LruCache\<K,V\>
 LRU cache with optional TTL and cache-miss loader.
 
