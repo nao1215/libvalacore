@@ -50,6 +50,27 @@ An immutable value object representing a file system path. Methods that transfor
 | `normalize()` | Returns a normalized path (resolves "." and "..") |
 | `abs()` | Returns the absolute, normalized path |
 
+## Vala.Io.StringBuilder
+A mutable string buffer for efficient string construction. Wraps GLib.StringBuilder with a rich, Java/C#-inspired API.
+
+| Method | Description |
+|---|---|
+| `StringBuilder()` | Creates an empty StringBuilder |
+| `StringBuilder.withString(string s)` | Creates a StringBuilder with initial content |
+| `StringBuilder.sized(size_t size)` | Creates a StringBuilder with pre-allocated capacity |
+| `append(string s)` | Appends a string |
+| `appendLine(string s)` | Appends a string followed by a newline |
+| `appendChar(char c)` | Appends a single character |
+| `insert(int offset, string s)` | Inserts a string at the specified position |
+| `deleteRange(int start, int end)` | Deletes characters in [start, end) |
+| `replaceRange(int start, int end, string s)` | Replaces characters in [start, end) |
+| `reverse()` | Reverses the contents |
+| `length()` | Returns the current byte length |
+| `charAt(int index)` | Returns the character at the index |
+| `clear()` | Clears the buffer |
+| `toString()` | Returns the built string |
+| `capacity()` | Returns the allocated buffer capacity |
+
 ## Vala.Io.Strings
 Static utility methods for string manipulation. All methods are null-safe.
 
