@@ -225,6 +225,14 @@ Static utility methods for hexadecimal encoding and decoding.
 | `encode(uint8[] data)` | Encodes bytes to lower-case hexadecimal text |
 | `decode(string hex)` | Decodes hexadecimal text to bytes |
 
+### Vala.Encoding.Url
+Static utility methods for URL percent-encoding.
+
+| Method | Description |
+|---|---|
+| `encode(string s)` | Encodes a URL component with percent-encoding |
+| `decode(string s)` | Decodes a percent-encoded URL component |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 
