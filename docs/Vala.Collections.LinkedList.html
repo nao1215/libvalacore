@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Collections.LinkedList &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Collections.LinkedList &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">LinkedList</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        
+        <img class="main_diagram" usemap="#Vala.Collections.LinkedList" alt="Object hierarchy for LinkedList" src="img/Vala.Collections.LinkedList.png"/>
+      
+
+      <map id="Vala.Collections.LinkedList" name="Vala.Collections.LinkedList">
+<area shape="rect" id="node1" href="Vala.Collections.LinkedList.html" title="Vala.Collections.LinkedList" alt="" coords="5,101,231,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">LinkedList</span></b>&lt;<b><span>T</span></b>&gt; : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>A doubly-linked list that supports efficient insertion and removal at both ends.</p>
+          <p>LinkedList provides O(1) addFirst/addLast and removeFirst/removeLast. It can be used as a queue, stack, or deque. Inspired by Java's 
+            LinkedList and Go's container/list.</p>
+          <p>For element comparison in methods like contains() and indexOf(), pass an equality function to the constructor. For string lists, use 
+            GLib.str_equal.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> list = <span class="main_keyword">new</span> LinkedList&lt;<span class="main_basic_type">string</span>&gt; (GLib.str_equal);<br/>    list.addLast (<span class="main_literal">"a"</span>);<br/>    list.addLast (<span class="main_literal">"b"</span>);<br/>    list.addFirst (<span class="main_literal">"z"</span>);<br/>    <span class="main_keyword">assert</span> (list.peekFirst () == <span class="main_literal">"z"</span>);<br/>    <span class="main_keyword">assert</span> (list.peekLast () == <span class="main_literal">"b"</span>);<br/>    <span class="main_keyword">assert</span> (list.size () == <span class="main_literal">3</span>);</code></pre>
+          </p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Collections.html">Vala.Collections</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Collections.LinkedList.LinkedList.html" class="creation_method">LinkedList</a></b> (<span class="main_type"><span class="delegate">EqualFunc</span></span>&lt;<span class="main_type"><span>T</span></span>&gt;? equal_func = <span class="main_literal">null</span>)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates an empty LinkedList.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.LinkedList.@get.html" class="method">@get</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> index)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the element at the specified index. Returns null if the index 
+                is out of bounds.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.LinkedList.addFirst.html" class="method">addFirst</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><span>T</span></span> element)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Adds an element to the front of the list.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.LinkedList.addLast.html" class="method">addLast</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><span>T</span></span> element)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Adds an element to the end of the list.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.LinkedList.clear.html" class="method">clear</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Removes all elements from the list.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.LinkedList.contains.html" class="method">contains</a></b> (<span class="main_type"><span>T</span></span> element)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether the list contains the specified element. Uses the 
+                equality function provided in the constructor, or pointer equality if none was provided.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.LinkedList.forEach.html" class="method">forEach</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.ConsumerFunc.html" class="delegate">ConsumerFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; func)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Applies the given function to each element in the list, from first to 
+                last.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Collections.LinkedList.indexOf.html" class="method">indexOf</a></b> (<span class="main_type"><span>T</span></span> element)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the index of the first occurrence of the specified element. 
+                Returns -1 if the element is not found. Uses the equality function provided in the constructor, or pointer equality if none was 
+                provided.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Collections.LinkedList.isEmpty.html" class="method">isEmpty</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether the list is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.LinkedList.peekFirst.html" class="method">peekFirst</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the first element without removing it. Returns null if the 
+                list is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.LinkedList.peekLast.html" class="method">peekLast</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the last element without removing it. Returns null if the list
+                is empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.LinkedList.removeFirst.html" class="method">removeFirst</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Removes and returns the first element. Returns null if the list is 
+                empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.LinkedList.removeLast.html" class="method">removeLast</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Removes and returns the last element. Returns null if the list is 
+                empty.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">uint</span></span> <b><a href="Vala.Collections.LinkedList.size.html" class="method">size</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the number of elements in the list.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span>[] <b><a href="Vala.Collections.LinkedList.toArray.html" class="method">toArray</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the elements as a native array.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-5')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-5">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

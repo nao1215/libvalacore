@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <book xmlns="http://www.devhelp.net/book" title="Valacore Reference Manual" language="vala" name="Valacore" version="" author="" link="index.htm">
   <chapters><sub name="Vala" link="Vala.html"><sub name="Collections" link="Vala.Collections.html">
-        <sub name="ArrayList" link="Vala.Collections.ArrayList.html"></sub><sub name="Optional" link="Vala.Collections.Optional.html"></sub>
-        <sub name="Queue" link="Vala.Collections.Queue.html"></sub><sub name="Result" link="Vala.Collections.Result.html"></sub>
-        <sub name="Stack" link="Vala.Collections.Stack.html"></sub></sub><sub name="Io" link="Vala.Io.html">
-        <sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub><sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub>
-        <sub name="Files" link="Vala.Io.Files.html"></sub><sub name="Path" link="Vala.Io.Path.html"></sub>
-        <sub name="Scanner" link="Vala.Io.Scanner.html"></sub><sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub>
-        <sub name="StringJoiner" link="Vala.Io.StringJoiner.html"></sub><sub name="Strings" link="Vala.Io.Strings.html"></sub></sub>
-      <sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html"></sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub>
-      </sub><sub name="Parser" link="Vala.Parser.html"><sub name="ArgParser" link="Vala.Parser.ArgParser.html">
-          <sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub></sub>
+        <sub name="ArrayList" link="Vala.Collections.ArrayList.html"></sub><sub name="BitSet" link="Vala.Collections.BitSet.html"></sub>
+        <sub name="Deque" link="Vala.Collections.Deque.html"></sub><sub name="HashMap" link="Vala.Collections.HashMap.html"></sub>
+        <sub name="HashSet" link="Vala.Collections.HashSet.html"></sub><sub name="LinkedList" link="Vala.Collections.LinkedList.html"></sub>
+        <sub name="Optional" link="Vala.Collections.Optional.html"></sub><sub name="Pair" link="Vala.Collections.Pair.html"></sub>
+        <sub name="PriorityQueue" link="Vala.Collections.PriorityQueue.html"></sub><sub name="Queue" link="Vala.Collections.Queue.html"></sub>
+        <sub name="Result" link="Vala.Collections.Result.html"></sub><sub name="Stack" link="Vala.Collections.Stack.html"></sub>
+        <sub name="TreeMap" link="Vala.Collections.TreeMap.html"></sub><sub name="Triple" link="Vala.Collections.Triple.html"></sub></sub>
+      <sub name="Io" link="Vala.Io.html"><sub name="BufferedReader" link="Vala.Io.BufferedReader.html"></sub>
+        <sub name="BufferedWriter" link="Vala.Io.BufferedWriter.html"></sub><sub name="Files" link="Vala.Io.Files.html"></sub>
+        <sub name="Path" link="Vala.Io.Path.html"></sub><sub name="Scanner" link="Vala.Io.Scanner.html"></sub>
+        <sub name="StringBuilder" link="Vala.Io.StringBuilder.html"></sub><sub name="StringJoiner" link="Vala.Io.StringJoiner.html"></sub>
+        <sub name="Strings" link="Vala.Io.Strings.html"></sub></sub><sub name="Lang" link="Vala.Lang.html"><sub name="Os" link="Vala.Lang.Os.html">
+        </sub><sub name="Objects" link="Vala.Lang.Objects.html"></sub></sub><sub name="Parser" link="Vala.Parser.html">
+        <sub name="ArgParser" link="Vala.Parser.ArgParser.html"><sub name="Builder" link="Vala.Parser.ArgParser.Builder.html"></sub></sub></sub></sub>
   </chapters><functions><keyword type="function" name="Vala.Collections.ArrayList.add" link="Vala.Collections.ArrayList.add.html"/>
     <keyword type="function" name="Vala.Collections.ArrayList.addAll" link="Vala.Collections.ArrayList.addAll.html"/>
     <keyword type="function" name="Vala.Collections.ArrayList.@get" link="Vala.Collections.ArrayList.@get.html"/>
@@ -31,6 +35,81 @@
     <keyword type="function" name="Vala.Collections.ArrayList.subList" link="Vala.Collections.ArrayList.subList.html"/>
     <keyword type="function" name="Vala.Collections.ArrayList.ArrayList" link="Vala.Collections.ArrayList.ArrayList.html"/>
     <keyword type="" name="Vala.Collections.ArrayList" link="Vala.Collections.ArrayList.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.@set" link="Vala.Collections.BitSet.@set.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.clearBit" link="Vala.Collections.BitSet.clearBit.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.@get" link="Vala.Collections.BitSet.@get.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.flip" link="Vala.Collections.BitSet.flip.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.and" link="Vala.Collections.BitSet.and.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.or" link="Vala.Collections.BitSet.or.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.xor" link="Vala.Collections.BitSet.xor.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.cardinality" link="Vala.Collections.BitSet.cardinality.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.length" link="Vala.Collections.BitSet.length.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.isEmpty" link="Vala.Collections.BitSet.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.toString" link="Vala.Collections.BitSet.toString.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.clearAll" link="Vala.Collections.BitSet.clearAll.html"/>
+    <keyword type="function" name="Vala.Collections.BitSet.BitSet" link="Vala.Collections.BitSet.BitSet.html"/>
+    <keyword type="" name="Vala.Collections.BitSet" link="Vala.Collections.BitSet.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.addFirst" link="Vala.Collections.Deque.addFirst.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.addLast" link="Vala.Collections.Deque.addLast.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.removeFirst" link="Vala.Collections.Deque.removeFirst.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.removeLast" link="Vala.Collections.Deque.removeLast.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.peekFirst" link="Vala.Collections.Deque.peekFirst.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.peekLast" link="Vala.Collections.Deque.peekLast.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.size" link="Vala.Collections.Deque.size.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.isEmpty" link="Vala.Collections.Deque.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.contains" link="Vala.Collections.Deque.contains.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.clear" link="Vala.Collections.Deque.clear.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.toArray" link="Vala.Collections.Deque.toArray.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.forEach" link="Vala.Collections.Deque.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.Deque.Deque" link="Vala.Collections.Deque.Deque.html"/>
+    <keyword type="" name="Vala.Collections.Deque" link="Vala.Collections.Deque.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.put" link="Vala.Collections.HashMap.put.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.@get" link="Vala.Collections.HashMap.@get.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.getOrDefault" link="Vala.Collections.HashMap.getOrDefault.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.containsKey" link="Vala.Collections.HashMap.containsKey.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.containsValue" link="Vala.Collections.HashMap.containsValue.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.remove" link="Vala.Collections.HashMap.remove.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.size" link="Vala.Collections.HashMap.size.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.isEmpty" link="Vala.Collections.HashMap.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.clear" link="Vala.Collections.HashMap.clear.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.keys" link="Vala.Collections.HashMap.keys.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.values" link="Vala.Collections.HashMap.values.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.forEach" link="Vala.Collections.HashMap.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.putIfAbsent" link="Vala.Collections.HashMap.putIfAbsent.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.merge" link="Vala.Collections.HashMap.merge.html"/>
+    <keyword type="function" name="Vala.Collections.HashMap.HashMap" link="Vala.Collections.HashMap.HashMap.html"/>
+    <keyword type="" name="Vala.Collections.HashMap" link="Vala.Collections.HashMap.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.add" link="Vala.Collections.HashSet.add.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.remove" link="Vala.Collections.HashSet.remove.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.contains" link="Vala.Collections.HashSet.contains.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.size" link="Vala.Collections.HashSet.size.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.isEmpty" link="Vala.Collections.HashSet.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.clear" link="Vala.Collections.HashSet.clear.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.union" link="Vala.Collections.HashSet.union.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.intersection" link="Vala.Collections.HashSet.intersection.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.difference" link="Vala.Collections.HashSet.difference.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.isSubsetOf" link="Vala.Collections.HashSet.isSubsetOf.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.toArray" link="Vala.Collections.HashSet.toArray.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.forEach" link="Vala.Collections.HashSet.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.addAll" link="Vala.Collections.HashSet.addAll.html"/>
+    <keyword type="function" name="Vala.Collections.HashSet.HashSet" link="Vala.Collections.HashSet.HashSet.html"/>
+    <keyword type="" name="Vala.Collections.HashSet" link="Vala.Collections.HashSet.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.addFirst" link="Vala.Collections.LinkedList.addFirst.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.addLast" link="Vala.Collections.LinkedList.addLast.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.removeFirst" link="Vala.Collections.LinkedList.removeFirst.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.removeLast" link="Vala.Collections.LinkedList.removeLast.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.peekFirst" link="Vala.Collections.LinkedList.peekFirst.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.peekLast" link="Vala.Collections.LinkedList.peekLast.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.size" link="Vala.Collections.LinkedList.size.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.isEmpty" link="Vala.Collections.LinkedList.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.clear" link="Vala.Collections.LinkedList.clear.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.contains" link="Vala.Collections.LinkedList.contains.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.indexOf" link="Vala.Collections.LinkedList.indexOf.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.@get" link="Vala.Collections.LinkedList.@get.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.forEach" link="Vala.Collections.LinkedList.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.toArray" link="Vala.Collections.LinkedList.toArray.html"/>
+    <keyword type="function" name="Vala.Collections.LinkedList.LinkedList" link="Vala.Collections.LinkedList.LinkedList.html"/>
+    <keyword type="" name="Vala.Collections.LinkedList" link="Vala.Collections.LinkedList.html"/>
     <keyword type="function" name="Vala.Collections.Optional.isPresent" link="Vala.Collections.Optional.isPresent.html"/>
     <keyword type="function" name="Vala.Collections.Optional.isEmpty" link="Vala.Collections.Optional.isEmpty.html"/>
     <keyword type="function" name="Vala.Collections.Optional.@get" link="Vala.Collections.Optional.@get.html"/>
@@ -42,6 +121,23 @@
     <keyword type="function" name="Vala.Collections.Optional.empty" link="Vala.Collections.Optional.empty.html"/>
     <keyword type="function" name="Vala.Collections.Optional.ofNullable" link="Vala.Collections.Optional.ofNullable.html"/>
     <keyword type="" name="Vala.Collections.Optional" link="Vala.Collections.Optional.html"/>
+    <keyword type="function" name="Vala.Collections.Pair.first" link="Vala.Collections.Pair.first.html"/>
+    <keyword type="function" name="Vala.Collections.Pair.second" link="Vala.Collections.Pair.second.html"/>
+    <keyword type="function" name="Vala.Collections.Pair.equals" link="Vala.Collections.Pair.equals.html"/>
+    <keyword type="function" name="Vala.Collections.Pair.toString" link="Vala.Collections.Pair.toString.html"/>
+    <keyword type="function" name="Vala.Collections.Pair.Pair" link="Vala.Collections.Pair.Pair.html"/>
+    <keyword type="" name="Vala.Collections.Pair" link="Vala.Collections.Pair.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.add" link="Vala.Collections.PriorityQueue.add.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.poll" link="Vala.Collections.PriorityQueue.poll.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.peek" link="Vala.Collections.PriorityQueue.peek.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.remove" link="Vala.Collections.PriorityQueue.remove.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.contains" link="Vala.Collections.PriorityQueue.contains.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.size" link="Vala.Collections.PriorityQueue.size.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.isEmpty" link="Vala.Collections.PriorityQueue.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.clear" link="Vala.Collections.PriorityQueue.clear.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.toArray" link="Vala.Collections.PriorityQueue.toArray.html"/>
+    <keyword type="function" name="Vala.Collections.PriorityQueue.PriorityQueue" link="Vala.Collections.PriorityQueue.PriorityQueue.html"/>
+    <keyword type="" name="Vala.Collections.PriorityQueue" link="Vala.Collections.PriorityQueue.html"/>
     <keyword type="function" name="Vala.Collections.Queue.enqueue" link="Vala.Collections.Queue.enqueue.html"/>
     <keyword type="function" name="Vala.Collections.Queue.dequeue" link="Vala.Collections.Queue.dequeue.html"/>
     <keyword type="function" name="Vala.Collections.Queue.peek" link="Vala.Collections.Queue.peek.html"/>
@@ -68,8 +164,32 @@
     <keyword type="function" name="Vala.Collections.Stack.clear" link="Vala.Collections.Stack.clear.html"/>
     <keyword type="function" name="Vala.Collections.Stack.Stack" link="Vala.Collections.Stack.Stack.html"/>
     <keyword type="" name="Vala.Collections.Stack" link="Vala.Collections.Stack.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.put" link="Vala.Collections.TreeMap.put.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.@get" link="Vala.Collections.TreeMap.@get.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.containsKey" link="Vala.Collections.TreeMap.containsKey.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.remove" link="Vala.Collections.TreeMap.remove.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.firstKey" link="Vala.Collections.TreeMap.firstKey.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.lastKey" link="Vala.Collections.TreeMap.lastKey.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.floorKey" link="Vala.Collections.TreeMap.floorKey.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.ceilingKey" link="Vala.Collections.TreeMap.ceilingKey.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.subMap" link="Vala.Collections.TreeMap.subMap.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.size" link="Vala.Collections.TreeMap.size.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.isEmpty" link="Vala.Collections.TreeMap.isEmpty.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.clear" link="Vala.Collections.TreeMap.clear.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.keys" link="Vala.Collections.TreeMap.keys.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.forEach" link="Vala.Collections.TreeMap.forEach.html"/>
+    <keyword type="function" name="Vala.Collections.TreeMap.TreeMap" link="Vala.Collections.TreeMap.TreeMap.html"/>
+    <keyword type="" name="Vala.Collections.TreeMap" link="Vala.Collections.TreeMap.html"/>
+    <keyword type="function" name="Vala.Collections.Triple.first" link="Vala.Collections.Triple.first.html"/>
+    <keyword type="function" name="Vala.Collections.Triple.second" link="Vala.Collections.Triple.second.html"/>
+    <keyword type="function" name="Vala.Collections.Triple.third" link="Vala.Collections.Triple.third.html"/>
+    <keyword type="function" name="Vala.Collections.Triple.equals" link="Vala.Collections.Triple.equals.html"/>
+    <keyword type="function" name="Vala.Collections.Triple.toString" link="Vala.Collections.Triple.toString.html"/>
+    <keyword type="function" name="Vala.Collections.Triple.Triple" link="Vala.Collections.Triple.Triple.html"/>
+    <keyword type="" name="Vala.Collections.Triple" link="Vala.Collections.Triple.html"/>
     <keyword type="" name="Vala.Collections.ReduceFunc" link="Vala.Collections.ReduceFunc.html"/>
     <keyword type="" name="Vala.Collections.ComparatorFunc" link="Vala.Collections.ComparatorFunc.html"/>
+    <keyword type="" name="Vala.Collections.BiConsumerFunc" link="Vala.Collections.BiConsumerFunc.html"/>
     <keyword type="" name="Vala.Collections.SupplierFunc" link="Vala.Collections.SupplierFunc.html"/>
     <keyword type="" name="Vala.Collections.ConsumerFunc" link="Vala.Collections.ConsumerFunc.html"/>
     <keyword type="" name="Vala.Collections.PredicateFunc" link="Vala.Collections.PredicateFunc.html"/>
