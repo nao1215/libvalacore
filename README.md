@@ -308,6 +308,26 @@ A hash table-based map from keys to values. Provides O(1) average-time lookup, i
 | `putIfAbsent(K key, V value)` | Adds only if the key is not present |
 | `merge(HashMap<K,V> other)` | Copies all entries from another map |
 
+### Vala.Collections.HashSet\<T\>
+A hash table-based set of unique elements. Provides O(1) average-time add, remove, and contains. Set operations (union, intersection, difference) return new sets. Inspired by Java's HashSet and Python's set.
+
+| Method | Description |
+|---|---|
+| `HashSet(HashFunc<T>, EqualFunc<T>)` | Creates an empty HashSet with hash and equality functions |
+| `add(T element)` | Adds an element; returns false if already present |
+| `remove(T element)` | Removes an element; returns false if not found |
+| `contains(T element)` | Returns whether the element is in the set |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the set is empty |
+| `clear()` | Removes all elements |
+| `union(HashSet<T> other)` | Returns a new set with elements from both sets |
+| `intersection(HashSet<T> other)` | Returns a new set with elements in both sets |
+| `difference(HashSet<T> other)` | Returns a new set with elements only in this set |
+| `isSubsetOf(HashSet<T> other)` | Returns whether this set is a subset of the other |
+| `toArray()` | Returns elements as a native array |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+| `addAll(HashSet<T> other)` | Adds all elements from another set |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
