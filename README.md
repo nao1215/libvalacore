@@ -27,9 +27,21 @@ File and directory operations. All methods are static and take a `Vala.Io.Path` 
 | `isHiddenFile(Path path)` | Returns whether the path is a hidden file (starts with `.`) |
 | `makeDirs(Path path)` | Creates a directory including parent directories |
 | `makeDir(Path path)` | Creates a single directory |
+| `copy(Path src, Path dst)` | Copies a file from source to destination |
+| `move(Path src, Path dst)` | Moves (renames) a file |
+| `remove(Path path)` | Deletes a file or empty directory |
+| `readAllText(Path path)` | Reads the entire file as a string |
+| `readAllLines(Path path)` | Reads the file as a list of lines |
+| `writeText(Path path, string text)` | Writes a string to a file |
+| `appendText(Path path, string text)` | Appends a string to a file |
+| `size(Path path)` | Returns the file size in bytes |
+| `listDir(Path path)` | Lists directory entries |
+| `tempFile(string prefix, string suffix)` | Creates a temporary file |
+| `tempDir(string prefix)` | Creates a temporary directory |
+| `touch(Path path)` | Creates a file or updates its modification time |
 
 ## Vala.Io.Path
-An object representing a file system path.
+An immutable value object representing a file system path. Methods that transform the path return a new Path instance.
 
 | Method | Description |
 |---|---|
@@ -37,16 +49,86 @@ An object representing a file system path.
 | `toString()` | Returns the path as a string |
 | `basename()` | Extracts the base name (file name) from the path |
 | `dirname(string path)` | Extracts the directory name from the path |
+| `extension()` | Returns the file extension including the dot (e.g. ".txt") |
+| `withoutExtension()` | Returns the path without the file extension |
+| `isAbsolute()` | Returns whether the path is absolute |
+| `parent()` | Returns a new Path for the parent directory |
+| `resolve(string other)` | Resolves a path against this path |
+| `join(string part1, ...)` | Joins multiple path components |
+| `equals(Path other)` | Returns whether two paths are equal |
+| `startsWith(string prefix)` | Returns whether the path starts with the prefix |
+| `endsWith(string suffix)` | Returns whether the path ends with the suffix |
+| `components()` | Returns the path components as a list |
+| `normalize()` | Returns a normalized path (resolves "." and "..") |
+| `abs()` | Returns the absolute, normalized path |
+
+## Vala.Io.StringBuilder
+A mutable string buffer for efficient string construction. Wraps GLib.StringBuilder with a rich, Java/C#-inspired API.
+
+| Method | Description |
+|---|---|
+| `StringBuilder()` | Creates an empty StringBuilder |
+| `StringBuilder.withString(string s)` | Creates a StringBuilder with initial content |
+| `StringBuilder.sized(size_t size)` | Creates a StringBuilder with pre-allocated capacity |
+| `append(string s)` | Appends a string |
+| `appendLine(string s)` | Appends a string followed by a newline |
+| `appendChar(char c)` | Appends a single character |
+| `insert(int offset, string s)` | Inserts a string at the specified position |
+| `deleteRange(int start, int end)` | Deletes characters in [start, end) |
+| `replaceRange(int start, int end, string s)` | Replaces characters in [start, end) |
+| `reverse()` | Reverses the contents |
+| `length()` | Returns the current byte length |
+| `charAt(int index)` | Returns the character at the index |
+| `clear()` | Clears the buffer |
+| `toString()` | Returns the built string |
+| `capacity()` | Returns the allocated buffer capacity |
 
 ## Vala.Io.Strings
-Static utility methods for string manipulation.
+Static utility methods for string manipulation. All methods are null-safe.
 
 | Method | Description |
 |---|---|
 | `isNullOrEmpty(string? str)` | Returns whether the string is null or empty |
+| `isBlank(string? s)` | Returns whether the string is null, empty, or whitespace only |
+| `isNumeric(string? s)` | Returns whether the string contains only digits |
+| `isAlpha(string? s)` | Returns whether the string contains only alphabetic characters |
+| `isAlphaNumeric(string? s)` | Returns whether the string contains only alphanumeric characters |
 | `trimSpace(string str)` | Removes leading and trailing whitespace/tabs |
+| `trimLeft(string? s, string cutset)` | Removes specified characters from the left |
+| `trimRight(string? s, string cutset)` | Removes specified characters from the right |
+| `trimPrefix(string? s, string prefix)` | Removes the prefix if present |
+| `trimSuffix(string? s, string suffix)` | Removes the suffix if present |
 | `contains(string? s, string? substr)` | Returns whether `s` contains `substr` |
-| `splitByNum(string str, uint num)` | Splits a string every `num` characters |
+| `startsWith(string? s, string? prefix)` | Returns whether `s` starts with `prefix` |
+| `endsWith(string? s, string? suffix)` | Returns whether `s` ends with `suffix` |
+| `toUpperCase(string? s)` | Converts to upper case |
+| `toLowerCase(string? s)` | Converts to lower case |
+| `replace(string? s, string old, string new)` | Replaces all occurrences |
+| `repeat(string? s, int count)` | Repeats the string `count` times |
+| `reverse(string? s)` | Reverses the string |
+| `padLeft(string? s, int len, char pad)` | Pads on the left to specified length |
+| `padRight(string? s, int len, char pad)` | Pads on the right to specified length |
+| `center(string? s, int width, char pad)` | Centers within specified width |
+| `indexOf(string? s, string? substr)` | Returns index of first occurrence (-1 if not found) |
+| `lastIndexOf(string? s, string? substr)` | Returns index of last occurrence (-1 if not found) |
+| `count(string? s, string? substr)` | Counts non-overlapping occurrences |
+| `join(string separator, string[] parts)` | Joins array with separator |
+| `split(string? s, string delimiter)` | Splits by delimiter |
+| `splitByNum(string str, uint num)` | Splits every `num` characters |
+| `substring(string? s, int start, int end)` | Returns substring [start, end) |
+| `capitalize(string? s)` | Capitalizes the first character |
+| `toCamelCase(string? s)` | Converts to camelCase |
+| `toSnakeCase(string? s)` | Converts to snake_case |
+| `toKebabCase(string? s)` | Converts to kebab-case |
+| `toPascalCase(string? s)` | Converts to PascalCase |
+| `title(string? s)` | Capitalizes the first letter of each word |
+| `compareTo(string? a, string? b)` | Lexicographic comparison |
+| `compareIgnoreCase(string? a, string? b)` | Case-insensitive comparison |
+| `equalsIgnoreCase(string? a, string? b)` | Case-insensitive equality |
+| `lines(string? s)` | Splits by newlines |
+| `words(string? s)` | Splits by whitespace (non-empty tokens) |
+| `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
+| `wrap(string? s, int width)` | Wraps at specified width |
 
 ## Vala.Lang.Objects
 Static utility methods for null checking.
@@ -93,21 +175,28 @@ Command-line argument parser with Builder pattern.
 # How to build (install)
 ```
 $ sudo apt update
-$ sudo apt install valac build-essential meson valadoc libglib2.0-0 ninja-build uncrustify
+$ sudo apt install valac build-essential meson valadoc libglib2.0-dev ninja-build uncrustify
 
 $ git clone https://github.com/nao1215/libvalacore.git
 $ cd libvalacore
-$ meson build
-$ cd build
-$ ninja
-$ sudo ninja install
+$ meson setup build
+$ ninja -C build
+$ sudo ninja -C build install
 ```
 
 # How to test
 ```
-$ meson build
-$ cd build
-$ meson test
+$ meson setup build
+$ meson test -C build
+```
+
+# Test coverage
+We target 80%+ line coverage. CI enforces this threshold automatically.
+```
+$ sudo apt install lcov
+$ ./scripts/coverage.sh          # Show coverage summary
+$ ./scripts/coverage.sh --check  # Check 80% threshold (fails if below)
+$ ./scripts/coverage.sh --html   # Generate HTML report
 ```
 
 # Code formatting
