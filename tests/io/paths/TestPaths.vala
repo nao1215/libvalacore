@@ -19,6 +19,11 @@ void main (string[] args) {
     Test.add_func ("/testNormalize", testNormalize);
     Test.add_func ("/testAbs", testAbs);
     Test.add_func ("/testPathInstantiation", testPathInstantiation);
+    Test.add_func ("/testSeparator", testSeparator);
+    Test.add_func ("/testVolumeName", testVolumeName);
+    Test.add_func ("/testToUri", testToUri);
+    Test.add_func ("/testMatch", testMatch);
+    Test.add_func ("/testRelativeTo", testRelativeTo);
     Test.run ();
 }
 
@@ -232,4 +237,80 @@ void testAbs () {
 void testPathInstantiation () {
     var path = new Vala.Io.Path ("/tmp");
     assert (path != null);
+}
+
+void testSeparator () {
+    assert (Vala.Io.Path.separator () == "/");
+}
+
+void testVolumeName () {
+    var path = new Vala.Io.Path ("/home/user");
+    assert (path.volumeName () == "");
+
+    var relative = new Vala.Io.Path ("relative");
+    assert (relative.volumeName () == "");
+
+    var root = new Vala.Io.Path ("/");
+    assert (root.volumeName () == "");
+}
+
+void testToUri () {
+    var abs = new Vala.Io.Path ("/tmp/file.txt");
+    assert (abs.toUri () == "file:///tmp/file.txt");
+
+    var root = new Vala.Io.Path ("/");
+    assert (root.toUri () == "file:///");
+
+    /* Relative path produces an absolute file:// URI */
+    var rel = new Vala.Io.Path ("file.txt");
+    assert (rel.toUri ().has_prefix ("file:///"));
+
+    /* Path with spaces gets percent-encoded */
+    var spaces = new Vala.Io.Path ("/tmp/my file.txt");
+    assert (spaces.toUri ().contains ("my%20file.txt"));
+}
+
+void testMatch () {
+    var path = new Vala.Io.Path ("/tmp/file.txt");
+    assert (path.match ("*.txt") == true);
+    assert (path.match ("*.log") == false);
+    assert (path.match ("file.*") == true);
+    assert (path.match ("?ile.txt") == true);
+    assert (path.match ("*") == true);
+
+    /* Empty pattern returns false */
+    assert (path.match ("") == false);
+
+    /* Hidden file matching */
+    var hidden = new Vala.Io.Path ("/tmp/.hidden");
+    assert (hidden.match (".*") == true);
+    assert (hidden.match (".hidden") == true);
+}
+
+void testRelativeTo () {
+    /* Descendant path */
+    var path = new Vala.Io.Path ("/home/user/docs/file.txt");
+    var base_path = new Vala.Io.Path ("/home/user");
+    var rel = path.relativeTo (base_path);
+    assert (rel != null);
+    assert (rel.toString () == "docs/file.txt");
+
+    /* Same path */
+    var same = new Vala.Io.Path ("/home/user");
+    rel = same.relativeTo (base_path);
+    assert (rel != null);
+    assert (rel.toString () == ".");
+
+    /* Sibling path requires ".." traversal */
+    var sibling = new Vala.Io.Path ("/home/admin");
+    rel = sibling.relativeTo (base_path);
+    assert (rel != null);
+    assert (rel.toString () == "../admin");
+
+    /* Divergent paths */
+    var a = new Vala.Io.Path ("/a/b/c");
+    var b = new Vala.Io.Path ("/a/d");
+    rel = a.relativeTo (b);
+    assert (rel != null);
+    assert (rel.toString () == "../b/c");
 }

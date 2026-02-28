@@ -347,6 +347,157 @@ namespace Vala.Io {
         }
 
         /**
+         * Returns the OS-specific path separator character.
+         *
+         * On Linux and macOS, the separator is always "/".
+         * On Windows, the separator is "\\".
+         *
+         * Example:
+         * {{{
+         *     assert (Path.separator () == "/");
+         * }}}
+         *
+         * @return the path separator string.
+         */
+        public static string separator () {
+            return GLib.Path.DIR_SEPARATOR_S;
+        }
+
+        /**
+         * Returns the volume name component of the path.
+         *
+         * On Linux and macOS, paths do not have volume names, so this
+         * method always returns an empty string. On Windows, this would
+         * return a drive letter like "C:".
+         *
+         * Example:
+         * {{{
+         *     var path = new Path ("/home/user");
+         *     assert (path.volumeName () == "");
+         * }}}
+         *
+         * @return the volume name, or "" if not applicable.
+         */
+        public string volumeName () {
+            return "";
+        }
+
+        /**
+         * Returns the file URI representation of this path.
+         *
+         * Converts the path to a file URI. Relative paths are resolved
+         * against the current working directory.
+         *
+         * Example:
+         * {{{
+         *     var path = new Path ("/tmp/file.txt");
+         *     assert (path.toUri () == "file:///tmp/file.txt");
+         * }}}
+         *
+         * @return the file URI string.
+         */
+        public string toUri () {
+            var file = GLib.File.new_for_path (_path);
+            return file.get_uri ();
+        }
+
+        /**
+         * Returns whether this path's basename matches the given glob pattern.
+         *
+         * The pattern uses shell-style wildcards: "*" matches any sequence
+         * of characters, "?" matches a single character.
+         *
+         * Example:
+         * {{{
+         *     var path = new Path ("/home/user/readme.txt");
+         *     assert (path.match ("*.txt") == true);
+         *     assert (path.match ("*.log") == false);
+         * }}}
+         *
+         * @param pattern the glob pattern to match against.
+         * @return true if the basename matches the pattern.
+         */
+        public bool match (string pattern) {
+            if (Strings.isNullOrEmpty (pattern)) {
+                return false;
+            }
+            var spec = new GLib.PatternSpec (pattern);
+            return spec.match_string (basename ());
+        }
+
+        /**
+         * Computes the relative path from the given base path to this path.
+         *
+         * Both paths are normalized before computing the relative path.
+         * If the base is null, returns null.
+         *
+         * Example:
+         * {{{
+         *     var path = new Path ("/home/user/docs/file.txt");
+         *     var base_path = new Path ("/home/user");
+         *     var rel = path.relativeTo (base_path);
+         *     assert (rel != null);
+         *     assert (rel.toString () == "docs/file.txt");
+         * }}}
+         *
+         * @param base_path the base path to compute relative to.
+         * @return a new relative Path, or null if base is null.
+         */
+        public Path ? relativeTo (Path base_path) {
+            var normThis = this.normalize ().toString ();
+            var normBase = base_path.normalize ().toString ();
+
+            /* Ensure base ends with separator for clean prefix removal */
+            if (!normBase.has_suffix ("/")) {
+                normBase += "/";
+            }
+
+            /* Same path */
+            if (normThis == normBase.substring (0, normBase.length - 1)) {
+                return new Path (".");
+            }
+
+            /* This is a descendant of base */
+            if (normThis.has_prefix (normBase)) {
+                return new Path (normThis.substring (normBase.length));
+            }
+
+            /* Compute common prefix by walking components */
+            var thisComps = this.normalize ().components ();
+            var baseComps = base_path.normalize ().components ();
+
+            uint commonLen = 0;
+            uint minLen = thisComps.length () < baseComps.length () ?
+                          thisComps.length () : baseComps.length ();
+            for (uint i = 0; i < minLen; i++) {
+                if (thisComps.nth_data (i) == baseComps.nth_data (i)) {
+                    commonLen++;
+                } else {
+                    break;
+                }
+            }
+
+            var result = new GLib.StringBuilder ();
+            for (uint i = commonLen; i < baseComps.length (); i++) {
+                if (result.len > 0) {
+                    result.append ("/");
+                }
+                result.append ("..");
+            }
+            for (uint i = commonLen; i < thisComps.length (); i++) {
+                if (result.len > 0) {
+                    result.append ("/");
+                }
+                result.append (thisComps.nth_data (i));
+            }
+
+            if (result.len == 0) {
+                return new Path (".");
+            }
+            return new Path (result.str);
+        }
+
+        /**
          * Returns the absolute path. If the path is already absolute,
          * returns a normalized version. If relative, prepends the current
          * working directory and normalizes.
