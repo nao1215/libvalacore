@@ -39,14 +39,51 @@ An object representing a file system path.
 | `dirname(string path)` | Extracts the directory name from the path |
 
 ## Vala.Io.Strings
-Static utility methods for string manipulation.
+Static utility methods for string manipulation. All methods are null-safe.
 
 | Method | Description |
 |---|---|
 | `isNullOrEmpty(string? str)` | Returns whether the string is null or empty |
+| `isBlank(string? s)` | Returns whether the string is null, empty, or whitespace only |
+| `isNumeric(string? s)` | Returns whether the string contains only digits |
+| `isAlpha(string? s)` | Returns whether the string contains only alphabetic characters |
+| `isAlphaNumeric(string? s)` | Returns whether the string contains only alphanumeric characters |
 | `trimSpace(string str)` | Removes leading and trailing whitespace/tabs |
+| `trimLeft(string? s, string cutset)` | Removes specified characters from the left |
+| `trimRight(string? s, string cutset)` | Removes specified characters from the right |
+| `trimPrefix(string? s, string prefix)` | Removes the prefix if present |
+| `trimSuffix(string? s, string suffix)` | Removes the suffix if present |
 | `contains(string? s, string? substr)` | Returns whether `s` contains `substr` |
-| `splitByNum(string str, uint num)` | Splits a string every `num` characters |
+| `startsWith(string? s, string? prefix)` | Returns whether `s` starts with `prefix` |
+| `endsWith(string? s, string? suffix)` | Returns whether `s` ends with `suffix` |
+| `toUpperCase(string? s)` | Converts to upper case |
+| `toLowerCase(string? s)` | Converts to lower case |
+| `replace(string? s, string old, string new)` | Replaces all occurrences |
+| `repeat(string? s, int count)` | Repeats the string `count` times |
+| `reverse(string? s)` | Reverses the string |
+| `padLeft(string? s, int len, char pad)` | Pads on the left to specified length |
+| `padRight(string? s, int len, char pad)` | Pads on the right to specified length |
+| `center(string? s, int width, char pad)` | Centers within specified width |
+| `indexOf(string? s, string? substr)` | Returns index of first occurrence (-1 if not found) |
+| `lastIndexOf(string? s, string? substr)` | Returns index of last occurrence (-1 if not found) |
+| `count(string? s, string? substr)` | Counts non-overlapping occurrences |
+| `join(string separator, string[] parts)` | Joins array with separator |
+| `split(string? s, string delimiter)` | Splits by delimiter |
+| `splitByNum(string str, uint num)` | Splits every `num` characters |
+| `substring(string? s, int start, int end)` | Returns substring [start, end) |
+| `capitalize(string? s)` | Capitalizes the first character |
+| `toCamelCase(string? s)` | Converts to camelCase |
+| `toSnakeCase(string? s)` | Converts to snake_case |
+| `toKebabCase(string? s)` | Converts to kebab-case |
+| `toPascalCase(string? s)` | Converts to PascalCase |
+| `title(string? s)` | Capitalizes the first letter of each word |
+| `compareTo(string? a, string? b)` | Lexicographic comparison |
+| `compareIgnoreCase(string? a, string? b)` | Case-insensitive comparison |
+| `equalsIgnoreCase(string? a, string? b)` | Case-insensitive equality |
+| `lines(string? s)` | Splits by newlines |
+| `words(string? s)` | Splits by whitespace (non-empty tokens) |
+| `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
+| `wrap(string? s, int width)` | Wraps at specified width |
 
 ## Vala.Lang.Objects
 Static utility methods for null checking.
@@ -93,21 +130,28 @@ Command-line argument parser with Builder pattern.
 # How to build (install)
 ```
 $ sudo apt update
-$ sudo apt install valac build-essential meson valadoc libglib2.0-0 ninja-build uncrustify
+$ sudo apt install valac build-essential meson valadoc libglib2.0-dev ninja-build uncrustify
 
 $ git clone https://github.com/nao1215/libvalacore.git
 $ cd libvalacore
-$ meson build
-$ cd build
-$ ninja
-$ sudo ninja install
+$ meson setup build
+$ ninja -C build
+$ sudo ninja -C build install
 ```
 
 # How to test
 ```
-$ meson build
-$ cd build
-$ meson test
+$ meson setup build
+$ meson test -C build
+```
+
+# Test coverage
+```
+$ sudo apt install gcovr
+$ meson setup build -Db_coverage=true
+$ ninja -C build test
+$ ninja -C build coverage-html
+$ xdg-open build/meson-logs/coveragereport/index.html
 ```
 
 # Code formatting
