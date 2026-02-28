@@ -65,6 +65,15 @@ Console utility methods.
 | `isTTY()` | Returns whether standard input is a terminal |
 | `readPassword()` | Reads a password from terminal input without echo (`null` when stdin is not a TTY) |
 
+### Vala.Io.Process
+Process execution helper methods.
+
+| Method | Description |
+|---|---|
+| `exec(string cmd, string[] args)` | Executes an external command and returns true on zero exit status |
+| `execWithOutput(string cmd, string[] args)` | Executes an external command and returns stdout text on success (`null` on failure) |
+| `kill(int pid)` | Sends SIGKILL to the specified process ID (`true` when signal delivery succeeds) |
+
 ### Vala.Io.Temp
 Temporary resource helpers that auto-clean up after callback execution.
 
