@@ -15,8 +15,7 @@ void testEncode () {
     assert (Hex.encode (data) == "48656c6c6f");
 }
 
-void testDecode () {
-    uint8[] decoded = Hex.decode ("48656c6c6f");
+void assertHelloBytes (uint8[] decoded) {
     assert (decoded.length == 5);
     assert (decoded[0] == 0x48);
     assert (decoded[1] == 0x65);
@@ -25,14 +24,14 @@ void testDecode () {
     assert (decoded[4] == 0x6F);
 }
 
+void testDecode () {
+    uint8[] decoded = Hex.decode ("48656c6c6f");
+    assertHelloBytes (decoded);
+}
+
 void testDecodeUpperCase () {
     uint8[] decoded = Hex.decode ("48656C6C6F");
-    assert (decoded.length == 5);
-    assert (decoded[0] == 0x48);
-    assert (decoded[1] == 0x65);
-    assert (decoded[2] == 0x6C);
-    assert (decoded[3] == 0x6C);
-    assert (decoded[4] == 0x6F);
+    assertHelloBytes (decoded);
 }
 
 void testEmpty () {

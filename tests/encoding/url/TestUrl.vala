@@ -26,4 +26,8 @@ void testRoundTrip () {
 
 void testInvalidDecode () {
     assert (Url.decode ("%ZZ") == "");
+    assert (Url.decode ("%") == "");
+    assert (Url.decode ("%A") == "");
+    assert (Url.decode ("%1G") == "");
+    assert (Url.decode ("%20%ZZ") == "");
 }

@@ -28,14 +28,19 @@ void main (string[] args) {
     Test.run ();
 }
 
+string uniqueLoggerName (string prefix) {
+    return "%s-%lld".printf (prefix, GLib.get_monotonic_time ());
+}
+
 void testGetLogger () {
-    Logger a = Logger.getLogger ("same-name");
-    Logger b = Logger.getLogger ("same-name");
+    string loggerName = uniqueLoggerName ("same-name");
+    Logger a = Logger.getLogger (loggerName);
+    Logger b = Logger.getLogger (loggerName);
     assert (a == b);
 }
 
 void testLevelFilter () {
-    Logger logger = Logger.getLogger ("level-filter");
+    Logger logger = Logger.getLogger (uniqueLoggerName ("level-filter"));
     logger.setLevel (LogLevel.WARN);
 
     CounterHandler handler = new CounterHandler ();
@@ -50,7 +55,8 @@ void testLevelFilter () {
 }
 
 void testAddHandler () {
-    Logger logger = Logger.getLogger ("capture");
+    string loggerName = uniqueLoggerName ("capture");
+    Logger logger = Logger.getLogger (loggerName);
     logger.setLevel (LogLevel.DEBUG);
 
     CaptureHandler handler = new CaptureHandler ();
@@ -59,6 +65,6 @@ void testAddHandler () {
     logger.info ("hello");
 
     assert (handler.level == LogLevel.INFO);
-    assert (handler.loggerName == "capture");
+    assert (handler.loggerName == loggerName);
     assert (handler.message == "hello");
 }

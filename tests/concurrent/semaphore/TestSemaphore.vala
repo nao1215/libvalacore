@@ -29,18 +29,37 @@ void testTryAcquire () {
 
 void testAcquireBlocks () {
     Vala.Concurrent.Semaphore sem = new Vala.Concurrent.Semaphore (0);
+    GLib.Mutex stateMutex = GLib.Mutex ();
+    GLib.Cond stateCond = GLib.Cond ();
+    bool entered_wait = false;
     bool acquired = false;
 
     Thread<void *> worker = new Thread<void *>("worker", () => {
+        stateMutex.lock ();
+        entered_wait = true;
+        stateCond.signal ();
+        stateMutex.unlock ();
+
         sem.acquire ();
+        stateMutex.lock ();
         acquired = true;
+        stateCond.signal ();
+        stateMutex.unlock ();
         return null;
     });
 
-    Posix.usleep (30000);
+    stateMutex.lock ();
+    int64 timeout = GLib.get_monotonic_time () + 1000000;
+    while (!entered_wait) {
+        assert (stateCond.wait_until (stateMutex, timeout) == true);
+    }
     assert (acquired == false);
+    stateMutex.unlock ();
 
     sem.release ();
     worker.join ();
+
+    stateMutex.lock ();
     assert (acquired == true);
+    stateMutex.unlock ();
 }

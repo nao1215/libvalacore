@@ -11,7 +11,12 @@ void main (string[] args) {
 
 void testV4 () {
     Vala.Crypto.Uuid uuid = Vala.Crypto.Uuid.v4 ();
-    assert (GLib.Uuid.string_is_valid (uuid.toString ()) == true);
+    string text = uuid.toString ();
+    assert (GLib.Uuid.string_is_valid (text) == true);
+    assert (text.substring (14, 1) == "4");
+
+    string variant = text.substring (19, 1).down ();
+    assert (variant == "8" || variant == "9" || variant == "a" || variant == "b");
 }
 
 void testParseValid () {
