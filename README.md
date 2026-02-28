@@ -806,6 +806,15 @@ Utility methods to query host system information.
 | `tmpDir()` | Returns temporary directory path |
 | `currentDir()` | Returns current working directory |
 
+### Vala.Lang.StringEscape
+String escaping utilities for HTML, JSON, and XML contexts.
+
+| Method | Description |
+|---|---|
+| `escapeHtml(string s)` | Escapes HTML special characters |
+| `escapeJson(string s)` | Escapes JSON special characters |
+| `escapeXml(string s)` | Escapes XML special characters |
+
 ### Vala.Parser.ArgParser
 Command-line argument parser with Builder pattern.
 

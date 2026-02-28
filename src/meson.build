@@ -47,6 +47,7 @@ valacore_sources = files([
   'lang/Objects.vala',
   'lang/Preconditions.vala',
   'lang/Process.vala',
+  'lang/StringEscape.vala',
   'lang/SystemInfo.vala',
   'log/LogLevel.vala',
   'log/Logger.vala',
