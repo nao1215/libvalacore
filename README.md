@@ -254,6 +254,15 @@ Static utility methods for keyed hash message authentication.
 | `sha512(string key, string message)` | Returns HMAC-SHA512 |
 | `verify(string expected, string actual)` | Compares two hashes in a timing-safe way |
 
+### Vala.Crypto.Uuid
+Immutable UUID value object.
+
+| Method | Description |
+|---|---|
+| `v4()` | Generates a random UUID v4 |
+| `parse(string s)` | Parses UUID text and returns null for invalid input |
+| `toString()` | Returns the canonical UUID string |
+
 ### Vala.Collections.Optional\<T\>
 A type-safe container that may or may not contain a value. An alternative to null inspired by Java's Optional, OCaml's option, and Rust's Option.
 
