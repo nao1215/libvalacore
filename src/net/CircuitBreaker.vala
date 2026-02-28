@@ -3,6 +3,10 @@ using Vala.Time;
 namespace Vala.Net {
     /**
      * Circuit breaker state.
+     *
+     * - CLOSED: requests pass through normally.
+     * - OPEN: requests are short-circuited.
+     * - HALF_OPEN: limited trial period before returning to CLOSED.
      */
     public enum CircuitState {
         CLOSED,
@@ -12,16 +16,36 @@ namespace Vala.Net {
 
     /**
      * Callback invoked when breaker state changes.
+     *
+     * @param from previous state.
+     * @param to next state.
      */
     public delegate void StateChangeCallback (CircuitState from, CircuitState to);
 
     /**
      * Callback executed through circuit breaker.
+     *
+     * Return null to indicate failure, non-null to indicate success.
      */
     public delegate T ? CircuitFunc<T> ();
 
     /**
      * Circuit breaker for protecting unstable dependencies.
+     *
+     * CircuitBreaker guards expensive or unreliable calls and prevents
+     * cascading failures. After enough failures, it opens and rejects calls
+     * immediately until timeout elapses.
+     *
+     * Example:
+     * {{{
+     *     var breaker = new CircuitBreaker ("payments")
+     *         .withFailureThreshold (3)
+     *         .withOpenTimeout (Duration.ofSeconds (10));
+     *
+     *     string? result = breaker.call<string> (() => {
+     *         return fetch_from_remote ();
+     *     });
+     * }}}
      */
     public class CircuitBreaker : GLib.Object {
         private string _name;
@@ -52,6 +76,9 @@ namespace Vala.Net {
         /**
          * Sets consecutive failure threshold.
          *
+         * Breaker transitions from CLOSED to OPEN when this threshold is
+         * reached.
+         *
          * @param n failure threshold.
          * @return this breaker.
          */
@@ -66,6 +93,9 @@ namespace Vala.Net {
         /**
          * Sets success threshold needed to close from HALF_OPEN.
          *
+         * In HALF_OPEN, this many consecutive successes are required to return
+         * to CLOSED state.
+         *
          * @param n success threshold.
          * @return this breaker.
          */
@@ -79,6 +109,9 @@ namespace Vala.Net {
 
         /**
          * Sets OPEN-state timeout.
+         *
+         * If timeout is zero, OPEN transitions to HALF_OPEN on next state
+         * check.
          *
          * @param timeout open timeout.
          * @return this breaker.
@@ -95,6 +128,8 @@ namespace Vala.Net {
         /**
          * Registers state change callback.
          *
+         * This hook is useful for metrics and operational logs.
+         *
          * @param fn callback.
          * @return this breaker.
          */
@@ -105,6 +140,10 @@ namespace Vala.Net {
 
         /**
          * Executes callback through circuit breaker.
+         *
+         * If breaker is OPEN, callback is not executed and null is returned.
+         * On non-null callback result, breaker records success; on null
+         * callback result, breaker records failure.
          *
          * @param fn callback to execute.
          * @return callback result or null when short-circuited/failed.
@@ -130,6 +169,9 @@ namespace Vala.Net {
 
         /**
          * Records one failure.
+         *
+         * This API can be used when call execution is handled externally and
+         * only outcome needs to be reported to breaker.
          */
         public void recordFailure () {
             _mutex.lock ();
@@ -161,6 +203,9 @@ namespace Vala.Net {
 
         /**
          * Records one success.
+         *
+         * This API can be used when call execution is handled externally and
+         * only outcome needs to be reported to breaker.
          */
         public void recordSuccess () {
             _mutex.lock ();
@@ -187,6 +232,8 @@ namespace Vala.Net {
         /**
          * Returns current state.
          *
+         * state() refreshes timeout-based transitions before returning.
+         *
          * @return current state.
          */
         public CircuitState state () {
@@ -200,6 +247,8 @@ namespace Vala.Net {
         /**
          * Returns recent failure count in CLOSED state.
          *
+         * The counter is reset on successful calls in CLOSED state.
+         *
          * @return failure count.
          */
         public int failureCount () {
@@ -211,6 +260,8 @@ namespace Vala.Net {
 
         /**
          * Resets breaker state and counters.
+         *
+         * After reset, state is CLOSED and all counters are zero.
          */
         public void reset () {
             _mutex.lock ();

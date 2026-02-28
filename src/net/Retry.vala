@@ -4,27 +4,41 @@ using Vala.Collections;
 
 namespace Vala.Net {
     /**
-     * Callback for retry loop that returns success/failure.
+     * Callback invoked by retry loop and interpreted as success/failure.
+     *
+     * Return true to stop retrying immediately.
      */
     public delegate bool RetryFunc ();
 
     /**
-     * Callback for retry loop that returns nullable result.
+     * Callback invoked by retry loop and interpreted as nullable result.
+     *
+     * Return a non-null value to stop retrying and use it as final result.
      */
     public delegate T ? RetryResultFunc<T> ();
 
     /**
-     * Callback for retry loop that may throw recoverable GLib.Error.
+     * Callback invoked by retry loop that may throw recoverable GLib.Error.
+     *
+     * Throwing an error is treated as a retryable failure unless predicate
+     * configured by withRetryOn() rejects it.
      */
     public delegate void RetryVoidFunc () throws GLib.Error;
 
     /**
-     * Predicate to decide whether retry should continue for a failure reason.
+     * Predicate used to decide whether retry should continue.
+     *
+     * @param reason textual failure reason captured by Retry.
+     * @return true to continue retrying, false to stop immediately.
      */
     public delegate bool RetryOnFunc (string reason);
 
     /**
-     * Callback invoked before waiting for next retry.
+     * Callback invoked before sleeping for the next retry attempt.
+     *
+     * @param attempt current attempt number (1-based).
+     * @param reason failure reason observed at this attempt.
+     * @param delayMillis delay before next attempt in milliseconds.
      */
     public delegate void RetryCallback (int attempt, string reason, int64 delayMillis);
 
@@ -34,7 +48,27 @@ namespace Vala.Net {
     }
 
     /**
-     * Retry policy with configurable attempts, delay strategy, and retry predicate.
+     * Retry policy for resilient operations such as HTTP calls or lock
+     * acquisition.
+     *
+     * This class encapsulates:
+     * - maximum attempts
+     * - delay strategy (fixed or exponential backoff)
+     * - optional jitter
+     * - retry predicate and callback hooks
+     *
+     * Example:
+     * {{{
+     *     Retry retry = Retry.networkDefault ()
+     *         .withMaxAttempts (3)
+     *         .onRetry ((attempt, reason, delay) => {
+     *             print ("retry %d: %s (%" + int64.FORMAT + "ms)\n", attempt, reason, delay);
+     *         });
+     *
+     *     bool ok = retry.retry (() => {
+     *         return call_external_service ();
+     *     });
+     * }}}
      */
     public class Retry : GLib.Object {
         private const int DEFAULT_MAX_ATTEMPTS = 3;
@@ -54,13 +88,29 @@ namespace Vala.Net {
         private RetryCallback ? _on_retry = null;
 
         /**
-         * Creates retry policy with default settings.
+         * Creates retry policy with conservative default settings.
+         *
+         * Defaults:
+         * - max attempts: 3
+         * - backoff: exponential
+         * - initial delay: 1000ms
+         * - max delay: 30000ms
+         * - jitter: disabled
          */
         public Retry () {
         }
 
         /**
          * Creates recommended retry policy for network operations.
+         *
+         * This preset is tuned for transient network failures and rate-limit
+         * responses. It uses exponential backoff and jitter to reduce
+         * synchronized retries.
+         *
+         * Example:
+         * {{{
+         *     Retry retry = Retry.networkDefault ();
+         * }}}
          *
          * @return configured retry policy.
          */
@@ -73,6 +123,11 @@ namespace Vala.Net {
         /**
          * Creates recommended retry policy for short I/O lock/contention cases.
          *
+         * Example:
+         * {{{
+         *     Retry retry = Retry.ioDefault ();
+         * }}}
+         *
          * @return configured retry policy.
          */
         public static Retry ioDefault () {
@@ -82,6 +137,8 @@ namespace Vala.Net {
 
         /**
          * Sets maximum attempts.
+         *
+         * The first execution counts as attempt 1.
          *
          * @param n maximum attempts (must be positive).
          * @return this retry instance.
@@ -96,6 +153,9 @@ namespace Vala.Net {
 
         /**
          * Sets exponential backoff strategy.
+         *
+         * Delay sequence grows as initial, 2*initial, 4*initial, ... and is
+         * capped by max.
          *
          * @param initial initial delay.
          * @param max maximum delay cap.
@@ -124,6 +184,8 @@ namespace Vala.Net {
         /**
          * Sets fixed delay strategy.
          *
+         * All retries use the same sleep duration.
+         *
          * @param delay fixed delay between attempts.
          * @return this retry instance.
          */
@@ -142,6 +204,9 @@ namespace Vala.Net {
         /**
          * Enables or disables random jitter.
          *
+         * When enabled, actual delay is randomized between 0 and calculated
+         * delay (inclusive), reducing retry bursts under high concurrency.
+         *
          * @param enabled true to enable jitter.
          * @return this retry instance.
          */
@@ -153,6 +218,8 @@ namespace Vala.Net {
         /**
          * Sets retry predicate for failure reason text.
          *
+         * If predicate returns false, retry loop ends immediately.
+         *
          * @param shouldRetry predicate to decide whether retry continues.
          * @return this retry instance.
          */
@@ -163,6 +230,8 @@ namespace Vala.Net {
 
         /**
          * Registers callback called before sleeping for next attempt.
+         *
+         * This callback is useful for metrics, structured logs, and tracing.
          *
          * @param fn callback with attempt number, reason, and next delay millis.
          * @return this retry instance.
@@ -200,6 +269,13 @@ namespace Vala.Net {
         /**
          * Retries bool callback until success or attempts exhausted.
          *
+         * Example:
+         * {{{
+         *     bool ok = retry.retry (() => {
+         *         return attempt_io_operation ();
+         *     });
+         * }}}
+         *
          * @param fn callback to run.
          * @return true if callback succeeded.
          */
@@ -218,6 +294,13 @@ namespace Vala.Net {
 
         /**
          * Retries nullable callback until non-null value or attempts exhausted.
+         *
+         * Example:
+         * {{{
+         *     string? token = retry.retryResult<string?> (() => {
+         *         return maybe_fetch_token ();
+         *     });
+         * }}}
          *
          * @param fn callback to run.
          * @return non-null value on success, null on failure.
@@ -238,6 +321,13 @@ namespace Vala.Net {
 
         /**
          * Retries callback that may throw GLib.Error.
+         *
+         * Example:
+         * {{{
+         *     bool ok = retry.retryVoid (() => {
+         *         do_operation_that_may_throw ();
+         *     });
+         * }}}
          *
          * @param fn callback to run.
          * @return true if callback finished without error.

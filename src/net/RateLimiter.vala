@@ -2,7 +2,20 @@ using Vala.Lang;
 
 namespace Vala.Net {
     /**
-     * Token-bucket rate limiter.
+     * Thread-safe token-bucket rate limiter.
+     *
+     * RateLimiter is useful for protecting downstream services or local
+     * resources from request spikes. It provides both non-blocking
+     * (allow/allowN) and blocking (wait/waitN) acquisition APIs.
+     *
+     * Example:
+     * {{{
+     *     var limiter = new RateLimiter (100).withBurst (200);
+     *
+     *     if (limiter.allow ()) {
+     *         send_request ();
+     *     }
+     * }}}
      */
     public class RateLimiter : GLib.Object {
         private int _permits_per_second;
@@ -13,6 +26,8 @@ namespace Vala.Net {
 
         /**
          * Creates a new rate limiter.
+         *
+         * Initial burst capacity equals permitsPerSecond.
          *
          * @param permitsPerSecond permits generated per second.
          */
@@ -29,6 +44,9 @@ namespace Vala.Net {
 
         /**
          * Sets burst capacity.
+         *
+         * Burst controls how many permits may be consumed instantly after an
+         * idle period.
          *
          * @param permits burst capacity.
          * @return this limiter.
@@ -51,6 +69,8 @@ namespace Vala.Net {
         /**
          * Tries to acquire one permit immediately.
          *
+         * This method never blocks.
+         *
          * @return true if permit acquired.
          */
         public bool allow () {
@@ -59,6 +79,8 @@ namespace Vala.Net {
 
         /**
          * Tries to acquire n permits immediately.
+         *
+         * This method never blocks.
          *
          * @param permits number of permits.
          * @return true if permits acquired.
@@ -81,6 +103,9 @@ namespace Vala.Net {
 
         /**
          * Waits until one permit is available and acquires it.
+         *
+         * Use this when work must eventually run and short waiting is
+         * acceptable.
          */
         public void wait () {
             waitN (1);
@@ -88,6 +113,9 @@ namespace Vala.Net {
 
         /**
          * Waits until n permits are available and acquires them.
+         *
+         * This method blocks the caller thread until enough permits are
+         * available.
          *
          * @param permits number of permits.
          */
@@ -120,6 +148,8 @@ namespace Vala.Net {
         /**
          * Returns estimated wait milliseconds until one permit becomes available.
          *
+         * reserve() does not consume permits.
+         *
          * @return estimated wait time in milliseconds.
          */
         public int64 reserve () {
@@ -133,6 +163,9 @@ namespace Vala.Net {
         /**
          * Returns currently available permits (floored).
          *
+         * The value is an instantaneous snapshot and may change immediately in
+         * concurrent environments.
+         *
          * @return available permit count.
          */
         public int availableTokens () {
@@ -145,6 +178,8 @@ namespace Vala.Net {
 
         /**
          * Updates rate.
+         *
+         * Existing token balance is preserved and clamped by burst rules.
          *
          * @param permitsPerSecond permits generated per second.
          */
@@ -164,6 +199,8 @@ namespace Vala.Net {
 
         /**
          * Resets current tokens to burst capacity.
+         *
+         * reset() is useful in tests and controlled maintenance operations.
          */
         public void reset () {
             _mutex.lock ();
