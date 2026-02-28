@@ -146,12 +146,12 @@ $ meson test -C build
 ```
 
 # Test coverage
+We target 80%+ line coverage. CI enforces this threshold automatically.
 ```
 $ sudo apt install gcovr
-$ meson setup build -Db_coverage=true
-$ ninja -C build test
-$ ninja -C build coverage-html
-$ xdg-open build/meson-logs/coveragereport/index.html
+$ ./scripts/coverage.sh          # Generate HTML report and show summary
+$ ./scripts/coverage.sh --check  # Check 80% threshold (fails if below)
+$ ./scripts/coverage.sh --text   # Show text summary only
 ```
 
 # Code formatting

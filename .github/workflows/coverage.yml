@@ -17,13 +17,5 @@ jobs:
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y valac build-essential meson valadoc libglib2.0-dev ninja-build gcovr
 
-    - name: Build and test with coverage
-      run: |
-        meson setup build -Db_coverage=true
-        ninja -C build test
-
-    - name: Generate coverage report
-      run: ninja -C build coverage-text
-
-    - name: Show coverage summary
-      run: cat build/meson-logs/coverage.txt
+    - name: Check coverage (80% threshold)
+      run: ./scripts/coverage.sh --check
