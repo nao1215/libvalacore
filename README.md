@@ -332,6 +332,15 @@ Executes a function at most once.
 |---|---|
 | `doOnce(OnceFunc func)` | Runs callback only once, even across threads |
 
+### Vala.Concurrent.WaitGroup
+Waits for a collection of tasks to complete.
+
+| Method | Description |
+|---|---|
+| `add(int delta)` | Adds delta to task counter |
+| `done()` | Decrements task counter by one |
+| `wait()` | Blocks until counter reaches zero |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
