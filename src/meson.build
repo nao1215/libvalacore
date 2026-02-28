@@ -38,7 +38,8 @@ valacore_sources = files([
   'lang/Objects.vala',
   'parser/ArgParser.vala',
   'text/Regex.vala',
-  'time/Duration.vala'
+  'time/Duration.vala',
+  'time/Stopwatch.vala'
 ])
 
 libvalacore = library('valacore-' + API_VERSION,

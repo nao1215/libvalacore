@@ -231,6 +231,17 @@ Immutable value object that represents a duration.
 | `minus(Duration other)` | Returns difference of durations |
 | `toString()` | Returns human-readable string (e.g. `2h30m`) |
 
+### Vala.Time.Stopwatch
+Mutable stopwatch for elapsed-time measurement.
+
+| Method | Description |
+|---|---|
+| `start()` | Starts measurement |
+| `stop()` | Stops measurement |
+| `reset()` | Resets elapsed time to zero |
+| `elapsed()` | Returns elapsed time as `Duration` |
+| `elapsedMillis()` | Returns elapsed milliseconds |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
