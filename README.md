@@ -84,6 +84,20 @@ Atomic update helper for safe file replacement with optional backup.
 | `replace(Path srcTmp, Path dst)` | Replaces destination file with source temp file |
 | `readConsistent(Path path)` | Reads text twice and returns `null` if contents changed between reads |
 
+### Vala.Io.FileLock
+Lock-file based process coordination utility.
+
+| Method | Description |
+|---|---|
+| `FileLock(Path path)` | Creates a lock bound to the given lock-file path |
+| `acquire()` | Blocks until lock is acquired |
+| `acquireTimeout(Duration timeout)` | Tries to acquire lock within timeout |
+| `tryAcquire()` | Attempts lock acquisition without blocking |
+| `release()` | Releases the lock (removes lock file) |
+| `isHeld()` | Returns whether this instance currently holds the lock |
+| `withLock(WithFileLockFunc fn)` | Runs callback while holding lock |
+| `ownerPid()` | Returns PID written in lock file (`null` when unavailable) |
+
 ### Vala.Io.Console
 Console utility methods.
 
