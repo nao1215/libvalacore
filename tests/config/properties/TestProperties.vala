@@ -25,32 +25,40 @@ void testSaveLoad () {
     Vala.Io.Path ? tmp = Files.tempFile ("props", ".txt");
     assert (tmp != null);
 
-    Properties props = new Properties ();
-    props.set ("k1", "v1");
-    props.set ("k2", "v2");
-    assert (props.save (tmp) == true);
+    try {
+        Properties props = new Properties ();
+        props.set ("k1", "v1");
+        props.set ("k2", "v2");
+        assert (props.save (tmp) == true);
 
-    Properties loaded = new Properties ();
-    assert (loaded.load (tmp) == true);
-    assert (loaded.get ("k1") == "v1");
-    assert (loaded.get ("k2") == "v2");
-    assert (loaded.size () == 2);
-
-    assert (Files.remove (tmp) == true);
+        Properties loaded = new Properties ();
+        assert (loaded.load (tmp) == true);
+        assert (loaded.get ("k1") == "v1");
+        assert (loaded.get ("k2") == "v2");
+        assert (loaded.size () == 2);
+    } finally {
+        if (tmp != null) {
+            Files.remove (tmp);
+        }
+    }
 }
 
 void testLoadWithComments () {
     Vala.Io.Path ? tmp = Files.tempFile ("props-comment", ".txt");
     assert (tmp != null);
 
-    string text = "# comment\n\nfoo = bar\ninvalid-line\nz=9\n";
-    assert (Files.writeText (tmp, text) == true);
+    try {
+        string text = "# comment\n\nfoo = bar\ninvalid-line\nz=9\n";
+        assert (Files.writeText (tmp, text) == true);
 
-    Properties props = new Properties ();
-    assert (props.load (tmp) == true);
-    assert (props.size () == 2);
-    assert (props.get ("foo") == "bar");
-    assert (props.get ("z") == "9");
-
-    assert (Files.remove (tmp) == true);
+        Properties props = new Properties ();
+        assert (props.load (tmp) == true);
+        assert (props.size () == 2);
+        assert (props.get ("foo") == "bar");
+        assert (props.get ("z") == "9");
+    } finally {
+        if (tmp != null) {
+            Files.remove (tmp);
+        }
+    }
 }

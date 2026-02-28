@@ -64,7 +64,18 @@ namespace Vala.Config {
          */
         public bool save (Vala.Io.Path path) {
             GLib.StringBuilder builder = new GLib.StringBuilder ();
-            foreach (string key in keys ()) {
+            string[] sortedKeys = keys ();
+            for (int i = 0; i < sortedKeys.length; i++) {
+                for (int j = i + 1; j < sortedKeys.length; j++) {
+                    if (GLib.strcmp (sortedKeys[i], sortedKeys[j]) > 0) {
+                        string tmp = sortedKeys[i];
+                        sortedKeys[i] = sortedKeys[j];
+                        sortedKeys[j] = tmp;
+                    }
+                }
+            }
+
+            foreach (string key in sortedKeys) {
                 string ? value = _values.lookup (key);
                 if (value == null) {
                     continue;
