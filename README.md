@@ -1210,6 +1210,20 @@ Weighted highest-random-weight hash for routing and replica selection.
 | `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
 | `clear()` | Clears all nodes and weights |
 
+## Vala.Distributed.Snowflake
+64-bit distributed unique ID generator with sortable timestamp prefix.
+
+| Method | Description |
+|---|---|
+| `Snowflake(int nodeId)` | Creates generator for node ID (0-1023) |
+| `withEpoch(DateTime epoch)` | Sets custom epoch |
+| `nextId()` | Returns next unique 64-bit ID |
+| `nextString()` | Returns next ID as decimal string |
+| `parse(int64 id)` | Parses ID into `SnowflakeParts` |
+| `timestampMillis(int64 id)` | Extracts timestamp in milliseconds |
+| `nodeIdOf(int64 id)` | Extracts node ID |
+| `sequenceOf(int64 id)` | Extracts sequence number |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 

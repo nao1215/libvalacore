@@ -46,6 +46,7 @@ valacore_sources = files([
   'crypto/Uuid.vala',
   'distributed/ConsistentHash.vala',
   'distributed/RendezvousHash.vala',
+  'distributed/Snowflake.vala',
   'encoding/Base64.vala',
   'encoding/Csv.vala',
   'encoding/Hex.vala',
