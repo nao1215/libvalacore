@@ -24,18 +24,17 @@ jobs:
 
     - name: Copy Valadoc to docs/
       run: |
-        VALADOC_DIR=$(find build/src -type d -name 'Valacore-*' | head -1)
-        if [ -z "${VALADOC_DIR}" ]; then
-          echo "Error: Valadoc output directory not found"
+        API_VERSION="${GITHUB_REF_NAME#v}"
+        VALADOC_DIR="build/src/Valacore-${API_VERSION}/Valacore"
+        if [ ! -d "${VALADOC_DIR}" ]; then
+          echo "Error: Valadoc output directory not found: ${VALADOC_DIR}"
           exit 1
         fi
-        # Find the nested Valacore-* directory inside
-        INNER_DIR=$(find "${VALADOC_DIR}" -mindepth 1 -maxdepth 1 -type d -name 'Valacore-*' | head -1)
-        if [ -n "${INNER_DIR}" ]; then
-          cp -rf "${INNER_DIR}"/* docs/
-        else
-          cp -rf "${VALADOC_DIR}"/* docs/
-        fi
+        # Remove old generated files but keep wiki/ and spec.md
+        find docs/ -maxdepth 1 -type f ! -name 'spec.md' -delete
+        find docs/ -maxdepth 1 -type d ! -name 'docs' ! -name 'wiki' -mindepth 1 -exec rm -rf {} +
+        # Copy new generated files
+        cp -rf "${VALADOC_DIR}"/* docs/
 
     - name: Check for changes
       id: check

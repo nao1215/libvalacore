@@ -67,6 +67,9 @@ if get_option('enable_valadoc')
       'devhelp',
       '--pkg=posix',
       '--pkg=gio-2.0',
+      '--package-name=Valacore',
+      '--package-version=' + API_VERSION,
+      '--wiki=' + meson.project_source_root() / 'docs' / 'wiki',
       '@INPUT@',
       '--force'
     ],

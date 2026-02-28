@@ -17,6 +17,9 @@
  */
 using Posix;
 using Vala.Lang;
+/**
+ * Vala.Io namespace provides file I/O, path manipulation, and string utility APIs.
+ */
 namespace Vala.Io {
     /**
      * Files class is an abstract representation of file and directory pathnames.

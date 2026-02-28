@@ -15,6 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Vala.Lang namespace provides language-level utilities such as null checking and OS interfaces.
+ */
 namespace Vala.Lang {
     /**
      * Objects class is a collection of static APIs for manipulating objects

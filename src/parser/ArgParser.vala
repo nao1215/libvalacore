@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 using Vala.Io;
+/**
+ * Vala.Parser namespace provides command-line argument parsing with the Builder pattern.
+ */
 namespace Vala.Parser {
     /**
      * ArgParse class parse application options. Options must be registered before

@@ -1,0 +1,15 @@
+libvalacore provides a rich set of convenient, high-level APIs that complement
+the Vala standard library. Inspired by the standard libraries of Java, Go, and
+OCaml, it offers intuitive and consistent interfaces for file I/O, string
+manipulation, argument parsing, and more.
+
+== Namespaces ==
+
+ * [[Vala.Io]] - File I/O, path, and string operations
+ * [[Vala.Lang]] - Language-level utilities (Objects, Os)
+ * [[Vala.Parser]] - Argument parsing
+
+== Links ==
+
+ * [[https://github.com/nao1215/libvalacore|GitHub Repository]]
+ * [[https://github.com/nao1215/libvalacore/blob/main/LICENSE|License (Apache 2.0)]]
