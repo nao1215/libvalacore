@@ -349,6 +349,25 @@ A doubly-linked list that supports efficient insertion and removal at both ends.
 | `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
 | `toArray()` | Returns elements as a native array |
 
+### Vala.Collections.Deque\<T\>
+A double-ended queue (deque) that supports efficient insertion and removal at both ends. Inspired by Java's ArrayDeque.
+
+| Method | Description |
+|---|---|
+| `Deque(EqualFunc<T>?)` | Creates an empty Deque with optional equality function |
+| `addFirst(T element)` | Adds an element to the front |
+| `addLast(T element)` | Adds an element to the end |
+| `removeFirst()` | Removes and returns the first element |
+| `removeLast()` | Removes and returns the last element |
+| `peekFirst()` | Returns the first element without removing |
+| `peekLast()` | Returns the last element without removing |
+| `size()` | Returns the number of elements |
+| `isEmpty()` | Returns whether the deque is empty |
+| `contains(T element)` | Returns whether the element is in the deque |
+| `clear()` | Removes all elements |
+| `toArray()` | Returns elements as a native array |
+| `forEach(ConsumerFunc<T> func)` | Applies a function to each element |
+
 ## Vala.Lang.Objects
 Static utility methods for null checking.
 
