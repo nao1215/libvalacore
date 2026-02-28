@@ -80,6 +80,23 @@ An immutable value object representing a file system path. Methods that transfor
 | `match(string pattern)` | Returns whether the basename matches a glob pattern |
 | `relativeTo(Path base)` | Computes the relative path from a base path |
 
+### Vala.Io.Scanner
+Tokenized input reader inspired by Java's Scanner and Go's bufio.Scanner. Reads from files, strings, or stdin and splits input by a configurable delimiter.
+
+| Method | Description |
+|---|---|
+| `Scanner.fromFile(Path path)` | Creates a Scanner from a file (returns null on error) |
+| `Scanner.fromString(string s)` | Creates a Scanner from a string |
+| `Scanner.fromStdin()` | Creates a Scanner from standard input |
+| `nextLine()` | Reads the next line |
+| `nextInt()` | Reads the next token as an integer |
+| `nextDouble()` | Reads the next token as a double |
+| `next()` | Reads the next token (split by delimiter) |
+| `hasNextLine()` | Returns whether there is another line |
+| `hasNextInt()` | Returns whether the next token is an integer |
+| `setDelimiter(string pattern)` | Sets the delimiter regex pattern |
+| `close()` | Closes the underlying stream |
+
 ### Vala.Io.StringBuilder
 A mutable string buffer for efficient string construction. Wraps GLib.StringBuilder with a rich, Java/C#-inspired API.
 
