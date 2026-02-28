@@ -242,6 +242,32 @@ Mutable stopwatch for elapsed-time measurement.
 | `elapsed()` | Returns elapsed time as `Duration` |
 | `elapsedMillis()` | Returns elapsed milliseconds |
 
+### Vala.Math.Math
+Static utility methods for mathematics.
+
+| Method | Description |
+|---|---|
+| `abs(double x)` | Returns absolute value |
+| `max(double a, double b)` | Returns larger value |
+| `min(double a, double b)` | Returns smaller value |
+| `clamp(double x, double lo, double hi)` | Clamps value into `[lo, hi]` |
+| `floor(double x)` | Returns floor value |
+| `ceil(double x)` | Returns ceil value |
+| `round(double x)` | Returns rounded value |
+| `pow(double base, double exp)` | Returns base raised to exponent |
+| `sqrt(double x)` | Returns square root |
+| `log(double x)` | Returns natural logarithm |
+| `log10(double x)` | Returns base-10 logarithm |
+| `sin(double x)` | Returns sine |
+| `cos(double x)` | Returns cosine |
+| `tan(double x)` | Returns tangent |
+| `gcd(int64 a, int64 b)` | Returns greatest common divisor |
+| `lcm(int64 a, int64 b)` | Returns least common multiple |
+| `isPrime(int64 n)` | Returns whether n is prime |
+| `factorial(int n)` | Returns factorial |
+| `PI` | Circle constant pi |
+| `E` | Euler's number |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
