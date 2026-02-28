@@ -5,6 +5,16 @@ namespace Vala.Lang {
      * Methods in this class fail-fast when a condition is violated.
      */
     public class Preconditions : GLib.Object {
+        private static void validate (bool cond, string message, string defaultMessage) {
+            if (cond) {
+                return;
+            }
+            if (message.length == 0) {
+                error ("%s", defaultMessage);
+            }
+            error ("%s", message);
+        }
+
         /**
          * Checks argument preconditions.
          *
@@ -17,13 +27,7 @@ namespace Vala.Lang {
          * @param message error message when condition is false.
          */
         public static void checkArgument (bool cond, string message) {
-            if (cond) {
-                return;
-            }
-            if (message.length == 0) {
-                error ("Invalid argument");
-            }
-            error ("%s", message);
+            validate (cond, message, "Invalid argument");
         }
 
         /**
@@ -38,13 +42,7 @@ namespace Vala.Lang {
          * @param message error message when condition is false.
          */
         public static void checkState (bool cond, string message) {
-            if (cond) {
-                return;
-            }
-            if (message.length == 0) {
-                error ("Invalid state");
-            }
-            error ("%s", message);
+            validate (cond, message, "Invalid state");
         }
     }
 }

@@ -7,12 +7,12 @@ void main (string[] args) {
     Test.run ();
 }
 
+// NOTE: false-condition paths call error() and abort the process.
+// We keep this suite on the non-aborting path only.
 void testCheckArgument () {
     Preconditions.checkArgument (true, "must not fail");
-    assert (true);
 }
 
 void testCheckState () {
     Preconditions.checkState (true, "must not fail");
-    assert (true);
 }
