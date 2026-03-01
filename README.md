@@ -793,7 +793,7 @@ Backward-compatible int channel wrapper.
 | Method | Description |
 |---|---|
 | `ChannelInt()` | Creates an unbuffered channel |
-| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity (`throws ChannelError.INVALID_ARGUMENT` when `capacity <= 0`) |
 | `send(int value)` | Sends a value, blocking if the buffer is full |
 | `trySend(int value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
@@ -809,7 +809,7 @@ Backward-compatible string channel wrapper.
 | Method | Description |
 |---|---|
 | `ChannelString()` | Creates an unbuffered channel |
-| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity (`throws ChannelError.INVALID_ARGUMENT` when `capacity <= 0`) |
 | `send(string value)` | Sends a value, blocking if the buffer is full |
 | `trySend(string value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |

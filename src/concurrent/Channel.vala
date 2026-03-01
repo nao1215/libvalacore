@@ -577,10 +577,13 @@ namespace Vala.Concurrent {
          *
          * @param capacity buffer size (must be > 0).
          * @return a new buffered ChannelInt.
+         * @throws ChannelError.INVALID_ARGUMENT when capacity is not positive.
          */
-        public static ChannelInt buffered (int capacity) {
+        public static ChannelInt buffered (int capacity) throws ChannelError {
             if (capacity <= 0) {
-                error ("capacity must be positive, got %d", capacity);
+                throw new ChannelError.INVALID_ARGUMENT (
+                          "capacity must be positive, got %d".printf (capacity)
+                );
             }
             var ch = new ChannelInt ();
             ch._capacity = capacity;
@@ -826,10 +829,13 @@ namespace Vala.Concurrent {
          *
          * @param capacity buffer size (must be > 0).
          * @return a new buffered ChannelString.
+         * @throws ChannelError.INVALID_ARGUMENT when capacity is not positive.
          */
-        public static ChannelString buffered (int capacity) {
+        public static ChannelString buffered (int capacity) throws ChannelError {
             if (capacity <= 0) {
-                error ("capacity must be positive, got %d", capacity);
+                throw new ChannelError.INVALID_ARGUMENT (
+                          "capacity must be positive, got %d".printf (capacity)
+                );
             }
             var ch = new ChannelString ();
             ch._capacity = capacity;

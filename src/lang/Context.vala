@@ -29,7 +29,12 @@ namespace Vala.Lang {
         private Context (Context ? parent, int64 deadline_mono_usec = -1) {
             _parent = parent;
             _deadline_mono_usec = deadline_mono_usec;
-            _done = ChannelInt.buffered (1);
+            try {
+                _done = ChannelInt.buffered (1);
+            } catch (ChannelError e) {
+                // Capacity is constant and valid; fallback keeps constructor non-throwing.
+                _done = new ChannelInt ();
+            }
             _local_values = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             _cancelled = false;
             _error_message = null;
