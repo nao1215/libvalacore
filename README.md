@@ -1615,12 +1615,12 @@ Weighted highest-random-weight hash for routing and replica selection.
 | Method | Description |
 |---|---|
 | `RendezvousHash()` | Creates empty node set |
-| `addNode(string nodeId)` | Adds node |
-| `removeNode(string nodeId)` | Removes node |
-| `containsNode(string nodeId)` | Returns whether node exists |
-| `getNode(string key)` | Returns assigned node for a key |
-| `getTopNodes(string key, int n)` | Returns top-N nodes by score |
-| `setWeight(string nodeId, double weight)` | Sets node weight |
+| `addNode(string nodeId)` | Adds node (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `removeNode(string nodeId)` | Removes node (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `containsNode(string nodeId)` | Returns whether node exists (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `getNode(string key)` | Returns assigned node for a key (`throws RendezvousHashError.INVALID_ARGUMENT` when `key` is empty) |
+| `getTopNodes(string key, int n)` | Returns top-N nodes by score (`throws RendezvousHashError.INVALID_ARGUMENT` when `key` is empty or `n <= 0`) |
+| `setWeight(string nodeId, double weight)` | Sets node weight (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty or `weight <= 0`) |
 | `nodeCount()` | Returns number of nodes |
 | `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
 | `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
