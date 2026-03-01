@@ -585,6 +585,55 @@ Circuit breaker for protecting unstable dependencies.
 | `reset()` | Resets breaker state and counters |
 | `name()` | Returns breaker name |
 
+### Vala.Net.Http
+HTTP client utilities using raw GIO sockets (no external HTTP library required).
+
+**HttpResponse** — Immutable HTTP response.
+
+| Method | Description |
+|---|---|
+| `statusCode()` | Returns the HTTP status code |
+| `isSuccess()` | Returns true if status is 2xx |
+| `isRedirect()` | Returns true if status is 3xx |
+| `isClientError()` | Returns true if status is 4xx |
+| `isServerError()` | Returns true if status is 5xx |
+| `bodyText()` | Returns response body as UTF-8 string |
+| `bodyBytes()` | Returns response body as raw bytes |
+| `header(string name)` | Returns header value (case-insensitive) or null |
+| `headers()` | Returns all response headers |
+| `contentLength()` | Returns Content-Length or -1 |
+| `contentType()` | Returns Content-Type or null |
+
+**Http** — Static utility for sending HTTP requests.
+
+| Method | Description |
+|---|---|
+| `get(string url)` | Sends GET request |
+| `post(string url, string body)` | Sends POST with text body |
+| `postJson(string url, string json)` | Sends POST with JSON body |
+| `putJson(string url, string json)` | Sends PUT with JSON body |
+| `patchJson(string url, string json)` | Sends PATCH with JSON body |
+| `delete(string url)` | Sends DELETE request |
+| `head(string url)` | Sends HEAD request |
+| `getText(string url)` | GET and return body as string |
+| `getBytes(string url)` | GET and return body as bytes |
+| `postForm(string url, HashMap fields)` | POST with form-encoded body |
+| `download(string url, Path dest)` | Downloads file to disk |
+| `request(string method, string url)` | Creates HttpRequestBuilder for custom requests |
+
+**HttpRequestBuilder** — Fluent builder for HTTP requests.
+
+| Method | Description |
+|---|---|
+| `header(string name, string value)` | Adds a request header |
+| `headers(HashMap map)` | Adds multiple headers |
+| `query(string key, string value)` | Adds URL query parameter |
+| `basicAuth(string user, string password)` | Sets Basic Authentication |
+| `bearerToken(string token)` | Sets Bearer token authentication |
+| `timeoutMillis(int ms)` | Sets request timeout |
+| `body(string text)` | Sets request body |
+| `send()` | Sends the request and returns HttpResponse |
+
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
 

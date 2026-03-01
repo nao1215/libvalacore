@@ -99,6 +99,7 @@ valacore_sources = files([
   'math/Math.vala',
   'math/Random.vala',
   'net/CircuitBreaker.vala',
+  'net/Http.vala',
   'net/NetUrl.vala',
   'net/RateLimiter.vala',
   'net/Retry.vala',
