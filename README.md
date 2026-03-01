@@ -5,41 +5,61 @@
 
 ![logo](./docs/images/logo-small.png)
 
-libvalacore is a comprehensive core library for Vala — just add one dependency and get everything you need for daily development.
-
-Vala has a solid GLib/GObject foundation, but lacks the kind of rich standard library that languages like Java, Go, or OCaml provide out of the box. libvalacore fills that gap, aiming to be for Vala what Boost is for C++, Base for OCaml, or the standard library for Go and Java. It provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
+libvalacore is a utility library for day-to-day Vala development.
+It adds practical APIs for file I/O, collections, encoding, networking, concurrency, and testing support.
 
 >[!NOTE]
 > Until v1.0.0, breaking changes may be introduced between minor versions.
 
 ## Dependencies
 
-libvalacore keeps external dependencies minimal — no libsoup, no libxml2, no third-party libraries.
+libvalacore keeps dependencies small and stays on standard Vala/GLib components.
+
+| Dependency | Used for |
+|---|---|
+| `glib-2.0` | Core types, utilities, test framework |
+| `gio-2.0` | Files, streams, sockets, network I/O |
+| `gobject-2.0` | Object model and type system |
+| `libm` | Math functions |
+| `linux.vapi` / `posix.vapi` | OS and POSIX features where needed |
 
 ```mermaid
-graph TD
-    LVC[libvalacore]
-
-    LVC --> GLib[glib-2.0<br><i>Core utilities, collections, testing</i>]
-    LVC --> GIO[gio-2.0<br><i>File I/O, sockets, networking</i>]
-    LVC --> GObject[gobject-2.0<br><i>Object system, type foundation</i>]
-    LVC --> libm[libm<br><i>Math functions</i>]
-    LVC --> linux[linux vapi<br><i>Linux system calls</i>]
-    LVC --> posix[posix vapi<br><i>POSIX API</i>]
-
-    style LVC fill:#4a90d9,color:#fff
-    style GLib fill:#e8a838,color:#fff
-    style GIO fill:#e8a838,color:#fff
-    style GObject fill:#e8a838,color:#fff
-    style libm fill:#7cb342,color:#fff
-    style linux fill:#7cb342,color:#fff
-    style posix fill:#7cb342,color:#fff
+graph LR
+    App[Your Vala App] --> LVC[libvalacore]
+    LVC --> G1[glib-2.0]
+    LVC --> G2[gio-2.0]
+    LVC --> G3[gobject-2.0]
+    LVC --> M[libm]
+    LVC --> P[linux/posix vapi]
 ```
 
 ## API Reference
 
 ### Valadoc
-[Click here for libcore's Valadoc.](https://nao1215.github.io/libvalacore/)
+[Click here for libvalacore Valadoc.](https://nao1215.github.io/libvalacore/)
+
+### Start From Your Use Case
+
+| What you want to do | Start here |
+|---|---|
+| Read/write/copy files | [Vala.Io.Files](#valaiofiles), [Vala.Io.Path](#valaiopath), [Vala.Io.FileTree](#valaiofiletree) |
+| Watch filesystem changes | [Vala.Io.Watcher](#valaiowatcher) |
+| Build HTTP clients | [Vala.Net.Http](#valanethttp), [Vala.Net.Retry](#valanetretry), [Vala.Net.CircuitBreaker](#valanetcircuitbreaker) |
+| Parse/serialize data formats | [Vala.Encoding.Json](#valaencodingjson), [Vala.Encoding.Yaml](#valaencodingyaml), [Vala.Encoding.Toml](#valaencodingtoml), [Vala.Encoding.Xml](#valaencodingxml) |
+| Run concurrent tasks | [Vala.Concurrent.Channel\<T\>](#valaconcurrentchannelt), [Vala.Concurrent.Future\<T\>](#valaconcurrentfuturet), [Vala.Concurrent.ThreadPool](#valaconcurrentthreadpool) |
+| Work with collections | [Vala.Collections.ArrayList\<T\>](#valacollectionsarraylistt), [Vala.Collections.HashMap\<K,V\>](#valacollectionshashmapkv), [Vala.Collections.Stream\<T\>](#valacollectionsstreamt) |
+| Validate inputs/config | [Vala.Validation.Validator](#valavalidationvalidator) |
+| Build CLI tools | [Vala.Parser.ArgParser](#valaparserargparser) |
+
+### API Layout
+
+Use this order if you are new to the library:
+1. `Vala.Io` and `Vala.Collections`
+2. `Vala.Encoding` and `Vala.Net`
+3. `Vala.Concurrent`
+4. domain-specific modules (`Vala.Crypto`, `Vala.Time`, `Vala.Math`, etc.)
+
+The detailed API list below is exhaustive. For method-level examples, check Valadoc first.
 
 
 ### Vala.Io.Files
