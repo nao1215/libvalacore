@@ -1631,10 +1631,10 @@ Weighted highest-random-weight hash for routing and replica selection.
 
 | Method | Description |
 |---|---|
-| `Snowflake(int nodeId)` | Creates generator for node ID (0-1023) |
+| `Snowflake(int nodeId)` | Creates generator for node ID (0-1023) (`throws SnowflakeError.INVALID_ARGUMENT` when out of range) |
 | `withEpoch(DateTime epoch)` | Sets custom epoch |
-| `nextId()` | Returns next unique 64-bit ID |
-| `nextString()` | Returns next ID as decimal string |
+| `nextId()` | Returns next unique 64-bit ID (`throws SnowflakeError.CLOCK_BEFORE_EPOCH` or `SnowflakeError.TIMESTAMP_OVERFLOW`) |
+| `nextString()` | Returns next ID as decimal string (`throws SnowflakeError` when nextId fails) |
 | `parse(int64 id)` | Parses ID into `SnowflakeParts` |
 | `timestampMillis(int64 id)` | Extracts timestamp in milliseconds |
 | `nodeIdOf(int64 id)` | Extracts node ID |
