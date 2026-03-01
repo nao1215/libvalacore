@@ -982,6 +982,31 @@ Static utility methods for TOML parsing, query, and rendering.
 | `getStringOr(TomlValue root, string path, string fallback)` | Gets string by path with fallback |
 | `getIntOr(TomlValue root, string path, int fallback)` | Gets int by path with fallback |
 
+### Vala.Encoding.Yaml
+YAML parsing, serialization, and query utilities.
+
+**YamlValue** — Immutable YAML node (scalar, mapping, or sequence).
+
+| Method | Description |
+|---|---|
+| `isString()` / `isInt()` / `isDouble()` / `isBool()` / `isNull()` | Type-check predicates |
+| `isMapping()` / `isSequence()` | Container type checks |
+| `asString()` / `asInt()` / `asDouble()` / `asBool()` | Type-safe value accessors |
+| `get(string key)` | Returns child value by key (mappings only) |
+| `at(int index)` | Returns child value by index (sequences only) |
+| `size()` | Number of children (mappings or sequences) |
+| `keys()` | Returns mapping keys in insertion order |
+
+**Yaml** — Static utility methods.
+
+| Method | Description |
+|---|---|
+| `parse(string yaml)` | Parses YAML text into `YamlValue` (`null` on invalid input) |
+| `parseFile(Path path)` | Parses YAML file into `YamlValue` (`null` on read/parse failure) |
+| `parseAll(string yaml)` | Parses multi-document YAML into a list of `YamlValue` |
+| `stringify(YamlValue value)` | Serializes YAML value tree to YAML text |
+| `query(YamlValue root, string path)` | Gets value by dot-path with array index (`"a.b[0].c"`) |
+
 ### Vala.Encoding.Url
 Static utility methods for URL percent-encoding.
 
