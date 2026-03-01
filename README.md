@@ -212,7 +212,7 @@ Shell command utility with captured output and pipeline helpers.
 |---|---|
 | `exec(string command)` | Executes shell command and returns `ShellResult` |
 | `execQuiet(string command)` | Executes command and returns result with output fields cleared |
-| `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound |
+| `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound (`throws ShellError.INVALID_ARGUMENT` when timeout is negative) |
 | `pipe(string[] commands)` | Executes commands as a pipeline (`cmd1 \| cmd2 \| ...`) |
 | `which(string binary)` | Resolves command path from `PATH` (`null` if not found) |
 
