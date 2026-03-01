@@ -36,12 +36,16 @@ namespace Vala.Archive {
                     return false;
                 }
                 basenames.add (name);
+                string safeName = name;
+                if (safeName.has_prefix ("-")) {
+                    safeName = "./" + safeName;
+                }
 
                 hasFile = true;
                 cmd.append (" -C ");
                 cmd.append (quote (file.parent ().toString ()));
                 cmd.append (" ");
-                cmd.append (quote (name));
+                cmd.append (quote (safeName));
             }
 
             if (!hasFile) {
@@ -86,7 +90,10 @@ namespace Vala.Archive {
             if (Objects.isNull (archive) || Objects.isNull (dest) || !Files.isFile (archive)) {
                 return false;
             }
-            if (!Files.exists (dest) && !Files.makeDirs (dest)) {
+            if (Files.exists (dest)) {
+                return false;
+            }
+            if (!Files.makeDirs (dest)) {
                 return false;
             }
             if (containsArchiveLinks (archive)) {
@@ -149,13 +156,17 @@ namespace Vala.Archive {
             if (!Files.isFile (archive) || !Files.isFile (file)) {
                 return false;
             }
+            string name = file.basename ();
+            if (name.has_prefix ("-")) {
+                name = "./" + name;
+            }
             return Vala.Io.Process.exec (
                 "tar",
             {
                 "--append",
                 "-f", archive.toString (),
                 "-C", file.parent ().toString (),
-                file.basename ()
+                name
             });
         }
 
@@ -181,9 +192,13 @@ namespace Vala.Archive {
             }
 
             Vala.Io.Path temp = parent.resolve (".tar-extract-%s.tmp".printf (GLib.Uuid.string_random ()));
+            string safeEntry = entry;
+            if (safeEntry.has_prefix ("-")) {
+                safeEntry = "./" + safeEntry;
+            }
             string cmd = "tar -xOf %s %s > %s".printf (
                 quote (archive.toString ()),
-                quote (entry),
+                quote (safeEntry),
                 quote (temp.toString ())
             );
             bool extracted = Vala.Io.Process.exec ("sh", { "-c", cmd });

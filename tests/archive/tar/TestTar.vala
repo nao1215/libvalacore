@@ -61,7 +61,6 @@ void testCreateAndExtract () {
     string root = rootFor ("create_extract");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/src")));
-    assert (Files.makeDirs (new Vala.Io.Path (root + "/out")));
 
     var a = new Vala.Io.Path (root + "/src/a.txt");
     var b = new Vala.Io.Path (root + "/src/b.txt");
