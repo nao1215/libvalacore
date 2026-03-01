@@ -17,6 +17,9 @@ namespace Vala.Concurrent {
         private GLib.Cond _notFull;
         private GLib.Cond _delivered;
         private int _size;
+        private static GLib.Mutex _select_mutex;
+        private static GLib.Cond _select_cond;
+        private static int64 _select_epoch = 0;
 
         /**
          * Creates an unbuffered channel.
@@ -68,6 +71,7 @@ namespace Vala.Concurrent {
                 _queue.push (new ChannelBox<T> (value));
                 _size++;
                 _mutex.unlock ();
+                notifySelectWaiters ();
             } else {
                 while (_size > 0 && !_closed) {
                     _delivered.wait (_mutex);
@@ -79,6 +83,7 @@ namespace Vala.Concurrent {
                 }
                 _queue.push (new ChannelBox<T> (value));
                 _size++;
+                notifySelectWaiters ();
                 while (_size > 0 && !_closed) {
                     _delivered.wait (_mutex);
                 }
@@ -111,6 +116,7 @@ namespace Vala.Concurrent {
             _queue.push (new ChannelBox<T> (value));
             _size++;
             _mutex.unlock ();
+            notifySelectWaiters ();
             return true;
         }
 
@@ -213,6 +219,7 @@ namespace Vala.Concurrent {
             var sentinel = new ChannelBox<T> ();
             sentinel.sentinel = true;
             _queue.push (sentinel);
+            notifySelectWaiters ();
         }
 
         /**
@@ -259,6 +266,10 @@ namespace Vala.Concurrent {
                 return null;
             }
             while (true) {
+                _select_mutex.lock ();
+                int64 observedEpoch = _select_epoch;
+                _select_mutex.unlock ();
+
                 bool allClosed = true;
                 for (int i = 0; i < channels.size (); i++) {
                     Channel<T> ch = channels.get (i);
@@ -273,8 +284,20 @@ namespace Vala.Concurrent {
                 if (allClosed) {
                     return null;
                 }
-                Thread.usleep (1000);
+
+                _select_mutex.lock ();
+                if (_select_epoch == observedEpoch) {
+                    _select_cond.wait (_select_mutex);
+                }
+                _select_mutex.unlock ();
             }
+        }
+
+        private static void notifySelectWaiters () {
+            _select_mutex.lock ();
+            _select_epoch++;
+            _select_cond.broadcast ();
+            _select_mutex.unlock ();
         }
 
         /**
