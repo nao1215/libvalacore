@@ -1288,6 +1288,20 @@ Lightweight task scheduler with interval and daily-time modes.
 | `isRunning()` | Returns running state |
 | `nextFireTime()` | Returns next execution time |
 
+## Vala.Event.EventBus
+In-process pub/sub bus with optional asynchronous dispatch.
+
+| Method | Description |
+|---|---|
+| `EventBus()` | Creates event bus |
+| `withAsync()` | Enables asynchronous dispatch mode |
+| `subscribe(string topic, EventHandler handler)` | Subscribes topic handler |
+| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler |
+| `publish(string topic, Variant eventData)` | Publishes event payload |
+| `unsubscribe(string topic)` | Removes all subscribers for topic |
+| `hasSubscribers(string topic)` | Returns subscriber existence |
+| `clear()` | Clears all subscriptions |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
