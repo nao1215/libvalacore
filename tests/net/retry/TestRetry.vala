@@ -18,12 +18,23 @@ void main (string[] args) {
     Test.add_func ("/net/retry/testHttpStatusRetry404", testHttpStatusRetry404);
     Test.add_func ("/net/retry/testNetworkDefault", testNetworkDefault);
     Test.add_func ("/net/retry/testIoDefault", testIoDefault);
+    Test.add_func ("/net/retry/testInvalidConfigurations", testInvalidConfigurations);
     Test.run ();
 }
 
+Retry mustRetryWithFixedDelay (int attempts, Duration delay) {
+    var retry = new Retry ();
+    try {
+        retry.withMaxAttempts (attempts)
+         .withFixedDelay (delay);
+    } catch (RetryError e) {
+        assert_not_reached ();
+    }
+    return retry;
+}
+
 void testRetryImmediateSuccess () {
-    Retry retry = new Retry ().withMaxAttempts (3)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = mustRetryWithFixedDelay (3, Duration.ofSeconds (0));
     int calls = 0;
 
     bool ok = retry.retry (() => {
@@ -36,8 +47,7 @@ void testRetryImmediateSuccess () {
 }
 
 void testRetryEventuallySuccess () {
-    Retry retry = new Retry ().withMaxAttempts (4)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = mustRetryWithFixedDelay (4, Duration.ofSeconds (0));
     int calls = 0;
 
     bool ok = retry.retry (() => {
@@ -50,8 +60,7 @@ void testRetryEventuallySuccess () {
 }
 
 void testRetryStopsByPredicate () {
-    Retry retry = new Retry ().withMaxAttempts (5)
-                   .withFixedDelay (Duration.ofSeconds (0))
+    Retry retry = mustRetryWithFixedDelay (5, Duration.ofSeconds (0))
                    .withRetryOn ((reason) => {
         return false;
     });
@@ -67,8 +76,7 @@ void testRetryStopsByPredicate () {
 }
 
 void testRetryResult () {
-    Retry retry = new Retry ().withMaxAttempts (3)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = mustRetryWithFixedDelay (3, Duration.ofSeconds (0));
     int calls = 0;
 
     string ? result = retry.retryResult<string ?> (() => {
@@ -84,8 +92,7 @@ void testRetryResult () {
 }
 
 void testRetryVoid () {
-    Retry retry = new Retry ().withMaxAttempts (3)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = mustRetryWithFixedDelay (3, Duration.ofSeconds (0));
     int calls = 0;
 
     bool ok = retry.retryVoid (() => {
@@ -100,8 +107,7 @@ void testRetryVoid () {
 }
 
 void testRetryVoidFailure () {
-    Retry retry = new Retry ().withMaxAttempts (2)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = mustRetryWithFixedDelay (2, Duration.ofSeconds (0));
     int calls = 0;
 
     bool ok = retry.retryVoid (() => {
@@ -117,8 +123,7 @@ void testHttpStatusRetry503 () {
     var codes = new ArrayList<int> ();
     codes.add (503);
 
-    Retry retry = new Retry ().withMaxAttempts (3)
-                   .withFixedDelay (Duration.ofSeconds (0))
+    Retry retry = mustRetryWithFixedDelay (3, Duration.ofSeconds (0))
                    .httpStatusRetry (codes);
 
     int calls = 0;
@@ -137,8 +142,7 @@ void testHttpStatusRetry404 () {
     var codes = new ArrayList<int> ();
     codes.add (503);
 
-    Retry retry = new Retry ().withMaxAttempts (3)
-                   .withFixedDelay (Duration.ofSeconds (0))
+    Retry retry = mustRetryWithFixedDelay (3, Duration.ofSeconds (0))
                    .httpStatusRetry (codes);
 
     int calls = 0;
@@ -152,8 +156,13 @@ void testHttpStatusRetry404 () {
 }
 
 void testNetworkDefault () {
-    Retry retry = Retry.networkDefault ().withMaxAttempts (2)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = Retry.networkDefault ();
+    try {
+        retry.withMaxAttempts (2)
+         .withFixedDelay (Duration.ofSeconds (0));
+    } catch (RetryError e) {
+        assert_not_reached ();
+    }
     int callbacks = 0;
 
     retry.onRetry ((attempt, reason, delayMillis) => {
@@ -173,8 +182,13 @@ void testNetworkDefault () {
 }
 
 void testIoDefault () {
-    Retry retry = Retry.ioDefault ().withMaxAttempts (2)
-                   .withFixedDelay (Duration.ofSeconds (0));
+    Retry retry = Retry.ioDefault ();
+    try {
+        retry.withMaxAttempts (2)
+         .withFixedDelay (Duration.ofSeconds (0));
+    } catch (RetryError e) {
+        assert_not_reached ();
+    }
 
     int calls = 0;
     bool ok = retry.retry (() => {
@@ -184,4 +198,53 @@ void testIoDefault () {
 
     assert (ok == false);
     assert (calls == 2);
+}
+
+void testInvalidConfigurations () {
+    var retry = new Retry ();
+
+    bool maxAttemptsThrown = false;
+    try {
+        retry.withMaxAttempts (0);
+    } catch (RetryError e) {
+        maxAttemptsThrown = true;
+        assert (e is RetryError.INVALID_ARGUMENT);
+    }
+    assert (maxAttemptsThrown);
+
+    bool backoffInitialThrown = false;
+    try {
+        retry.withBackoff (Duration.ofSeconds (-1), Duration.ofSeconds (1));
+    } catch (RetryError e) {
+        backoffInitialThrown = true;
+        assert (e is RetryError.INVALID_ARGUMENT);
+    }
+    assert (backoffInitialThrown);
+
+    bool backoffRangeThrown = false;
+    try {
+        retry.withBackoff (Duration.ofSeconds (2), Duration.ofSeconds (1));
+    } catch (RetryError e) {
+        backoffRangeThrown = true;
+        assert (e is RetryError.INVALID_ARGUMENT);
+    }
+    assert (backoffRangeThrown);
+
+    bool backoffMaxThrown = false;
+    try {
+        retry.withBackoff (Duration.ofSeconds (1), Duration.ofSeconds (-1));
+    } catch (RetryError e) {
+        backoffMaxThrown = true;
+        assert (e is RetryError.INVALID_ARGUMENT);
+    }
+    assert (backoffMaxThrown);
+
+    bool fixedDelayThrown = false;
+    try {
+        retry.withFixedDelay (Duration.ofSeconds (-1));
+    } catch (RetryError e) {
+        fixedDelayThrown = true;
+        assert (e is RetryError.INVALID_ARGUMENT);
+    }
+    assert (fixedDelayThrown);
 }

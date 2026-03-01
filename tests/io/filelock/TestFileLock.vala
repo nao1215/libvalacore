@@ -10,6 +10,7 @@ void main (string[] args) {
     Test.add_func ("/io/filelock/testWithLock", testWithLock);
     Test.add_func ("/io/filelock/testOwnerPidUnavailable", testOwnerPidUnavailable);
     Test.add_func ("/io/filelock/testReleaseWithoutAcquire", testReleaseWithoutAcquire);
+    Test.add_func ("/io/filelock/testAcquireTimeoutInvalid", testAcquireTimeoutInvalid);
     Test.run ();
 }
 
@@ -44,7 +45,11 @@ void testAcquireTimeout () {
     var lock2 = new FileLock (lockPath);
 
     assert (lock1.tryAcquire () == true);
-    assert (lock2.acquireTimeout (Duration.ofSeconds (0)) == false);
+    try {
+        assert (lock2.acquireTimeout (Duration.ofSeconds (0)) == false);
+    } catch (FileLockError e) {
+        assert_not_reached ();
+    }
 
     assert (lock1.release () == true);
 }
@@ -78,7 +83,11 @@ void testAcquireAfterRelease () {
     releaseMutex.unlock ();
 
     int64 startMicros = GLib.get_monotonic_time ();
-    assert (lock2.acquireTimeout (Duration.ofSeconds (1)) == true);
+    try {
+        assert (lock2.acquireTimeout (Duration.ofSeconds (1)) == true);
+    } catch (FileLockError e) {
+        assert_not_reached ();
+    }
     int64 elapsedMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
 
     assert (elapsedMillis < 1000);
@@ -120,4 +129,19 @@ void testReleaseWithoutAcquire () {
 
     var lock = new FileLock (lockPath);
     assert (lock.release () == false);
+}
+
+void testAcquireTimeoutInvalid () {
+    Vala.Io.Path lockPath = new Vala.Io.Path ("/tmp/valacore/ut/filelock_invalid.lock");
+    Files.remove (lockPath);
+
+    var file_lock = new FileLock (lockPath);
+    bool thrown = false;
+    try {
+        file_lock.acquireTimeout (Duration.ofSeconds (-1));
+    } catch (FileLockError e) {
+        thrown = true;
+        assert (e is FileLockError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

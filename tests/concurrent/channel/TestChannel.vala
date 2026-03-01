@@ -11,26 +11,82 @@ void main (string[] args) {
     Test.add_func ("/concurrent/channel/testTryReceiveInt", testTryReceiveInt);
     Test.add_func ("/concurrent/channel/testCloseInt", testCloseInt);
     Test.add_func ("/concurrent/channel/testIntCapacityAndSize", testIntCapacityAndSize);
+    Test.add_func ("/concurrent/channel/testBufferedIntInvalidCapacity", testBufferedIntInvalidCapacity);
     Test.add_func ("/concurrent/channel/testBufferedStringSendReceive", testBufferedStringSendReceive);
     Test.add_func ("/concurrent/channel/testUnbufferedStringSendReceive", testUnbufferedStringSendReceive);
     Test.add_func ("/concurrent/channel/testTrySendString", testTrySendString);
     Test.add_func ("/concurrent/channel/testTryReceiveString", testTryReceiveString);
     Test.add_func ("/concurrent/channel/testCloseString", testCloseString);
+    Test.add_func ("/concurrent/channel/testBufferedStringInvalidCapacity", testBufferedStringInvalidCapacity);
     Test.add_func ("/concurrent/channel/testProducerConsumer", testProducerConsumer);
     Test.add_func ("/concurrent/channel/testReceiveAfterCloseEmpty", testReceiveAfterCloseEmpty);
     Test.add_func ("/concurrent/channel/testUnbufferedMultiSender", testUnbufferedMultiSender);
     Test.add_func ("/concurrent/channel/testGenericBufferedSendReceive", testGenericBufferedSendReceive);
     Test.add_func ("/concurrent/channel/testGenericTrySendTryReceive", testGenericTrySendTryReceive);
+    Test.add_func ("/concurrent/channel/testGenericBufferedInvalidCapacity", testGenericBufferedInvalidCapacity);
     Test.add_func ("/concurrent/channel/testGenericReceiveTimeout", testGenericReceiveTimeout);
     Test.add_func ("/concurrent/channel/testGenericSelect", testGenericSelect);
     Test.add_func ("/concurrent/channel/testGenericSelectDelayedSend", testGenericSelectDelayedSend);
     Test.add_func ("/concurrent/channel/testGenericPipeline", testGenericPipeline);
     Test.add_func ("/concurrent/channel/testGenericFanInOut", testGenericFanInOut);
+    Test.add_func ("/concurrent/channel/testGenericFanOutInvalidN", testGenericFanOutInvalidN);
     Test.run ();
 }
 
+Channel<T> mustBuffered<T> (int capacity) {
+    Channel<T> ? channel = null;
+    try {
+        channel = Channel.buffered<T> (capacity);
+    } catch (ChannelError e) {
+        assert_not_reached ();
+    }
+    if (channel == null) {
+        assert_not_reached ();
+    }
+    return channel;
+}
+
+ArrayList<Channel<T> > mustFanOut<T> (Channel<T> src, int n) {
+    ArrayList<Channel<T> > ? channels = null;
+    try {
+        channels = Channel.fanOut<T> (src, n);
+    } catch (ChannelError e) {
+        assert_not_reached ();
+    }
+    if (channels == null) {
+        assert_not_reached ();
+    }
+    return channels;
+}
+
+ChannelInt mustBufferedInt (int capacity) {
+    ChannelInt ? channel = null;
+    try {
+        channel = ChannelInt.buffered (capacity);
+    } catch (ChannelError e) {
+        assert_not_reached ();
+    }
+    if (channel == null) {
+        assert_not_reached ();
+    }
+    return channel;
+}
+
+ChannelString mustBufferedString (int capacity) {
+    ChannelString ? channel = null;
+    try {
+        channel = ChannelString.buffered (capacity);
+    } catch (ChannelError e) {
+        assert_not_reached ();
+    }
+    if (channel == null) {
+        assert_not_reached ();
+    }
+    return channel;
+}
+
 void testBufferedIntSendReceive () {
-    var ch = ChannelInt.buffered (5);
+    var ch = mustBufferedInt (5);
     ch.send (42);
     int val = ch.receive ();
     assert (val == 42);
@@ -47,7 +103,7 @@ void testUnbufferedIntSendReceive () {
 }
 
 void testBufferedMultipleValues () {
-    var ch = ChannelInt.buffered (3);
+    var ch = mustBufferedInt (3);
     ch.send (1);
     ch.send (2);
     ch.send (3);
@@ -58,7 +114,7 @@ void testBufferedMultipleValues () {
 }
 
 void testTrySendInt () {
-    var ch = ChannelInt.buffered (1);
+    var ch = mustBufferedInt (1);
     assert (ch.trySend (10) == true);
     assert (ch.trySend (20) == false);
     ch.receive ();
@@ -66,7 +122,7 @@ void testTrySendInt () {
 }
 
 void testTryReceiveInt () {
-    var ch = ChannelInt.buffered (5);
+    var ch = mustBufferedInt (5);
     assert (ch.tryReceive () == null);
     ch.send (7);
     IntBox ? box = ch.tryReceive ();
@@ -76,14 +132,14 @@ void testTryReceiveInt () {
 }
 
 void testCloseInt () {
-    var ch = ChannelInt.buffered (5);
+    var ch = mustBufferedInt (5);
     assert (ch.isClosed () == false);
     ch.close ();
     assert (ch.isClosed () == true);
 }
 
 void testIntCapacityAndSize () {
-    var ch = ChannelInt.buffered (10);
+    var ch = mustBufferedInt (10);
     assert (ch.capacity () == 10);
     assert (ch.size () == 0);
     ch.send (1);
@@ -97,7 +153,7 @@ void testIntCapacityAndSize () {
 }
 
 void testBufferedStringSendReceive () {
-    var ch = ChannelString.buffered (5);
+    var ch = mustBufferedString (5);
     ch.send ("hello");
     string val = ch.receive ();
     assert (val == "hello");
@@ -114,7 +170,7 @@ void testUnbufferedStringSendReceive () {
 }
 
 void testTrySendString () {
-    var ch = ChannelString.buffered (1);
+    var ch = mustBufferedString (1);
     assert (ch.trySend ("a") == true);
     assert (ch.trySend ("b") == false);
     ch.receive ();
@@ -122,7 +178,7 @@ void testTrySendString () {
 }
 
 void testTryReceiveString () {
-    var ch = ChannelString.buffered (5);
+    var ch = mustBufferedString (5);
     assert (ch.tryReceive () == null);
     ch.send ("test");
     StringBox ? box = ch.tryReceive ();
@@ -132,14 +188,14 @@ void testTryReceiveString () {
 }
 
 void testCloseString () {
-    var ch = ChannelString.buffered (5);
+    var ch = mustBufferedString (5);
     assert (ch.isClosed () == false);
     ch.close ();
     assert (ch.isClosed () == true);
 }
 
 void testProducerConsumer () {
-    var ch = ChannelInt.buffered (10);
+    var ch = mustBufferedInt (10);
     int sum = 0;
     var mutex = new Vala.Concurrent.Mutex ();
     var wg = new WaitGroup ();
@@ -175,12 +231,12 @@ void testProducerConsumer () {
 }
 
 void testReceiveAfterCloseEmpty () {
-    var ch = ChannelInt.buffered (5);
+    var ch = mustBufferedInt (5);
     ch.close ();
     int val = ch.receive ();
     assert (val == 0);
 
-    var sch = ChannelString.buffered (5);
+    var sch = mustBufferedString (5);
     sch.close ();
     string sval = sch.receive ();
     assert (sval == "");
@@ -213,8 +269,48 @@ void testUnbufferedMultiSender () {
     assert (total == 60);
 }
 
+void testBufferedIntInvalidCapacity () {
+    bool thrown = false;
+    try {
+        ChannelInt.buffered (0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        ChannelInt.buffered (-1);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+}
+
+void testBufferedStringInvalidCapacity () {
+    bool thrown = false;
+    try {
+        ChannelString.buffered (0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        ChannelString.buffered (-1);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+}
+
 void testGenericBufferedSendReceive () {
-    var ch = Channel.buffered<int> (3);
+    var ch = mustBuffered<int> (3);
     ch.send (10);
     ch.send (20);
     int ? v1 = ch.receive ();
@@ -224,12 +320,32 @@ void testGenericBufferedSendReceive () {
 }
 
 void testGenericTrySendTryReceive () {
-    var ch = Channel.buffered<string> (1);
+    var ch = mustBuffered<string> (1);
     assert (ch.trySend ("a"));
     assert (!ch.trySend ("b"));
     string ? v = ch.tryReceive ();
     assert (v != null && v == "a");
     assert (ch.tryReceive () == null);
+}
+
+void testGenericBufferedInvalidCapacity () {
+    bool thrown = false;
+    try {
+        Channel.buffered<int> (0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        Channel.buffered<int> (-1);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }
 
 void testGenericReceiveTimeout () {
@@ -239,8 +355,8 @@ void testGenericReceiveTimeout () {
 }
 
 void testGenericSelect () {
-    var ch1 = Channel.buffered<int> (1);
-    var ch2 = Channel.buffered<int> (1);
+    var ch1 = mustBuffered<int> (1);
+    var ch2 = mustBuffered<int> (1);
     ch2.send (42);
 
     var channels = new ArrayList<Channel<int> > ();
@@ -256,8 +372,8 @@ void testGenericSelect () {
 }
 
 void testGenericSelectDelayedSend () {
-    var ch1 = Channel.buffered<int> (1);
-    var ch2 = Channel.buffered<int> (1);
+    var ch1 = mustBuffered<int> (1);
+    var ch2 = mustBuffered<int> (1);
     var channels = new ArrayList<Channel<int> > ();
     channels.add (ch1);
     channels.add (ch2);
@@ -277,7 +393,7 @@ void testGenericSelectDelayedSend () {
 }
 
 void testGenericPipeline () {
-    var inCh = Channel.buffered<int> (4);
+    var inCh = mustBuffered<int> (4);
     var outCh = Channel.pipeline<int, int> (inCh, (n) => {
         return n * 2;
     });
@@ -295,13 +411,13 @@ void testGenericPipeline () {
 }
 
 void testGenericFanInOut () {
-    var src = Channel.buffered<int> (8);
+    var src = mustBuffered<int> (8);
     for (int i = 1; i <= 4; i++) {
         src.send (i);
     }
     src.close ();
 
-    var outs = Channel.fanOut<int> (src, 2);
+    var outs = mustFanOut<int> (src, 2);
     var merged = Channel.fanIn<int> (outs);
 
     int sum = 0;
@@ -313,4 +429,25 @@ void testGenericFanInOut () {
         }
     }
     assert (sum == 10);
+}
+
+void testGenericFanOutInvalidN () {
+    var src = new Channel<int> ();
+    bool thrown = false;
+    try {
+        Channel.fanOut<int> (src, 0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        Channel.fanOut<int> (src, -1);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

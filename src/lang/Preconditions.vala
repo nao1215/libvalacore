@@ -1,10 +1,18 @@
 namespace Vala.Lang {
     /**
+     * Recoverable precondition validation errors.
+     */
+    public errordomain PreconditionError {
+        INVALID_ARGUMENT,
+        INVALID_STATE
+    }
+
+    /**
      * Utility methods for precondition checks.
      *
-     * Methods in this class fail-fast when a condition is violated. Use these
-     * checks for programmer errors (invalid arguments or illegal state), not
-     * for recoverable runtime conditions.
+     * Methods in this class throw recoverable errors when a condition is
+     * violated. Use these checks for programmer errors (invalid arguments or
+     * illegal state), and propagate the failure to callers.
      *
      * Example:
      * {{{
@@ -13,14 +21,26 @@ namespace Vala.Lang {
      * }}}
      */
     public class Preconditions : GLib.Object {
-        private static void validate (bool cond, string message, string defaultMessage) {
+        private static string normalizeMessage (string message, string defaultMessage) {
+            if (message.strip ().length == 0) {
+                return defaultMessage;
+            }
+            return message;
+        }
+
+        private static void validate (bool cond,
+                                      string message,
+                                      string defaultMessage,
+                                      bool argumentError) throws PreconditionError {
             if (cond) {
                 return;
             }
-            if (message.length == 0) {
-                error ("%s", defaultMessage);
+
+            string finalMessage = normalizeMessage (message, defaultMessage);
+            if (argumentError) {
+                throw new PreconditionError.INVALID_ARGUMENT (finalMessage);
             }
-            error ("%s", message);
+            throw new PreconditionError.INVALID_STATE (finalMessage);
         }
 
         /**
@@ -33,9 +53,10 @@ namespace Vala.Lang {
          *
          * @param cond condition that must be true.
          * @param message error message when condition is false.
+         * @throws PreconditionError.INVALID_ARGUMENT when condition is false.
          */
-        public static void checkArgument (bool cond, string message) {
-            validate (cond, message, "Invalid argument");
+        public static void checkArgument (bool cond, string message) throws PreconditionError {
+            validate (cond, message, "Invalid argument", true);
         }
 
         /**
@@ -48,9 +69,10 @@ namespace Vala.Lang {
          *
          * @param cond condition that must be true.
          * @param message error message when condition is false.
+         * @throws PreconditionError.INVALID_STATE when condition is false.
          */
-        public static void checkState (bool cond, string message) {
-            validate (cond, message, "Invalid state");
+        public static void checkState (bool cond, string message) throws PreconditionError {
+            validate (cond, message, "Invalid state", false);
         }
     }
 }

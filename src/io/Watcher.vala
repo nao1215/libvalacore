@@ -3,6 +3,15 @@ using Vala.Time;
 
 namespace Vala.Io {
     /**
+     * Recoverable watcher initialization errors.
+     */
+    public errordomain WatcherError {
+        INVALID_ARGUMENT,
+        PATH_NOT_FOUND,
+        MONITOR_SETUP_FAILED
+    }
+
+    /**
      * Watch callback type.
      */
     public delegate void WatchCallback (WatchEvent eventData);
@@ -78,7 +87,7 @@ namespace Vala.Io {
         private WatchCallback ? _deleted_callback;
         private RenameCallback ? _renamed_callback;
 
-        internal FileWatcher (Path root, bool recursive, string ? glob) {
+        internal FileWatcher (Path root, bool recursive, string ? glob) throws WatcherError {
             _monitors = new ArrayList<GLib.FileMonitor> ();
             _watched_dirs = new HashMap<string, bool> (GLib.str_hash, GLib.str_equal);
             _last_dispatch = new HashMap<string, int64 ?> (GLib.str_hash, GLib.str_equal);
@@ -92,16 +101,25 @@ namespace Vala.Io {
             _pending_deleted_ts = 0;
 
             if (!Files.exists (root)) {
-                error ("watch path does not exist: %s", root.toString ());
+                throw new WatcherError.PATH_NOT_FOUND (
+                          "watch path does not exist: %s".printf (root.toString ())
+                );
             }
 
-            if (recursive) {
-                if (!Files.isDir (root)) {
-                    error ("watchRecursive/watchGlob requires directory path");
+            try {
+                if (recursive) {
+                    if (!Files.isDir (root)) {
+                        throw new WatcherError.INVALID_ARGUMENT (
+                                  "watchRecursive/watchGlob requires directory path"
+                        );
+                    }
+                    attachDirectoryRecursive (root);
+                } else {
+                    attachSinglePath (root);
                 }
-                attachDirectoryRecursive (root);
-            } else {
-                attachSinglePath (root);
+            } catch (WatcherError e) {
+                close ();
+                throw e;
             }
         }
 
@@ -188,7 +206,7 @@ namespace Vala.Io {
             close ();
         }
 
-        private void attachSinglePath (Path path) {
+        private void attachSinglePath (Path path) throws WatcherError {
             if (Files.isDir (path)) {
                 attachDirectoryMonitor (path);
                 return;
@@ -200,11 +218,13 @@ namespace Vala.Io {
                 connectMonitor (monitor);
                 _monitors.add (monitor);
             } catch (Error e) {
-                warning ("failed to monitor file: %s", path.toString ());
+                throw new WatcherError.MONITOR_SETUP_FAILED (
+                          "failed to monitor file `%s`: %s".printf (path.toString (), e.message)
+                );
             }
         }
 
-        private void attachDirectoryRecursive (Path dir) {
+        private void attachDirectoryRecursive (Path dir) throws WatcherError {
             if (_watched_dirs.containsKey (dir.toString ())) {
                 return;
             }
@@ -225,14 +245,16 @@ namespace Vala.Io {
             }
         }
 
-        private void attachDirectoryMonitor (Path dir) {
+        private void attachDirectoryMonitor (Path dir) throws WatcherError {
             var file = GLib.File.new_for_path (dir.toString ());
             try {
                 GLib.FileMonitor monitor = file.monitor_directory (FileMonitorFlags.NONE);
                 connectMonitor (monitor);
                 _monitors.add (monitor);
             } catch (Error e) {
-                warning ("failed to monitor directory: %s", dir.toString ());
+                throw new WatcherError.MONITOR_SETUP_FAILED (
+                          "failed to monitor directory `%s`: %s".printf (dir.toString (), e.message)
+                );
             }
         }
 
@@ -261,7 +283,11 @@ namespace Vala.Io {
                      eventType == GLib.FileMonitorEvent.MOVED_IN) &&
                     Files.isDir (primaryPath) &&
                     !Files.isSymbolicFile (primaryPath)) {
-                    attachDirectoryRecursive (primaryPath);
+                    try {
+                        attachDirectoryRecursive (primaryPath);
+                    } catch (WatcherError e) {
+                        warning ("failed to attach recursive monitor: %s", e.message);
+                    }
                 }
 
                 switch (eventType) {
@@ -321,12 +347,17 @@ namespace Vala.Io {
             if (type == WatchEventType.CREATED &&
                 _pending_deleted_from != null &&
                 now - _pending_deleted_ts <= 500) {
-                if (_pending_deleted_from.parent ().toString () == path.parent ().toString ()) {
+                Path ? pendingParent = _pending_deleted_from.parent ();
+                Path ? pathParent = path.parent ();
+                if (pendingParent != null && pathParent != null &&
+                    pendingParent.toString () == pathParent.toString ()) {
                     dispatchRenameEvent (_pending_deleted_from, path);
                     _pending_deleted_from = null;
                     _pending_deleted_ts = 0;
                     return;
                 }
+                _pending_deleted_from = null;
+                _pending_deleted_ts = 0;
             }
 
             string key = "%d:%s".printf ((int) type, path.toString ());
@@ -336,12 +367,12 @@ namespace Vala.Io {
 
             var eventData = new WatchEvent (path, type, now);
             switch (type) {
-                case WatchEventType.CREATED:
+                case WatchEventType.CREATED :
                     if (_created_callback != null) {
                         _created_callback (eventData);
                     }
                     break;
-                case WatchEventType.MODIFIED:
+                case WatchEventType.MODIFIED :
                     if (_modified_callback != null) {
                         _modified_callback (eventData);
                     }
@@ -421,8 +452,10 @@ namespace Vala.Io {
          *
          * @param path target path.
          * @return watcher instance.
+         * @throws WatcherError.PATH_NOT_FOUND when path does not exist.
+         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
          */
-        public static FileWatcher watch (Path path) {
+        public static FileWatcher watch (Path path) throws WatcherError {
             return new FileWatcher (path, false, null);
         }
 
@@ -431,8 +464,11 @@ namespace Vala.Io {
          *
          * @param root root directory.
          * @return watcher instance.
+         * @throws WatcherError.PATH_NOT_FOUND when root does not exist.
+         * @throws WatcherError.INVALID_ARGUMENT when root is not a directory.
+         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
          */
-        public static FileWatcher watchRecursive (Path root) {
+        public static FileWatcher watchRecursive (Path root) throws WatcherError {
             return new FileWatcher (root, true, null);
         }
 
@@ -442,8 +478,11 @@ namespace Vala.Io {
          * @param root root directory.
          * @param glob glob filter.
          * @return watcher instance.
+         * @throws WatcherError.PATH_NOT_FOUND when root does not exist.
+         * @throws WatcherError.INVALID_ARGUMENT when root is not a directory.
+         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
          */
-        public static FileWatcher watchGlob (Path root, string glob) {
+        public static FileWatcher watchGlob (Path root, string glob) throws WatcherError {
             return new FileWatcher (root, true, glob);
         }
     }

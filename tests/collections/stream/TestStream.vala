@@ -31,6 +31,7 @@ void main (string[] args) {
     Test.add_func ("/collections/stream/testToMap", testToMap);
     Test.add_func ("/collections/stream/testJoining", testJoining);
     Test.add_func ("/collections/stream/testJoiningWith", testJoiningWith);
+    Test.add_func ("/collections/stream/testJoiningNonStringThrows", testJoiningNonStringThrows);
     Test.add_func ("/collections/stream/testFirstOr", testFirstOr);
     Test.add_func ("/collections/stream/testGroupBy", testGroupBy);
     Test.add_func ("/collections/stream/testPartitionBy", testPartitionBy);
@@ -323,9 +324,13 @@ void testToMap () {
 
 void testJoining () {
     var list = stringList ({ "a", "b", "c" });
-    string joined = Stream.fromList<string> (list).joining (",");
-    assert (joined == "a,b,c");
-    assert (Stream.empty<string> ().joining (",") == "");
+    try {
+        string joined = Stream.fromList<string> (list).joining (",");
+        assert (joined == "a,b,c");
+        assert (Stream.empty<string> ().joining (",") == "");
+    } catch (StreamError e) {
+        assert_not_reached ();
+    }
 }
 
 void testJoiningWith () {
@@ -334,7 +339,17 @@ void testJoiningWith () {
         return n.to_string ();
     }, "-");
     assert (joined == "1-2-3");
-    assert (Stream.range (1, 2).joining () == "");
+}
+
+void testJoiningNonStringThrows () {
+    bool thrown = false;
+    try {
+        Stream.range (1, 2).joining ();
+    } catch (StreamError e) {
+        thrown = true;
+        assert (e is StreamError.UNSUPPORTED_TYPE);
+    }
+    assert (thrown);
 }
 
 void testFirstOr () {

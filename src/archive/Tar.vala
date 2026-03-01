@@ -19,9 +19,9 @@ namespace Vala.Archive {
                 return false;
             }
 
-            var cmd = new GLib.StringBuilder ();
-            cmd.append ("tar -cf ");
-            cmd.append (quote (archive.toString ()));
+            var args = new GLib.Array<string> ();
+            args.append_val ("-cf");
+            args.append_val (archive.toString ());
             var basenames = new HashSet<string> (GLib.str_hash, GLib.str_equal);
 
             bool hasFile = false;
@@ -42,10 +42,9 @@ namespace Vala.Archive {
                 }
 
                 hasFile = true;
-                cmd.append (" -C ");
-                cmd.append (quote (file.parent ().toString ()));
-                cmd.append (" ");
-                cmd.append (quote (safeName));
+                args.append_val ("-C");
+                args.append_val (file.parent ().toString ());
+                args.append_val (safeName);
             }
 
             if (!hasFile) {
@@ -55,7 +54,12 @@ namespace Vala.Archive {
             if (Files.exists (archive)) {
                 Files.remove (archive);
             }
-            return Vala.Io.Process.exec ("sh", { "-c", cmd.str });
+
+            string[] execArgs = new string[args.length];
+            for (uint i = 0; i < args.length; i++) {
+                execArgs[i] = args.index (i);
+            }
+            return Vala.Io.Process.exec ("tar", execArgs);
         }
 
         /**
@@ -247,19 +251,23 @@ namespace Vala.Archive {
                 return false;
             }
 
-            if (Files.exists (dest) && !Files.remove (dest)) {
+            bool hadDest = Files.exists (dest);
+            Vala.Io.Path backup = parent.resolve (".tar-dest-backup-%s.tmp".printf (GLib.Uuid.string_random ()));
+            if (hadDest && !Files.move (dest, backup)) {
                 Files.remove (temp);
                 return false;
             }
             if (!Files.move (temp, dest)) {
+                if (hadDest && Files.exists (backup)) {
+                    Files.move (backup, dest);
+                }
                 Files.remove (temp);
                 return false;
             }
+            if (hadDest && Files.exists (backup)) {
+                Files.remove (backup);
+            }
             return true;
-        }
-
-        private static string quote (string s) {
-            return GLib.Shell.quote (s);
         }
 
         private static bool isSafeArchiveEntry (string entry, Vala.Io.Path dest) {

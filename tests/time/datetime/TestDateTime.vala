@@ -10,7 +10,21 @@ void main (string[] args) {
     Test.add_func ("/datetime/testCompare", testCompare);
     Test.add_func ("/datetime/testUnixTimestamp", testUnixTimestamp);
     Test.add_func ("/datetime/testDiff", testDiff);
+    Test.add_func ("/datetime/testInvalidComponents", testInvalidComponents);
     Test.run ();
+}
+
+Vala.Time.DateTime createDateTime (int year,
+                                   int month,
+                                   int day,
+                                   int hour,
+                                   int min,
+                                   int sec) {
+    try {
+        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    } catch (DateTimeError e) {
+        assert_not_reached ();
+    }
 }
 
 void testNow () {
@@ -19,7 +33,7 @@ void testNow () {
 }
 
 void testOfAndFields () {
-    Vala.Time.DateTime dt = Vala.Time.DateTime.of (2024, 1, 1, 12, 34, 56);
+    Vala.Time.DateTime dt = createDateTime (2024, 1, 1, 12, 34, 56);
 
     assert (dt.year () == 2024);
     assert (dt.month () == 1);
@@ -52,7 +66,7 @@ void testParseInvalid () {
 }
 
 void testPlusMinus () {
-    Vala.Time.DateTime dt = Vala.Time.DateTime.of (2024, 5, 10, 8, 0, 0);
+    Vala.Time.DateTime dt = createDateTime (2024, 5, 10, 8, 0, 0);
 
     Vala.Time.DateTime plus = dt.plusDays (2);
     assert (plus.format ("%Y-%m-%d") == "2024-05-12");
@@ -65,8 +79,8 @@ void testPlusMinus () {
 }
 
 void testCompare () {
-    Vala.Time.DateTime a = Vala.Time.DateTime.of (2024, 1, 1, 0, 0, 0);
-    Vala.Time.DateTime b = Vala.Time.DateTime.of (2024, 1, 2, 0, 0, 0);
+    Vala.Time.DateTime a = createDateTime (2024, 1, 1, 0, 0, 0);
+    Vala.Time.DateTime b = createDateTime (2024, 1, 2, 0, 0, 0);
 
     assert (a.isBefore (b) == true);
     assert (b.isAfter (a) == true);
@@ -74,7 +88,7 @@ void testCompare () {
 }
 
 void testUnixTimestamp () {
-    Vala.Time.DateTime dt = Vala.Time.DateTime.of (2024, 1, 1, 0, 0, 0);
+    Vala.Time.DateTime dt = createDateTime (2024, 1, 1, 0, 0, 0);
     int64 ts = dt.toUnixTimestamp ();
 
     Vala.Time.DateTime restored = Vala.Time.DateTime.fromUnixTimestamp (ts);
@@ -82,9 +96,20 @@ void testUnixTimestamp () {
 }
 
 void testDiff () {
-    Vala.Time.DateTime a = Vala.Time.DateTime.of (2024, 1, 1, 0, 0, 0);
-    Vala.Time.DateTime b = Vala.Time.DateTime.of (2024, 1, 3, 0, 0, 0);
+    Vala.Time.DateTime a = createDateTime (2024, 1, 1, 0, 0, 0);
+    Vala.Time.DateTime b = createDateTime (2024, 1, 3, 0, 0, 0);
 
     assert (b.diff (a).toSeconds () == 172800);
     assert (a.diff (b).toSeconds () == -172800);
+}
+
+void testInvalidComponents () {
+    bool thrown = false;
+    try {
+        Vala.Time.DateTime.of (2024, 2, 30, 0, 0, 0);
+    } catch (DateTimeError e) {
+        thrown = true;
+        assert (e is DateTimeError.INVALID_COMPONENTS);
+    }
+    assert (thrown);
 }

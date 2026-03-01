@@ -3,6 +3,13 @@ using Vala.Concurrent;
 
 namespace Vala.Event {
     /**
+     * Recoverable EventBus argument errors.
+     */
+    public errordomain EventBusError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Event handler receiving a Variant payload.
      */
     public delegate void EventHandler (GLib.Variant eventData);
@@ -62,8 +69,10 @@ namespace Vala.Event {
          * @param topic topic name.
          * @param handler event handler.
          * @return this bus.
+         * @throws EventBusError.INVALID_ARGUMENT when topic is empty.
          */
-        public EventBus subscribe (string topic, owned EventHandler handler) {
+        public EventBus subscribe (string topic,
+                                   owned EventHandler handler) throws EventBusError {
             return addSubscription (topic, false, (owned) handler);
         }
 
@@ -73,8 +82,10 @@ namespace Vala.Event {
          * @param topic topic name.
          * @param handler event handler.
          * @return this bus.
+         * @throws EventBusError.INVALID_ARGUMENT when topic is empty.
          */
-        public EventBus subscribeOnce (string topic, owned EventHandler handler) {
+        public EventBus subscribeOnce (string topic,
+                                       owned EventHandler handler) throws EventBusError {
             return addSubscription (topic, true, (owned) handler);
         }
 
@@ -83,8 +94,10 @@ namespace Vala.Event {
          *
          * @param topic topic name.
          * @param eventData event payload.
+         * @throws EventBusError.INVALID_ARGUMENT when topic is empty.
          */
-        public void publish (string topic, GLib.Variant eventData) {
+        public void publish (string topic,
+                             GLib.Variant eventData) throws EventBusError {
             ensureTopic (topic);
 
             ArrayList<EventSubscription> snapshot = takeSubscriptionsForPublish (topic);
@@ -112,8 +125,9 @@ namespace Vala.Event {
          * Unsubscribes all handlers from topic.
          *
          * @param topic topic name.
+         * @throws EventBusError.INVALID_ARGUMENT when topic is empty.
          */
-        public void unsubscribe (string topic) {
+        public void unsubscribe (string topic) throws EventBusError {
             ensureTopic (topic);
             _mutex.lock ();
             _topics.remove (topic);
@@ -125,8 +139,9 @@ namespace Vala.Event {
          *
          * @param topic topic name.
          * @return true if topic has subscribers.
+         * @throws EventBusError.INVALID_ARGUMENT when topic is empty.
          */
-        public bool hasSubscribers (string topic) {
+        public bool hasSubscribers (string topic) throws EventBusError {
             ensureTopic (topic);
 
             _mutex.lock ();
@@ -147,7 +162,7 @@ namespace Vala.Event {
 
         private EventBus addSubscription (string topic,
                                           bool once,
-                                          owned EventHandler handler) {
+                                          owned EventHandler handler) throws EventBusError {
             ensureTopic (topic);
 
             _mutex.lock ();
@@ -195,9 +210,9 @@ namespace Vala.Event {
             return list;
         }
 
-        private static void ensureTopic (string topic) {
+        private static void ensureTopic (string topic) throws EventBusError {
             if (topic.length == 0) {
-                GLib.error ("topic must not be empty");
+                throw new EventBusError.INVALID_ARGUMENT ("topic must not be empty");
             }
         }
     }

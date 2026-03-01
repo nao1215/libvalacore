@@ -9,22 +9,31 @@ void main (string[] args) {
     Test.add_func ("/random/testShuffle", testShuffle);
     Test.add_func ("/random/testChoice", testChoice);
     Test.add_func ("/random/testChoiceEmpty", testChoiceEmpty);
+    Test.add_func ("/random/testInvalidArguments", testInvalidArguments);
     Test.run ();
 }
 
 void testNextInt () {
-    for (int i = 0; i < 100; i++) {
-        int n = Vala.Math.Random.nextInt (10);
-        assert (n >= 0);
-        assert (n < 10);
+    try {
+        for (int i = 0; i < 100; i++) {
+            int n = Vala.Math.Random.nextInt (10);
+            assert (n >= 0);
+            assert (n < 10);
+        }
+    } catch (RandomError e) {
+        assert_not_reached ();
     }
 }
 
 void testNextIntRange () {
-    for (int i = 0; i < 100; i++) {
-        int n = Vala.Math.Random.nextIntRange (-3, 7);
-        assert (n >= -3);
-        assert (n < 7);
+    try {
+        for (int i = 0; i < 100; i++) {
+            int n = Vala.Math.Random.nextIntRange (-3, 7);
+            assert (n >= -3);
+            assert (n < 7);
+        }
+    } catch (RandomError e) {
+        assert_not_reached ();
     }
 }
 
@@ -83,4 +92,24 @@ void testChoice () {
 void testChoiceEmpty () {
     string[] values = {};
     assert (Vala.Math.Random.choice<string> (values) == null);
+}
+
+void testInvalidArguments () {
+    bool nextIntThrown = false;
+    try {
+        Vala.Math.Random.nextInt (0);
+    } catch (RandomError e) {
+        nextIntThrown = true;
+        assert (e is RandomError.INVALID_ARGUMENT);
+    }
+    assert (nextIntThrown);
+
+    bool rangeThrown = false;
+    try {
+        Vala.Math.Random.nextIntRange (5, 5);
+    } catch (RandomError e) {
+        rangeThrown = true;
+        assert (e is RandomError.INVALID_ARGUMENT);
+    }
+    assert (rangeThrown);
 }

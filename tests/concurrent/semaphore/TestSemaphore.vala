@@ -5,11 +5,25 @@ void main (string[] args) {
     Test.add_func ("/concurrent/semaphore/testAcquireRelease", testAcquireRelease);
     Test.add_func ("/concurrent/semaphore/testTryAcquire", testTryAcquire);
     Test.add_func ("/concurrent/semaphore/testAcquireBlocks", testAcquireBlocks);
+    Test.add_func ("/concurrent/semaphore/testInvalidPermits", testInvalidPermits);
     Test.run ();
 }
 
+Semaphore mustSemaphore (int permits) {
+    Semaphore ? sem = null;
+    try {
+        sem = new Semaphore (permits);
+    } catch (SemaphoreError e) {
+        assert_not_reached ();
+    }
+    if (sem == null) {
+        assert_not_reached ();
+    }
+    return sem;
+}
+
 void testAcquireRelease () {
-    Vala.Concurrent.Semaphore sem = new Vala.Concurrent.Semaphore (1);
+    Vala.Concurrent.Semaphore sem = mustSemaphore (1);
 
     assert (sem.availablePermits () == 1);
     sem.acquire ();
@@ -19,7 +33,7 @@ void testAcquireRelease () {
 }
 
 void testTryAcquire () {
-    Vala.Concurrent.Semaphore sem = new Vala.Concurrent.Semaphore (1);
+    Vala.Concurrent.Semaphore sem = mustSemaphore (1);
 
     assert (sem.tryAcquire () == true);
     assert (sem.tryAcquire () == false);
@@ -28,7 +42,7 @@ void testTryAcquire () {
 }
 
 void testAcquireBlocks () {
-    Vala.Concurrent.Semaphore sem = new Vala.Concurrent.Semaphore (0);
+    Vala.Concurrent.Semaphore sem = mustSemaphore (0);
     GLib.Mutex stateMutex = GLib.Mutex ();
     GLib.Cond stateCond = GLib.Cond ();
     bool entered_wait = false;
@@ -62,4 +76,15 @@ void testAcquireBlocks () {
     stateMutex.lock ();
     assert (acquired == true);
     stateMutex.unlock ();
+}
+
+void testInvalidPermits () {
+    bool thrown = false;
+    try {
+        new Semaphore (-1);
+    } catch (SemaphoreError e) {
+        thrown = true;
+        assert (e is SemaphoreError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

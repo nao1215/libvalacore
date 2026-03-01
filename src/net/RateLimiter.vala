@@ -2,6 +2,13 @@ using Vala.Lang;
 
 namespace Vala.Net {
     /**
+     * Recoverable rate limiter operation errors.
+     */
+    public errordomain RateLimiterError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Thread-safe token-bucket rate limiter.
      *
      * RateLimiter is useful for protecting downstream services or local
@@ -30,10 +37,13 @@ namespace Vala.Net {
          * Initial burst capacity equals permitsPerSecond.
          *
          * @param permitsPerSecond permits generated per second.
+         * @throws RateLimiterError.INVALID_ARGUMENT when permitsPerSecond is not positive.
          */
-        public RateLimiter (int permitsPerSecond) {
+        public RateLimiter (int permitsPerSecond) throws RateLimiterError {
             if (permitsPerSecond <= 0) {
-                error ("permitsPerSecond must be positive, got %d", permitsPerSecond);
+                throw new RateLimiterError.INVALID_ARGUMENT (
+                          "permitsPerSecond must be positive, got %d".printf (permitsPerSecond)
+                );
             }
 
             _permits_per_second = permitsPerSecond;
@@ -50,10 +60,13 @@ namespace Vala.Net {
          *
          * @param permits burst capacity.
          * @return this limiter.
+         * @throws RateLimiterError.INVALID_ARGUMENT when permits is not positive.
          */
-        public RateLimiter withBurst (int permits) {
+        public RateLimiter withBurst (int permits) throws RateLimiterError {
             if (permits <= 0) {
-                error ("permits must be positive, got %d", permits);
+                throw new RateLimiterError.INVALID_ARGUMENT (
+                          "permits must be positive, got %d".printf (permits)
+                );
             }
 
             _mutex.lock ();
@@ -74,7 +87,15 @@ namespace Vala.Net {
          * @return true if permit acquired.
          */
         public bool allow () {
-            return allowN (1);
+            _mutex.lock ();
+            refillLocked ();
+            if (_tokens >= 1) {
+                _tokens -= 1;
+                _mutex.unlock ();
+                return true;
+            }
+            _mutex.unlock ();
+            return false;
         }
 
         /**
@@ -84,10 +105,13 @@ namespace Vala.Net {
          *
          * @param permits number of permits.
          * @return true if permits acquired.
+         * @throws RateLimiterError.INVALID_ARGUMENT when permits is not positive.
          */
-        public bool allowN (int permits) {
+        public bool allowN (int permits) throws RateLimiterError {
             if (permits <= 0) {
-                error ("permits must be positive, got %d", permits);
+                throw new RateLimiterError.INVALID_ARGUMENT (
+                          "permits must be positive, got %d".printf (permits)
+                );
             }
 
             _mutex.lock ();
@@ -108,7 +132,25 @@ namespace Vala.Net {
          * acceptable.
          */
         public void wait () {
-            waitN (1);
+            while (true) {
+                int64 delay = 0;
+
+                _mutex.lock ();
+                refillLocked ();
+                if (_tokens >= 1) {
+                    _tokens -= 1;
+                    _mutex.unlock ();
+                    return;
+                }
+
+                delay = waitMillisLocked (1);
+                _mutex.unlock ();
+
+                if (delay > 0) {
+                    int sleep_millis = delay > int.MAX ? int.MAX : (int) delay;
+                    Threads.sleepMillis (sleep_millis);
+                }
+            }
         }
 
         /**
@@ -118,10 +160,13 @@ namespace Vala.Net {
          * available.
          *
          * @param permits number of permits.
+         * @throws RateLimiterError.INVALID_ARGUMENT when permits is not positive.
          */
-        public void waitN (int permits) {
+        public void waitN (int permits) throws RateLimiterError {
             if (permits <= 0) {
-                error ("permits must be positive, got %d", permits);
+                throw new RateLimiterError.INVALID_ARGUMENT (
+                          "permits must be positive, got %d".printf (permits)
+                );
             }
 
             while (true) {
@@ -185,10 +230,13 @@ namespace Vala.Net {
          * explicitly lowering burst capacity is required.
          *
          * @param permitsPerSecond permits generated per second.
+         * @throws RateLimiterError.INVALID_ARGUMENT when permitsPerSecond is not positive.
          */
-        public void setRate (int permitsPerSecond) {
+        public void setRate (int permitsPerSecond) throws RateLimiterError {
             if (permitsPerSecond <= 0) {
-                error ("permitsPerSecond must be positive, got %d", permitsPerSecond);
+                throw new RateLimiterError.INVALID_ARGUMENT (
+                          "permitsPerSecond must be positive, got %d".printf (permitsPerSecond)
+                );
             }
 
             _mutex.lock ();

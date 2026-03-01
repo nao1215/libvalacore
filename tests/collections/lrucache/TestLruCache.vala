@@ -10,11 +10,28 @@ void main (string[] args) {
     Test.add_func ("/collections/lrucache/testTtlExpiration", testTtlExpiration);
     Test.add_func ("/collections/lrucache/testLoader", testLoader);
     Test.add_func ("/collections/lrucache/testStats", testStats);
+    Test.add_func ("/collections/lrucache/testInvalidMaxEntries", testInvalidMaxEntries);
+    Test.add_func ("/collections/lrucache/testNegativeTtl", testNegativeTtl);
     Test.run ();
 }
 
+LruCache<K, V> mustCreateCache<K, V> (int max_entries,
+                                      GLib.HashFunc<K> hash_func,
+                                      GLib.EqualFunc<K> equal_func) {
+    LruCache<K, V> ? cache = null;
+    try {
+        cache = new LruCache<K, V> (max_entries, hash_func, equal_func);
+    } catch (LruCacheError e) {
+        assert_not_reached ();
+    }
+    if (cache == null) {
+        assert_not_reached ();
+    }
+    return cache;
+}
+
 void testPutGet () {
-    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("b", "2");
 
@@ -24,7 +41,7 @@ void testPutGet () {
 }
 
 void testEviction () {
-    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("b", "2");
 
@@ -37,7 +54,7 @@ void testEviction () {
 }
 
 void testUpdateExisting () {
-    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("a", "2");
 
@@ -46,7 +63,7 @@ void testUpdateExisting () {
 }
 
 void testRemoveAndClear () {
-    var cache = new LruCache<string, string> (3, GLib.str_hash, GLib.str_equal);
+    var cache = mustCreateCache<string, string> (3, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
     cache.put ("b", "2");
 
@@ -60,8 +77,12 @@ void testRemoveAndClear () {
 }
 
 void testTtlExpiration () {
-    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
-    cache.withTtl (Duration.ofSeconds (1));
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    try {
+        cache.withTtl (Duration.ofSeconds (1));
+    } catch (LruCacheError e) {
+        assert_not_reached ();
+    }
 
     cache.put ("a", "1");
     Posix.usleep (1200000);
@@ -71,7 +92,7 @@ void testTtlExpiration () {
 }
 
 void testLoader () {
-    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     int load_calls = 0;
 
     cache.withLoader ((key) => {
@@ -85,7 +106,7 @@ void testLoader () {
 }
 
 void testStats () {
-    var cache = new LruCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     cache.put ("a", "1");
 
     assert (cache.get ("a") == "1"); // hit
@@ -94,4 +115,27 @@ void testStats () {
     Pair<int, int> stats = cache.stats ();
     assert (stats.first () == 1);
     assert (stats.second () == 1);
+}
+
+void testInvalidMaxEntries () {
+    bool thrown = false;
+    try {
+        new LruCache<string, string> (0, GLib.str_hash, GLib.str_equal);
+    } catch (LruCacheError e) {
+        thrown = true;
+        assert (e is LruCacheError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+}
+
+void testNegativeTtl () {
+    var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
+    bool thrown = false;
+    try {
+        cache.withTtl (Duration.ofSeconds (-1));
+    } catch (LruCacheError e) {
+        thrown = true;
+        assert (e is LruCacheError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

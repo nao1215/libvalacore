@@ -1,5 +1,12 @@
 namespace Vala.Collections {
     /**
+     * Recoverable BloomFilter argument errors.
+     */
+    public errordomain BloomFilterError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Probabilistic membership filter with no false negatives.
      */
     public class BloomFilter<T>: GLib.Object {
@@ -14,13 +21,14 @@ namespace Vala.Collections {
          *
          * @param expectedInsertions expected number of inserted items.
          * @param falsePositiveRate target false-positive rate in range (0, 1).
+         * @throws BloomFilterError.INVALID_ARGUMENT when parameters are out of range.
          */
-        public BloomFilter (int expectedInsertions, double falsePositiveRate) {
+        public BloomFilter (int expectedInsertions, double falsePositiveRate) throws BloomFilterError {
             if (expectedInsertions <= 0) {
-                GLib.error ("expectedInsertions must be positive");
+                throw new BloomFilterError.INVALID_ARGUMENT ("expectedInsertions must be positive");
             }
             if (falsePositiveRate <= 0.0 || falsePositiveRate >= 1.0) {
-                GLib.error ("falsePositiveRate must be in range (0, 1)");
+                throw new BloomFilterError.INVALID_ARGUMENT ("falsePositiveRate must be in range (0, 1)");
             }
 
             _target_false_positive_rate = falsePositiveRate;

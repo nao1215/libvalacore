@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.9.0
+
+### Changed
+- Unified failure handling across core modules from process-abort style to recoverable errors:
+  - `Vala.Lang.Context` now throws `ContextError` for invalid parent/key/timeout arguments
+  - `Vala.Time.Cron` now throws `CronError` for invalid schedule/interval inputs
+  - `Vala.Io.Watcher`/`Vala.Io.FileWatcher` now throw `WatcherError` on invalid watch targets and monitor setup failures
+  - `Vala.Concurrent.SingleFlight` now reports invalid key/type mismatch via `SingleFlightError` (and failed futures)
+  - `Vala.Lang.Preconditions` now throws `PreconditionError` instead of terminating the process
+- `Vala.Lang.Exceptions.sneakyThrow` now rethrows the original `GLib.Error` instead of aborting
+- `Vala.Concurrent.ChannelInt` / `Vala.Concurrent.ChannelString` `buffered(int)` now throw `ChannelError.INVALID_ARGUMENT` when `capacity <= 0`
+- `Vala.Concurrent.SingleFlight.doFuture` now schedules work on shared `ThreadPool` workers instead of creating one thread per request
+- `Vala.Config.AppConfig.loadFile` now validates the input path and throws `AppConfigError.INVALID_ARGUMENT` for invalid/nonexistent files
+- `Vala.Math.Math.factorial` now enforces valid input range `[0, 20]` to avoid `int64` overflow
+- `Vala.Encoding.Json.must` now classifies malformed JSONPath syntax as `JsonError.INVALID_PATH`
+- `Vala.Concurrent.WaitGroup` negative-counter underflow now emits `warning` level logs
+
+### Fixed
+- Removed remaining shell-command construction in archive helpers:
+  - `Tar.create` now executes `tar` directly without `sh -c`
+  - `Zip.create`/`Zip.createFromDir`/`Zip.extractFile` now avoid `sh -c` and use direct subprocess execution/streaming
+- Improved archive safety and compatibility:
+  - archive entry names starting with `-` are handled safely in create/extract paths
+  - single-file extraction paths in Zip use temp-file write + move semantics
+- Removed dead XML node code path (`XmlNode.appendText`) and strengthened XML node snapshot behavior tests
+- Added regression tests for JSON builder snapshot semantics (`build()` result immutability against later builder reuse)
+- Standardized temp test directory cleanup in JSON/XML/ZIP tests to filesystem API based deletion (no shell cleanup calls)
+- `Watcher` initialization now fails fast when monitor attachment cannot be established (no partially initialized watcher is returned)
+- `FileLock.acquireTimeout` now uses overflow-safe deadline calculations
+- `Tar.extractFile`/`Zip.extractFile` now preserve existing destination files using backup-restore replacement flow on move failure
+- Expanded boundary and contract tests for:
+  - `HyperLogLog` invalid upper bound (`errorRate == 1.0`)
+  - `Channel.buffered`/`Channel.fanOut` negative argument validation
+  - `Future.awaitTimeout` invalid-duration behavior preserving source future state
+  - `Snowflake` `TIMESTAMP_OVERFLOW`
+  - `Retry.withBackoff` negative max duration
+
 ## 0.8.0
 
 ### Added

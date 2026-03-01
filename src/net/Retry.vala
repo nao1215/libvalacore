@@ -4,6 +4,13 @@ using Vala.Collections;
 
 namespace Vala.Net {
     /**
+     * Recoverable retry policy configuration errors.
+     */
+    public errordomain RetryError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Callback invoked by retry loop and interpreted as success/failure.
      *
      * Return true to stop retrying immediately.
@@ -115,9 +122,11 @@ namespace Vala.Net {
          * @return configured retry policy.
          */
         public static Retry networkDefault () {
-            return new Retry ().withMaxAttempts (5)
-                    .withBackoff (Duration.ofSeconds (1), Duration.ofSeconds (30))
-                    .withJitter (true);
+            var retry = new Retry ();
+            retry._max_attempts = 5;
+            retry.setBackoffUnchecked (RetryBackoffMode.EXPONENTIAL, 1000, 30000);
+            retry._jitter_enabled = true;
+            return retry;
         }
 
         /**
@@ -131,8 +140,10 @@ namespace Vala.Net {
          * @return configured retry policy.
          */
         public static Retry ioDefault () {
-            return new Retry ().withMaxAttempts (6)
-                    .withFixedDelay (Duration.ofSeconds (1));
+            var retry = new Retry ();
+            retry._max_attempts = 6;
+            retry.setBackoffUnchecked (RetryBackoffMode.FIXED, 1000, 1000);
+            return retry;
         }
 
         /**
@@ -142,10 +153,11 @@ namespace Vala.Net {
          *
          * @param n maximum attempts (must be positive).
          * @return this retry instance.
+         * @throws RetryError.INVALID_ARGUMENT when n is not positive.
          */
-        public Retry withMaxAttempts (int n) {
+        public Retry withMaxAttempts (int n) throws RetryError {
             if (n <= 0) {
-                error ("n must be positive, got %d", n);
+                throw new RetryError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n));
             }
             _max_attempts = n;
             return this;
@@ -160,25 +172,27 @@ namespace Vala.Net {
          * @param initial initial delay.
          * @param max maximum delay cap.
          * @return this retry instance.
+         * @throws RetryError.INVALID_ARGUMENT when initial/max are invalid.
          */
-        public Retry withBackoff (Duration initial, Duration max) {
+        public Retry withBackoff (Duration initial, Duration max) throws RetryError {
             int64 initial_millis = initial.toMillis ();
             int64 max_millis = max.toMillis ();
 
             if (initial_millis < 0) {
-                error ("initial must be non-negative, got %" + int64.FORMAT, initial_millis);
+                throw new RetryError.INVALID_ARGUMENT (
+                          "initial must be non-negative, got " + initial_millis.to_string ()
+                );
             }
             if (max_millis < 0) {
-                error ("max must be non-negative, got %" + int64.FORMAT, max_millis);
+                throw new RetryError.INVALID_ARGUMENT (
+                          "max must be non-negative, got " + max_millis.to_string ()
+                );
             }
             if (max_millis < initial_millis) {
-                error ("max must be greater than or equal to initial");
+                throw new RetryError.INVALID_ARGUMENT ("max must be greater than or equal to initial");
             }
 
-            _backoff_mode = RetryBackoffMode.EXPONENTIAL;
-            _initial_delay_millis = initial_millis;
-            _max_delay_millis = max_millis;
-            return this;
+            return setBackoffUnchecked (RetryBackoffMode.EXPONENTIAL, initial_millis, max_millis);
         }
 
         /**
@@ -188,17 +202,17 @@ namespace Vala.Net {
          *
          * @param delay fixed delay between attempts.
          * @return this retry instance.
+         * @throws RetryError.INVALID_ARGUMENT when delay is negative.
          */
-        public Retry withFixedDelay (Duration delay) {
+        public Retry withFixedDelay (Duration delay) throws RetryError {
             int64 delay_millis = delay.toMillis ();
             if (delay_millis < 0) {
-                error ("delay must be non-negative, got %" + int64.FORMAT, delay_millis);
+                throw new RetryError.INVALID_ARGUMENT (
+                          "delay must be non-negative, got " + delay_millis.to_string ()
+                );
             }
 
-            _backoff_mode = RetryBackoffMode.FIXED;
-            _initial_delay_millis = delay_millis;
-            _max_delay_millis = delay_millis;
-            return this;
+            return setBackoffUnchecked (RetryBackoffMode.FIXED, delay_millis, delay_millis);
         }
 
         /**
@@ -397,6 +411,15 @@ namespace Vala.Net {
             }
             int sleep_millis = millis > int.MAX ? int.MAX : (int) millis;
             Threads.sleepMillis (sleep_millis);
+        }
+
+        private Retry setBackoffUnchecked (RetryBackoffMode mode,
+                                           int64 initial_millis,
+                                           int64 max_millis) {
+            _backoff_mode = mode;
+            _initial_delay_millis = initial_millis;
+            _max_delay_millis = max_millis;
+            return this;
         }
 
         private static int extractHttpStatusCode (string reason) {

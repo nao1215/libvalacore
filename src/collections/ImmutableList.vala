@@ -1,5 +1,12 @@
 namespace Vala.Collections {
     /**
+     * Recoverable ImmutableList argument errors.
+     */
+    public errordomain ImmutableListError {
+        INDEX_OUT_OF_BOUNDS
+    }
+
+    /**
      * Immutable list value object.
      */
     public class ImmutableList<T>: GLib.Object {
@@ -52,10 +59,13 @@ namespace Vala.Collections {
          *
          * @param index target index.
          * @return element at index.
+         * @throws ImmutableListError.INDEX_OUT_OF_BOUNDS when index is outside [0, size).
          */
-        public new T get (int index) {
+        public new T get (int index) throws ImmutableListError {
             if (index < 0 || index >= (int) _items.length) {
-                error ("index out of bounds: %d", index);
+                throw new ImmutableListError.INDEX_OUT_OF_BOUNDS (
+                          "index out of bounds: %d".printf (index)
+                );
             }
             return _items[index];
         }

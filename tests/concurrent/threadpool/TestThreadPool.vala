@@ -14,11 +14,25 @@ void main (string[] args) {
     Test.add_func ("/concurrent/threadpool/testPoolSize", testPoolSize);
     Test.add_func ("/concurrent/threadpool/testIsDone", testIsDone);
     Test.add_func ("/concurrent/threadpool/testConcurrentSubmit", testConcurrentSubmit);
+    Test.add_func ("/concurrent/threadpool/testInvalidPoolSize", testInvalidPoolSize);
     Test.run ();
 }
 
+WorkerPool mustWorkerPool (int poolSize) {
+    WorkerPool ? pool = null;
+    try {
+        pool = new WorkerPool (poolSize);
+    } catch (WorkerPoolError e) {
+        assert_not_reached ();
+    }
+    if (pool == null) {
+        assert_not_reached ();
+    }
+    return pool;
+}
+
 void testCreateWithSize () {
-    var pool = new WorkerPool (4);
+    var pool = mustWorkerPool (4);
     assert (pool.poolSize () == 4);
     assert (pool.isShutdown () == false);
     pool.shutdown ();
@@ -32,7 +46,7 @@ void testWithDefault () {
 }
 
 void testSubmitInt () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     var promise = pool.submitInt (() => { return 42; });
     int result = promise.await ();
     assert (result == 42);
@@ -40,7 +54,7 @@ void testSubmitInt () {
 }
 
 void testSubmitString () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     var promise = pool.submitString (() => { return "hello"; });
     string result = promise.await ();
     assert (result == "hello");
@@ -48,7 +62,7 @@ void testSubmitString () {
 }
 
 void testSubmitBool () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     var promise = pool.submitBool (() => { return true; });
     bool result = promise.await ();
     assert (result == true);
@@ -60,7 +74,7 @@ void testSubmitBool () {
 }
 
 void testSubmitDouble () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     var promise = pool.submitDouble (() => { return 3.14; });
     double result = promise.await ();
     assert (result > 3.13 && result < 3.15);
@@ -68,7 +82,7 @@ void testSubmitDouble () {
 }
 
 void testExecute () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     var wg = new WaitGroup ();
     int counter = 0;
     var mutex = new Vala.Concurrent.Mutex ();
@@ -87,7 +101,7 @@ void testExecute () {
 }
 
 void testMultipleTasks () {
-    var pool = new WorkerPool (4);
+    var pool = mustWorkerPool (4);
 
     var p1 = pool.submitInt (() => { return 1; });
     var p2 = pool.submitInt (() => { return 2; });
@@ -100,20 +114,20 @@ void testMultipleTasks () {
 }
 
 void testShutdown () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     assert (pool.isShutdown () == false);
     pool.shutdown ();
     assert (pool.isShutdown () == true);
 }
 
 void testPoolSize () {
-    var pool = new WorkerPool (8);
+    var pool = mustWorkerPool (8);
     assert (pool.poolSize () == 8);
     pool.shutdown ();
 }
 
 void testIsDone () {
-    var pool = new WorkerPool (2);
+    var pool = mustWorkerPool (2);
     var promise = pool.submitInt (() => { return 99; });
     promise.await ();
     assert (promise.isDone () == true);
@@ -121,7 +135,7 @@ void testIsDone () {
 }
 
 void testConcurrentSubmit () {
-    var pool = new WorkerPool (4);
+    var pool = mustWorkerPool (4);
     int total = 0;
     var mutex = new Vala.Concurrent.Mutex ();
     var wg = new WaitGroup ();
@@ -139,4 +153,15 @@ void testConcurrentSubmit () {
     wg.wait ();
     assert (total == 100);
     pool.shutdown ();
+}
+
+void testInvalidPoolSize () {
+    bool thrown = false;
+    try {
+        new WorkerPool (0);
+    } catch (WorkerPoolError e) {
+        thrown = true;
+        assert (e is WorkerPoolError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

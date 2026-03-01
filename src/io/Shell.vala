@@ -3,6 +3,13 @@ using Vala.Time;
 
 namespace Vala.Io {
     /**
+     * Recoverable Shell argument errors.
+     */
+    public errordomain ShellError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Result of shell command execution.
      */
     public class ShellResult : GLib.Object {
@@ -135,11 +142,15 @@ namespace Vala.Io {
          * @param command shell command.
          * @param timeout timeout duration.
          * @return execution result.
+         * @throws ShellError.INVALID_ARGUMENT when timeout is negative.
          */
-        public static ShellResult execWithTimeout (string command, Duration timeout) {
+        public static ShellResult execWithTimeout (string command,
+                                                   Duration timeout) throws ShellError {
             int64 timeoutMillis = timeout.toMillis ();
             if (timeoutMillis < 0) {
-                error ("timeout must be non-negative, got %" + int64.FORMAT, timeoutMillis);
+                throw new ShellError.INVALID_ARGUMENT (
+                          ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
+                );
             }
 
             if (timeoutMillis == 0) {

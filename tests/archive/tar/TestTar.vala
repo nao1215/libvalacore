@@ -5,6 +5,7 @@ using Vala.Io;
 void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/archive/tar/testCreateAndExtract", testCreateAndExtract);
+    Test.add_func ("/archive/tar/testCreateAndExtractLeadingDash", testCreateAndExtractLeadingDash);
     Test.add_func ("/archive/tar/testCreateFromDirAndList", testCreateFromDirAndList);
     Test.add_func ("/archive/tar/testAddFile", testAddFile);
     Test.add_func ("/archive/tar/testExtractFile", testExtractFile);
@@ -78,6 +79,28 @@ void testCreateAndExtract () {
     assert (Tar.extract (archive, new Vala.Io.Path (root + "/out")));
     assert (Files.readAllText (new Vala.Io.Path (root + "/out/a.txt")) == "alpha");
     assert (Files.readAllText (new Vala.Io.Path (root + "/out/b.txt")) == "beta");
+    cleanup (root);
+}
+
+void testCreateAndExtractLeadingDash () {
+    if (!requireTarTool ()) {
+        return;
+    }
+
+    string root = rootFor ("create_extract_leading_dash");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/src")));
+
+    var dashFile = new Vala.Io.Path (root + "/src/-dash.txt");
+    assert (Files.writeText (dashFile, "dash"));
+
+    var archive = new Vala.Io.Path (root + "/files.tar");
+    var files = new ArrayList<Vala.Io.Path> ();
+    files.add (dashFile);
+
+    assert (Tar.create (archive, files));
+    assert (Tar.extract (archive, new Vala.Io.Path (root + "/out")));
+    assert (Files.readAllText (new Vala.Io.Path (root + "/out/-dash.txt")) == "dash");
     cleanup (root);
 }
 

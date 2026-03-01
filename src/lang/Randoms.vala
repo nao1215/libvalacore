@@ -1,5 +1,12 @@
 namespace Vala.Lang {
     /**
+     * Recoverable random utility argument errors.
+     */
+    public errordomain RandomsError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Random utility methods.
      *
      * This class offers common random operations for quick application logic:
@@ -20,10 +27,11 @@ namespace Vala.Lang {
          *
          * @param bound exclusive upper bound.
          * @return random integer.
+         * @throws RandomsError.INVALID_ARGUMENT when bound is not positive.
          */
-        public static int nextInt (int bound) {
+        public static int nextInt (int bound) throws RandomsError {
             if (bound <= 0) {
-                error ("bound must be greater than zero");
+                throw new RandomsError.INVALID_ARGUMENT ("bound must be greater than zero");
             }
             return GLib.Random.int_range (0, bound);
         }

@@ -6,6 +6,7 @@ void main (string[] args) {
     Test.add_func ("/collections/immutablelist/testBasicRead", testBasicRead);
     Test.add_func ("/collections/immutablelist/testContainsAndEmpty", testContainsAndEmpty);
     Test.add_func ("/collections/immutablelist/testToArrayReturnsCopy", testToArrayReturnsCopy);
+    Test.add_func ("/collections/immutablelist/testGetOutOfBounds", testGetOutOfBounds);
     Test.run ();
 }
 
@@ -18,9 +19,13 @@ void testBasicRead () {
     ImmutableList<string> list = ImmutableList.of<string> ({ "a", "b", "c" });
 
     assert (list.size () == 3);
-    assert (list.get (0) == "a");
-    assert (list.get (1) == "b");
-    assert (list.get (2) == "c");
+    try {
+        assert (list.get (0) == "a");
+        assert (list.get (1) == "b");
+        assert (list.get (2) == "c");
+    } catch (ImmutableListError e) {
+        assert_not_reached ();
+    }
 }
 
 void testContainsAndEmpty () {
@@ -41,9 +46,29 @@ void testToArrayReturnsCopy () {
     ImmutableList<string> list = new ImmutableList<string> (source);
 
     source[0] = "changed";
-    assert (list.get (0) == "x");
+    try {
+        assert (list.get (0) == "x");
+    } catch (ImmutableListError e) {
+        assert_not_reached ();
+    }
 
     string[] copy = list.toArray ();
     copy[1] = "changed";
-    assert (list.get (1) == "y");
+    try {
+        assert (list.get (1) == "y");
+    } catch (ImmutableListError e) {
+        assert_not_reached ();
+    }
+}
+
+void testGetOutOfBounds () {
+    ImmutableList<string> list = ImmutableList.of<string> ({ "a" });
+    bool thrown = false;
+    try {
+        list.get (1);
+    } catch (ImmutableListError e) {
+        thrown = true;
+        assert (e is ImmutableListError.INDEX_OUT_OF_BOUNDS);
+    }
+    assert (thrown);
 }

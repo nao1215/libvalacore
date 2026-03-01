@@ -12,12 +12,26 @@ void main (string[] args) {
     Test.add_func ("/concurrent/threadpool2/testShutdownNow", testShutdownNow);
     Test.add_func ("/concurrent/threadpool2/testGlobal", testGlobal);
     Test.add_func ("/concurrent/threadpool2/testGo", testGo);
+    Test.add_func ("/concurrent/threadpool2/testInvalidPoolSize", testInvalidPoolSize);
 
     Test.run ();
 }
 
+Vala.Concurrent.ThreadPool mustThreadPool (int poolSize) {
+    Vala.Concurrent.ThreadPool ? pool = null;
+    try {
+        pool = new Vala.Concurrent.ThreadPool (poolSize);
+    } catch (ThreadPoolError e) {
+        assert_not_reached ();
+    }
+    if (pool == null) {
+        assert_not_reached ();
+    }
+    return pool;
+}
+
 void testSubmit () {
-    var pool = new Vala.Concurrent.ThreadPool (2);
+    var pool = mustThreadPool (2);
     Future<int> future = pool.submit<int> (() => {
         return 42;
     });
@@ -30,7 +44,7 @@ void testSubmit () {
 }
 
 void testExecute () {
-    var pool = new Vala.Concurrent.ThreadPool (2);
+    var pool = mustThreadPool (2);
     var wg = new WaitGroup ();
     int counter = 0;
     GLib.Mutex mutex = GLib.Mutex ();
@@ -61,7 +75,7 @@ void testExecute () {
 }
 
 void testInvokeAll () {
-    var pool = new Vala.Concurrent.ThreadPool (3);
+    var pool = mustThreadPool (3);
 
     var tasks = new ArrayList<ThreadPoolTaskFunc<int> > ();
     tasks.add (new ThreadPoolTaskFunc<int> (() => {
@@ -89,7 +103,7 @@ void testInvokeAll () {
 }
 
 void testShutdownRejectsSubmit () {
-    var pool = new Vala.Concurrent.ThreadPool (1);
+    var pool = mustThreadPool (1);
     pool.shutdown ();
 
     Future<int> rejected = pool.submit<int> (() => {
@@ -102,7 +116,7 @@ void testShutdownRejectsSubmit () {
 }
 
 void testShutdownNow () {
-    var pool = new Vala.Concurrent.ThreadPool (2);
+    var pool = mustThreadPool (2);
 
     for (int i = 0; i < 10; i++) {
         pool.execute (() => {
@@ -134,4 +148,15 @@ void testGo () {
 
     wg.wait ();
     assert (called == 1);
+}
+
+void testInvalidPoolSize () {
+    bool thrown = false;
+    try {
+        new Vala.Concurrent.ThreadPool (0);
+    } catch (ThreadPoolError e) {
+        thrown = true;
+        assert (e is ThreadPoolError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

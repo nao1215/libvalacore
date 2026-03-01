@@ -1,5 +1,14 @@
 namespace Vala.Distributed {
     /**
+     * Recoverable Snowflake generator errors.
+     */
+    public errordomain SnowflakeError {
+        INVALID_ARGUMENT,
+        CLOCK_BEFORE_EPOCH,
+        TIMESTAMP_OVERFLOW
+    }
+
+    /**
      * Parsed Snowflake ID components.
      */
     public class SnowflakeParts : GLib.Object {
@@ -68,10 +77,13 @@ namespace Vala.Distributed {
          * Creates a generator with node ID.
          *
          * @param nodeId node ID in [0, 1023].
+         * @throws SnowflakeError.INVALID_ARGUMENT when nodeId is out of range.
          */
-        public Snowflake (int nodeId) {
+        public Snowflake (int nodeId) throws SnowflakeError {
             if (nodeId < 0 || nodeId > MAX_NODE_ID) {
-                GLib.error ("nodeId must be in range [0, %s]".printf (MAX_NODE_ID.to_string ()));
+                throw new SnowflakeError.INVALID_ARGUMENT (
+                          "nodeId must be in range [0, %s]".printf (MAX_NODE_ID.to_string ())
+                );
             }
 
             _node_id = nodeId;
@@ -95,8 +107,10 @@ namespace Vala.Distributed {
          * Generates next Snowflake ID.
          *
          * @return next unique ID.
+         * @throws SnowflakeError.CLOCK_BEFORE_EPOCH when current clock is before configured epoch.
+         * @throws SnowflakeError.TIMESTAMP_OVERFLOW when 41-bit timestamp capacity is exceeded.
          */
-        public int64 nextId () {
+        public int64 nextId () throws SnowflakeError {
             _mutex.lock ();
 
             int64 now = currentTimeMillis ();
@@ -116,11 +130,11 @@ namespace Vala.Distributed {
             int64 elapsed = now - _epoch_millis;
             if (elapsed < 0L) {
                 _mutex.unlock ();
-                GLib.error ("current time is before configured epoch");
+                throw new SnowflakeError.CLOCK_BEFORE_EPOCH ("current time is before configured epoch");
             }
             if (elapsed > TIMESTAMP_MASK) {
                 _mutex.unlock ();
-                GLib.error ("snowflake timestamp overflow");
+                throw new SnowflakeError.TIMESTAMP_OVERFLOW ("snowflake timestamp overflow");
             }
 
             _last_timestamp_millis = now;
@@ -136,8 +150,9 @@ namespace Vala.Distributed {
          * Generates next Snowflake ID as string.
          *
          * @return next unique ID string.
+         * @throws SnowflakeError when nextId fails.
          */
-        public string nextString () {
+        public string nextString () throws SnowflakeError {
             return nextId ().to_string ();
         }
 

@@ -206,6 +206,9 @@ void main (string[] args) {
     Test.add_func ("/net/http/testInvalidUrl", testInvalidUrl);
     Test.add_func ("/net/http/testConnectionRefused", testConnectionRefused);
     Test.add_func ("/net/http/testDownloadInvalid", testDownloadInvalid);
+    Test.add_func ("/net/http/testRequestBuilderRejectsUnsafeHeader", testRequestBuilderRejectsUnsafeHeader);
+    Test.add_func ("/net/http/testRedirectCrossOriginStripsSensitiveHeaders",
+                   testRedirectCrossOriginStripsSensitiveHeaders);
 
     Test.run ();
 }
@@ -426,6 +429,71 @@ void testRequestBuilderFollowRedirects () {
     if (followResp != null) {
         assert (followResp.statusCode () == 200);
         assert (followResp.bodyText () == "final-ok");
+    }
+}
+
+void testRequestBuilderRejectsUnsafeHeader () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "text/plain", "ok");
+    var t = serveAsync (server);
+
+    var resp = Http.request ("GET", server.baseUrl () + "/unsafe")
+                .header ("X-Test", "ok\r\nInjected: evil")
+                .send ();
+    t.join ();
+    server.stop ();
+
+    assert (resp != null);
+    if (resp != null) {
+        assert (resp.statusCode () == 200);
+    }
+    string ? req = server.lastRequest ();
+    assert (req != null);
+    if (req != null) {
+        assert (!req.contains ("X-Test:"));
+        assert (!req.contains ("Injected: evil"));
+    }
+}
+
+void testRedirectCrossOriginStripsSensitiveHeaders () {
+    var finalServer = new MockHttpServer ();
+    finalServer.setResponse (200, "text/plain", "final");
+    var finalThread = serveAsync (finalServer);
+
+    var redirectServer = new MockHttpServer ();
+    redirectServer.setRedirectResponse (302, finalServer.baseUrl () + "/final");
+    var redirectThread = serveAsync (redirectServer);
+
+    var resp = Http.request ("GET", redirectServer.baseUrl () + "/start")
+                .header ("Authorization", "Bearer top-secret")
+                .header ("Cookie", "sid=abc")
+                .header ("X-Trace", "trace-123")
+                .followRedirects (true)
+                .send ();
+
+    redirectServer.stop ();
+    finalServer.stop ();
+    redirectThread.join ();
+    finalThread.join ();
+
+    assert (resp != null);
+    if (resp != null) {
+        assert (resp.statusCode () == 200);
+    }
+
+    string ? redirectReq = redirectServer.lastRequest ();
+    assert (redirectReq != null);
+    if (redirectReq != null) {
+        assert (redirectReq.contains ("Authorization: Bearer top-secret"));
+        assert (redirectReq.contains ("Cookie: sid=abc"));
+    }
+
+    string ? finalReq = finalServer.lastRequest ();
+    assert (finalReq != null);
+    if (finalReq != null) {
+        assert (!finalReq.contains ("Authorization:"));
+        assert (!finalReq.contains ("Cookie:"));
+        assert (finalReq.contains ("X-Trace: trace-123"));
     }
 }
 

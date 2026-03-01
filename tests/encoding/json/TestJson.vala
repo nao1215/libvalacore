@@ -14,7 +14,9 @@ void main (string[] args) {
 
     // JsonValue object/array builders
     Test.add_func ("/encoding/json/testObjectBuilder", testObjectBuilder);
+    Test.add_func ("/encoding/json/testObjectBuilderSnapshot", testObjectBuilderSnapshot);
     Test.add_func ("/encoding/json/testArrayBuilder", testArrayBuilder);
+    Test.add_func ("/encoding/json/testArrayBuilderSnapshot", testArrayBuilderSnapshot);
 
     // JsonValue access
     Test.add_func ("/encoding/json/testGetAndAt", testGetAndAt);
@@ -52,6 +54,7 @@ void main (string[] args) {
     Test.add_func ("/encoding/json/testGetInt", testGetInt);
     Test.add_func ("/encoding/json/testGetBool", testGetBool);
     Test.add_func ("/encoding/json/testMust", testMust);
+    Test.add_func ("/encoding/json/testMustMissing", testMustMissing);
 
     // Json set, remove, merge, diff, flatten
     Test.add_func ("/encoding/json/testSet", testSet);
@@ -69,11 +72,11 @@ void main (string[] args) {
 }
 
 string rootFor (string name) {
-    return "/tmp/valacore/ut/json_" + name;
+    return "%s/valacore/ut/json_%s_%s".printf (Environment.get_tmp_dir (), name, GLib.Uuid.string_random ());
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 // --- JsonValue factory and type checks ---
@@ -145,6 +148,18 @@ void testObjectBuilder () {
     }
 }
 
+void testObjectBuilderSnapshot () {
+    var builder = JsonValue.object ().put ("a", JsonValue.ofInt (1));
+    JsonValue first = builder.build ();
+    JsonValue second = builder.put ("b", JsonValue.ofInt (2)).build ();
+
+    assert (first.isObject ());
+    assert (first.get ("a") != null);
+    assert (first.get ("b") == null);
+    assert (second.get ("a") == null);
+    assert (second.get ("b") != null);
+}
+
 void testArrayBuilder () {
     var arr = JsonValue.array ()
                .add (JsonValue.ofInt (1))
@@ -160,6 +175,18 @@ void testArrayBuilder () {
         int ? i = second.asInt ();
         assert (i != null && i == 2);
     }
+}
+
+void testArrayBuilderSnapshot () {
+    var builder = JsonValue.array ().add (JsonValue.ofInt (1));
+    JsonValue first = builder.build ();
+    JsonValue second = builder.add (JsonValue.ofInt (2)).build ();
+
+    assert (first.isArray ());
+    assert (first.size () == 1);
+    assert (first.at (0).asInt () == 1);
+    assert (second.size () == 1);
+    assert (second.at (0).asInt () == 2);
 }
 
 // --- Access ---
@@ -539,9 +566,48 @@ void testMust () {
     if (root == null) {
         return;
     }
-    JsonValue v = Json.must (root, "$.user.id");
-    int ? id = v.asInt ();
-    assert (id != null && id == 123);
+    try {
+        JsonValue v = Json.must (root, "$.user.id");
+        int ? id = v.asInt ();
+        assert (id != null && id == 123);
+    } catch (JsonError e) {
+        assert_not_reached ();
+    }
+}
+
+void testMustMissing () {
+    JsonValue ? root = Json.parse ("{\"user\":{\"id\":123}}");
+    assert (root != null);
+    if (root == null) {
+        return;
+    }
+
+    bool missingThrown = false;
+    try {
+        Json.must (root, "$.user.missing");
+    } catch (JsonError e) {
+        missingThrown = true;
+        assert (e is JsonError.NOT_FOUND);
+    }
+    assert (missingThrown);
+
+    bool emptyPathThrown = false;
+    try {
+        Json.must (root, " ");
+    } catch (JsonError e) {
+        emptyPathThrown = true;
+        assert (e is JsonError.INVALID_PATH);
+    }
+    assert (emptyPathThrown);
+
+    bool malformedPathThrown = false;
+    try {
+        Json.must (root, "$.user[abc]");
+    } catch (JsonError e) {
+        malformedPathThrown = true;
+        assert (e is JsonError.INVALID_PATH);
+    }
+    assert (malformedPathThrown);
 }
 
 // --- set, remove, merge, flatten ---

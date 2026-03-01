@@ -25,6 +25,8 @@ void main (string[] args) {
     Test.add_func ("/encoding/xml/testNodeAttr", testNodeAttr);
     Test.add_func ("/encoding/xml/testNodeAttrMissing", testNodeAttrMissing);
     Test.add_func ("/encoding/xml/testNodeChildrenByName", testNodeChildrenByName);
+    Test.add_func ("/encoding/xml/testNodeChildrenSnapshot", testNodeChildrenSnapshot);
+    Test.add_func ("/encoding/xml/testNodeAttrsSnapshot", testNodeAttrsSnapshot);
 
     // Stringify
     Test.add_func ("/encoding/xml/testStringify", testStringify);
@@ -46,11 +48,11 @@ void main (string[] args) {
 }
 
 string rootFor (string name) {
-    return "/tmp/valacore/ut/xml_" + name;
+    return "%s/valacore/ut/xml_%s_%s".printf (Environment.get_tmp_dir (), name, GLib.Uuid.string_random ());
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 // --- Parse basics ---
@@ -201,6 +203,26 @@ void testNodeChildrenByName () {
     assert (aNodes.get (1).text () == "3");
 }
 
+void testNodeChildrenSnapshot () {
+    XmlNode ? root = Xml.parse ("<r><a/><b/></r>");
+    assert (root != null);
+    ArrayList<XmlNode> snapshot = root.children ();
+    assert (snapshot.size () == 2);
+    snapshot.clear ();
+    ArrayList<XmlNode> latest = root.children ();
+    assert (latest.size () == 2);
+}
+
+void testNodeAttrsSnapshot () {
+    XmlNode ? root = Xml.parse ("<r id=\"1\"/>");
+    assert (root != null);
+    HashMap<string, string> snapshot = root.attrs ();
+    snapshot.put ("id", "changed");
+    snapshot.put ("extra", "x");
+    assert (root.attr ("id") == "1");
+    assert (root.attr ("extra") == null);
+}
+
 // --- Stringify ---
 
 void testStringify () {
@@ -299,6 +321,9 @@ void testParseFile () {
 }
 
 void testParseFileMissing () {
-    XmlNode ? node = Xml.parseFile (new Vala.Io.Path ("/tmp/valacore/ut/nonexist.xml"));
+    string root = rootFor ("missing");
+    cleanup (root);
+    XmlNode ? node = Xml.parseFile (new Vala.Io.Path (root + "/nonexist.xml"));
     assert (node == null);
+    cleanup (root);
 }

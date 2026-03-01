@@ -8,6 +8,15 @@ namespace Vala.Concurrent {
      */
     public delegate T SingleFlightFunc<T> ();
 
+    /**
+     * Recoverable SingleFlight operation errors.
+     */
+    public errordomain SingleFlightError {
+        INVALID_ARGUMENT,
+        TYPE_MISMATCH,
+        INTERNAL_STATE
+    }
+
     internal class InFlightCall<T>: GLib.Object {
         private GLib.Mutex _mutex;
         private GLib.Cond _cond;
@@ -87,10 +96,13 @@ namespace Vala.Concurrent {
          * @param key deduplication key.
          * @param fn function to run.
          * @return shared result.
+         * @throws SingleFlightError.INVALID_ARGUMENT when key is empty.
+         * @throws SingleFlightError.TYPE_MISMATCH when the key is in flight with another value type.
+         * @throws SingleFlightError.INTERNAL_STATE when internal entry state is corrupted.
          */
-        public T @do<T> (string key, SingleFlightFunc<T> fn) {
+        public T @do<T> (string key, SingleFlightFunc<T> fn) throws SingleFlightError {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                throw new SingleFlightError.INVALID_ARGUMENT ("key must not be empty");
             }
 
             _mutex.lock ();
@@ -98,14 +110,18 @@ namespace Vala.Concurrent {
             if (existing != null) {
                 if (existing.valueType != typeof (T)) {
                     _mutex.unlock ();
-                    GLib.error ("key `%s` is already in flight with different type", key);
+                    throw new SingleFlightError.TYPE_MISMATCH (
+                              "key `%s` is already in flight with different type".printf (key)
+                    );
                 }
 
                 InFlightCall<T> ? waiter = existing.call as InFlightCall<T>;
                 _mutex.unlock ();
 
                 if (waiter == null) {
-                    GLib.error ("internal singleflight state is invalid");
+                    throw new SingleFlightError.INTERNAL_STATE (
+                              "internal singleflight state is invalid"
+                    );
                 }
 
                 return waiter.waitResult ();
@@ -129,7 +145,9 @@ namespace Vala.Concurrent {
         }
 
         /**
-         * Asynchronous version of {@link do}.
+         * Asynchronous version of do().
+         *
+         * Returns a failed future when key is empty.
          *
          * @param key deduplication key.
          * @param fn function to run.
@@ -137,25 +155,35 @@ namespace Vala.Concurrent {
          */
         public Future<T> doFuture<T> (string key, owned SingleFlightFunc<T> fn) {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                return Future<T>.failed<T> ("key must not be empty");
             }
 
             var captured = (owned) fn;
-            return Future<T>.run<T> (() => {
-                return @do<T> (key, captured);
+            var future = Future<T>.pending<T> ();
+
+            var group = this;
+            ThreadPool.go (() => {
+                try {
+                    T result = group.@do<T> (key, captured);
+                    future.completeSuccess ((owned) result);
+                } catch (SingleFlightError e) {
+                    future.completeFailure (e.message);
+                }
             });
+            return future;
         }
 
         /**
          * Forgets in-flight state for key.
          *
          * This does not cancel already running computation.
+         * Empty key is ignored.
          *
          * @param key deduplication key.
          */
         public void forget (string key) {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                return;
             }
 
             _mutex.lock ();
@@ -178,12 +206,14 @@ namespace Vala.Concurrent {
         /**
          * Returns whether key is currently in flight.
          *
+         * Returns false for empty key.
+         *
          * @param key deduplication key.
          * @return true when key is in flight.
          */
         public bool hasInFlight (string key) {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                return false;
             }
 
             _mutex.lock ();

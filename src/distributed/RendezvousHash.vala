@@ -1,6 +1,13 @@
 using Vala.Collections;
 
 namespace Vala.Distributed {
+    /**
+     * Recoverable RendezvousHash argument errors.
+     */
+    public errordomain RendezvousHashError {
+        INVALID_ARGUMENT
+    }
+
     internal class RendezvousScoreEntry : GLib.Object {
         public string nodeId { get; private set; }
         public double score { get; private set; }
@@ -44,8 +51,9 @@ namespace Vala.Distributed {
          *
          * @param nodeId node identifier.
          * @return true if node was newly added.
+         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty.
          */
-        public bool addNode (string nodeId) {
+        public bool addNode (string nodeId) throws RendezvousHashError {
             ensureNodeId (nodeId);
 
             bool added = _nodes.add (nodeId);
@@ -60,8 +68,9 @@ namespace Vala.Distributed {
          *
          * @param nodeId node identifier.
          * @return true if node existed.
+         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty.
          */
-        public bool removeNode (string nodeId) {
+        public bool removeNode (string nodeId) throws RendezvousHashError {
             ensureNodeId (nodeId);
 
             bool removed = _nodes.remove (nodeId);
@@ -76,8 +85,9 @@ namespace Vala.Distributed {
          *
          * @param nodeId node identifier.
          * @return true if node exists.
+         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty.
          */
-        public bool containsNode (string nodeId) {
+        public bool containsNode (string nodeId) throws RendezvousHashError {
             ensureNodeId (nodeId);
             return _nodes.contains (nodeId);
         }
@@ -87,8 +97,9 @@ namespace Vala.Distributed {
          *
          * @param key lookup key.
          * @return assigned node, or null when no nodes are registered.
+         * @throws RendezvousHashError.INVALID_ARGUMENT when key is empty.
          */
-        public string ? getNode (string key) {
+        public string ? getNode (string key) throws RendezvousHashError {
             ensureKey (key);
             return locateBestNode (key, null, 1.0);
         }
@@ -99,11 +110,13 @@ namespace Vala.Distributed {
          * @param key lookup key.
          * @param n number of nodes to return.
          * @return sorted node list by descending score.
+         * @throws RendezvousHashError.INVALID_ARGUMENT when key is empty or n is not positive.
          */
-        public ArrayList<string> getTopNodes (string key, int n) {
+        public ArrayList<string> getTopNodes (string key,
+                                              int n) throws RendezvousHashError {
             ensureKey (key);
             if (n <= 0) {
-                GLib.error ("n must be positive");
+                throw new RendezvousHashError.INVALID_ARGUMENT ("n must be positive");
             }
 
             var scores = collectScores (key);
@@ -127,11 +140,13 @@ namespace Vala.Distributed {
          * @param nodeId node identifier.
          * @param weight positive node weight.
          * @return true when weight is updated.
+         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty or weight is not positive.
          */
-        public bool setWeight (string nodeId, double weight) {
+        public bool setWeight (string nodeId,
+                               double weight) throws RendezvousHashError {
             ensureNodeId (nodeId);
             if (weight <= 0.0) {
-                GLib.error ("weight must be positive");
+                throw new RendezvousHashError.INVALID_ARGUMENT ("weight must be positive");
             }
             if (!_nodes.contains (nodeId)) {
                 return false;
@@ -168,7 +183,7 @@ namespace Vala.Distributed {
                     continue;
                 }
 
-                string ? node = getNode (key);
+                string ? node = locateBestNode (key, null, 1.0);
                 if (node == null) {
                     continue;
                 }
@@ -205,7 +220,7 @@ namespace Vala.Distributed {
                     continue;
                 }
 
-                string ? before = getNode (key);
+                string ? before = locateBestNode (key, null, 1.0);
                 string ? after = locateBestNode (key, probeNode, 1.0);
                 if (before == null || after == null) {
                     continue;
@@ -314,15 +329,15 @@ namespace Vala.Distributed {
             return hash;
         }
 
-        private static void ensureNodeId (string nodeId) {
+        private static void ensureNodeId (string nodeId) throws RendezvousHashError {
             if (nodeId.length == 0) {
-                GLib.error ("nodeId must not be empty");
+                throw new RendezvousHashError.INVALID_ARGUMENT ("nodeId must not be empty");
             }
         }
 
-        private static void ensureKey (string key) {
+        private static void ensureKey (string key) throws RendezvousHashError {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                throw new RendezvousHashError.INVALID_ARGUMENT ("key must not be empty");
             }
         }
     }

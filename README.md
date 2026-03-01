@@ -137,9 +137,9 @@ Filesystem watch API with callback-based events, recursive watch support, glob f
 
 | Method | Description |
 |---|---|
-| `watch(Path path)` | Starts watching a file or directory |
-| `watchRecursive(Path root)` | Starts recursive directory watch |
-| `watchGlob(Path root, string glob)` | Starts recursive watch filtered by glob |
+| `watch(Path path)` | Starts watching a file or directory (`throws WatcherError.PATH_NOT_FOUND` when path does not exist) |
+| `watchRecursive(Path root)` | Starts recursive directory watch (`throws WatcherError.PATH_NOT_FOUND` or `WatcherError.INVALID_ARGUMENT` when root is not a directory) |
+| `watchGlob(Path root, string glob)` | Starts recursive watch filtered by glob (`throws WatcherError.PATH_NOT_FOUND` or `WatcherError.INVALID_ARGUMENT` when root is not a directory) |
 
 #### Vala.Io.FileWatcher
 
@@ -167,7 +167,7 @@ Atomic update helper for safe file replacement with optional backup.
 |---|---|
 | `AtomicFile()` | Creates an atomic writer with default settings |
 | `withBackup(bool enabled)` | Enables/disables backup creation before replacement |
-| `backupSuffix(string suffix)` | Sets backup suffix (default: `.bak`) |
+| `backupSuffix(string suffix)` | Sets backup suffix (default: `.bak`) (`throws AtomicFileError.INVALID_ARGUMENT` when empty) |
 | `write(Path path, string text)` | Atomically replaces file with text content |
 | `writeBytes(Path path, uint8[] data)` | Atomically replaces file with binary content |
 | `append(Path path, string text)` | Appends by reading current content then atomically replacing |
@@ -181,7 +181,7 @@ Lock-file based process coordination utility.
 |---|---|
 | `FileLock(Path path)` | Creates a lock bound to the given lock-file path |
 | `acquire()` | Blocks until lock is acquired |
-| `acquireTimeout(Duration timeout)` | Tries to acquire lock within timeout |
+| `acquireTimeout(Duration timeout)` | Tries to acquire lock within timeout (`throws FileLockError.INVALID_ARGUMENT` when timeout is negative) |
 | `tryAcquire()` | Attempts lock acquisition without blocking |
 | `release()` | Releases the lock (removes lock file) |
 | `isHeld()` | Returns whether this instance currently holds the lock |
@@ -212,7 +212,7 @@ Shell command utility with captured output and pipeline helpers.
 |---|---|
 | `exec(string command)` | Executes shell command and returns `ShellResult` |
 | `execQuiet(string command)` | Executes command and returns result with output fields cleared |
-| `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound |
+| `execWithTimeout(string command, Duration timeout)` | Executes command through `timeout` with upper time bound (`throws ShellError.INVALID_ARGUMENT` when timeout is negative) |
 | `pipe(string[] commands)` | Executes commands as a pipeline (`cmd1 \| cmd2 \| ...`) |
 | `which(string binary)` | Resolves command path from `PATH` (`null` if not found) |
 
@@ -443,7 +443,7 @@ Immutable value object for date-time operations.
 | Method | Description |
 |---|---|
 | `now()` | Returns current local date-time |
-| `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components |
+| `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components (`throws DateTimeError.INVALID_COMPONENTS` on invalid values) |
 | `parse(string s, string format)` | Parses text using `%Y-%m-%d %H:%M:%S` or `%Y-%m-%dT%H:%M:%S` (returns `null` for unsupported formats) |
 | `format(string format)` | Formats with strftime format |
 | `year()` / `month()` / `day()` | Returns date components |
@@ -505,7 +505,7 @@ Static utility methods for mathematics.
 | `abs(double x)` | Returns absolute value |
 | `max(double a, double b)` | Returns larger value |
 | `min(double a, double b)` | Returns smaller value |
-| `clamp(double x, double lo, double hi)` | Clamps value into `[lo, hi]` |
+| `clamp(double x, double lo, double hi)` | Clamps value into `[lo, hi]` (`throws MathError.INVALID_ARGUMENT` when `lo > hi`) |
 | `floor(double x)` | Returns floor value |
 | `ceil(double x)` | Returns ceil value |
 | `round(double x)` | Returns rounded value |
@@ -519,7 +519,7 @@ Static utility methods for mathematics.
 | `gcd(int64 a, int64 b)` | Returns greatest common divisor |
 | `lcm(int64 a, int64 b)` | Returns least common multiple |
 | `isPrime(int64 n)` | Returns whether n is prime |
-| `factorial(int n)` | Returns factorial |
+| `factorial(int n)` | Returns factorial (`throws MathError.INVALID_ARGUMENT` when `n < 0`) |
 | `PI` | Circle constant pi |
 | `E` | Euler's number |
 
@@ -528,7 +528,7 @@ Immutable arbitrary-precision decimal value object.
 
 | Method | Description |
 |---|---|
-| `BigDecimal(string value)` | Creates from decimal text |
+| `BigDecimal(string value)` | Creates from decimal text (`throws BigDecimalError.INVALID_ARGUMENT` on invalid input) |
 | `parse(string value)` | Parses decimal text and returns null on failure |
 | `toString()` | Returns normalized decimal text |
 | `scale()` | Returns number of fractional digits |
@@ -537,33 +537,33 @@ Immutable arbitrary-precision decimal value object.
 | `compareTo(BigDecimal other)` | Compares two values (-1, 0, 1) |
 | `add(BigDecimal other)` | Returns sum |
 | `subtract(BigDecimal other)` | Returns difference |
-| `multiply(BigDecimal other)` | Returns product |
-| `divide(BigDecimal other)` | Returns quotient (truncated, default scale) |
-| `divideWithScale(BigDecimal other, int scale)` | Returns quotient with explicit scale |
-| `mod(BigDecimal other)` | Returns remainder |
-| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
+| `multiply(BigDecimal other)` | Returns product (`throws BigDecimalError.SCALE_OVERFLOW` on scale overflow) |
+| `divide(BigDecimal other)` | Returns quotient (truncated, default scale) (`throws BigDecimalError`) |
+| `divideWithScale(BigDecimal other, int scale)` | Returns quotient with explicit scale (`throws BigDecimalError`) |
+| `mod(BigDecimal other)` | Returns remainder (`throws BigDecimalError`) |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) (`throws BigDecimalError`) |
 
 ### Vala.Math.BigInteger
 Immutable arbitrary-precision integer value object.
 
 | Method | Description |
 |---|---|
-| `BigInteger(string value)` | Creates from decimal text |
+| `BigInteger(string value)` | Creates from decimal text (`throws BigIntegerError.INVALID_ARGUMENT` on invalid input) |
 | `toString()` | Returns normalized decimal text |
 | `add(BigInteger other)` | Returns sum |
 | `subtract(BigInteger other)` | Returns difference |
 | `multiply(BigInteger other)` | Returns product |
-| `divide(BigInteger other)` | Returns integer quotient (truncated toward zero) |
-| `mod(BigInteger other)` | Returns integer remainder |
-| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
+| `divide(BigInteger other)` | Returns integer quotient (truncated toward zero) (`throws BigIntegerError.DIVISION_BY_ZERO` when divisor is zero) |
+| `mod(BigInteger other)` | Returns integer remainder (`throws BigIntegerError.DIVISION_BY_ZERO` when divisor is zero) |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) (`throws BigIntegerError.INVALID_ARGUMENT` when exponent is negative) |
 
 ### Vala.Math.Random
 Static utility methods for random values.
 
 | Method | Description |
 |---|---|
-| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
-| `nextIntRange(int min, int max)` | Returns random integer in `[min, max)` |
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` (`throws RandomError.INVALID_ARGUMENT` when `bound <= 0`) |
+| `nextIntRange(int min, int max)` | Returns random integer in `[min, max)` (`throws RandomError.INVALID_ARGUMENT` when `min >= max`) |
 | `nextDouble()` | Returns random double in `[0.0, 1.0)` |
 | `nextBool()` | Returns random boolean |
 | `shuffle<T>(T[] array)` | Shuffles array in place |
@@ -604,9 +604,9 @@ Retry policy utility for transient failures.
 | `Retry()` | Creates a retry policy with default settings |
 | `networkDefault()` | Creates recommended retry policy for network operations |
 | `ioDefault()` | Creates recommended retry policy for short I/O contention |
-| `withMaxAttempts(int n)` | Sets maximum attempts |
-| `withBackoff(Duration initial, Duration max)` | Sets exponential backoff strategy |
-| `withFixedDelay(Duration delay)` | Sets fixed delay strategy |
+| `withMaxAttempts(int n)` | Sets maximum attempts (`throws RetryError.INVALID_ARGUMENT` when `n <= 0`) |
+| `withBackoff(Duration initial, Duration max)` | Sets exponential backoff strategy (`throws RetryError.INVALID_ARGUMENT` on invalid range) |
+| `withFixedDelay(Duration delay)` | Sets fixed delay strategy (`throws RetryError.INVALID_ARGUMENT` when delay is negative) |
 | `withJitter(bool enabled)` | Enables or disables jitter |
 | `withRetryOn(RetryOnFunc shouldRetry)` | Sets retry predicate by failure reason |
 | `onRetry(RetryCallback fn)` | Registers callback before each retry wait |
@@ -620,15 +620,15 @@ Token-bucket based rate limiter.
 
 | Method | Description |
 |---|---|
-| `RateLimiter(int permitsPerSecond)` | Creates limiter with permits generated per second |
-| `withBurst(int permits)` | Sets burst capacity and returns this limiter |
+| `RateLimiter(int permitsPerSecond)` | Creates limiter (`throws RateLimiterError.INVALID_ARGUMENT` when `permitsPerSecond <= 0`) |
+| `withBurst(int permits)` | Sets burst capacity (`throws RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) and returns this limiter |
 | `allow()` | Tries to acquire one permit immediately |
-| `allowN(int permits)` | Tries to acquire multiple permits immediately |
+| `allowN(int permits)` | Tries to acquire multiple permits immediately (`throws RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
 | `wait()` | Waits until one permit is available |
-| `waitN(int permits)` | Waits until multiple permits are available |
+| `waitN(int permits)` | Waits until multiple permits are available (`throws RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
 | `reserve()` | Returns estimated wait milliseconds for one permit |
 | `availableTokens()` | Returns currently available permits (floored) |
-| `setRate(int permitsPerSecond)` | Updates permit generation rate |
+| `setRate(int permitsPerSecond)` | Updates permit generation rate (`throws RateLimiterError.INVALID_ARGUMENT` when `permitsPerSecond <= 0`) |
 | `reset()` | Refills tokens to burst capacity |
 
 ### Vala.Net.CircuitBreaker
@@ -636,10 +636,10 @@ Circuit breaker for protecting unstable dependencies.
 
 | Method | Description |
 |---|---|
-| `CircuitBreaker(string name)` | Creates breaker with the specified name |
-| `withFailureThreshold(int n)` | Sets consecutive failure threshold |
-| `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN |
-| `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout |
+| `CircuitBreaker(string name)` | Creates breaker (`throws CircuitBreakerError.INVALID_ARGUMENT` when name is empty) |
+| `withFailureThreshold(int n)` | Sets consecutive failure threshold (`throws CircuitBreakerError.INVALID_ARGUMENT` when `n <= 0`) |
+| `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN (`throws CircuitBreakerError.INVALID_ARGUMENT` when `n <= 0`) |
+| `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout (`throws CircuitBreakerError.INVALID_ARGUMENT` when timeout is negative) |
 | `onStateChange(StateChangeCallback fn)` | Registers state transition callback |
 | `call<T>(CircuitFunc<T> fn)` | Executes callback through breaker and returns `Result<T,string>` (error when blocked/failed) |
 | `recordFailure()` | Records one failure |
@@ -751,8 +751,8 @@ Waits for a collection of tasks to complete.
 
 | Method | Description |
 |---|---|
-| `add(int delta)` | Adds delta to task counter |
-| `done()` | Decrements task counter by one |
+| `add(int delta)` | Adds delta to task counter (ignored if it would go below zero) |
+| `done()` | Decrements task counter by one (no-op when already zero) |
 | `wait()` | Blocks until counter reaches zero |
 
 ### Vala.Concurrent.Semaphore
@@ -760,7 +760,7 @@ Counting semaphore.
 
 | Method | Description |
 |---|---|
-| `Semaphore(int permits)` | Creates with initial permit count |
+| `Semaphore(int permits)` | Creates with initial permit count (`throws SemaphoreError.INVALID_ARGUMENT` when permits is negative) |
 | `acquire()` | Acquires permit, blocking if necessary |
 | `tryAcquire()` | Tries non-blocking permit acquisition |
 | `release()` | Releases permit |
@@ -772,7 +772,7 @@ Generic typed message-passing channel inspired by Go channels. Supports unbuffer
 | Method | Description |
 |---|---|
 | `Channel()` | Creates an unbuffered channel |
-| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `buffered(int capacity)` | Creates a buffered channel (`throws ChannelError.INVALID_ARGUMENT` when `capacity <= 0`) |
 | `send(T value)` | Sends a value, blocking if the buffer is full |
 | `trySend(T value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
@@ -783,7 +783,7 @@ Generic typed message-passing channel inspired by Go channels. Supports unbuffer
 | `size()` | Returns the number of items in the buffer |
 | `capacity()` | Returns the buffer capacity (0 = unbuffered) |
 | `select(ArrayList<Channel<T>> channels)` | Returns first receivable `(index, value)` |
-| `fanOut(Channel<T> src, int n)` | Distributes one source to n output channels |
+| `fanOut(Channel<T> src, int n)` | Distributes one source to n output channels (`throws ChannelError.INVALID_ARGUMENT` when `n <= 0`) |
 | `fanIn(ArrayList<Channel<T>> sources)` | Merges many channels into one |
 | `pipeline(Channel<T> input, MapFunc<T,U> fn)` | Creates transform pipeline channel |
 
@@ -793,7 +793,7 @@ Backward-compatible int channel wrapper.
 | Method | Description |
 |---|---|
 | `ChannelInt()` | Creates an unbuffered channel |
-| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity (`throws ChannelError.INVALID_ARGUMENT` when `capacity <= 0`) |
 | `send(int value)` | Sends a value, blocking if the buffer is full |
 | `trySend(int value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
@@ -809,7 +809,7 @@ Backward-compatible string channel wrapper.
 | Method | Description |
 |---|---|
 | `ChannelString()` | Creates an unbuffered channel |
-| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity (`throws ChannelError.INVALID_ARGUMENT` when `capacity <= 0`) |
 | `send(string value)` | Sends a value, blocking if the buffer is full |
 | `trySend(string value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
@@ -824,7 +824,7 @@ One-shot countdown latch for synchronization.
 
 | Method | Description |
 |---|---|
-| `CountDownLatch(int count)` | Creates with initial count |
+| `CountDownLatch(int count)` | Creates with initial count (`throws CountDownLatchError.INVALID_ARGUMENT` when count is negative) |
 | `countDown()` | Decrements count by one |
 | `await()` | Blocks until count reaches zero |
 | `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
@@ -835,7 +835,7 @@ Fixed-size worker pool for executing tasks concurrently. Manages worker threads 
 
 | Method | Description |
 |---|---|
-| `WorkerPool(int poolSize)` | Creates a pool with the specified number of workers |
+| `WorkerPool(int poolSize)` | Creates a pool with the specified number of workers (`throws WorkerPoolError.INVALID_ARGUMENT` when `poolSize <= 0`) |
 | `withDefault()` | Creates a pool sized to CPU core count |
 | `submitInt(TaskFunc<int> task)` | Submits an int-returning task and returns a PromiseInt |
 | `submitString(TaskFunc<string> task)` | Submits a string-returning task and returns a PromiseString |
@@ -853,14 +853,14 @@ Generic fixed-size thread pool that integrates with `Future<T>`.
 
 | Method | Description |
 |---|---|
-| `ThreadPool(int poolSize)` | Creates a pool with the specified worker count |
+| `ThreadPool(int poolSize)` | Creates a pool (`throws ThreadPoolError.INVALID_ARGUMENT` when `poolSize <= 0`) |
 | `withDefault()` | Creates a pool sized to CPU core count |
 | `submit<T>(TaskFunc<T> task)` | Submits task and returns `Future<T>` |
 | `execute(VoidTaskFunc task)` | Executes a fire-and-forget task |
 | `invokeAll<T>(ArrayList<ThreadPoolTaskFunc<T>> tasks)` | Submits wrapped tasks and returns futures |
 | `shutdown()` | Stops accepting new tasks and waits running workers |
 | `shutdownNow()` | Requests immediate stop and drops queued tasks |
-| `awaitTermination(Duration timeout)` | Waits for worker termination with timeout |
+| `awaitTermination(Duration timeout)` | Waits for worker termination with timeout (`false` for negative timeout) |
 | `isShutdown()` | Returns whether shutdown has been requested |
 | `activeCount()` | Returns number of executing tasks |
 | `queueSize()` | Returns queued task count |
@@ -884,7 +884,7 @@ Represents the eventual result of an asynchronous computation.
 | `completed<T>(T value)` | Creates an already successful future |
 | `failed<T>(string message)` | Creates an already failed future |
 | `await()` | Waits for completion and returns success value (value-type futures return default value on failure) |
-| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time |
+| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time (`null` when timeout is negative) |
 | `isDone()` | Returns whether the future is completed |
 | `isSuccess()` | Returns whether the future is successful |
 | `isFailed()` | Returns whether the future failed |
@@ -893,13 +893,13 @@ Represents the eventual result of an asynchronous computation.
 | `flatMap<U>(MapFunc<T, Future<U>> fn)` | Chains asynchronous operations |
 | `recover(RecoverFunc<T> fn)` | Converts failure into a fallback success value |
 | `onComplete(ConsumerFunc<T?> fn)` | Registers completion callback |
-| `timeout(Duration timeout)` | Returns a future that fails with `timeout` when deadline expires |
+| `timeout(Duration timeout)` | Returns a future that fails with `timeout` when deadline expires (negative timeout returns failed future) |
 | `orElse(T fallback)` | Returns success value or fallback when failed/cancelled |
 | `cancel()` | Cancels pending future |
 | `isCancelled()` | Returns whether future was cancelled |
 | `all<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns a future of collected values |
 | `any<T>(ArrayList<Future<T>> futures)` | Returns the first completed future result |
-| `delayed<T>(Duration delay, TaskFunc<T> task)` | Starts a task after delay |
+| `delayed<T>(Duration delay, TaskFunc<T> task)` | Starts a task after delay (negative delay returns failed future) |
 | `allSettled<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns settled futures |
 | `race<T>(ArrayList<Future<T>> futures)` | Alias of `any` |
 
@@ -909,11 +909,11 @@ Suppresses duplicate concurrent work for the same key.
 | Method | Description |
 |---|---|
 | `SingleFlight()` | Creates empty singleflight group |
-| `do<T>(string key, SingleFlightFunc<T> fn)` | Executes function once per key and shares result |
-| `doFuture<T>(string key, SingleFlightFunc<T> fn)` | Asynchronous version returning `Future<T>` |
-| `forget(string key)` | Removes in-flight state for a key |
+| `do<T>(string key, SingleFlightFunc<T> fn)` | Executes function once per key and shares result (`throws SingleFlightError.INVALID_ARGUMENT` for empty key, `TYPE_MISMATCH` for concurrent mixed types) |
+| `doFuture<T>(string key, SingleFlightFunc<T> fn)` | Asynchronous version returning `Future<T>` (failed future when key is empty) |
+| `forget(string key)` | Removes in-flight state for a key (empty key is ignored) |
 | `inFlightCount()` | Returns number of in-flight keys |
-| `hasInFlight(string key)` | Returns whether key is in flight |
+| `hasInFlight(string key)` | Returns whether key is in flight (returns `false` for empty key) |
 | `clear()` | Clears all tracked in-flight keys |
 
 ### Vala.Concurrent.PromiseInt / PromiseString / PromiseBool / PromiseDouble
@@ -1013,7 +1013,7 @@ Static utility methods for CSV parsing and writing.
 |---|---|
 | `parse(string csv)` | Parses CSV text into `ArrayList<ArrayList<string>>` |
 | `parseFile(Path path)` | Parses a CSV file into `ArrayList<ArrayList<string>>` |
-| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text and returns the result as a string |
+| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text and returns the result as a string (`throws CsvError.INVALID_ARGUMENT` when separator is empty) |
 
 ### Vala.Encoding.Hex
 Static utility methods for hexadecimal encoding and decoding.
@@ -1036,6 +1036,7 @@ JSON parsing, serialization, and path-based querying. Handles JSON as a `JsonVal
 | `getString(JsonValue root, string path, string fallback)` | Gets string by path with fallback |
 | `getInt(JsonValue root, string path, int fallback)` | Gets int by path with fallback |
 | `getBool(JsonValue root, string path, bool fallback)` | Gets bool by path with fallback |
+| `must(JsonValue root, string path)` | Gets value by path or throws `JsonError` (`INVALID_PATH` / `NOT_FOUND`) |
 | `set(JsonValue root, string path, JsonValue value)` | Sets value at top-level object key path (`$.key`, e.g. `$.name`; `$.a.b` is unsupported) and returns new tree |
 | `remove(JsonValue root, string path)` | Removes a top-level object key path (`$.key`) and returns new tree |
 | `merge(JsonValue a, JsonValue b)` | Merges two objects (b overrides a, returns new tree) |
@@ -1237,7 +1238,8 @@ A fluent pipeline for transforming and aggregating collection data. Supports fil
 | `noneMatch(PredicateFunc<T> fn)` | Returns true if no elements match |
 | `reduce<U>(U init, ReduceFunc<T, U> fn)` | Folds into a single value |
 | `forEach(ConsumerFunc<T> fn)` | Executes action for each element |
-| `joining(string delimiter = "")` | Joins elements as string |
+| `joining(string delimiter = "")` | Joins `Stream<string>` elements; throws `StreamError.UNSUPPORTED_TYPE` for non-string streams |
+| `joiningWith(MapFunc<T,string> toStr, string delimiter = "")` | Joins elements using an explicit formatter |
 | `partitionBy(PredicateFunc<T> fn)` | Splits into matching and non-matching lists |
 | `groupBy<K>(MapFunc<T,K> keyFn, HashFunc<K>, EqualFunc<K>)` | Groups elements by key |
 | `sumInt(MapFunc<T,int> fn)` | Sums projected integer values |
@@ -1304,7 +1306,7 @@ An immutable list value object backed by an internal copied array.
 | `of(T[] items)` | Static factory that returns immutable list |
 | `size()` | Returns number of elements |
 | `isEmpty()` | Returns whether the list is empty |
-| `get(int index)` | Returns element at index (fails fast when out of bounds) |
+| `get(int index)` | Returns element at index (`throws ImmutableListError.INDEX_OUT_OF_BOUNDS` when out of bounds) |
 | `contains(T value)` | Returns whether value exists in the list |
 | `toArray()` | Returns a copied array of elements |
 
@@ -1450,8 +1452,8 @@ LRU cache with optional TTL and cache-miss loader.
 
 | Method | Description |
 |---|---|
-| `LruCache(int maxEntries, HashFunc<K>, EqualFunc<K>)` | Creates an LRU cache with key hash/equality functions |
-| `withTtl(Duration ttl)` | Sets entry TTL and returns this instance |
+| `LruCache(int maxEntries, HashFunc<K>, EqualFunc<K>)` | Creates an LRU cache (`throws LruCacheError.INVALID_ARGUMENT` when `maxEntries <= 0`) |
+| `withTtl(Duration ttl)` | Sets entry TTL (`throws LruCacheError.INVALID_ARGUMENT` when negative) and returns this instance |
 | `withLoader(CacheLoaderFunc<K, V> loader)` | Sets cache-miss loader and returns this instance |
 | `get(K key)` | Returns cached value or loader value; updates LRU order |
 | `put(K key, V value)` | Inserts or replaces an entry |
@@ -1578,16 +1580,16 @@ Unified application configuration from file, environment, and CLI.
 
 | Method | Description |
 |---|---|
-| `load(string appName)` | Loads from standard app config paths |
+| `load(string appName)` | Loads from standard app config paths (`throws AppConfigError.INVALID_ARGUMENT` when appName is empty) |
 | `loadFile(Path path)` | Loads from explicit file |
 | `withEnvPrefix(string prefix)` | Sets env prefix like `MYAPP_` |
 | `withCliArgs(string[] args)` | Parses CLI overrides (`--k=v`, `--k v`, `--flag`) |
-| `getString(string key, string fallback = "")` | Returns string value or fallback |
-| `getInt(string key, int fallback = 0)` | Returns int value or fallback |
-| `getBool(string key, bool fallback = false)` | Returns bool value or fallback |
-| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback |
-| `require(string key)` | Returns required value, fail-fast when missing |
-| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` |
+| `getString(string key, string fallback = "")` | Returns string value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getInt(string key, int fallback = 0)` | Returns int value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getBool(string key, bool fallback = false)` | Returns bool value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `require(string key)` | Returns required value (`throws AppConfigError.INVALID_ARGUMENT` or `AppConfigError.REQUIRED_KEY_MISSING`) |
+| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
 
 ## Vala.Distributed.ConsistentHash
 Consistent hash ring with virtual nodes for stable key distribution.
@@ -1595,12 +1597,12 @@ Consistent hash ring with virtual nodes for stable key distribution.
 | Method | Description |
 |---|---|
 | `ConsistentHash()` | Creates empty hash ring |
-| `withVirtualNodes(int replicas)` | Sets virtual node count per physical node |
-| `addNode(string nodeId)` | Adds physical node to ring |
-| `removeNode(string nodeId)` | Removes physical node from ring |
-| `containsNode(string nodeId)` | Returns whether node exists |
-| `getNode(string key)` | Returns assigned node for a key |
-| `getNodes(string key, int count)` | Returns distinct replica nodes for a key |
+| `withVirtualNodes(int replicas)` | Sets virtual node count per physical node (`throws ConsistentHashError.INVALID_ARGUMENT` when `replicas <= 0`) |
+| `addNode(string nodeId)` | Adds physical node to ring (`throws ConsistentHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `removeNode(string nodeId)` | Removes physical node from ring (`throws ConsistentHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `containsNode(string nodeId)` | Returns whether node exists (`throws ConsistentHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `getNode(string key)` | Returns assigned node for a key (`throws ConsistentHashError.INVALID_ARGUMENT` when `key` is empty) |
+| `getNodes(string key, int count)` | Returns distinct replica nodes for a key (`throws ConsistentHashError.INVALID_ARGUMENT` when `key` is empty or `count <= 0`) |
 | `nodeCount()` | Returns physical node count |
 | `virtualNodeCount()` | Returns virtual node count |
 | `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
@@ -1613,12 +1615,12 @@ Weighted highest-random-weight hash for routing and replica selection.
 | Method | Description |
 |---|---|
 | `RendezvousHash()` | Creates empty node set |
-| `addNode(string nodeId)` | Adds node |
-| `removeNode(string nodeId)` | Removes node |
-| `containsNode(string nodeId)` | Returns whether node exists |
-| `getNode(string key)` | Returns assigned node for a key |
-| `getTopNodes(string key, int n)` | Returns top-N nodes by score |
-| `setWeight(string nodeId, double weight)` | Sets node weight |
+| `addNode(string nodeId)` | Adds node (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `removeNode(string nodeId)` | Removes node (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `containsNode(string nodeId)` | Returns whether node exists (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `getNode(string key)` | Returns assigned node for a key (`throws RendezvousHashError.INVALID_ARGUMENT` when `key` is empty) |
+| `getTopNodes(string key, int n)` | Returns top-N nodes by score (`throws RendezvousHashError.INVALID_ARGUMENT` when `key` is empty or `n <= 0`) |
+| `setWeight(string nodeId, double weight)` | Sets node weight (`throws RendezvousHashError.INVALID_ARGUMENT` when `nodeId` is empty or `weight <= 0`) |
 | `nodeCount()` | Returns number of nodes |
 | `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
 | `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
@@ -1629,10 +1631,10 @@ Weighted highest-random-weight hash for routing and replica selection.
 
 | Method | Description |
 |---|---|
-| `Snowflake(int nodeId)` | Creates generator for node ID (0-1023) |
+| `Snowflake(int nodeId)` | Creates generator for node ID (0-1023) (`throws SnowflakeError.INVALID_ARGUMENT` when out of range) |
 | `withEpoch(DateTime epoch)` | Sets custom epoch |
-| `nextId()` | Returns next unique 64-bit ID |
-| `nextString()` | Returns next ID as decimal string |
+| `nextId()` | Returns next unique 64-bit ID (`throws SnowflakeError.CLOCK_BEFORE_EPOCH` or `SnowflakeError.TIMESTAMP_OVERFLOW`) |
+| `nextString()` | Returns next ID as decimal string (`throws SnowflakeError` when nextId fails) |
 | `parse(int64 id)` | Parses ID into `SnowflakeParts` |
 | `timestampMillis(int64 id)` | Extracts timestamp in milliseconds |
 | `nodeIdOf(int64 id)` | Extracts node ID |
@@ -1643,7 +1645,7 @@ Approximate unique counter with fixed memory footprint.
 
 | Method | Description |
 |---|---|
-| `HyperLogLog(double errorRate = 0.01)` | Creates estimator with target error rate |
+| `HyperLogLog(double errorRate = 0.01)` | Creates estimator with target error rate (`throws HyperLogLogError.INVALID_ARGUMENT` when `errorRate` is outside `(0, 1)`) |
 | `add(string value)` | Adds one value |
 | `addBytes(uint8[] value)` | Adds raw byte value |
 | `addAll(ArrayList<string> values)` | Adds multiple values |
@@ -1660,7 +1662,7 @@ Probabilistic set membership filter with compact memory usage.
 
 | Method | Description |
 |---|---|
-| `BloomFilter(int expectedInsertions, double falsePositiveRate)` | Creates filter with expected size and FPR |
+| `BloomFilter(int expectedInsertions, double falsePositiveRate)` | Creates filter with expected size and FPR (`throws BloomFilterError.INVALID_ARGUMENT` when parameters are invalid) |
 | `add(T item)` | Adds one item |
 | `addAll(ArrayList<T> items)` | Adds multiple items |
 | `mightContain(T item)` | Returns membership possibility |
@@ -1693,11 +1695,11 @@ Lightweight task scheduler with interval and daily-time modes.
 
 | Method | Description |
 |---|---|
-| `Cron(string expression)` | Creates scheduler from cron expression |
-| `every(Duration interval)` | Creates fixed-interval scheduler |
-| `at(int hour, int minute)` | Creates daily scheduler |
+| `Cron(string expression)` | Creates scheduler from cron expression (`throws CronError.INVALID_EXPRESSION`) |
+| `every(Duration interval)` | Creates fixed-interval scheduler (`throws CronError.INVALID_ARGUMENT` when interval is not positive) |
+| `at(int hour, int minute)` | Creates daily scheduler (`throws CronError.INVALID_ARGUMENT` when hour/minute is out of range) |
 | `schedule(CronTask task)` | Starts schedule immediately |
-| `scheduleWithDelay(Duration initialDelay, CronTask task)` | Starts with initial delay |
+| `scheduleWithDelay(Duration initialDelay, CronTask task)` | Starts with initial delay (`throws CronError.INVALID_ARGUMENT` when delay is negative) |
 | `cancel()` | Stops running schedule |
 | `isRunning()` | Returns running state |
 | `nextFireTime()` | Returns next execution time |
@@ -1709,11 +1711,11 @@ In-process pub/sub bus with optional asynchronous dispatch.
 |---|---|
 | `EventBus()` | Creates event bus |
 | `withAsync()` | Enables asynchronous dispatch mode |
-| `subscribe(string topic, EventHandler handler)` | Subscribes topic handler |
-| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler |
-| `publish(string topic, Variant eventData)` | Publishes event payload |
-| `unsubscribe(string topic)` | Removes all subscribers for topic |
-| `hasSubscribers(string topic)` | Returns subscriber existence |
+| `subscribe(string topic, EventHandler handler)` | Subscribes topic handler (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `publish(string topic, Variant eventData)` | Publishes event payload (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `unsubscribe(string topic)` | Removes all subscribers for topic (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `hasSubscribers(string topic)` | Returns subscriber existence (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
 | `clear()` | Clears all subscriptions |
 
 ## Vala.Conv.Convert
@@ -1781,16 +1783,16 @@ Cancellation and timeout context propagated across call boundaries.
 | Method | Description |
 |---|---|
 | `background()` | Creates root context |
-| `withCancel(Context parent)` | Creates cancellable child context |
-| `withTimeout(Context parent, Duration timeout)` | Creates timeout child context |
-| `withDeadline(Context parent, DateTime deadline)` | Creates deadline child context |
+| `withCancel(Context parent)` | Creates cancellable child context (`throws ContextError.INVALID_ARGUMENT` when parent is null) |
+| `withTimeout(Context parent, Duration timeout)` | Creates timeout child context (`throws ContextError.INVALID_ARGUMENT` when parent is null or timeout is negative) |
+| `withDeadline(Context parent, DateTime deadline)` | Creates deadline child context (`throws ContextError.INVALID_ARGUMENT` when parent is null) |
 | `cancel()` | Cancels this context |
 | `isCancelled()` | Returns cancellation state |
 | `error()` | Returns cancellation reason (`cancelled` / `timeout`) |
 | `remaining()` | Returns remaining time until deadline, or `null` when no deadline |
 | `done()` | Returns notification channel closed on cancellation |
-| `value(string key)` | Returns scoped value by key |
-| `withValue(string key, string value)` | Creates child context with key-value |
+| `value(string key)` | Returns scoped value by key (`throws ContextError.INVALID_ARGUMENT` when key is empty) |
+| `withValue(string key, string value)` | Creates child context with key-value (`throws ContextError.INVALID_ARGUMENT` when key is empty) |
 
 ### Vala.Lang.Os
 Operating system interface methods.
@@ -1817,19 +1819,19 @@ Wrapper for external process execution.
 Recommended failure checks: verify return value from `exec`/`execAsync`, call `waitFor()` for async runs, then inspect `exitCode()` and `stderr()`.
 
 ### Vala.Lang.Preconditions
-Fail-fast precondition checks for arguments and object state.
+Precondition checks for arguments and object state with recoverable errors.
 
 | Method | Description |
 |---|---|
-| `checkArgument(bool cond, string message)` | Validates method arguments and terminates the process immediately when invalid |
-| `checkState(bool cond, string message)` | Validates object state and terminates the process immediately when invalid |
+| `checkArgument(bool cond, string message)` | Validates method arguments and throws `PreconditionError.INVALID_ARGUMENT` when invalid |
+| `checkState(bool cond, string message)` | Validates object state and throws `PreconditionError.INVALID_STATE` when invalid |
 
 ### Vala.Lang.Exceptions
 Exception utility methods.
 
 | Method | Description |
 |---|---|
-| `sneakyThrow(GLib.Error e)` | Terminates the process immediately with the provided error (does not return) |
+| `sneakyThrow(GLib.Error e)` | Rethrows the provided error (preserves domain/code/message) |
 | `getStackTrace(GLib.Error e)` | Returns printable error details |
 
 ### Vala.Lang.SystemInfo
@@ -1871,7 +1873,7 @@ Convenience random utility methods. Prefer `Vala.Math.Random` for the full API.
 
 | Method | Description |
 |---|---|
-| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` (`throws RandomsError.INVALID_ARGUMENT` when `bound <= 0`) |
 | `nextDouble()` | Returns random double in `[0.0, 1.0)` |
 | `shuffle<T>(T[] array)` | Shuffles array in place |
 

@@ -10,11 +10,13 @@ void main (string[] args) {
     Test.add_func ("/concurrent/future/testFailed", testFailed);
     Test.add_func ("/concurrent/future/testAwaitTimeout", testAwaitTimeout);
     Test.add_func ("/concurrent/future/testAwaitTimeoutSuccess", testAwaitTimeoutSuccess);
+    Test.add_func ("/concurrent/future/testAwaitTimeoutInvalid", testAwaitTimeoutInvalid);
     Test.add_func ("/concurrent/future/testMap", testMap);
     Test.add_func ("/concurrent/future/testFlatMap", testFlatMap);
     Test.add_func ("/concurrent/future/testRecover", testRecover);
     Test.add_func ("/concurrent/future/testOnComplete", testOnComplete);
     Test.add_func ("/concurrent/future/testTimeout", testTimeout);
+    Test.add_func ("/concurrent/future/testTimeoutInvalid", testTimeoutInvalid);
     Test.add_func ("/concurrent/future/testCancel", testCancel);
     Test.add_func ("/concurrent/future/testOrElse", testOrElse);
     Test.add_func ("/concurrent/future/testAll", testAll);
@@ -22,6 +24,7 @@ void main (string[] args) {
     Test.add_func ("/concurrent/future/testAny", testAny);
     Test.add_func ("/concurrent/future/testRace", testRace);
     Test.add_func ("/concurrent/future/testDelayed", testDelayed);
+    Test.add_func ("/concurrent/future/testDelayedInvalid", testDelayedInvalid);
     Test.add_func ("/concurrent/future/testAllSettled", testAllSettled);
 
     Test.run ();
@@ -76,6 +79,16 @@ void testAwaitTimeoutSuccess () {
 
     int ? value = future.awaitTimeout (Duration.ofSeconds (1));
     assert (value == 5);
+}
+
+void testAwaitTimeoutInvalid () {
+    Future<string> future = Future<string>.completed<string> ("ok");
+
+    string ? value = future.awaitTimeout (Duration.ofSeconds (-1));
+    assert (value == null);
+    assert (future.isDone () == true);
+    assert (future.isSuccess () == true);
+    assert (future.@await () == "ok");
 }
 
 void testMap () {
@@ -144,6 +157,15 @@ void testTimeout () {
     assert (wrapped.isDone () == true);
     assert (wrapped.isFailed () == true);
     assert (wrapped.error () == "timeout");
+}
+
+void testTimeoutInvalid () {
+    Future<int> source = Future<int>.completed<int> (1);
+
+    Future<int> wrapped = source.timeout (Duration.ofSeconds (-1));
+    wrapped.@await ();
+    assert (wrapped.isFailed () == true);
+    assert (wrapped.error () == "timeout must be non-negative");
 }
 
 void testCancel () {
@@ -242,6 +264,16 @@ void testDelayed () {
     });
 
     assert (delayed.@await () == 11);
+}
+
+void testDelayedInvalid () {
+    Future<int> delayed = Future<int>.delayed<int> (Duration.ofSeconds (-1), () => {
+        return 11;
+    });
+
+    delayed.@await ();
+    assert (delayed.isFailed () == true);
+    assert (delayed.error () == "delay must be non-negative");
 }
 
 void testAllSettled () {

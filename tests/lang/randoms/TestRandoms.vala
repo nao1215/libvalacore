@@ -5,14 +5,19 @@ void main (string[] args) {
     Test.add_func ("/lang/randoms/testNextInt", testNextInt);
     Test.add_func ("/lang/randoms/testNextDouble", testNextDouble);
     Test.add_func ("/lang/randoms/testShuffle", testShuffle);
+    Test.add_func ("/lang/randoms/testNextIntInvalidBound", testNextIntInvalidBound);
     Test.run ();
 }
 
 void testNextInt () {
-    for (int i = 0; i < 100; i++) {
-        int n = Randoms.nextInt (10);
-        assert (n >= 0);
-        assert (n < 10);
+    try {
+        for (int i = 0; i < 100; i++) {
+            int n = Randoms.nextInt (10);
+            assert (n >= 0);
+            assert (n < 10);
+        }
+    } catch (RandomsError e) {
+        assert_not_reached ();
     }
 }
 
@@ -60,4 +65,15 @@ void testShuffle () {
     string[] empty = {};
     Randoms.shuffle (empty);
     assert (empty.length == 0);
+}
+
+void testNextIntInvalidBound () {
+    bool thrown = false;
+    try {
+        Randoms.nextInt (0);
+    } catch (RandomsError e) {
+        thrown = true;
+        assert (e is RandomsError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

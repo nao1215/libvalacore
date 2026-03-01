@@ -8,12 +8,21 @@ void main (string[] args) {
     Test.add_func ("/collections/hyperloglog/testMerge", testMerge);
     Test.add_func ("/collections/hyperloglog/testSerialize", testSerialize);
     Test.add_func ("/collections/hyperloglog/testClear", testClear);
+    Test.add_func ("/collections/hyperloglog/testInvalidArguments", testInvalidArguments);
 
     Test.run ();
 }
 
+HyperLogLog createEstimator (double error_rate = 0.01) {
+    try {
+        return new HyperLogLog (error_rate);
+    } catch (HyperLogLogError e) {
+        assert_not_reached ();
+    }
+}
+
 void testCountEstimate () {
-    var hll = new HyperLogLog (0.01);
+    var hll = createEstimator (0.01);
     for (int i = 0; i < 10000; i++) {
         hll.add ("user-%d".printf (i));
     }
@@ -29,7 +38,7 @@ void testCountEstimate () {
 }
 
 void testAddBytes () {
-    var hll = new HyperLogLog (0.02);
+    var hll = createEstimator (0.02);
 
     for (int i = 0; i < 2000; i++) {
         string value = "byte-%d".printf (i);
@@ -42,8 +51,8 @@ void testAddBytes () {
 }
 
 void testMerge () {
-    var left = new HyperLogLog (0.01);
-    var right = new HyperLogLog (0.01);
+    var left = createEstimator (0.01);
+    var right = createEstimator (0.01);
 
     for (int i = 0; i < 4000; i++) {
         left.add ("id-%d".printf (i));
@@ -59,7 +68,7 @@ void testMerge () {
 }
 
 void testSerialize () {
-    var source = new HyperLogLog (0.01);
+    var source = createEstimator (0.01);
     for (int i = 0; i < 5000; i++) {
         source.add ("serialize-%d".printf (i));
     }
@@ -79,7 +88,7 @@ void testSerialize () {
 }
 
 void testClear () {
-    var hll = new HyperLogLog ();
+    var hll = createEstimator ();
     for (int i = 0; i < 1000; i++) {
         hll.add ("x-%d".printf (i));
     }
@@ -87,4 +96,42 @@ void testClear () {
 
     hll.clear ();
     assert (hll.count () == 0);
+}
+
+void testInvalidArguments () {
+    bool thrown = false;
+    try {
+        new HyperLogLog (0.0);
+    } catch (HyperLogLogError e) {
+        thrown = true;
+        assert (e is HyperLogLogError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        new HyperLogLog (1.0);
+    } catch (HyperLogLogError e) {
+        thrown = true;
+        assert (e is HyperLogLogError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        new HyperLogLog (-0.5);
+    } catch (HyperLogLogError e) {
+        thrown = true;
+        assert (e is HyperLogLogError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        new HyperLogLog (1.5);
+    } catch (HyperLogLogError e) {
+        thrown = true;
+        assert (e is HyperLogLogError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

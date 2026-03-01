@@ -1,5 +1,12 @@
 namespace Vala.Collections {
     /**
+     * Recoverable HyperLogLog argument errors.
+     */
+    public errordomain HyperLogLogError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * HyperLogLog cardinality estimator.
      *
      * HyperLogLog estimates unique count with fixed memory usage.
@@ -17,10 +24,11 @@ namespace Vala.Collections {
          * Creates HyperLogLog with target error rate.
          *
          * @param errorRate target relative error rate.
+         * @throws HyperLogLogError.INVALID_ARGUMENT when errorRate is outside (0, 1).
          */
-        public HyperLogLog (double errorRate = 0.01) {
+        public HyperLogLog (double errorRate = 0.01) throws HyperLogLogError {
             if (errorRate <= 0.0 || errorRate >= 1.0) {
-                GLib.error ("errorRate must be in range (0, 1)");
+                throw new HyperLogLogError.INVALID_ARGUMENT ("errorRate must be in range (0, 1)");
             }
 
             _precision = precisionForErrorRate (errorRate);

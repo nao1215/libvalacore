@@ -1,5 +1,12 @@
 namespace Vala.Io {
     /**
+     * Recoverable AtomicFile argument errors.
+     */
+    public errordomain AtomicFileError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Atomic file update helper.
      *
      * AtomicFile writes data by replacing file contents in a single step,
@@ -41,10 +48,11 @@ namespace Vala.Io {
          *
          * @param suffix backup suffix such as ".bak".
          * @return this AtomicFile instance.
+         * @throws AtomicFileError.INVALID_ARGUMENT when suffix is empty.
          */
-        public AtomicFile backupSuffix (string suffix) {
+        public AtomicFile backupSuffix (string suffix) throws AtomicFileError {
             if (suffix.length == 0) {
-                error ("suffix must not be empty");
+                throw new AtomicFileError.INVALID_ARGUMENT ("suffix must not be empty");
             }
             _backup_suffix = suffix;
             return this;

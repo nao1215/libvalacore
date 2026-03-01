@@ -10,6 +10,7 @@ void main (string[] args) {
     Test.add_func ("/io/shell/testPipe", testPipe);
     Test.add_func ("/io/shell/testWhich", testWhich);
     Test.add_func ("/io/shell/testLines", testLines);
+    Test.add_func ("/io/shell/testExecWithTimeoutInvalid", testExecWithTimeoutInvalid);
     Test.run ();
 }
 
@@ -37,7 +38,12 @@ void testExecQuiet () {
 }
 
 void testExecWithTimeout () {
-    ShellResult result = Vala.Io.Shell.execWithTimeout ("sleep 2", Duration.ofSeconds (1));
+    ShellResult result;
+    try {
+        result = Vala.Io.Shell.execWithTimeout ("sleep 2", Duration.ofSeconds (1));
+    } catch (Vala.Io.ShellError e) {
+        assert_not_reached ();
+    }
 
     assert (result.isSuccess () == false);
     assert (result.durationMillis () >= 900);
@@ -68,4 +74,15 @@ void testLines () {
 
     var errLines = result.stderrLines ();
     assert (errLines.length () == 0);
+}
+
+void testExecWithTimeoutInvalid () {
+    bool thrown = false;
+    try {
+        Vala.Io.Shell.execWithTimeout ("echo hello", Duration.ofSeconds (-1));
+    } catch (Vala.Io.ShellError e) {
+        thrown = true;
+        assert (e is Vala.Io.ShellError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

@@ -8,15 +8,33 @@ void main (string[] args) {
     Test.add_func ("/concurrent/singleflight/testDoFutureSharesExecution", testDoFutureSharesExecution);
     Test.add_func ("/concurrent/singleflight/testForget", testForget);
     Test.add_func ("/concurrent/singleflight/testClear", testClear);
+    Test.add_func ("/concurrent/singleflight/testDoInvalidKey", testDoInvalidKey);
+    Test.add_func ("/concurrent/singleflight/testDoFutureInvalidKey", testDoFutureInvalidKey);
+    Test.add_func ("/concurrent/singleflight/testDoTypeMismatch", testDoTypeMismatch);
 
     Test.run ();
+}
+
+int mustDoInt (SingleFlight group, string key, owned SingleFlightFunc<int> fn) {
+    int result = 0;
+    bool succeeded = false;
+    try {
+        result = group.@do<int> (key, fn);
+        succeeded = true;
+    } catch (SingleFlightError e) {
+        assert_not_reached ();
+    }
+    if (!succeeded) {
+        assert_not_reached ();
+    }
+    return result;
 }
 
 void testDo () {
     var group = new SingleFlight ();
     int called = 0;
 
-    int value = group.@do<int> ("k1", () => {
+    int value = mustDoInt (group, "k1", () => {
         called++;
         return 42;
     });
@@ -37,12 +55,16 @@ void testDoSharesExecution () {
     int second = 0;
 
     new GLib.Thread<void *> ("singleflight-test-1", () => {
-        first = group.@do<int> ("same-key", () => {
-            called++;
-            started.countDown ();
-            release.@await ();
-            return 7;
-        });
+        try {
+            first = group.@do<int> ("same-key", () => {
+                called++;
+                started.countDown ();
+                release.@await ();
+                return 7;
+            });
+        } catch (SingleFlightError e) {
+            assert_not_reached ();
+        }
         done.countDown ();
         return null;
     });
@@ -50,10 +72,14 @@ void testDoSharesExecution () {
     started.@await ();
 
     new GLib.Thread<void *> ("singleflight-test-2", () => {
-        second = group.@do<int> ("same-key", () => {
-            called += 100;
-            return 999;
-        });
+        try {
+            second = group.@do<int> ("same-key", () => {
+                called += 100;
+                return 999;
+            });
+        } catch (SingleFlightError e) {
+            assert_not_reached ();
+        }
         done.countDown ();
         return null;
     });
@@ -109,11 +135,15 @@ void testForget () {
     var done = new CountDownLatch (1);
 
     new GLib.Thread<void *> ("singleflight-test-forget", () => {
-        group.@do<int> ("forget-key", () => {
-            started.countDown ();
-            release.@await ();
-            return 1;
-        });
+        try {
+            group.@do<int> ("forget-key", () => {
+                started.countDown ();
+                release.@await ();
+                return 1;
+            });
+        } catch (SingleFlightError e) {
+            assert_not_reached ();
+        }
         done.countDown ();
         return null;
     });
@@ -157,4 +187,65 @@ void testClear () {
     release.countDown ();
     assert (first.@await () == 1);
     assert (second.@await () == 2);
+}
+
+void testDoInvalidKey () {
+    var group = new SingleFlight ();
+    bool thrown = false;
+    try {
+        group.@do<int> ("", () => {
+            return 0;
+        });
+    } catch (SingleFlightError e) {
+        thrown = true;
+        assert (e is SingleFlightError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+}
+
+void testDoFutureInvalidKey () {
+    var group = new SingleFlight ();
+    Future<int> future = group.doFuture<int> ("", () => {
+        return 1;
+    });
+    future.@await ();
+    assert (future.isFailed () == true);
+    assert (future.error () == "key must not be empty");
+}
+
+void testDoTypeMismatch () {
+    var group = new SingleFlight ();
+    var started = new CountDownLatch (1);
+    var release = new CountDownLatch (1);
+    var done = new CountDownLatch (1);
+
+    new GLib.Thread<void *> ("singleflight-type-mismatch", () => {
+        try {
+            group.@do<int> ("mixed-key", () => {
+                started.countDown ();
+                release.@await ();
+                return 10;
+            });
+        } catch (SingleFlightError e) {
+            assert_not_reached ();
+        }
+        done.countDown ();
+        return null;
+    });
+
+    started.@await ();
+
+    bool thrown = false;
+    try {
+        group.@do<string> ("mixed-key", () => {
+            return "x";
+        });
+    } catch (SingleFlightError e) {
+        thrown = true;
+        assert (e is SingleFlightError.TYPE_MISMATCH);
+    }
+    assert (thrown);
+
+    release.countDown ();
+    done.@await ();
 }
