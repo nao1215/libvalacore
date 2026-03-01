@@ -230,6 +230,15 @@ void testInvalidConfigurations () {
     }
     assert (backoffRangeThrown);
 
+    bool backoffMaxThrown = false;
+    try {
+        retry.withBackoff (Duration.ofSeconds (1), Duration.ofSeconds (-1));
+    } catch (RetryError e) {
+        backoffMaxThrown = true;
+        assert (e is RetryError.INVALID_ARGUMENT);
+    }
+    assert (backoffMaxThrown);
+
     bool fixedDelayThrown = false;
     try {
         retry.withFixedDelay (Duration.ofSeconds (-1));

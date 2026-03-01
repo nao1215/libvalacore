@@ -235,11 +235,14 @@ namespace Vala.Math {
          *
          * @param n non-negative integer.
          * @return factorial value.
-         * @throws MathError.INVALID_ARGUMENT when n is negative.
+         * @throws MathError.INVALID_ARGUMENT when n is outside [0, 20].
          */
         public static int64 factorial (int n) throws MathError {
             if (n < 0) {
                 throw new MathError.INVALID_ARGUMENT ("n must be non-negative");
+            }
+            if (n > 20) {
+                throw new MathError.INVALID_ARGUMENT ("n must be in range [0, 20]");
             }
 
             int64 result = 1;

@@ -100,4 +100,13 @@ void testInvalidArguments () {
         assert (e is MathError.INVALID_ARGUMENT);
     }
     assert (factorialThrown);
+
+    factorialThrown = false;
+    try {
+        Vala.Math.Math.factorial (21);
+    } catch (MathError e) {
+        factorialThrown = true;
+        assert (e is MathError.INVALID_ARGUMENT);
+    }
+    assert (factorialThrown);
 }

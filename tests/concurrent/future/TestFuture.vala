@@ -86,6 +86,9 @@ void testAwaitTimeoutInvalid () {
 
     string ? value = future.awaitTimeout (Duration.ofSeconds (-1));
     assert (value == null);
+    assert (future.isDone () == true);
+    assert (future.isSuccess () == true);
+    assert (future.@await () == "ok");
 }
 
 void testMap () {

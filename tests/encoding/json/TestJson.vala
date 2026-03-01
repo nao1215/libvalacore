@@ -156,6 +156,7 @@ void testObjectBuilderSnapshot () {
     assert (first.isObject ());
     assert (first.get ("a") != null);
     assert (first.get ("b") == null);
+    assert (second.get ("a") == null);
     assert (second.get ("b") != null);
 }
 

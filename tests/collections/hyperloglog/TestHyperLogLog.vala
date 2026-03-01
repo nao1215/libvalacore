@@ -107,4 +107,13 @@ void testInvalidArguments () {
         assert (e is HyperLogLogError.INVALID_ARGUMENT);
     }
     assert (thrown);
+
+    thrown = false;
+    try {
+        new HyperLogLog (1.0);
+    } catch (HyperLogLogError e) {
+        thrown = true;
+        assert (e is HyperLogLogError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

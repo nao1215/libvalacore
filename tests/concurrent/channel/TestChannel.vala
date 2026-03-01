@@ -278,12 +278,30 @@ void testBufferedIntInvalidCapacity () {
         assert (e is ChannelError.INVALID_ARGUMENT);
     }
     assert (thrown);
+
+    thrown = false;
+    try {
+        ChannelInt.buffered (-1);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }
 
 void testBufferedStringInvalidCapacity () {
     bool thrown = false;
     try {
         ChannelString.buffered (0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        ChannelString.buffered (-1);
     } catch (ChannelError e) {
         thrown = true;
         assert (e is ChannelError.INVALID_ARGUMENT);
@@ -314,6 +332,15 @@ void testGenericBufferedInvalidCapacity () {
     bool thrown = false;
     try {
         Channel.buffered<int> (0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        Channel.buffered<int> (-1);
     } catch (ChannelError e) {
         thrown = true;
         assert (e is ChannelError.INVALID_ARGUMENT);
@@ -409,6 +436,15 @@ void testGenericFanOutInvalidN () {
     bool thrown = false;
     try {
         Channel.fanOut<int> (src, 0);
+    } catch (ChannelError e) {
+        thrown = true;
+        assert (e is ChannelError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+
+    thrown = false;
+    try {
+        Channel.fanOut<int> (src, -1);
     } catch (ChannelError e) {
         thrown = true;
         assert (e is ChannelError.INVALID_ARGUMENT);

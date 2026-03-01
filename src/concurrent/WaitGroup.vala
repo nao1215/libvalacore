@@ -32,7 +32,7 @@ namespace Vala.Concurrent {
             int next = _count + delta;
             if (next < 0) {
                 _mutex.unlock ();
-                message ("WaitGroup counter cannot be negative");
+                warning ("WaitGroup counter cannot be negative (attempted next=%d)", next);
                 return;
             }
 

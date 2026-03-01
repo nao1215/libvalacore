@@ -7,7 +7,8 @@ namespace Vala.Io {
      */
     public errordomain WatcherError {
         INVALID_ARGUMENT,
-        PATH_NOT_FOUND
+        PATH_NOT_FOUND,
+        MONITOR_SETUP_FAILED
     }
 
     /**
@@ -105,15 +106,20 @@ namespace Vala.Io {
                 );
             }
 
-            if (recursive) {
-                if (!Files.isDir (root)) {
-                    throw new WatcherError.INVALID_ARGUMENT (
-                              "watchRecursive/watchGlob requires directory path"
-                    );
+            try {
+                if (recursive) {
+                    if (!Files.isDir (root)) {
+                        throw new WatcherError.INVALID_ARGUMENT (
+                                  "watchRecursive/watchGlob requires directory path"
+                        );
+                    }
+                    attachDirectoryRecursive (root);
+                } else {
+                    attachSinglePath (root);
                 }
-                attachDirectoryRecursive (root);
-            } else {
-                attachSinglePath (root);
+            } catch (WatcherError e) {
+                close ();
+                throw e;
             }
         }
 
@@ -200,7 +206,7 @@ namespace Vala.Io {
             close ();
         }
 
-        private void attachSinglePath (Path path) {
+        private void attachSinglePath (Path path) throws WatcherError {
             if (Files.isDir (path)) {
                 attachDirectoryMonitor (path);
                 return;
@@ -212,11 +218,13 @@ namespace Vala.Io {
                 connectMonitor (monitor);
                 _monitors.add (monitor);
             } catch (Error e) {
-                warning ("failed to monitor file: %s", path.toString ());
+                throw new WatcherError.MONITOR_SETUP_FAILED (
+                          "failed to monitor file `%s`: %s".printf (path.toString (), e.message)
+                );
             }
         }
 
-        private void attachDirectoryRecursive (Path dir) {
+        private void attachDirectoryRecursive (Path dir) throws WatcherError {
             if (_watched_dirs.containsKey (dir.toString ())) {
                 return;
             }
@@ -237,14 +245,16 @@ namespace Vala.Io {
             }
         }
 
-        private void attachDirectoryMonitor (Path dir) {
+        private void attachDirectoryMonitor (Path dir) throws WatcherError {
             var file = GLib.File.new_for_path (dir.toString ());
             try {
                 GLib.FileMonitor monitor = file.monitor_directory (FileMonitorFlags.NONE);
                 connectMonitor (monitor);
                 _monitors.add (monitor);
             } catch (Error e) {
-                warning ("failed to monitor directory: %s", dir.toString ());
+                throw new WatcherError.MONITOR_SETUP_FAILED (
+                          "failed to monitor directory `%s`: %s".printf (dir.toString (), e.message)
+                );
             }
         }
 
@@ -273,7 +283,11 @@ namespace Vala.Io {
                      eventType == GLib.FileMonitorEvent.MOVED_IN) &&
                     Files.isDir (primaryPath) &&
                     !Files.isSymbolicFile (primaryPath)) {
-                    attachDirectoryRecursive (primaryPath);
+                    try {
+                        attachDirectoryRecursive (primaryPath);
+                    } catch (WatcherError e) {
+                        warning ("failed to attach recursive monitor: %s", e.message);
+                    }
                 }
 
                 switch (eventType) {
@@ -439,6 +453,7 @@ namespace Vala.Io {
          * @param path target path.
          * @return watcher instance.
          * @throws WatcherError.PATH_NOT_FOUND when path does not exist.
+         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
          */
         public static FileWatcher watch (Path path) throws WatcherError {
             return new FileWatcher (path, false, null);
@@ -451,6 +466,7 @@ namespace Vala.Io {
          * @return watcher instance.
          * @throws WatcherError.PATH_NOT_FOUND when root does not exist.
          * @throws WatcherError.INVALID_ARGUMENT when root is not a directory.
+         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
          */
         public static FileWatcher watchRecursive (Path root) throws WatcherError {
             return new FileWatcher (root, true, null);
@@ -464,6 +480,7 @@ namespace Vala.Io {
          * @return watcher instance.
          * @throws WatcherError.PATH_NOT_FOUND when root does not exist.
          * @throws WatcherError.INVALID_ARGUMENT when root is not a directory.
+         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
          */
         public static FileWatcher watchGlob (Path root, string glob) throws WatcherError {
             return new FileWatcher (root, true, glob);

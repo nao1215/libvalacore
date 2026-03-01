@@ -827,10 +827,15 @@ namespace Vala.Encoding {
          * @throws JsonError.NOT_FOUND when no value exists at path.
          */
         public static JsonValue must (JsonValue root, string path) throws JsonError {
-            if (path.strip ().length == 0) {
+            string p = path.strip ();
+            if (p.length == 0) {
                 throw new JsonError.INVALID_PATH ("path must not be empty");
             }
-            JsonValue ? v = query (root, path);
+            if (!isValidQueryPathSyntax (p)) {
+                throw new JsonError.INVALID_PATH ("invalid path: %s".printf (path));
+            }
+
+            JsonValue ? v = query (root, p);
             if (v == null) {
                 throw new JsonError.NOT_FOUND ("value is required at path: %s".printf (path));
             }
@@ -1520,6 +1525,57 @@ namespace Vala.Encoding {
         }
 
         // --- Query engine ---
+
+        private static bool isValidQueryPathSyntax (string p) {
+            if (p == "$") {
+                return true;
+            }
+            if (!p.has_prefix ("$.")) {
+                return false;
+            }
+
+            string rest = p.substring (2);
+            if (rest.length == 0) {
+                return false;
+            }
+
+            int pos = 0;
+            while (pos < rest.length) {
+                if (rest[pos] == '.') {
+                    return false;
+                }
+
+                if (rest[pos] == '[') {
+                    int close = rest.index_of ("]", pos);
+                    if (close < 0) {
+                        return false;
+                    }
+
+                    string idx = rest.substring (pos + 1, close - pos - 1);
+                    int64 parsed;
+                    if (idx.length == 0 || !int64.try_parse (idx, out parsed)) {
+                        return false;
+                    }
+                    pos = close + 1;
+                } else {
+                    int start = pos;
+                    while (pos < rest.length && rest[pos] != '.' && rest[pos] != '[') {
+                        pos++;
+                    }
+                    if (pos == start) {
+                        return false;
+                    }
+                }
+
+                if (pos < rest.length && rest[pos] == '.') {
+                    pos++;
+                    if (pos >= rest.length) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         private static JsonValue ? queryPath (JsonValue current, string path) {
             if (path.length == 0) {

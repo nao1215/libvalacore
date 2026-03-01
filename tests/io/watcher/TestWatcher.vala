@@ -3,6 +3,8 @@ using Vala.Time;
 
 delegate bool ConditionFunc ();
 
+delegate FileWatcher WatchFactory () throws WatcherError;
+
 void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/io/watcher/testWatchCreateDelete", testWatchCreateDelete);
@@ -38,10 +40,10 @@ bool waitUntil (owned ConditionFunc cond, int timeoutMillis) {
     return false;
 }
 
-FileWatcher mustWatch (Vala.Io.Path path) {
+FileWatcher mustWatchWith (owned WatchFactory fn) {
     FileWatcher ? watcher = null;
     try {
-        watcher = Watcher.watch (path);
+        watcher = fn ();
     } catch (WatcherError e) {
         assert_not_reached ();
     }
@@ -49,32 +51,24 @@ FileWatcher mustWatch (Vala.Io.Path path) {
         assert_not_reached ();
     }
     return watcher;
+}
+
+FileWatcher mustWatch (Vala.Io.Path path) {
+    return mustWatchWith (() => {
+        return Watcher.watch (path);
+    });
 }
 
 FileWatcher mustWatchRecursive (Vala.Io.Path root) {
-    FileWatcher ? watcher = null;
-    try {
-        watcher = Watcher.watchRecursive (root);
-    } catch (WatcherError e) {
-        assert_not_reached ();
-    }
-    if (watcher == null) {
-        assert_not_reached ();
-    }
-    return watcher;
+    return mustWatchWith (() => {
+        return Watcher.watchRecursive (root);
+    });
 }
 
 FileWatcher mustWatchGlob (Vala.Io.Path root, string glob) {
-    FileWatcher ? watcher = null;
-    try {
-        watcher = Watcher.watchGlob (root, glob);
-    } catch (WatcherError e) {
-        assert_not_reached ();
-    }
-    if (watcher == null) {
-        assert_not_reached ();
-    }
-    return watcher;
+    return mustWatchWith (() => {
+        return Watcher.watchGlob (root, glob);
+    });
 }
 
 void testWatchCreateDelete () {
@@ -221,9 +215,10 @@ void testDebounce () {
 }
 
 void testWatchMissingPath () {
+    string missing = GLib.Path.build_filename (Environment.get_tmp_dir (), "missing-watcher-" + GLib.Uuid.string_random ());
     bool thrown = false;
     try {
-        Watcher.watch (new Vala.Io.Path ("/tmp/valacore/ut/missing_watcher_path"));
+        Watcher.watch (new Vala.Io.Path (missing));
     } catch (WatcherError e) {
         thrown = true;
         assert (e is WatcherError.PATH_NOT_FOUND);

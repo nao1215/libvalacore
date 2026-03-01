@@ -158,6 +158,10 @@ void testInvalidArguments () {
     bool countThrown = false;
     try {
         ring.addNode ("n1");
+    } catch (ConsistentHashError e) {
+        assert_not_reached ();
+    }
+    try {
         ring.getNodes ("k", 0);
     } catch (ConsistentHashError e) {
         countThrown = true;

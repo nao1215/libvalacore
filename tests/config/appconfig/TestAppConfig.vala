@@ -21,7 +21,12 @@ void testLoadFile () {
     try {
         assert (Files.writeText (file, "host=127.0.0.1\nport=8080\n") == true);
 
-        AppConfig config = AppConfig.loadFile (file);
+        AppConfig config;
+        try {
+            config = AppConfig.loadFile (file);
+        } catch (AppConfigError e) {
+            assert_not_reached ();
+        }
         try {
             assert (config.getString ("host", "") == "127.0.0.1");
             assert (config.getInt ("port", 0) == 8080);
@@ -48,9 +53,14 @@ void testPrecedence () {
         assert (Files.writeText (file, "host=file-host\n") == true);
 
         string[] cli = { "--host=cli-host" };
-        AppConfig config = AppConfig.loadFile (file)
-                            .withEnvPrefix ("MYAPP_")
-                            .withCliArgs (cli);
+        AppConfig config;
+        try {
+            config = AppConfig.loadFile (file)
+                      .withEnvPrefix ("MYAPP_")
+                      .withCliArgs (cli);
+        } catch (AppConfigError e) {
+            assert_not_reached ();
+        }
 
         try {
             assert (config.getString ("host", "") == "cli-host");
@@ -164,4 +174,13 @@ void testInvalidArguments () {
         assert (e is AppConfigError.INVALID_ARGUMENT);
     }
     assert (keyThrown);
+
+    bool loadFileThrown = false;
+    try {
+        AppConfig.loadFile (new Vala.Io.Path ("/tmp/valacore/ut/appconfig-missing.properties"));
+    } catch (AppConfigError e) {
+        loadFileThrown = true;
+        assert (e is AppConfigError.INVALID_ARGUMENT);
+    }
+    assert (loadFileThrown);
 }

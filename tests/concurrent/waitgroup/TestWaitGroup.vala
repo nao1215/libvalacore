@@ -57,12 +57,22 @@ void testWaitBlocksUntilDone () {
 void testDoneUnderflowNoOp () {
     Vala.Concurrent.WaitGroup wg = new Vala.Concurrent.WaitGroup ();
 
+    int64 start = GLib.get_monotonic_time ();
+    Test.expect_message (
+        null,
+        GLib.LogLevelFlags.LEVEL_WARNING,
+        "*WaitGroup counter cannot be negative*"
+    );
     wg.done ();
+    Test.assert_expected_messages ();
     wg.wait ();
+    int64 first_wait_millis = (GLib.get_monotonic_time () - start) / 1000;
+    assert (first_wait_millis < 50);
 
+    start = GLib.get_monotonic_time ();
     wg.add (1);
     wg.done ();
     wg.wait ();
-
-    assert (true);
+    int64 second_wait_millis = (GLib.get_monotonic_time () - start) / 1000;
+    assert (second_wait_millis < 50);
 }

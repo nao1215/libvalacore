@@ -12,14 +12,11 @@ void main (string[] args) {
 }
 
 RateLimiter mustRateLimiter (int permits_per_second, int burst) {
-    RateLimiter ? limiter = null;
+    RateLimiter limiter;
     try {
         limiter = new RateLimiter (permits_per_second);
         limiter.withBurst (burst);
     } catch (RateLimiterError e) {
-        assert_not_reached ();
-    }
-    if (limiter == null) {
         assert_not_reached ();
     }
     return limiter;

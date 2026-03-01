@@ -104,14 +104,14 @@ void testLargeValues () {
 }
 
 void testInvalidArguments () {
-    bool textThrown = false;
+    bool emptyInputThrown = false;
     try {
         new BigInteger ("");
     } catch (BigIntegerError e) {
-        textThrown = true;
+        emptyInputThrown = true;
         assert (e is BigIntegerError.INVALID_ARGUMENT);
     }
-    assert (textThrown);
+    assert (emptyInputThrown);
 
     bool divThrown = false;
     try {

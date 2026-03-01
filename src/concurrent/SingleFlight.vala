@@ -162,14 +162,13 @@ namespace Vala.Concurrent {
             var future = Future<T>.pending<T> ();
 
             var group = this;
-            new GLib.Thread<void *> ("singleflight-future", () => {
+            ThreadPool.go (() => {
                 try {
                     T result = group.@do<T> (key, captured);
                     future.completeSuccess ((owned) result);
                 } catch (SingleFlightError e) {
                     future.completeFailure (e.message);
                 }
-                return null;
             });
             return future;
         }

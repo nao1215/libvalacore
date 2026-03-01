@@ -85,8 +85,14 @@ namespace Vala.Config {
          *
          * @param path config file path.
          * @return loaded AppConfig.
+         * @throws AppConfigError.INVALID_ARGUMENT when path is empty or not a file.
          */
-        public static AppConfig loadFile (Vala.Io.Path path) {
+        public static AppConfig loadFile (Vala.Io.Path path) throws AppConfigError {
+            if (path.toString ().strip ().length == 0 || !Files.isFile (path)) {
+                throw new AppConfigError.INVALID_ARGUMENT (
+                          "path must reference an existing file: %s".printf (path.toString ())
+                );
+            }
             var config = new AppConfig ();
             config.loadFromFile (path);
             return config;

@@ -131,4 +131,15 @@ void testInvalidArguments () {
         assert (e is SnowflakeError.CLOCK_BEFORE_EPOCH);
     }
     assert (clockThrown);
+
+    bool overflowThrown = false;
+    try {
+        Vala.Time.DateTime oldEpoch = createDateTime (1900, 1, 1, 0, 0, 0);
+        Snowflake generator = createGenerator (1).withEpoch (oldEpoch);
+        generator.nextId ();
+    } catch (SnowflakeError e) {
+        overflowThrown = true;
+        assert (e is SnowflakeError.TIMESTAMP_OVERFLOW);
+    }
+    assert (overflowThrown);
 }

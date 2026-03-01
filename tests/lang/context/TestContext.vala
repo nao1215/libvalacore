@@ -60,14 +60,9 @@ Context mustWithDeadline (Context parent, Vala.Time.DateTime deadline) {
 
 string ? mustValue (Context ctx, string key) {
     string ? result = null;
-    bool succeeded = false;
     try {
         result = ctx.value (key);
-        succeeded = true;
     } catch (ContextError e) {
-        assert_not_reached ();
-    }
-    if (!succeeded) {
         assert_not_reached ();
     }
     return result;

@@ -77,7 +77,20 @@ namespace Vala.Io {
                 );
             }
 
-            int64 deadlineMicros = GLib.get_monotonic_time () + (timeoutMillis * 1000);
+            int64 nowMicros = GLib.get_monotonic_time ();
+            int64 timeoutMicros;
+            if (timeoutMillis > int64.MAX / 1000) {
+                timeoutMicros = int64.MAX;
+            } else {
+                timeoutMicros = timeoutMillis * 1000;
+            }
+
+            int64 deadlineMicros;
+            if (timeoutMicros == int64.MAX || nowMicros > int64.MAX - timeoutMicros) {
+                deadlineMicros = int64.MAX;
+            } else {
+                deadlineMicros = nowMicros + timeoutMicros;
+            }
             while (true) {
                 if (GLib.get_monotonic_time () > deadlineMicros) {
                     return false;

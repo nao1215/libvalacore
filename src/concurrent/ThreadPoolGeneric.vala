@@ -233,6 +233,7 @@ namespace Vala.Concurrent {
          * Waits for worker termination up to timeout.
          *
          * @param timeout maximum wait duration.
+         * Returns false immediately when timeout is negative.
          * @return true when all workers terminated within timeout.
          */
         public bool awaitTermination (Duration timeout) {

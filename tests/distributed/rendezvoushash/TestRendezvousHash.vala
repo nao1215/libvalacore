@@ -165,6 +165,10 @@ void testInvalidArguments () {
     bool nThrown = false;
     try {
         hash.addNode ("n1");
+    } catch (RendezvousHashError e) {
+        assert_not_reached ();
+    }
+    try {
         hash.getTopNodes ("k", 0);
     } catch (RendezvousHashError e) {
         nThrown = true;

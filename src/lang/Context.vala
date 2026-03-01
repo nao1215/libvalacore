@@ -32,8 +32,8 @@ namespace Vala.Lang {
             try {
                 _done = ChannelInt.buffered (1);
             } catch (ChannelError e) {
-                // Capacity is constant and valid; fallback keeps constructor non-throwing.
-                _done = new ChannelInt ();
+                // Capacity is constant and valid; this path should never happen.
+                assert_not_reached ();
             }
             _local_values = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             _cancelled = false;
@@ -274,7 +274,9 @@ namespace Vala.Lang {
             _error_message = reason;
             _mutex.unlock ();
 
-            _done.trySend (1);
+            if (!_done.trySend (1)) {
+                warning ("context done signal was not delivered");
+            }
             _done.close ();
         }
     }

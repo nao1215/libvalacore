@@ -251,13 +251,21 @@ namespace Vala.Archive {
                 return false;
             }
 
-            if (Files.exists (dest) && !Files.remove (dest)) {
+            bool hadDest = Files.exists (dest);
+            Vala.Io.Path backup = parent.resolve (".tar-dest-backup-%s.tmp".printf (GLib.Uuid.string_random ()));
+            if (hadDest && !Files.move (dest, backup)) {
                 Files.remove (temp);
                 return false;
             }
             if (!Files.move (temp, dest)) {
+                if (hadDest && Files.exists (backup)) {
+                    Files.move (backup, dest);
+                }
                 Files.remove (temp);
                 return false;
+            }
+            if (hadDest && Files.exists (backup)) {
+                Files.remove (backup);
             }
             return true;
         }
