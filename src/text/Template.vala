@@ -312,8 +312,29 @@ namespace Vala.Text {
          */
         public static CompiledTemplate compile (string template) {
             int pos = 0;
-            string ? stopped = null;
-            TemplateSegment[] segments = parseSegments (template, ref pos, out stopped);
+            var merged = new GLib.Array<TemplateSegment> ();
+
+            while (pos < template.length) {
+                string ? stopped = null;
+                TemplateSegment[] segments = parseSegments (template, ref pos, out stopped);
+                for (int i = 0; i < segments.length; i++) {
+                    merged.append_val (segments[i]);
+                }
+
+                if (stopped == null) {
+                    break;
+                }
+
+                string literal = stopTokenToLiteral (stopped);
+                if (literal.length > 0) {
+                    merged.append_val (new TemplateSegment (TemplateSegment.Kind.LITERAL, literal));
+                }
+            }
+
+            TemplateSegment[] segments = new TemplateSegment[merged.length];
+            for (uint i = 0; i < merged.length; i++) {
+                segments[i] = merged.index (i);
+            }
             return new CompiledTemplate (segments);
         }
 
@@ -486,6 +507,19 @@ namespace Vala.Text {
             var seg = new TemplateSegment (TemplateSegment.Kind.FALLBACK, varName);
             seg.fallback_value = defaultVal;
             segments.append_val (seg);
+        }
+
+        private static string stopTokenToLiteral (string token) {
+            if (token == STOP_ELSE) {
+                return "{{else}}";
+            }
+            if (token == STOP_ENDIF) {
+                return "{{/if}}";
+            }
+            if (token == STOP_ENDEACH) {
+                return "{{/each}}";
+            }
+            return "";
         }
     }
 }
