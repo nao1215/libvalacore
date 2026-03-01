@@ -58,6 +58,75 @@ namespace Vala.Collections {
         }
 
         /**
+         * Creates a Stream from an array.
+         *
+         * Example:
+         * {{{
+         *     var s = Stream.of<string> ({ "a", "b", "c" });
+         * }}}
+         *
+         * @param values the source array.
+         * @return a new Stream over array elements.
+         */
+        public static Stream<T> of<T> (T[] values) {
+            var list = new ArrayList<T> ();
+            for (int i = 0; i < values.length; i++) {
+                list.add (values[i]);
+            }
+            return new Stream<T> (list);
+        }
+
+        /**
+         * Creates a Stream of integers from start (inclusive) to end
+         * (exclusive).
+         *
+         * @param start the start value (inclusive).
+         * @param end the end value (exclusive).
+         * @return a Stream of integer range values.
+         */
+        public static Stream<int> range (int start, int end) {
+            var list = new ArrayList<int> ();
+            for (int i = start; i < end; i++) {
+                list.add (i);
+            }
+            return new Stream<int> (list);
+        }
+
+        /**
+         * Creates a Stream of integers from start (inclusive) to end
+         * (inclusive).
+         *
+         * @param start the start value (inclusive).
+         * @param end the end value (inclusive).
+         * @return a Stream of integer range values.
+         */
+        public static Stream<int> rangeClosed (int start, int end) {
+            var list = new ArrayList<int> ();
+            for (int i = start; i <= end; i++) {
+                list.add (i);
+            }
+            return new Stream<int> (list);
+        }
+
+        /**
+         * Creates a Stream by invoking a supplier function repeatedly.
+         *
+         * @param fn the supplier function.
+         * @param limit number of items to generate.
+         * @return a Stream of generated values.
+         */
+        public static Stream<T> generate<T> (owned SupplierFunc<T> fn, int limit) {
+            var list = new ArrayList<T> ();
+            if (limit <= 0) {
+                return new Stream<T> (list);
+            }
+            for (int i = 0; i < limit; i++) {
+                list.add (fn ());
+            }
+            return new Stream<T> (list);
+        }
+
+        /**
          * Creates an empty Stream.
          *
          * Example:
@@ -110,6 +179,25 @@ namespace Vala.Collections {
             var result = new ArrayList<U> ();
             for (int i = 0; i < _data.size (); i++) {
                 result.add (fn (_data.get (i)));
+            }
+            return new Stream<U> (result);
+        }
+
+        /**
+         * Returns a Stream where each element is transformed into
+         * another Stream and then flattened.
+         *
+         * @param fn transformation function that returns a Stream.
+         * @return a flattened Stream of transformed elements.
+         */
+        public Stream<U> flatMap<U> (owned MapFunc<T, Stream<U> > fn) {
+            var result = new ArrayList<U> ();
+            for (int i = 0; i < _data.size (); i++) {
+                Stream<U> nested = fn (_data.get (i));
+                var nestedList = nested.toList ();
+                for (int j = 0; j < nestedList.size (); j++) {
+                    result.add (nestedList.get (j));
+                }
             }
             return new Stream<U> (result);
         }
@@ -286,6 +374,58 @@ namespace Vala.Collections {
         }
 
         /**
+         * Collects the stream elements into an array.
+         *
+         * @return a new array with all stream elements.
+         */
+        public T[] toArray () {
+            T[] result = new T[(int) _data.size ()];
+            for (int i = 0; i < _data.size (); i++) {
+                result[i] = _data.get (i);
+            }
+            return result;
+        }
+
+        /**
+         * Collects stream elements into a HashSet.
+         *
+         * @param hash_func hash function for set elements.
+         * @param equal_func equality function for set elements.
+         * @return a HashSet containing unique stream elements.
+         */
+        public HashSet<T> toHashSet (GLib.HashFunc<T> hash_func, GLib.EqualFunc<T> equal_func) {
+            var result = new HashSet<T> (hash_func, equal_func);
+            for (int i = 0; i < _data.size (); i++) {
+                result.add (_data.get (i));
+            }
+            return result;
+        }
+
+        /**
+         * Collects stream elements into a HashMap.
+         *
+         * If multiple elements map to the same key, later values
+         * overwrite earlier values.
+         *
+         * @param keyFn key extraction function.
+         * @param valFn value extraction function.
+         * @param hash_func hash function for map keys.
+         * @param equal_func equality function for map keys.
+         * @return a HashMap of mapped keys and values.
+         */
+        public HashMap<K, V> toMap<K, V> (owned MapFunc<T, K> keyFn,
+                                          owned MapFunc<T, V> valFn,
+                                          GLib.HashFunc<K> hash_func,
+                                          GLib.EqualFunc<K> equal_func) {
+            var result = new HashMap<K, V> (hash_func, equal_func);
+            for (int i = 0; i < _data.size (); i++) {
+                T item = _data.get (i);
+                result.put (keyFn (item), valFn (item));
+            }
+            return result;
+        }
+
+        /**
          * Returns the number of elements in this stream.
          *
          * @return the element count.
@@ -302,6 +442,19 @@ namespace Vala.Collections {
         public T ? findFirst () {
             if (_data.size () == 0) {
                 return null;
+            }
+            return _data.get (0);
+        }
+
+        /**
+         * Returns the first element or the fallback value if empty.
+         *
+         * @param fallback the fallback value.
+         * @return first element or fallback when empty.
+         */
+        public T firstOr (T fallback) {
+            if (_data.size () == 0) {
+                return fallback;
             }
             return _data.get (0);
         }
@@ -398,6 +551,121 @@ namespace Vala.Collections {
         }
 
         /**
+         * Joins stream elements into a string with a delimiter.
+         *
+         * This method expects stream elements to be strings.
+         *
+         * @param delimiter the delimiter string.
+         * @return joined string.
+         */
+        public string joining (string delimiter = "") {
+            var sb = new GLib.StringBuilder ();
+            for (int i = 0; i < _data.size (); i++) {
+                if (i > 0) {
+                    sb.append (delimiter);
+                }
+                string value = (string) _data.get (i);
+                sb.append (value);
+            }
+            return sb.str;
+        }
+
+        /**
+         * Partitions elements into two lists by a predicate.
+         *
+         * The first list contains elements matching the predicate,
+         * and the second list contains the rest.
+         *
+         * @param fn the predicate function.
+         * @return a Pair of (matching, non-matching) lists.
+         */
+        public Pair<ArrayList<T>, ArrayList<T> > partitionBy (owned PredicateFunc<T> fn) {
+            var matching = new ArrayList<T> ();
+            var rest = new ArrayList<T> ();
+            for (int i = 0; i < _data.size (); i++) {
+                T item = _data.get (i);
+                if (fn (item)) {
+                    matching.add (item);
+                } else {
+                    rest.add (item);
+                }
+            }
+            return new Pair<ArrayList<T>, ArrayList<T> > (matching, rest);
+        }
+
+        /**
+         * Groups elements by a key extraction function.
+         *
+         * @param keyFn function that extracts a key.
+         * @param hash_func hash function for keys.
+         * @param equal_func equality function for keys.
+         * @return grouped elements by key.
+         */
+        public HashMap<K, ArrayList<T> > groupBy<K> (owned MapFunc<T, K> keyFn,
+                                                     GLib.HashFunc<K> hash_func,
+                                                     GLib.EqualFunc<K> equal_func) {
+            var result = new HashMap<K, ArrayList<T> > (hash_func, equal_func);
+            for (int i = 0; i < _data.size (); i++) {
+                T item = _data.get (i);
+                K key = keyFn (item);
+                ArrayList<T> ? group = result.get (key);
+                if (group == null) {
+                    group = new ArrayList<T> ();
+                    result.put (key, group);
+                }
+                if (group != null) {
+                    group.add (item);
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Returns the sum of mapped integer values.
+         *
+         * @param fn mapping function to integer values.
+         * @return sum of integers.
+         */
+        public int sumInt (owned MapFunc<T, int> fn) {
+            int total = 0;
+            for (int i = 0; i < _data.size (); i++) {
+                total += fn (_data.get (i));
+            }
+            return total;
+        }
+
+        /**
+         * Returns the sum of mapped double values.
+         *
+         * @param fn mapping function to double values.
+         * @return sum of doubles.
+         */
+        public double sumDouble (owned DoubleMapFunc<T> fn) {
+            double total = 0.0;
+            for (int i = 0; i < _data.size (); i++) {
+                total += fn (_data.get (i));
+            }
+            return total;
+        }
+
+        /**
+         * Returns the average of mapped double values.
+         *
+         * @param fn mapping function to double values.
+         * @return average value, or null for empty streams.
+         */
+        public double ? average (owned DoubleMapFunc<T> fn) {
+            if (_data.size () == 0) {
+                return null;
+            }
+            double total = 0.0;
+            for (int i = 0; i < _data.size (); i++) {
+                total += fn (_data.get (i));
+            }
+            return total / (double) _data.size ();
+        }
+
+        /**
          * Returns the minimum element using the given comparator,
          * or null if the stream is empty.
          *
@@ -437,4 +705,12 @@ namespace Vala.Collections {
             return best;
         }
     }
+
+    /**
+     * A function that maps a value to a double.
+     *
+     * @param value the source value.
+     * @return the mapped double value.
+     */
+    public delegate double DoubleMapFunc<T> (T value);
 }

@@ -4,8 +4,13 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/collections/stream/testFromList", testFromList);
     Test.add_func ("/collections/stream/testEmpty", testEmpty);
+    Test.add_func ("/collections/stream/testOf", testOf);
+    Test.add_func ("/collections/stream/testRange", testRange);
+    Test.add_func ("/collections/stream/testRangeClosed", testRangeClosed);
+    Test.add_func ("/collections/stream/testGenerate", testGenerate);
     Test.add_func ("/collections/stream/testFilter", testFilter);
     Test.add_func ("/collections/stream/testMap", testMap);
+    Test.add_func ("/collections/stream/testFlatMap", testFlatMap);
     Test.add_func ("/collections/stream/testSorted", testSorted);
     Test.add_func ("/collections/stream/testDistinct", testDistinct);
     Test.add_func ("/collections/stream/testLimit", testLimit);
@@ -21,6 +26,16 @@ void main (string[] args) {
     Test.add_func ("/collections/stream/testNoneMatch", testNoneMatch);
     Test.add_func ("/collections/stream/testReduce", testReduce);
     Test.add_func ("/collections/stream/testForEach", testForEach);
+    Test.add_func ("/collections/stream/testToArray", testToArray);
+    Test.add_func ("/collections/stream/testToHashSet", testToHashSet);
+    Test.add_func ("/collections/stream/testToMap", testToMap);
+    Test.add_func ("/collections/stream/testJoining", testJoining);
+    Test.add_func ("/collections/stream/testFirstOr", testFirstOr);
+    Test.add_func ("/collections/stream/testGroupBy", testGroupBy);
+    Test.add_func ("/collections/stream/testPartitionBy", testPartitionBy);
+    Test.add_func ("/collections/stream/testSumInt", testSumInt);
+    Test.add_func ("/collections/stream/testSumDouble", testSumDouble);
+    Test.add_func ("/collections/stream/testAverage", testAverage);
     Test.add_func ("/collections/stream/testMinMax", testMinMax);
     Test.add_func ("/collections/stream/testChaining", testChaining);
     Test.add_func ("/collections/stream/testEmptyBoundary", testEmptyBoundary);
@@ -46,6 +61,46 @@ void testEmpty () {
     assert (s.count () == 0);
 }
 
+void testOf () {
+    var s = Stream.of<string> ({ "a", "b", "c" });
+    assert (s.count () == 3);
+    assert (s.findFirst () == "a");
+}
+
+void testRange () {
+    var result = Stream.range (2, 6).toList ();
+    assert (result.size () == 4);
+    assert (result.get (0) == 2);
+    assert (result.get (3) == 5);
+
+    var empty = Stream.range (3, 3).toList ();
+    assert (empty.size () == 0);
+}
+
+void testRangeClosed () {
+    var result = Stream.rangeClosed (2, 6).toList ();
+    assert (result.size () == 5);
+    assert (result.get (0) == 2);
+    assert (result.get (4) == 6);
+
+    var empty = Stream.rangeClosed (5, 4).toList ();
+    assert (empty.size () == 0);
+}
+
+void testGenerate () {
+    int n = 0;
+    var result = Stream.generate<int> (() => {
+        n++;
+        return n;
+    }, 3).toList ();
+    assert (result.size () == 3);
+    assert (result.get (0) == 1);
+    assert (result.get (2) == 3);
+
+    var empty = Stream.generate<int> (() => { return 1; }, 0).toList ();
+    assert (empty.size () == 0);
+}
+
 void testFilter () {
     var list = stringList ({ "apple", "banana", "avocado", "cherry" });
     var result = Stream.fromList<string> (list)
@@ -64,6 +119,19 @@ void testMap () {
     assert (result.size () == 2);
     assert (result.get (0) == "HELLO");
     assert (result.get (1) == "WORLD");
+}
+
+void testFlatMap () {
+    var list = stringList ({ "a,b", "c" });
+    var result = Stream.fromList<string> (list)
+                  .flatMap<string> ((s) => {
+        return Stream.of<string> (s.split (","));
+    })
+                  .toList ();
+    assert (result.size () == 3);
+    assert (result.get (0) == "a");
+    assert (result.get (1) == "b");
+    assert (result.get (2) == "c");
 }
 
 void testSorted () {
@@ -218,6 +286,104 @@ void testForEach () {
         count++;
     });
     assert (count == 3);
+}
+
+void testToArray () {
+    var list = stringList ({ "x", "y", "z" });
+    string[] arr = Stream.fromList<string> (list).toArray ();
+    assert (arr.length == 3);
+    assert (arr[0] == "x");
+    assert (arr[2] == "z");
+}
+
+void testToHashSet () {
+    var list = stringList ({ "a", "b", "a", "c" });
+    var set = Stream.fromList<string> (list).toHashSet (GLib.str_hash, GLib.str_equal);
+    assert (set.size () == 3);
+    assert (set.contains ("a"));
+    assert (set.contains ("b"));
+    assert (set.contains ("c"));
+}
+
+void testToMap () {
+    var list = stringList ({ "apple", "banana" });
+    var map = Stream.fromList<string> (list).toMap<string, int> (
+        (s) => { return s; },
+        (s) => { return s.length; },
+        GLib.str_hash,
+        GLib.str_equal
+    );
+    assert (map.size () == 2);
+    int ? appleLen = map.get ("apple");
+    int ? bananaLen = map.get ("banana");
+    assert (appleLen != null && appleLen == 5);
+    assert (bananaLen != null && bananaLen == 6);
+}
+
+void testJoining () {
+    var list = stringList ({ "a", "b", "c" });
+    string joined = Stream.fromList<string> (list).joining (",");
+    assert (joined == "a,b,c");
+    assert (Stream.empty<string> ().joining (",") == "");
+}
+
+void testFirstOr () {
+    var list = stringList ({ "x", "y" });
+    assert (Stream.fromList<string> (list).firstOr ("fallback") == "x");
+    assert (Stream.empty<string> ().firstOr ("fallback") == "fallback");
+}
+
+void testGroupBy () {
+    var list = stringList ({ "apple", "avocado", "banana" });
+    var groups = Stream.fromList<string> (list).groupBy<string> (
+        (s) => { return s.substring (0, 1); },
+        GLib.str_hash,
+        GLib.str_equal
+    );
+    assert (groups.size () == 2);
+    var aGroup = groups.get ("a");
+    var bGroup = groups.get ("b");
+    assert (aGroup != null && aGroup.size () == 2);
+    assert (bGroup != null && bGroup.size () == 1);
+}
+
+void testPartitionBy () {
+    var list = stringList ({ "a", "bb", "ccc", "d" });
+    var pair = Stream.fromList<string> (list).partitionBy ((s) => {
+        return s.length >= 2;
+    });
+    assert (pair.first ().size () == 2);
+    assert (pair.second ().size () == 2);
+    assert (pair.first ().get (0) == "bb");
+    assert (pair.second ().get (0) == "a");
+}
+
+void testSumInt () {
+    var list = stringList ({ "aa", "bbb", "c" });
+    int total = Stream.fromList<string> (list).sumInt ((s) => {
+        return s.length;
+    });
+    assert (total == 6);
+    assert (Stream.empty<string> ().sumInt ((s) => { return s.length; }) == 0);
+}
+
+void testSumDouble () {
+    var list = Stream.rangeClosed (1, 4);
+    double total = list.sumDouble ((n) => {
+        return (double) n * 0.5;
+    });
+    assert (total == 5.0);
+}
+
+void testAverage () {
+    var list = Stream.rangeClosed (1, 3).map<int> ((n) => {
+        return n * 2;
+    });
+    double ? avg = list.average ((n) => {
+        return (double) n;
+    });
+    assert (avg != null && avg == 4.0);
+    assert (Stream.empty<int> ().average ((n) => { return (double) n; }) == null);
 }
 
 void testMinMax () {
