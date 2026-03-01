@@ -1,5 +1,13 @@
 namespace Vala.Math {
     /**
+     * Recoverable BigInteger argument errors.
+     */
+    public errordomain BigIntegerError {
+        INVALID_ARGUMENT,
+        DIVISION_BY_ZERO
+    }
+
+    /**
      * Immutable arbitrary-precision integer value object.
      */
     public class BigInteger : GLib.Object {
@@ -9,9 +17,14 @@ namespace Vala.Math {
          * Creates a BigInteger from decimal text.
          *
          * @param value decimal text (optional leading + or -).
+         * @throws BigIntegerError.INVALID_ARGUMENT when value is invalid decimal text.
          */
-        public BigInteger (string value) {
+        public BigInteger (string value) throws BigIntegerError {
             _value = normalize (value);
+        }
+
+        private BigInteger.fromNormalized (string normalizedValue) {
+            _value = normalizedValue;
         }
 
         /**
@@ -38,28 +51,28 @@ namespace Vala.Math {
             if (leftNegative == rightNegative) {
                 string absSum = addAbs (leftAbs, rightAbs);
                 if (leftNegative && absSum != "0") {
-                    return new BigInteger ("-" + absSum);
+                    return new BigInteger.fromNormalized ("-" + absSum);
                 }
-                return new BigInteger (absSum);
+                return new BigInteger.fromNormalized (absSum);
             }
 
             int cmp = compareAbs (leftAbs, rightAbs);
             if (cmp == 0) {
-                return new BigInteger ("0");
+                return new BigInteger.fromNormalized ("0");
             }
             if (cmp > 0) {
                 string absDiff = subtractAbs (leftAbs, rightAbs);
                 if (leftNegative) {
-                    return new BigInteger ("-" + absDiff);
+                    return new BigInteger.fromNormalized ("-" + absDiff);
                 }
-                return new BigInteger (absDiff);
+                return new BigInteger.fromNormalized (absDiff);
             }
 
             string reversedDiff = subtractAbs (rightAbs, leftAbs);
             if (rightNegative) {
-                return new BigInteger ("-" + reversedDiff);
+                return new BigInteger.fromNormalized ("-" + reversedDiff);
             }
-            return new BigInteger (reversedDiff);
+            return new BigInteger.fromNormalized (reversedDiff);
         }
 
         /**
@@ -81,13 +94,13 @@ namespace Vala.Math {
         public BigInteger multiply (BigInteger other) {
             string absProduct = multiplyAbs (absValue (_value), absValue (other._value));
             if (absProduct == "0") {
-                return new BigInteger ("0");
+                return new BigInteger.fromNormalized ("0");
             }
             bool negative = isNegative (_value) != isNegative (other._value);
             if (negative) {
-                return new BigInteger ("-" + absProduct);
+                return new BigInteger.fromNormalized ("-" + absProduct);
             }
-            return new BigInteger (absProduct);
+            return new BigInteger.fromNormalized (absProduct);
         }
 
         /**
@@ -97,24 +110,25 @@ namespace Vala.Math {
          *
          * @param other divisor.
          * @return quotient.
+         * @throws BigIntegerError.DIVISION_BY_ZERO when other is zero.
          */
-        public BigInteger divide (BigInteger other) {
+        public BigInteger divide (BigInteger other) throws BigIntegerError {
             string divisorAbs = absValue (other._value);
             if (divisorAbs == "0") {
-                error ("division by zero");
+                throw new BigIntegerError.DIVISION_BY_ZERO ("division by zero");
             }
 
             string remainder;
             string quotientAbs = divideAbs (absValue (_value), divisorAbs, out remainder);
             if (quotientAbs == "0") {
-                return new BigInteger ("0");
+                return new BigInteger.fromNormalized ("0");
             }
 
             bool negative = isNegative (_value) != isNegative (other._value);
             if (negative) {
-                return new BigInteger ("-" + quotientAbs);
+                return new BigInteger.fromNormalized ("-" + quotientAbs);
             }
-            return new BigInteger (quotientAbs);
+            return new BigInteger.fromNormalized (quotientAbs);
         }
 
         /**
@@ -124,22 +138,23 @@ namespace Vala.Math {
          *
          * @param other divisor.
          * @return remainder.
+         * @throws BigIntegerError.DIVISION_BY_ZERO when other is zero.
          */
-        public BigInteger mod (BigInteger other) {
+        public BigInteger mod (BigInteger other) throws BigIntegerError {
             string divisorAbs = absValue (other._value);
             if (divisorAbs == "0") {
-                error ("division by zero");
+                throw new BigIntegerError.DIVISION_BY_ZERO ("division by zero");
             }
 
             string remainder;
             divideAbs (absValue (_value), divisorAbs, out remainder);
             if (remainder == "0") {
-                return new BigInteger ("0");
+                return new BigInteger.fromNormalized ("0");
             }
             if (isNegative (_value)) {
-                return new BigInteger ("-" + remainder);
+                return new BigInteger.fromNormalized ("-" + remainder);
             }
-            return new BigInteger (remainder);
+            return new BigInteger.fromNormalized (remainder);
         }
 
         /**
@@ -147,14 +162,15 @@ namespace Vala.Math {
          *
          * @param exponent non-negative exponent.
          * @return computed power.
+         * @throws BigIntegerError.INVALID_ARGUMENT when exponent is negative.
          */
-        public BigInteger pow (int exponent) {
+        public BigInteger pow (int exponent) throws BigIntegerError {
             if (exponent < 0) {
-                error ("exponent must be non-negative");
+                throw new BigIntegerError.INVALID_ARGUMENT ("exponent must be non-negative");
             }
 
-            BigInteger result = new BigInteger ("1");
-            BigInteger baseValue = new BigInteger (_value);
+            BigInteger result = new BigInteger.fromNormalized ("1");
+            BigInteger baseValue = new BigInteger.fromNormalized (_value);
             int current = exponent;
 
             while (current > 0) {
@@ -171,12 +187,12 @@ namespace Vala.Math {
 
         private BigInteger negate () {
             if (_value == "0") {
-                return new BigInteger ("0");
+                return new BigInteger.fromNormalized ("0");
             }
             if (isNegative (_value)) {
-                return new BigInteger (absValue (_value));
+                return new BigInteger.fromNormalized (absValue (_value));
             }
-            return new BigInteger ("-" + _value);
+            return new BigInteger.fromNormalized ("-" + _value);
         }
 
         private static bool isNegative (string value) {
@@ -190,9 +206,9 @@ namespace Vala.Math {
             return value;
         }
 
-        private static string normalize (string value) {
+        private static string normalize (string value) throws BigIntegerError {
             if (value.length == 0) {
-                error ("value must not be empty");
+                throw new BigIntegerError.INVALID_ARGUMENT ("value must not be empty");
             }
 
             int index = 0;
@@ -206,13 +222,13 @@ namespace Vala.Math {
             }
 
             if (index >= value.length) {
-                error ("invalid integer text");
+                throw new BigIntegerError.INVALID_ARGUMENT ("invalid integer text");
             }
 
             for (int i = index; i < value.length; i++) {
                 unichar c = value.get_char (i);
                 if (c < '0' || c > '9') {
-                    error ("invalid integer text");
+                    throw new BigIntegerError.INVALID_ARGUMENT ("invalid integer text");
                 }
             }
 

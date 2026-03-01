@@ -21,7 +21,7 @@ namespace Vala.Math {
             }
 
             BigDecimal normalized = fromComponents (unscaled, parsedScale);
-            _unscaled = new BigInteger (normalized._unscaled.toString ());
+            _unscaled = mustBigInteger (normalized._unscaled.toString ());
             _scale = normalized._scale;
         }
 
@@ -94,9 +94,9 @@ namespace Vala.Math {
         public BigDecimal abs () {
             string text = _unscaled.toString ();
             if (text.has_prefix ("-")) {
-                return fromComponents (new BigInteger (text.substring (1)), _scale);
+                return fromComponents (mustBigInteger (text.substring (1)), _scale);
             }
-            return fromComponents (new BigInteger (text), _scale);
+            return fromComponents (mustBigInteger (text), _scale);
         }
 
         /**
@@ -107,12 +107,12 @@ namespace Vala.Math {
         public BigDecimal negate () {
             string text = _unscaled.toString ();
             if (text == "0") {
-                return fromComponents (new BigInteger ("0"), 0);
+                return fromComponents (mustBigInteger ("0"), 0);
             }
             if (text.has_prefix ("-")) {
-                return fromComponents (new BigInteger (text.substring (1)), _scale);
+                return fromComponents (mustBigInteger (text.substring (1)), _scale);
             }
-            return fromComponents (new BigInteger ("-" + text), _scale);
+            return fromComponents (mustBigInteger ("-" + text), _scale);
         }
 
         /**
@@ -202,7 +202,7 @@ namespace Vala.Math {
 
             BigInteger numerator = _unscaled.multiply (pow10 (scale + other._scale));
             BigInteger denominator = other._unscaled.multiply (pow10 (_scale));
-            BigInteger quotient = numerator.divide (denominator);
+            BigInteger quotient = mustDivide (numerator, denominator);
             return fromComponents (quotient, scale);
         }
 
@@ -219,7 +219,7 @@ namespace Vala.Math {
 
             BigInteger numerator = _unscaled.multiply (pow10 (other._scale));
             BigInteger denominator = other._unscaled.multiply (pow10 (_scale));
-            BigInteger quotient = numerator.divide (denominator);
+            BigInteger quotient = mustDivide (numerator, denominator);
             BigDecimal scaledQuotient = fromComponents (quotient, 0);
             return subtract (other.multiply (scaledQuotient));
         }
@@ -237,7 +237,7 @@ namespace Vala.Math {
             if (_scale != 0 && exponent != 0 && _scale > int.MAX / exponent) {
                 error ("scale overflow in pow");
             }
-            return fromComponents (_unscaled.pow (exponent), _scale * exponent);
+            return fromComponents (mustPow (_unscaled, exponent), _scale * exponent);
         }
 
         private static BigDecimal fromComponents (BigInteger unscaled, int scale) {
@@ -249,7 +249,7 @@ namespace Vala.Math {
             bool negative = text.has_prefix ("-");
             string digits = negative ? text.substring (1) : text;
             if (digits == "0") {
-                return new BigDecimal.fromParts (new BigInteger ("0"), 0);
+                return new BigDecimal.fromParts (mustBigInteger ("0"), 0);
             }
 
             while (scale > 0 && digits[digits.length - 1] == '0') {
@@ -258,12 +258,12 @@ namespace Vala.Math {
             }
 
             string normalized = negative ? "-" + digits : digits;
-            return new BigDecimal.fromParts (new BigInteger (normalized), scale);
+            return new BigDecimal.fromParts (mustBigInteger (normalized), scale);
         }
 
         private static BigInteger scaleUp (BigInteger value, int scaleDelta) {
             if (scaleDelta <= 0) {
-                return new BigInteger (value.toString ());
+                return mustBigInteger (value.toString ());
             }
             return value.multiply (pow10 (scaleDelta));
         }
@@ -273,14 +273,14 @@ namespace Vala.Math {
                 error ("n must be non-negative");
             }
             if (n == 0) {
-                return new BigInteger ("1");
+                return mustBigInteger ("1");
             }
 
             var builder = new GLib.StringBuilder ("1");
             for (int i = 0; i < n; i++) {
                 builder.append_c ('0');
             }
-            return new BigInteger (builder.str);
+            return mustBigInteger (builder.str);
         }
 
         private static int compareBigInteger (BigInteger left, BigInteger right) {
@@ -325,7 +325,7 @@ namespace Vala.Math {
         }
 
         private static bool tryParseComponents (string value, out BigInteger unscaled, out int scale) {
-            unscaled = new BigInteger ("0");
+            unscaled = mustBigInteger ("0");
             scale = 0;
 
             if (value.length == 0) {
@@ -380,7 +380,7 @@ namespace Vala.Math {
             }
 
             if (firstNonZero == digits.length) {
-                unscaled = new BigInteger ("0");
+                unscaled = mustBigInteger ("0");
                 scale = 0;
                 return true;
             }
@@ -392,8 +392,32 @@ namespace Vala.Math {
             }
 
             string unscaledText = negative ? "-" + digits : digits;
-            unscaled = new BigInteger (unscaledText);
+            unscaled = mustBigInteger (unscaledText);
             return true;
+        }
+
+        private static BigInteger mustBigInteger (string value) {
+            try {
+                return new BigInteger (value);
+            } catch (BigIntegerError e) {
+                error ("internal big integer conversion failed: %s", value);
+            }
+        }
+
+        private static BigInteger mustDivide (BigInteger left, BigInteger right) {
+            try {
+                return left.divide (right);
+            } catch (BigIntegerError e) {
+                error ("internal decimal division failed: %s", e.message);
+            }
+        }
+
+        private static BigInteger mustPow (BigInteger value, int exponent) {
+            try {
+                return value.pow (exponent);
+            } catch (BigIntegerError e) {
+                error ("internal decimal power failed: %s", e.message);
+            }
         }
     }
 }

@@ -548,14 +548,14 @@ Immutable arbitrary-precision integer value object.
 
 | Method | Description |
 |---|---|
-| `BigInteger(string value)` | Creates from decimal text |
+| `BigInteger(string value)` | Creates from decimal text (`throws BigIntegerError.INVALID_ARGUMENT` on invalid input) |
 | `toString()` | Returns normalized decimal text |
 | `add(BigInteger other)` | Returns sum |
 | `subtract(BigInteger other)` | Returns difference |
 | `multiply(BigInteger other)` | Returns product |
-| `divide(BigInteger other)` | Returns integer quotient (truncated toward zero) |
-| `mod(BigInteger other)` | Returns integer remainder |
-| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
+| `divide(BigInteger other)` | Returns integer quotient (truncated toward zero) (`throws BigIntegerError.DIVISION_BY_ZERO` when divisor is zero) |
+| `mod(BigInteger other)` | Returns integer remainder (`throws BigIntegerError.DIVISION_BY_ZERO` when divisor is zero) |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) (`throws BigIntegerError.INVALID_ARGUMENT` when exponent is negative) |
 
 ### Vala.Math.Random
 Static utility methods for random values.
