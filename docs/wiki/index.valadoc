@@ -1,11 +1,11 @@
 = Valacore Reference Manual =
 
-libvalacore is a batteries-included core library for Vala.
-It provides practical APIs inspired by Java, Go, and modern utility libraries,
-while keeping GLib compatibility and idiomatic Vala design.
+libvalacore is a comprehensive core library for Vala — just add one
+dependency and get everything you need for daily development.
 
-The goal is simple: reduce boilerplate for daily tasks such as file I/O,
-collections, encoding, concurrency, process execution, and configuration.
+It aims to be for Vala what Boost is for C++, Base for OCaml, or the standard
+library for Go and Java. It provides practical APIs inspired by those ecosystems,
+while keeping GLib compatibility and idiomatic Vala design.
 
 == Design Goals ==
 
@@ -90,7 +90,7 @@ Each public class and method includes Valadoc comments with:
  * parameter and return descriptions
  * practical examples for common use cases
 
-The API is under active development and may evolve between releases.
+Until v1.0.0, breaking changes may be introduced between minor versions.
 
 == Links ==
 

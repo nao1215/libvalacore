@@ -4,14 +4,36 @@
 
 ![logo](./docs/images/logo-small.png)
 
-libvalacore is an ambitious effort to build a powerful core standard library for the Vala language.
+libvalacore is a comprehensive core library for Vala — just add one dependency and get everything you need for daily development.
 
-Vala has a solid GLib/GObject foundation, but lacks the kind of rich, batteries-included standard library that developers in Java, Go, Python, or OCaml take for granted. libvalacore fills that gap: it provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
-
-Our goal is to make Vala a language where everyday programming tasks can be accomplished with a single import, without hunting for scattered third-party packages or reinventing the wheel.
+Vala has a solid GLib/GObject foundation, but lacks the kind of rich standard library that languages like Java, Go, or OCaml provide out of the box. libvalacore fills that gap, aiming to be for Vala what Boost is for C++, Base for OCaml, or the standard library for Go and Java. It provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
 
 >[!NOTE]
-> This library is under active development. The API is not yet stable and may change without notice.
+> Until v1.0.0, breaking changes may be introduced between minor versions.
+
+## Dependencies
+
+libvalacore keeps external dependencies minimal — no libsoup, no libxml2, no third-party libraries.
+
+```mermaid
+graph TD
+    LVC[libvalacore]
+
+    LVC --> GLib[glib-2.0<br><i>Core utilities, collections, testing</i>]
+    LVC --> GIO[gio-2.0<br><i>File I/O, sockets, networking</i>]
+    LVC --> GObject[gobject-2.0<br><i>Object system, type foundation</i>]
+    LVC --> libm[libm<br><i>Math functions</i>]
+    LVC --> linux[linux vapi<br><i>Linux system calls</i>]
+    LVC --> posix[posix vapi<br><i>POSIX API</i>]
+
+    style LVC fill:#4a90d9,color:#fff
+    style GLib fill:#e8a838,color:#fff
+    style GIO fill:#e8a838,color:#fff
+    style GObject fill:#e8a838,color:#fff
+    style libm fill:#7cb342,color:#fff
+    style linux fill:#7cb342,color:#fff
+    style posix fill:#7cb342,color:#fff
+```
 
 ## API Reference
 
