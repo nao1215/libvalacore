@@ -358,11 +358,13 @@ namespace Vala.Text {
                 } else if (val.isNumber ()) {
                     double ? d = val.asDouble ();
                     if (d != null) {
-                        int iv = (int) d;
-                        if ((double) iv == d) {
+                        double dv = d;
+                        int iv = (int) dv;
+                        if ((double) iv == dv) {
                             map.put (key, iv.to_string ());
                         } else {
-                            map.put (key, d.to_string ());
+                            char[] buf = new char[double.DTOSTR_BUF_SIZE];
+                            map.put (key, dv.to_str (buf));
                         }
                     }
                 } else if (val.isBool ()) {
@@ -437,9 +439,26 @@ namespace Vala.Text {
                         string varName = tag.substring (6).strip ();
                         var seg = new TemplateSegment (
                             TemplateSegment.Kind.EACH_BLOCK, varName);
-
-                        string ? innerStop = null;
-                        seg.children = parseSegments (tmpl, ref pos, out innerStop);
+                        var childSegments = new GLib.Array<TemplateSegment> ();
+                        while (true) {
+                            string ? innerStop = null;
+                            TemplateSegment[] parsed = parseSegments (tmpl, ref pos, out innerStop);
+                            for (int i = 0; i < parsed.length; i++) {
+                                childSegments.append_val (parsed[i]);
+                            }
+                            if (innerStop == null || innerStop == STOP_ENDEACH) {
+                                break;
+                            }
+                            string stopLiteral = stopTokenToLiteral (innerStop);
+                            if (stopLiteral.length > 0) {
+                                childSegments.append_val (
+                                    new TemplateSegment (TemplateSegment.Kind.LITERAL, stopLiteral));
+                            }
+                        }
+                        seg.children = new TemplateSegment[childSegments.length];
+                        for (uint i = 0; i < childSegments.length; i++) {
+                            seg.children[i] = childSegments.index (i);
+                        }
                         segments.append_val (seg);
                     } else if (tag == "else") {
                         stoppedAt = STOP_ELSE;
