@@ -780,6 +780,17 @@ Static utility methods for Gzip compression and decompression.
 | `decompressFile(Path src, Path dst)` | Decompresses Gzip file to destination |
 | `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
 
+### Vala.Compress.Zlib
+Static utility methods for Zlib compression and decompression.
+
+| Method | Description |
+|---|---|
+| `compress(uint8[] data)` | Compresses bytes with default level |
+| `decompress(uint8[] data)` | Decompresses Zlib bytes (empty on invalid input) |
+| `compressFile(Path src, Path dst)` | Compresses source file to destination |
+| `decompressFile(Path src, Path dst)` | Decompresses Zlib file to destination |
+| `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 

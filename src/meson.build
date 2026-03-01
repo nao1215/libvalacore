@@ -41,6 +41,7 @@ valacore_sources = files([
   'concurrent/ThreadPool.vala',
   'concurrent/WaitGroup.vala',
   'compress/Gzip.vala',
+  'compress/Zlib.vala',
   'config/AppConfig.vala',
   'config/Properties.vala',
   'conv/Convert.vala',
