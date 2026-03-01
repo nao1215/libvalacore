@@ -772,7 +772,7 @@ Generic typed message-passing channel inspired by Go channels. Supports unbuffer
 | Method | Description |
 |---|---|
 | `Channel()` | Creates an unbuffered channel |
-| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `buffered(int capacity)` | Creates a buffered channel (`throws ChannelError.INVALID_ARGUMENT` when `capacity <= 0`) |
 | `send(T value)` | Sends a value, blocking if the buffer is full |
 | `trySend(T value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
@@ -783,7 +783,7 @@ Generic typed message-passing channel inspired by Go channels. Supports unbuffer
 | `size()` | Returns the number of items in the buffer |
 | `capacity()` | Returns the buffer capacity (0 = unbuffered) |
 | `select(ArrayList<Channel<T>> channels)` | Returns first receivable `(index, value)` |
-| `fanOut(Channel<T> src, int n)` | Distributes one source to n output channels |
+| `fanOut(Channel<T> src, int n)` | Distributes one source to n output channels (`throws ChannelError.INVALID_ARGUMENT` when `n <= 0`) |
 | `fanIn(ArrayList<Channel<T>> sources)` | Merges many channels into one |
 | `pipeline(Channel<T> input, MapFunc<T,U> fn)` | Creates transform pipeline channel |
 

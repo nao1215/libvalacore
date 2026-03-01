@@ -3,6 +3,13 @@ using Vala.Time;
 
 namespace Vala.Concurrent {
     /**
+     * Recoverable channel operation errors.
+     */
+    public errordomain ChannelError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Generic typed message-passing channel inspired by Go channels.
      *
      * Channel supports both unbuffered (synchronous) and buffered modes.
@@ -64,10 +71,13 @@ namespace Vala.Concurrent {
          *
          * @param capacity buffer size (must be > 0).
          * @return buffered channel.
+         * @throws ChannelError.INVALID_ARGUMENT when capacity is not positive.
          */
-        public static Channel<T> buffered<T> (int capacity) {
+        public static Channel<T> buffered<T> (int capacity) throws ChannelError {
             if (capacity <= 0) {
-                error ("capacity must be positive, got %d", capacity);
+                throw new ChannelError.INVALID_ARGUMENT (
+                          "capacity must be positive, got %d".printf (capacity)
+                );
             }
             var ch = new Channel<T> ();
             ch._capacity = capacity;
@@ -386,10 +396,13 @@ namespace Vala.Concurrent {
          * @param src source channel.
          * @param n number of output channels.
          * @return output channels.
+         * @throws ChannelError.INVALID_ARGUMENT when n is not positive.
          */
-        public static ArrayList<Channel<T> > fanOut<T> (Channel<T> src, int n) {
+        public static ArrayList<Channel<T> > fanOut<T> (Channel<T> src, int n) throws ChannelError {
             if (n <= 0) {
-                error ("n must be positive, got %d", n);
+                throw new ChannelError.INVALID_ARGUMENT (
+                          "n must be positive, got %d".printf (n)
+                );
             }
             var outputs = new ArrayList<Channel<T> > ();
             for (int i = 0; i < n; i++) {
