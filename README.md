@@ -1711,11 +1711,11 @@ In-process pub/sub bus with optional asynchronous dispatch.
 |---|---|
 | `EventBus()` | Creates event bus |
 | `withAsync()` | Enables asynchronous dispatch mode |
-| `subscribe(string topic, EventHandler handler)` | Subscribes topic handler |
-| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler |
-| `publish(string topic, Variant eventData)` | Publishes event payload |
-| `unsubscribe(string topic)` | Removes all subscribers for topic |
-| `hasSubscribers(string topic)` | Returns subscriber existence |
+| `subscribe(string topic, EventHandler handler)` | Subscribes topic handler (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `publish(string topic, Variant eventData)` | Publishes event payload (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `unsubscribe(string topic)` | Removes all subscribers for topic (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `hasSubscribers(string topic)` | Returns subscriber existence (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
 | `clear()` | Clears all subscriptions |
 
 ## Vala.Conv.Convert
