@@ -85,7 +85,7 @@ void testCreateFromDirAndList () {
     var archive = new Vala.Io.Path (root + "/tree.tar");
     assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
 
-    ArrayList<string>? entries = Tar.list (archive);
+    ArrayList<string> ? entries = Tar.list (archive);
     assert (entries != null);
     if (entries == null) {
         cleanup (root);
@@ -113,7 +113,7 @@ void testAddFile () {
     assert (Files.writeText (add, "add"));
     assert (Tar.addFile (archive, add));
 
-    ArrayList<string>? entries = Tar.list (archive);
+    ArrayList<string> ? entries = Tar.list (archive);
     assert (entries != null);
     if (entries == null) {
         cleanup (root);
@@ -136,7 +136,7 @@ void testExtractFile () {
     var archive = new Vala.Io.Path (root + "/tree.tar");
     assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
 
-    ArrayList<string>? entries = Tar.list (archive);
+    ArrayList<string> ? entries = Tar.list (archive);
     assert (entries != null);
     if (entries == null) {
         cleanup (root);
@@ -169,8 +169,8 @@ void testInvalidInputs () {
     assert (!Tar.create (new Vala.Io.Path (root + "/x.tar"), empty));
     assert (Tar.list (new Vala.Io.Path (root + "/missing.tar")) == null);
     assert (!Tar.extract (
-        new Vala.Io.Path (root + "/missing.tar"),
-        new Vala.Io.Path (root + "/out")
+                new Vala.Io.Path (root + "/missing.tar"),
+                new Vala.Io.Path (root + "/out")
     ));
     cleanup (root);
 }

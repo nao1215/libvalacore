@@ -85,8 +85,7 @@ namespace Vala.Archive {
             }
             return Vala.Io.Process.exec (
                 "tar",
-                { "-xf", archive.toString (), "-C", dest.toString () }
-            );
+                { "-xf", archive.toString (), "-C", dest.toString () });
         }
 
         /**
@@ -131,13 +130,12 @@ namespace Vala.Archive {
             }
             return Vala.Io.Process.exec (
                 "tar",
-                {
-                    "--append",
-                    "-f", archive.toString (),
-                    "-C", file.parent ().toString (),
-                    file.basename ()
-                }
-            );
+            {
+                "--append",
+                "-f", archive.toString (),
+                "-C", file.parent ().toString (),
+                file.basename ()
+            });
         }
 
         /**
