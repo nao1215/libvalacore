@@ -4,6 +4,13 @@ using Vala.Time;
 
 namespace Vala.Lang {
     /**
+     * Recoverable context argument errors.
+     */
+    public errordomain ContextError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Cancellation and timeout context propagated across call boundaries.
      *
      * Context is inspired by Go's context package and is intended to pass
@@ -46,7 +53,7 @@ namespace Vala.Lang {
          * @param parent parent context.
          * @return cancellable child context.
          */
-        public static Context withCancel (Context parent) {
+        public static Context withCancel (Context parent) throws ContextError {
             ensureParent (parent);
             return new Context (parent, parent._deadline_mono_usec);
         }
@@ -58,12 +65,12 @@ namespace Vala.Lang {
          * @param timeout timeout duration.
          * @return timeout child context.
          */
-        public static Context withTimeout (Context parent, Duration timeout) {
+        public static Context withTimeout (Context parent, Duration timeout) throws ContextError {
             ensureParent (parent);
 
             int64 timeout_millis = timeout.toMillis ();
             if (timeout_millis < 0) {
-                GLib.error ("timeout must be non-negative");
+                throw new ContextError.INVALID_ARGUMENT ("timeout must be non-negative");
             }
 
             int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
@@ -81,7 +88,7 @@ namespace Vala.Lang {
          * @param deadline absolute deadline.
          * @return deadline child context.
          */
-        public static Context withDeadline (Context parent, Vala.Time.DateTime deadline) {
+        public static Context withDeadline (Context parent, Vala.Time.DateTime deadline) throws ContextError {
             ensureParent (parent);
 
             int64 now_unix = Vala.Time.DateTime.now ().toUnixTimestamp ();
@@ -175,9 +182,9 @@ namespace Vala.Lang {
          * @param key lookup key.
          * @return value or null.
          */
-        public string ? value (string key) {
+        public string ? value (string key) throws ContextError {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                throw new ContextError.INVALID_ARGUMENT ("key must not be empty");
             }
 
             string ? v = _local_values.get (key);
@@ -198,9 +205,9 @@ namespace Vala.Lang {
          * @param value value string.
          * @return child context containing key/value.
          */
-        public Context withValue (string key, string value) {
+        public Context withValue (string key, string value) throws ContextError {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                throw new ContextError.INVALID_ARGUMENT ("key must not be empty");
             }
 
             var child = new Context (this, _deadline_mono_usec);
@@ -208,9 +215,9 @@ namespace Vala.Lang {
             return child;
         }
 
-        private static void ensureParent (Context ? parent) {
+        private static void ensureParent (Context ? parent) throws ContextError {
             if (parent == null) {
-                GLib.error ("parent context must not be null");
+                throw new ContextError.INVALID_ARGUMENT ("parent context must not be null");
             }
         }
 

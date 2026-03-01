@@ -1783,16 +1783,16 @@ Cancellation and timeout context propagated across call boundaries.
 | Method | Description |
 |---|---|
 | `background()` | Creates root context |
-| `withCancel(Context parent)` | Creates cancellable child context |
-| `withTimeout(Context parent, Duration timeout)` | Creates timeout child context |
-| `withDeadline(Context parent, DateTime deadline)` | Creates deadline child context |
+| `withCancel(Context parent)` | Creates cancellable child context (`throws ContextError.INVALID_ARGUMENT` when parent is null) |
+| `withTimeout(Context parent, Duration timeout)` | Creates timeout child context (`throws ContextError.INVALID_ARGUMENT` when parent is null or timeout is negative) |
+| `withDeadline(Context parent, DateTime deadline)` | Creates deadline child context (`throws ContextError.INVALID_ARGUMENT` when parent is null) |
 | `cancel()` | Cancels this context |
 | `isCancelled()` | Returns cancellation state |
 | `error()` | Returns cancellation reason (`cancelled` / `timeout`) |
 | `remaining()` | Returns remaining time until deadline, or `null` when no deadline |
 | `done()` | Returns notification channel closed on cancellation |
-| `value(string key)` | Returns scoped value by key |
-| `withValue(string key, string value)` | Creates child context with key-value |
+| `value(string key)` | Returns scoped value by key (`throws ContextError.INVALID_ARGUMENT` when key is empty) |
+| `withValue(string key, string value)` | Creates child context with key-value (`throws ContextError.INVALID_ARGUMENT` when key is empty) |
 
 ### Vala.Lang.Os
 Operating system interface methods.
