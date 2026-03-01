@@ -267,7 +267,12 @@ namespace Vala.Encoding {
             if (_kind != Kind.MAPPING) {
                 return null;
             }
-            return _key_order;
+            var copy = new ArrayList<string> ();
+            for (int i = 0; i < _key_order.size (); i++) {
+                string key = _key_order.get (i);
+                copy.add (key);
+            }
+            return copy;
         }
     }
 
@@ -382,17 +387,28 @@ namespace Vala.Encoding {
                             return null;
                         }
                     }
-                    // Extract index
-                    int closeBracket = part.index_of ("]", bracketIdx);
-                    if (closeBracket < 0) {
-                        return null;
+
+                    int cursor = bracketIdx;
+                    while (cursor < part.length) {
+                        if (part[cursor] != '[') {
+                            return null;
+                        }
+
+                        int closeBracket = part.index_of ("]", cursor);
+                        if (closeBracket < 0) {
+                            return null;
+                        }
+                        string idxStr = part.substring (cursor + 1, closeBracket - cursor - 1);
+                        int64 idx;
+                        if (!int64.try_parse (idxStr, out idx)) {
+                            return null;
+                        }
+                        current = current.at ((int) idx);
+                        if (current == null) {
+                            return null;
+                        }
+                        cursor = closeBracket + 1;
                     }
-                    string idxStr = part.substring (bracketIdx + 1, closeBracket - bracketIdx - 1);
-                    int64 idx;
-                    if (!int64.try_parse (idxStr, out idx)) {
-                        return null;
-                    }
-                    current = current.at ((int) idx);
                 } else {
                     current = current.get (part);
                 }
@@ -486,8 +502,8 @@ namespace Vala.Encoding {
                     val = parseFlowSequence (valPart);
                 } else if (valPart.has_prefix ("{")) {
                     val = parseFlowMapping (valPart);
-                } else if (valPart == "|" || valPart == ">") {
-                    val = parseMultilineString (lines, ref pos, baseIndent + 1, valPart == "|");
+                } else if (valPart.has_prefix ("|") || valPart.has_prefix (">")) {
+                    val = parseMultilineString (lines, ref pos, baseIndent + 1, valPart.has_prefix ("|"));
                 } else {
                     val = parseScalar (valPart);
                 }
@@ -649,7 +665,7 @@ namespace Vala.Encoding {
             string[] pairs = splitFlowItems (inner);
             foreach (string pair in pairs) {
                 string trimmed = pair.strip ();
-                int colonIdx = trimmed.index_of (":");
+                int colonIdx = findColonSeparator (trimmed);
                 if (colonIdx > 0) {
                     string key = trimmed.substring (0, colonIdx).strip ();
                     string val = trimmed.substring (colonIdx + 1).strip ();
@@ -893,7 +909,7 @@ namespace Vala.Encoding {
                 string s = value.asString ();
                 if (needsQuoting (s)) {
                     sb.append ("\"");
-                    sb.append (s.replace ("\\", "\\\\").replace ("\"", "\\\""));
+                    sb.append (escapeYamlString (s));
                     sb.append ("\"\n");
                 } else {
                     sb.append (s);
@@ -970,8 +986,11 @@ namespace Vala.Encoding {
             if (s.length == 0) {
                 return true;
             }
-            if (s == "true" || s == "false" || s == "null"
-                || s == "yes" || s == "no" || s == "~") {
+            string lower = s.down ();
+            if (lower == "true" || lower == "false" || lower == "null"
+                || lower == "yes" || lower == "no"
+                || lower == "on" || lower == "off"
+                || s == "~") {
                 return true;
             }
             if (s.contains (":") || s.contains ("#") || s.contains ("\"")
@@ -988,6 +1007,41 @@ namespace Vala.Encoding {
                 return true;
             }
             return false;
+        }
+
+        private static string escapeYamlString (string input) {
+            var sb = new GLib.StringBuilder ();
+            for (int i = 0; i < input.length; i++) {
+                char c = input[i];
+                switch (c) {
+                    case '\\' :
+                        sb.append ("\\\\");
+                        break;
+                    case '"' :
+                        sb.append ("\\\"");
+                        break;
+                    case '\n' :
+                        sb.append ("\\n");
+                        break;
+                    case '\r' :
+                        sb.append ("\\r");
+                        break;
+                    case '\t' :
+                        sb.append ("\\t");
+                        break;
+                    case '\0' :
+                        sb.append ("\\0");
+                        break;
+                        default :
+                        if ((uint) c < 0x20) {
+                            sb.append ("\\u%04X".printf ((uint) c));
+                        } else {
+                            sb.append_c (c);
+                        }
+                        break;
+                }
+            }
+            return sb.str;
         }
 
         private static void appendIndent (GLib.StringBuilder sb, int indent) {
