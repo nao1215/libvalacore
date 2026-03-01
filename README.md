@@ -842,6 +842,38 @@ Static utility methods for hexadecimal encoding and decoding.
 | `encode(uint8[] data)` | Encodes bytes to lower-case hexadecimal text |
 | `decode(string hex)` | Decodes hexadecimal text to bytes |
 
+### Vala.Encoding.Json
+JSON parsing, serialization, and path-based querying. Handles JSON as a `JsonValue` tree with immutable operations.
+
+| Method | Description |
+|---|---|
+| `parse(string json)` | Parses JSON string into `JsonValue` (`null` on invalid input) |
+| `parseFile(Path path)` | Parses JSON file into `JsonValue` (`null` on read/parse failure) |
+| `stringify(JsonValue value)` | Serializes `JsonValue` to compact JSON string |
+| `pretty(JsonValue value, int indent = 2)` | Serializes `JsonValue` to indented JSON string |
+| `query(JsonValue root, string path)` | Queries value by JSON path (e.g. `$.users[0].name`) |
+| `getString(JsonValue root, string path, string fallback)` | Gets string by path with fallback |
+| `getInt(JsonValue root, string path, int fallback)` | Gets int by path with fallback |
+| `getBool(JsonValue root, string path, bool fallback)` | Gets bool by path with fallback |
+| `set(JsonValue root, string path, JsonValue value)` | Sets value at path (returns new tree) |
+| `remove(JsonValue root, string path)` | Removes key at path (returns new tree) |
+| `merge(JsonValue a, JsonValue b)` | Merges two objects (b overrides a, returns new tree) |
+| `flatten(JsonValue root)` | Flattens nested object to dot-notation `HashMap` |
+
+#### JsonValue
+| Method | Description |
+|---|---|
+| `ofString(string v)` / `ofInt(int v)` / `ofDouble(double v)` / `ofBool(bool v)` / `ofNull()` | Factory methods |
+| `object()` → `JsonObjectBuilder` | Builds JSON objects fluently with `.put(key, value).build()` |
+| `array()` → `JsonArrayBuilder` | Builds JSON arrays fluently with `.add(value).build()` |
+| `isObject()` / `isArray()` / `isString()` / `isNumber()` / `isBool()` / `isNull()` | Type checks |
+| `asString()` / `asInt()` / `asDouble()` / `asBool()` | Type-safe getters (`null` on mismatch) |
+| `asStringOr(string fallback)` / `asIntOr(int fallback)` | Fallback getters |
+| `get(string key)` | Object key lookup |
+| `at(int index)` | Array index access |
+| `keys()` / `size()` / `toList()` | Collection accessors |
+| `equals(JsonValue other)` | Structural equality comparison |
+
 ### Vala.Encoding.Toml
 Static utility methods for TOML parsing, query, and rendering.
 

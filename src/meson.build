@@ -57,6 +57,7 @@ valacore_sources = files([
   'encoding/Base64.vala',
   'encoding/Csv.vala',
   'encoding/Hex.vala',
+  'encoding/Json.vala',
   'encoding/Toml.vala',
   'encoding/Url.vala',
   'event/EventBus.vala',
