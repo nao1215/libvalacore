@@ -528,7 +528,7 @@ Immutable arbitrary-precision decimal value object.
 
 | Method | Description |
 |---|---|
-| `BigDecimal(string value)` | Creates from decimal text |
+| `BigDecimal(string value)` | Creates from decimal text (`throws BigDecimalError.INVALID_ARGUMENT` on invalid input) |
 | `parse(string value)` | Parses decimal text and returns null on failure |
 | `toString()` | Returns normalized decimal text |
 | `scale()` | Returns number of fractional digits |
@@ -537,11 +537,11 @@ Immutable arbitrary-precision decimal value object.
 | `compareTo(BigDecimal other)` | Compares two values (-1, 0, 1) |
 | `add(BigDecimal other)` | Returns sum |
 | `subtract(BigDecimal other)` | Returns difference |
-| `multiply(BigDecimal other)` | Returns product |
-| `divide(BigDecimal other)` | Returns quotient (truncated, default scale) |
-| `divideWithScale(BigDecimal other, int scale)` | Returns quotient with explicit scale |
-| `mod(BigDecimal other)` | Returns remainder |
-| `pow(int exponent)` | Returns exponentiation (non-negative exponent) |
+| `multiply(BigDecimal other)` | Returns product (`throws BigDecimalError.SCALE_OVERFLOW` on scale overflow) |
+| `divide(BigDecimal other)` | Returns quotient (truncated, default scale) (`throws BigDecimalError`) |
+| `divideWithScale(BigDecimal other, int scale)` | Returns quotient with explicit scale (`throws BigDecimalError`) |
+| `mod(BigDecimal other)` | Returns remainder (`throws BigDecimalError`) |
+| `pow(int exponent)` | Returns exponentiation (non-negative exponent) (`throws BigDecimalError`) |
 
 ### Vala.Math.BigInteger
 Immutable arbitrary-precision integer value object.

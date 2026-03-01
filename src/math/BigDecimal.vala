@@ -1,5 +1,14 @@
 namespace Vala.Math {
     /**
+     * Recoverable BigDecimal argument and arithmetic errors.
+     */
+    public errordomain BigDecimalError {
+        INVALID_ARGUMENT,
+        DIVISION_BY_ZERO,
+        SCALE_OVERFLOW
+    }
+
+    /**
      * Immutable arbitrary-precision decimal value object.
      */
     public class BigDecimal : GLib.Object {
@@ -12,12 +21,13 @@ namespace Vala.Math {
          * Creates a BigDecimal from decimal text.
          *
          * @param value decimal text (optional sign and decimal point).
+         * @throws BigDecimalError.INVALID_ARGUMENT when value is invalid decimal text.
          */
-        public BigDecimal (string value) {
+        public BigDecimal (string value) throws BigDecimalError {
             BigInteger unscaled;
             int parsedScale;
             if (!tryParseComponents (value, out unscaled, out parsedScale)) {
-                error ("invalid decimal text");
+                throw new BigDecimalError.INVALID_ARGUMENT ("invalid decimal text");
             }
 
             BigDecimal normalized = fromComponents (unscaled, parsedScale);
@@ -159,10 +169,11 @@ namespace Vala.Math {
          *
          * @param other multiplier.
          * @return computed product.
+         * @throws BigDecimalError.SCALE_OVERFLOW when resulting scale exceeds int range.
          */
-        public BigDecimal multiply (BigDecimal other) {
+        public BigDecimal multiply (BigDecimal other) throws BigDecimalError {
             if (_scale > int.MAX - other._scale) {
-                error ("scale overflow in multiply");
+                throw new BigDecimalError.SCALE_OVERFLOW ("scale overflow in multiply");
             }
             BigInteger product = _unscaled.multiply (other._unscaled);
             return fromComponents (product, _scale + other._scale);
@@ -175,8 +186,9 @@ namespace Vala.Math {
          *
          * @param other divisor.
          * @return quotient.
+         * @throws BigDecimalError when divideWithScale validation fails.
          */
-        public BigDecimal divide (BigDecimal other) {
+        public BigDecimal divide (BigDecimal other) throws BigDecimalError {
             return divideWithScale (other, DEFAULT_DIVIDE_SCALE);
         }
 
@@ -188,16 +200,20 @@ namespace Vala.Math {
          * @param other divisor.
          * @param scale scale for quotient.
          * @return quotient.
+         * @throws BigDecimalError.INVALID_ARGUMENT when scale is negative.
+         * @throws BigDecimalError.DIVISION_BY_ZERO when other is zero.
+         * @throws BigDecimalError.SCALE_OVERFLOW when resulting scale exceeds int range.
          */
-        public BigDecimal divideWithScale (BigDecimal other, int scale) {
+        public BigDecimal divideWithScale (BigDecimal other,
+                                           int scale) throws BigDecimalError {
             if (scale < 0) {
-                error ("scale must be non-negative");
+                throw new BigDecimalError.INVALID_ARGUMENT ("scale must be non-negative");
             }
             if (other._unscaled.toString () == "0") {
-                error ("division by zero");
+                throw new BigDecimalError.DIVISION_BY_ZERO ("division by zero");
             }
             if (scale > int.MAX - other._scale) {
-                error ("scale overflow in divideWithScale");
+                throw new BigDecimalError.SCALE_OVERFLOW ("scale overflow in divideWithScale");
             }
 
             BigInteger numerator = _unscaled.multiply (pow10 (scale + other._scale));
@@ -211,10 +227,12 @@ namespace Vala.Math {
          *
          * @param other divisor.
          * @return remainder.
+         * @throws BigDecimalError.DIVISION_BY_ZERO when other is zero.
+         * @throws BigDecimalError.SCALE_OVERFLOW when internal multiply overflows scale.
          */
-        public BigDecimal mod (BigDecimal other) {
+        public BigDecimal mod (BigDecimal other) throws BigDecimalError {
             if (other._unscaled.toString () == "0") {
-                error ("division by zero");
+                throw new BigDecimalError.DIVISION_BY_ZERO ("division by zero");
             }
 
             BigInteger numerator = _unscaled.multiply (pow10 (other._scale));
@@ -229,13 +247,15 @@ namespace Vala.Math {
          *
          * @param exponent non-negative exponent.
          * @return computed power.
+         * @throws BigDecimalError.INVALID_ARGUMENT when exponent is negative.
+         * @throws BigDecimalError.SCALE_OVERFLOW when resulting scale exceeds int range.
          */
-        public BigDecimal pow (int exponent) {
+        public BigDecimal pow (int exponent) throws BigDecimalError {
             if (exponent < 0) {
-                error ("exponent must be non-negative");
+                throw new BigDecimalError.INVALID_ARGUMENT ("exponent must be non-negative");
             }
             if (_scale != 0 && exponent != 0 && _scale > int.MAX / exponent) {
-                error ("scale overflow in pow");
+                throw new BigDecimalError.SCALE_OVERFLOW ("scale overflow in pow");
             }
             return fromComponents (mustPow (_unscaled, exponent), _scale * exponent);
         }
