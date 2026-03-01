@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - Expanded `README.md` API reference for newly added modules and types
 - Added/expanded Meson test targets for new modules
+- Consolidated CI checks into a single workflow that runs configure/build/test/coverage in sequence
+- Optimized `scripts/coverage.sh` for CI reuse:
+  - reuses existing coverage-enabled build artifacts by default
+  - supports `--skip-test` to avoid duplicate test execution
+  - captures coverage in a single `lcov` pass over `build/tests` (with optional `--parallel` when available)
 
 ### Fixed
 - `Gzip`/`Zlib` converter loops no longer rebuild full tail buffers per iteration
@@ -38,11 +43,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `EventBus.subscribeOnce` now removes one-shot subscribers before dispatch to avoid duplicate delivery under concurrent publish
 - `Http` timeout conversion now validates milliseconds and avoids zero/overflowed socket timeouts
 - `Http` response parser now validates `Content-Length`/chunk sizes and supports chunk-size extensions
+- `Http.download` now streams response bodies directly to disk instead of loading full payloads in memory
 - `Toml.getIntOr` now guards int64-to-int narrowing overflow
 - `Xml` parser now validates closing tag names, and serializer preserves mixed-content order
 - `ValidationResult.errors()` and `Validator.validate()` now return defensive snapshots
+- `Validator.validate()` now resets validator internal state between runs, and field validation rejects whitespace-only names
 - Replaced shell-based recursive cleanup in tests with filesystem API helpers
 - Synchronized shared counters in concurrency-sensitive tests (`EventBus`, `ThreadPool2`, `Cron`)
+- `Yaml` inline mapping values now parse as full nodes (not scalar-only), quoted escapes are decoded, and `key:value` (no-space) flow pairs are accepted
+- `Yaml` serializer now quotes strings with leading/trailing whitespace to preserve round-trip fidelity
+- `Tar` relative path safety check now rejects only true parent traversal components (`..`, `../...`) without over-rejecting names like `..foo`
 
 ## 0.7.0
 
