@@ -1,5 +1,6 @@
 subdir('collections/arrays')
 subdir('collections/arraylist')
+subdir('collections/bloomfilter')
 subdir('collections/bitset')
 subdir('collections/deque')
 subdir('collections/hashmap')

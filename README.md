@@ -1241,6 +1241,23 @@ Approximate unique counter with fixed memory footprint.
 | `fromBytes(uint8[] bytes)` | Restores estimator from serialized bytes |
 | `clear()` | Resets estimator state |
 
+## Vala.Collections.BloomFilter<T>
+Probabilistic set membership filter with compact memory usage.
+
+| Method | Description |
+|---|---|
+| `BloomFilter(int expectedInsertions, double falsePositiveRate)` | Creates filter with expected size and FPR |
+| `add(T item)` | Adds one item |
+| `addAll(ArrayList<T> items)` | Adds multiple items |
+| `mightContain(T item)` | Returns membership possibility |
+| `clear()` | Clears all bits |
+| `bitSize()` | Returns bit-array size |
+| `hashCount()` | Returns number of hash functions |
+| `estimatedFalsePositiveRate()` | Returns current estimated FPR |
+| `merge(BloomFilter<T> other)` | Merges compatible filter |
+| `toBytes()` | Serializes filter state |
+| `fromBytes(uint8[] bytes)` | Restores filter from bytes |
+
 ## Vala.Validation.Validator
 Fluent input validation with field-level error reporting.
 
