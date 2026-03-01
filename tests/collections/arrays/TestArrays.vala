@@ -5,6 +5,7 @@ void main (string[] args) {
     Test.add_func ("/arrays/testSort", testSort);
     Test.add_func ("/arrays/testBinarySearch", testBinarySearch);
     Test.add_func ("/arrays/testCopyOf", testCopyOf);
+    Test.add_func ("/arrays/testCopyOfInvalidLength", testCopyOfInvalidLength);
     Test.add_func ("/arrays/testFill", testFill);
     Test.add_func ("/arrays/testEquals", testEquals);
     Test.run ();
@@ -45,6 +46,12 @@ void testCopyOf () {
     assert (shrink.length == 2);
     assert (shrink[0] == 10);
     assert (shrink[1] == 20);
+}
+
+void testCopyOfInvalidLength () {
+    int[] arr = { 1, 2, 3 };
+    int[] copied = Arrays.copyOf (arr, -1);
+    assert (copied.length == 0);
 }
 
 void testFill () {

@@ -23,6 +23,7 @@ void main (string[] args) {
     Test.add_func ("/concurrent/channel/testGenericTrySendTryReceive", testGenericTrySendTryReceive);
     Test.add_func ("/concurrent/channel/testGenericReceiveTimeout", testGenericReceiveTimeout);
     Test.add_func ("/concurrent/channel/testGenericSelect", testGenericSelect);
+    Test.add_func ("/concurrent/channel/testGenericSelectDelayedSend", testGenericSelectDelayedSend);
     Test.add_func ("/concurrent/channel/testGenericPipeline", testGenericPipeline);
     Test.add_func ("/concurrent/channel/testGenericFanInOut", testGenericFanInOut);
     Test.run ();
@@ -251,6 +252,27 @@ void testGenericSelect () {
     if (selected != null) {
         assert ((int) selected.first () == 1);
         assert ((int) selected.second () == 42);
+    }
+}
+
+void testGenericSelectDelayedSend () {
+    var ch1 = Channel.buffered<int> (1);
+    var ch2 = Channel.buffered<int> (1);
+    var channels = new ArrayList<Channel<int> > ();
+    channels.add (ch1);
+    channels.add (ch2);
+
+    var sender = new Thread<void> ("delayed-sender", () => {
+        Thread.usleep (50 * 1000);
+        ch1.send (7);
+    });
+
+    Pair<int, int> ? selected = Channel.select<int> (channels);
+    sender.join ();
+    assert (selected != null);
+    if (selected != null) {
+        assert ((int) selected.first () == 0);
+        assert ((int) selected.second () == 7);
     }
 }
 

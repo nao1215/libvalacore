@@ -10,6 +10,34 @@ namespace Vala.Concurrent {
      * In buffered mode, send blocks only when the internal buffer is full.
      */
     public class Channel<T>: GLib.Object {
+        private class SelectWaiter : GLib.Object {
+            private GLib.Mutex _mutex;
+            private GLib.Cond _cond;
+            private int64 _epoch;
+
+            public int64 snapshot () {
+                _mutex.lock ();
+                int64 observed = _epoch;
+                _mutex.unlock ();
+                return observed;
+            }
+
+            public void waitForChange (int64 observed) {
+                _mutex.lock ();
+                if (_epoch == observed) {
+                    _cond.wait (_mutex);
+                }
+                _mutex.unlock ();
+            }
+
+            public void notifyChange () {
+                _mutex.lock ();
+                _epoch++;
+                _cond.broadcast ();
+                _mutex.unlock ();
+            }
+        }
+
         private GLib.AsyncQueue<ChannelBox<T> > _queue;
         private int _capacity;
         private bool _closed;
@@ -17,6 +45,8 @@ namespace Vala.Concurrent {
         private GLib.Cond _notFull;
         private GLib.Cond _delivered;
         private int _size;
+        private GLib.Mutex _select_waiters_mutex;
+        private ArrayList<SelectWaiter> _select_waiters;
 
         /**
          * Creates an unbuffered channel.
@@ -26,6 +56,7 @@ namespace Vala.Concurrent {
             _closed = false;
             _size = 0;
             _queue = new GLib.AsyncQueue<ChannelBox<T> > ();
+            _select_waiters = new ArrayList<SelectWaiter> ();
         }
 
         /**
@@ -68,6 +99,7 @@ namespace Vala.Concurrent {
                 _queue.push (new ChannelBox<T> (value));
                 _size++;
                 _mutex.unlock ();
+                notifySelectWaiters ();
             } else {
                 while (_size > 0 && !_closed) {
                     _delivered.wait (_mutex);
@@ -79,6 +111,7 @@ namespace Vala.Concurrent {
                 }
                 _queue.push (new ChannelBox<T> (value));
                 _size++;
+                notifySelectWaiters ();
                 while (_size > 0 && !_closed) {
                     _delivered.wait (_mutex);
                 }
@@ -111,6 +144,7 @@ namespace Vala.Concurrent {
             _queue.push (new ChannelBox<T> (value));
             _size++;
             _mutex.unlock ();
+            notifySelectWaiters ();
             return true;
         }
 
@@ -131,6 +165,7 @@ namespace Vala.Concurrent {
                 return null;
             }
 
+            bool notifyClosedDrained = false;
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
@@ -138,7 +173,11 @@ namespace Vala.Concurrent {
             } else {
                 _delivered.broadcast ();
             }
+            notifyClosedDrained = _closed && _size == 0;
             _mutex.unlock ();
+            if (notifyClosedDrained) {
+                notifySelectWaiters ();
+            }
             return box.value;
         }
 
@@ -157,6 +196,7 @@ namespace Vala.Concurrent {
                 return null;
             }
 
+            bool notifyClosedDrained = false;
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
@@ -164,7 +204,11 @@ namespace Vala.Concurrent {
             } else {
                 _delivered.broadcast ();
             }
+            notifyClosedDrained = _closed && _size == 0;
             _mutex.unlock ();
+            if (notifyClosedDrained) {
+                notifySelectWaiters ();
+            }
             return box.value;
         }
 
@@ -189,6 +233,7 @@ namespace Vala.Concurrent {
                 return null;
             }
 
+            bool notifyClosedDrained = false;
             _mutex.lock ();
             _size--;
             if (_capacity > 0) {
@@ -196,7 +241,11 @@ namespace Vala.Concurrent {
             } else {
                 _delivered.broadcast ();
             }
+            notifyClosedDrained = _closed && _size == 0;
             _mutex.unlock ();
+            if (notifyClosedDrained) {
+                notifySelectWaiters ();
+            }
             return box.value;
         }
 
@@ -213,6 +262,7 @@ namespace Vala.Concurrent {
             var sentinel = new ChannelBox<T> ();
             sentinel.sentinel = true;
             _queue.push (sentinel);
+            notifySelectWaiters ();
         }
 
         /**
@@ -258,12 +308,30 @@ namespace Vala.Concurrent {
             if (channels.size () == 0) {
                 return null;
             }
+            var waiter = new SelectWaiter ();
+            var registered = new ArrayList<Channel<T> > ();
+            for (int i = 0; i < channels.size (); i++) {
+                Channel<T> ch = channels.get (i);
+                bool exists = false;
+                for (int j = 0; j < registered.size (); j++) {
+                    if (registered.get (j) == ch) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    ch.registerSelectWaiter (waiter);
+                    registered.add (ch);
+                }
+            }
+
             while (true) {
                 bool allClosed = true;
                 for (int i = 0; i < channels.size (); i++) {
                     Channel<T> ch = channels.get (i);
                     T ? value = ch.tryReceive ();
                     if (value != null) {
+                        unregisterSelectWaiterFromChannels (registered, waiter);
                         return new Pair<int, T> (i, value);
                     }
                     if (!(ch.isClosed () && ch.size () == 0)) {
@@ -271,10 +339,45 @@ namespace Vala.Concurrent {
                     }
                 }
                 if (allClosed) {
+                    unregisterSelectWaiterFromChannels (registered, waiter);
                     return null;
                 }
-                Thread.usleep (1000);
+                int64 observedEpoch = waiter.snapshot ();
+                waiter.waitForChange (observedEpoch);
             }
+        }
+
+        private void registerSelectWaiter (SelectWaiter waiter) {
+            _select_waiters_mutex.lock ();
+            _select_waiters.add (waiter);
+            _select_waiters_mutex.unlock ();
+        }
+
+        private void unregisterSelectWaiter (SelectWaiter waiter) {
+            _select_waiters_mutex.lock ();
+            for (int i = 0; i < _select_waiters.size (); i++) {
+                if (_select_waiters.get (i) == waiter) {
+                    _select_waiters.removeAt (i);
+                    break;
+                }
+            }
+            _select_waiters_mutex.unlock ();
+        }
+
+        private static void unregisterSelectWaiterFromChannels<T> (ArrayList<Channel<T> > channels,
+                                                                   SelectWaiter waiter) {
+            for (int i = 0; i < channels.size (); i++) {
+                channels.get (i).unregisterSelectWaiter (waiter);
+            }
+        }
+
+        private void notifySelectWaiters () {
+            _select_waiters_mutex.lock ();
+            for (int i = 0; i < _select_waiters.size (); i++) {
+                SelectWaiter waiter = _select_waiters.get (i);
+                waiter.notifyChange ();
+            }
+            _select_waiters_mutex.unlock ();
         }
 
         /**

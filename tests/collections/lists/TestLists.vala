@@ -13,6 +13,7 @@ void main (string[] args) {
     Test.add_func ("/collections/lists/testRotateGeneric", testRotateGeneric);
     Test.add_func ("/collections/lists/testShuffleGeneric", testShuffleGeneric);
     Test.add_func ("/collections/lists/testSlidingGeneric", testSlidingGeneric);
+    Test.add_func ("/collections/lists/testSlidingGenericInvalidSize", testSlidingGenericInvalidSize);
     Test.add_func ("/collections/lists/testInterleaveGeneric", testInterleaveGeneric);
     Test.add_func ("/collections/lists/testFrequencyGeneric", testFrequencyGeneric);
     Test.add_func ("/collections/lists/testSortByGeneric", testSortByGeneric);
@@ -27,6 +28,7 @@ void main (string[] args) {
     Test.add_func ("/collections/lists/testDistinctString", testDistinctString);
     Test.add_func ("/collections/lists/testReverseString", testReverseString);
     Test.add_func ("/collections/lists/testSlidingString", testSlidingString);
+    Test.add_func ("/collections/lists/testSlidingStringInvalidSize", testSlidingStringInvalidSize);
     Test.add_func ("/collections/lists/testInterleaveString", testInterleaveString);
     Test.add_func ("/collections/lists/testFrequencyString", testFrequencyString);
     Test.add_func ("/collections/lists/testEmptyList", testEmptyList);
@@ -170,6 +172,12 @@ void testSlidingGeneric () {
     var w1 = (ArrayList<int>) windows.get (1);
     assert (w0.get (0) == 1 && w0.get (1) == 2);
     assert (w1.get (0) == 2 && w1.get (1) == 3);
+}
+
+void testSlidingGenericInvalidSize () {
+    var list = il ({ 1, 2, 3 });
+    assert (Lists.sliding<int> (list, 0).size () == 0);
+    assert (Lists.sliding<int> (list, -1).size () == 0);
 }
 
 void testInterleaveGeneric () {
@@ -331,6 +339,12 @@ void testSlidingString () {
     assert (w1.get (1) == "c");
     assert (w2.get (0) == "c");
     assert (w2.get (1) == "d");
+}
+
+void testSlidingStringInvalidSize () {
+    var list = sl ({ "a", "b", "c" });
+    assert (Lists.slidingString (list, 0).size () == 0);
+    assert (Lists.slidingString (list, -3).size () == 0);
 }
 
 void testInterleaveString () {

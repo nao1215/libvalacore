@@ -68,11 +68,13 @@ void main (string[] args) {
 }
 
 string rootFor (string name) {
-    return "/tmp/valacore/ut/yaml_" + name;
+    return "%s/valacore/ut/yaml_%s_%s".printf (Environment.get_tmp_dir (),
+                                               name,
+                                               GLib.Uuid.string_random ());
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 // --- Scalar parsing ---

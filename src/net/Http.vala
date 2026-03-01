@@ -22,8 +22,8 @@ namespace Vala.Net {
 
         internal HttpResponse (int status, HashMap<string, string> headers, owned uint8[] body) {
             _status_code = status;
-            _headers = headers;
-            _body = (owned) body;
+            _headers = copyHeaders (headers);
+            _body = copyBodyBytes (body);
         }
 
         /**
@@ -94,7 +94,7 @@ namespace Vala.Net {
          * @return body bytes.
          */
         public uint8[] bodyBytes () {
-            return _body;
+            return copyBodyBytes (_body);
         }
 
         /**
@@ -132,7 +132,7 @@ namespace Vala.Net {
          * @return headers map.
          */
         public HashMap<string, string> headers () {
-            return _headers;
+            return copyHeaders (_headers);
         }
 
         /**
@@ -159,6 +159,26 @@ namespace Vala.Net {
          */
         public string ? contentType () {
             return header ("content-type");
+        }
+
+        private static HashMap<string, string> copyHeaders (HashMap<string, string> src) {
+            var copy = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            GLib.List<unowned string> keys = src.keys ();
+            foreach (unowned string key in keys) {
+                string ? value = src.get (key);
+                if (value != null) {
+                    copy.put (key, value);
+                }
+            }
+            return copy;
+        }
+
+        private static uint8[] copyBodyBytes (uint8[] src) {
+            uint8[] copy = new uint8[src.length];
+            if (src.length > 0) {
+                GLib.Memory.copy (copy, src, src.length);
+            }
+            return copy;
         }
     }
 
