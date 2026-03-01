@@ -14,7 +14,9 @@ void main (string[] args) {
 
     // JsonValue object/array builders
     Test.add_func ("/encoding/json/testObjectBuilder", testObjectBuilder);
+    Test.add_func ("/encoding/json/testObjectBuilderSnapshot", testObjectBuilderSnapshot);
     Test.add_func ("/encoding/json/testArrayBuilder", testArrayBuilder);
+    Test.add_func ("/encoding/json/testArrayBuilderSnapshot", testArrayBuilderSnapshot);
 
     // JsonValue access
     Test.add_func ("/encoding/json/testGetAndAt", testGetAndAt);
@@ -70,11 +72,11 @@ void main (string[] args) {
 }
 
 string rootFor (string name) {
-    return "/tmp/valacore/ut/json_" + name;
+    return "%s/valacore/ut/json_%s_%s".printf (Environment.get_tmp_dir (), name, GLib.Uuid.string_random ());
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 // --- JsonValue factory and type checks ---
@@ -146,6 +148,17 @@ void testObjectBuilder () {
     }
 }
 
+void testObjectBuilderSnapshot () {
+    var builder = JsonValue.object ().put ("a", JsonValue.ofInt (1));
+    JsonValue first = builder.build ();
+    JsonValue second = builder.put ("b", JsonValue.ofInt (2)).build ();
+
+    assert (first.isObject ());
+    assert (first.get ("a") != null);
+    assert (first.get ("b") == null);
+    assert (second.get ("b") != null);
+}
+
 void testArrayBuilder () {
     var arr = JsonValue.array ()
                .add (JsonValue.ofInt (1))
@@ -161,6 +174,18 @@ void testArrayBuilder () {
         int ? i = second.asInt ();
         assert (i != null && i == 2);
     }
+}
+
+void testArrayBuilderSnapshot () {
+    var builder = JsonValue.array ().add (JsonValue.ofInt (1));
+    JsonValue first = builder.build ();
+    JsonValue second = builder.add (JsonValue.ofInt (2)).build ();
+
+    assert (first.isArray ());
+    assert (first.size () == 1);
+    assert (first.at (0).asInt () == 1);
+    assert (second.size () == 1);
+    assert (second.at (0).asInt () == 2);
 }
 
 // --- Access ---
