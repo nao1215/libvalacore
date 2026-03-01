@@ -544,7 +544,16 @@ namespace Vala.Encoding {
          * @return the constructed JSON object.
          */
         public JsonValue build () {
-            return JsonValue.fromObject (_map);
+            var snapshot = new HashMap<string, JsonValue> (GLib.str_hash, GLib.str_equal);
+            GLib.List<unowned string> keys = _map.keys ();
+            foreach (unowned string key in keys) {
+                JsonValue ? value = _map.get (key);
+                if (value != null) {
+                    snapshot.put (key, value);
+                }
+            }
+            _map = new HashMap<string, JsonValue> (GLib.str_hash, GLib.str_equal);
+            return JsonValue.fromObject (snapshot);
         }
     }
 
@@ -583,7 +592,15 @@ namespace Vala.Encoding {
          * @return the constructed JSON array.
          */
         public JsonValue build () {
-            return JsonValue.fromArray (_list);
+            var snapshot = new ArrayList<JsonValue> ();
+            for (int i = 0; i < _list.size (); i++) {
+                JsonValue ? value = _list.get (i);
+                if (value != null) {
+                    snapshot.add (value);
+                }
+            }
+            _list = new ArrayList<JsonValue> ();
+            return JsonValue.fromArray (snapshot);
         }
     }
 
@@ -1018,22 +1035,46 @@ namespace Vala.Encoding {
                             builder.append_c ('\t');
                             break;
                         case 'u' :
-                            pos++;
-                            if (pos + 4 > json.length) {
+                            if (pos + 5 > json.length) {
                                 return null;
                             }
-                            string hex = json.substring (pos, 4);
-                            uint cp = 0;
-                            if (!parseHex4 (hex, out cp)) {
+                            uint high = 0;
+                            if (!parseHex4 (json.substring (pos + 1, 4), out high)) {
                                 return null;
                             }
-                            builder.append (unicodeToUtf8 (cp));
-                            pos += 3;
+
+                            if (high >= 0xD800 && high <= 0xDBFF) {
+                                if (pos + 11 > json.length
+                                    || json[pos + 5] != '\\'
+                                    || json[pos + 6] != 'u') {
+                                    return null;
+                                }
+
+                                uint low = 0;
+                                if (!parseHex4 (json.substring (pos + 7, 4), out low)
+                                    || low < 0xDC00 || low > 0xDFFF) {
+                                    return null;
+                                }
+
+                                uint combined = 0x10000
+                                                + ((high - 0xD800) << 10)
+                                                + (low - 0xDC00);
+                                builder.append (unicodeToUtf8 (combined));
+                                pos += 10;
+                            } else if (high >= 0xDC00 && high <= 0xDFFF) {
+                                return null;
+                            } else {
+                                builder.append (unicodeToUtf8 (high));
+                                pos += 4;
+                            }
                             break;
                             default :
                             return null;
                     }
                 } else {
+                    if ((uint) c < 0x20) {
+                        return null;
+                    }
                     builder.append_c (c);
                 }
                 pos++;
@@ -1098,8 +1139,15 @@ namespace Vala.Encoding {
             if (pos >= json.length || json[pos] < '0' || json[pos] > '9') {
                 return null;
             }
-            while (pos < json.length && json[pos] >= '0' && json[pos] <= '9') {
+            if (json[pos] == '0') {
+                if (pos + 1 < json.length && json[pos + 1] >= '0' && json[pos + 1] <= '9') {
+                    return null;
+                }
                 pos++;
+            } else {
+                while (pos < json.length && json[pos] >= '0' && json[pos] <= '9') {
+                    pos++;
+                }
             }
             if (pos < json.length && json[pos] == '.') {
                 hasDecimal = true;

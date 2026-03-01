@@ -973,8 +973,8 @@ JSON parsing, serialization, and path-based querying. Handles JSON as a `JsonVal
 | `getString(JsonValue root, string path, string fallback)` | Gets string by path with fallback |
 | `getInt(JsonValue root, string path, int fallback)` | Gets int by path with fallback |
 | `getBool(JsonValue root, string path, bool fallback)` | Gets bool by path with fallback |
-| `set(JsonValue root, string path, JsonValue value)` | Sets value at path (returns new tree) |
-| `remove(JsonValue root, string path)` | Removes key at path (returns new tree) |
+| `set(JsonValue root, string path, JsonValue value)` | Sets value at top-level object key path (`$.key`, e.g. `$.name`; `$.a.b` is unsupported) and returns new tree |
+| `remove(JsonValue root, string path)` | Removes a top-level object key path (`$.key`) and returns new tree |
 | `merge(JsonValue a, JsonValue b)` | Merges two objects (b overrides a, returns new tree) |
 | `flatten(JsonValue root)` | Flattens nested object to dot-notation `HashMap` |
 
