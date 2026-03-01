@@ -167,7 +167,7 @@ Atomic update helper for safe file replacement with optional backup.
 |---|---|
 | `AtomicFile()` | Creates an atomic writer with default settings |
 | `withBackup(bool enabled)` | Enables/disables backup creation before replacement |
-| `backupSuffix(string suffix)` | Sets backup suffix (default: `.bak`) |
+| `backupSuffix(string suffix)` | Sets backup suffix (default: `.bak`) (`throws AtomicFileError.INVALID_ARGUMENT` when empty) |
 | `write(Path path, string text)` | Atomically replaces file with text content |
 | `writeBytes(Path path, uint8[] data)` | Atomically replaces file with binary content |
 | `append(Path path, string text)` | Appends by reading current content then atomically replacing |

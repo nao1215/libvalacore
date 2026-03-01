@@ -20,7 +20,16 @@ void main (string[] args) {
     Test.add_func ("/io/atomicfile/testWriteWithBackup", testWriteWithBackup);
     Test.add_func ("/io/atomicfile/testReadConsistentMissing", testReadConsistentMissing);
     Test.add_func ("/io/atomicfile/testReplaceMissingSource", testReplaceMissingSource);
+    Test.add_func ("/io/atomicfile/testBackupSuffixInvalid", testBackupSuffixInvalid);
     Test.run ();
+}
+
+AtomicFile atomicWithBackup (string suffix) {
+    try {
+        return new AtomicFile ().withBackup (true).backupSuffix (suffix);
+    } catch (AtomicFileError e) {
+        assert_not_reached ();
+    }
 }
 
 void testWriteAndReadConsistent () {
@@ -106,7 +115,7 @@ void testReplaceWithBackup () {
         assert (Files.writeText (srcTmp, "next") == true);
         assert (Files.writeText (dst, "prev") == true);
 
-        var atomic = new AtomicFile ().withBackup (true).backupSuffix (".old");
+        var atomic = atomicWithBackup (".old");
         assert (atomic.replace (srcTmp, dst) == true);
 
         assert (Files.readAllText (dst) == "next");
@@ -124,7 +133,7 @@ void testWriteWithBackup () {
     try {
         assert (Files.writeText (path, "before") == true);
 
-        var atomic = new AtomicFile ().withBackup (true).backupSuffix (".prev");
+        var atomic = atomicWithBackup (".prev");
         assert (atomic.write (path, "after") == true);
 
         assert (Files.readAllText (path) == "after");
@@ -163,4 +172,15 @@ void testReplaceMissingSource () {
     } finally {
         cleanupTempDir (dir);
     }
+}
+
+void testBackupSuffixInvalid () {
+    bool thrown = false;
+    try {
+        new AtomicFile ().backupSuffix ("");
+    } catch (AtomicFileError e) {
+        thrown = true;
+        assert (e is AtomicFileError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }
