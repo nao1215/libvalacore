@@ -215,12 +215,12 @@ namespace Vala.Collections {
          * Returns sliding windows over a list.
          *
          * @param list source list.
-         * @param windowSize window size (must be > 0).
+         * @param windowSize window size (must be > 0, otherwise empty result).
          * @return list of windows.
          */
         public static ArrayList<ArrayList<T> > sliding<T> (ArrayList<T> list, int windowSize) {
             if (windowSize <= 0) {
-                error ("windowSize must be positive, got %d", windowSize);
+                return new ArrayList<ArrayList<T> > ();
             }
             var result = new ArrayList<ArrayList<T> > ();
             for (int i = 0; i <= (int) list.size () - windowSize; i++) {
@@ -498,12 +498,12 @@ namespace Vala.Collections {
          * }}}
          *
          * @param list the source list.
-         * @param windowSize the window size (must be > 0).
+         * @param windowSize the window size (must be > 0, otherwise empty result).
          * @return an ArrayList of window lists.
          */
         public static ArrayList<ArrayList<string> > slidingString (ArrayList<string> list, int windowSize) {
             if (windowSize <= 0) {
-                error ("windowSize must be positive, got %d", windowSize);
+                return new ArrayList<ArrayList<string> > ();
             }
             var result = new ArrayList<ArrayList<string> > ();
             for (int i = 0; i <= (int) list.size () - windowSize; i++) {
