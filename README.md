@@ -1597,12 +1597,12 @@ Consistent hash ring with virtual nodes for stable key distribution.
 | Method | Description |
 |---|---|
 | `ConsistentHash()` | Creates empty hash ring |
-| `withVirtualNodes(int replicas)` | Sets virtual node count per physical node |
-| `addNode(string nodeId)` | Adds physical node to ring |
-| `removeNode(string nodeId)` | Removes physical node from ring |
-| `containsNode(string nodeId)` | Returns whether node exists |
-| `getNode(string key)` | Returns assigned node for a key |
-| `getNodes(string key, int count)` | Returns distinct replica nodes for a key |
+| `withVirtualNodes(int replicas)` | Sets virtual node count per physical node (`throws ConsistentHashError.INVALID_ARGUMENT` when `replicas <= 0`) |
+| `addNode(string nodeId)` | Adds physical node to ring (`throws ConsistentHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `removeNode(string nodeId)` | Removes physical node from ring (`throws ConsistentHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `containsNode(string nodeId)` | Returns whether node exists (`throws ConsistentHashError.INVALID_ARGUMENT` when `nodeId` is empty) |
+| `getNode(string key)` | Returns assigned node for a key (`throws ConsistentHashError.INVALID_ARGUMENT` when `key` is empty) |
+| `getNodes(string key, int count)` | Returns distinct replica nodes for a key (`throws ConsistentHashError.INVALID_ARGUMENT` when `key` is empty or `count <= 0`) |
 | `nodeCount()` | Returns physical node count |
 | `virtualNodeCount()` | Returns virtual node count |
 | `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
