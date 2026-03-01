@@ -10,6 +10,19 @@ void main (string[] args) {
     Test.run ();
 }
 
+Vala.Time.DateTime createDateTime (int year,
+                                   int month,
+                                   int day,
+                                   int hour,
+                                   int min,
+                                   int sec) {
+    try {
+        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    } catch (DateTimeError e) {
+        assert_not_reached ();
+    }
+}
+
 void testNow () {
     Vala.Time.DateTime now = Dates.now ();
     assert (now.toUnixTimestamp () > 0);
@@ -29,7 +42,7 @@ void testParseInvalid () {
 }
 
 void testAddDays () {
-    Vala.Time.DateTime dt = Vala.Time.DateTime.of (2024, 2, 28, 0, 0, 0);
+    Vala.Time.DateTime dt = createDateTime (2024, 2, 28, 0, 0, 0);
     Vala.Time.DateTime plus = Dates.addDays (dt, 1);
     Vala.Time.DateTime minus = Dates.addDays (dt, -1);
 

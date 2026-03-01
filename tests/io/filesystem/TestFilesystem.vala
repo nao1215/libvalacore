@@ -11,6 +11,19 @@ void main (string[] args) {
     Test.run ();
 }
 
+Vala.Time.DateTime createDateTime (int year,
+                                   int month,
+                                   int day,
+                                   int hour,
+                                   int min,
+                                   int sec) {
+    try {
+        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    } catch (DateTimeError e) {
+        assert_not_reached ();
+    }
+}
+
 void testGetFileAttributes () {
     Vala.Io.Path ? tmp = Files.tempFile ("filesystem", ".tmp");
     assert (tmp != null);
@@ -29,7 +42,7 @@ void testSetLastModifiedTime () {
     assert (tmp != null);
 
     try {
-        Vala.Time.DateTime target = Vala.Time.DateTime.of (2001, 2, 3, 4, 5, 6);
+        Vala.Time.DateTime target = createDateTime (2001, 2, 3, 4, 5, 6);
         assert (Filesystem.setLastModifiedTime (tmp, target) == true);
 
         GLib.DateTime ? modified = Files.lastModified (tmp);

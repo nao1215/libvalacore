@@ -443,7 +443,7 @@ Immutable value object for date-time operations.
 | Method | Description |
 |---|---|
 | `now()` | Returns current local date-time |
-| `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components |
+| `of(int year, int month, int day, int hour, int min, int sec)` | Creates date-time from components (`throws DateTimeError.INVALID_COMPONENTS` on invalid values) |
 | `parse(string s, string format)` | Parses text using `%Y-%m-%d %H:%M:%S` or `%Y-%m-%dT%H:%M:%S` (returns `null` for unsupported formats) |
 | `format(string format)` | Formats with strftime format |
 | `year()` / `month()` / `day()` | Returns date components |

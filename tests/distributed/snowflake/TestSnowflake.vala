@@ -12,6 +12,19 @@ void main (string[] args) {
     Test.run ();
 }
 
+Vala.Time.DateTime createDateTime (int year,
+                                   int month,
+                                   int day,
+                                   int hour,
+                                   int min,
+                                   int sec) {
+    try {
+        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    } catch (Vala.Time.DateTimeError e) {
+        assert_not_reached ();
+    }
+}
+
 void testBasic () {
     var generator = new Snowflake (7);
     int64 id = generator.nextId ();
@@ -49,7 +62,7 @@ void testMonotonicUnique () {
 }
 
 void testWithEpoch () {
-    Vala.Time.DateTime epoch = Vala.Time.DateTime.of (2024, 1, 1, 0, 0, 0);
+    Vala.Time.DateTime epoch = createDateTime (2024, 1, 1, 0, 0, 0);
     var generator = new Snowflake (9).withEpoch (epoch);
     int64 id = generator.nextId ();
 
