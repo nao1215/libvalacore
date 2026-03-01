@@ -403,6 +403,9 @@ namespace Vala.Encoding {
                         if (!int64.try_parse (idxStr, out idx)) {
                             return null;
                         }
+                        if (idx < 0 || idx > int.MAX) {
+                            return null;
+                        }
                         current = current.at ((int) idx);
                         if (current == null) {
                             return null;
@@ -930,9 +933,6 @@ namespace Vala.Encoding {
                     sb.append ("{}\n");
                     return;
                 }
-                if (!inlineItem) {
-                    // Already on a new line
-                }
                 for (int i = 0; i < keysList.size (); i++) {
                     string key = keysList.get (i);
                     YamlValue ? val = value.get (key);
@@ -994,7 +994,8 @@ namespace Vala.Encoding {
                 return true;
             }
             if (s.contains (":") || s.contains ("#") || s.contains ("\"")
-                || s.contains ("'") || s.contains ("\n")) {
+                || s.contains ("'") || s.contains ("\n")
+                || s.contains ("\r") || s.contains ("\t")) {
                 return true;
             }
             // Check if it looks like a number
