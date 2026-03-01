@@ -167,9 +167,11 @@ void main (string[] args) {
     Test.add_func ("/net/http/testResponseBodyBytes", testResponseBodyBytes);
     Test.add_func ("/net/http/testResponseJson", testResponseJson);
     Test.add_func ("/net/http/testResponseHeaders", testResponseHeaders);
+    Test.add_func ("/net/http/testResponseHeadersSnapshot", testResponseHeadersSnapshot);
     Test.add_func ("/net/http/testResponseContentLength", testResponseContentLength);
     Test.add_func ("/net/http/testResponseContentType", testResponseContentType);
     Test.add_func ("/net/http/testResponseEmptyBody", testResponseEmptyBody);
+    Test.add_func ("/net/http/testResponseBodyBytesSnapshot", testResponseBodyBytesSnapshot);
 
     // HttpRequestBuilder unit tests (no server needed)
     Test.add_func ("/net/http/testRequestBuilder", testRequestBuilder);
@@ -291,6 +293,19 @@ void testResponseHeaders () {
     assert (all.size () == 2);
 }
 
+void testResponseHeadersSnapshot () {
+    var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+    headers.put ("X-Test", "one");
+    var resp = new HttpResponse (200, headers, {});
+
+    HashMap<string, string> snapshot = resp.headers ();
+    snapshot.put ("X-Test", "modified");
+    snapshot.put ("X-New", "value");
+
+    assert (resp.header ("X-Test") == "one");
+    assert (resp.header ("X-New") == null);
+}
+
 void testResponseContentLength () {
     var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     headers.put ("Content-Length", "42");
@@ -318,6 +333,18 @@ void testResponseEmptyBody () {
     var resp = new HttpResponse (204, headers, {});
     assert (resp.bodyText () == "");
     assert (resp.bodyBytes ().length == 0);
+}
+
+void testResponseBodyBytesSnapshot () {
+    var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+    uint8[] data = { 0x41, 0x42, 0x43 };
+    var resp = new HttpResponse (200, headers, (owned) data);
+
+    uint8[] first = resp.bodyBytes ();
+    first[0] = 0x5a;
+    uint8[] second = resp.bodyBytes ();
+
+    assert (second[0] == 0x41);
 }
 
 // --- HttpRequestBuilder unit tests ---
