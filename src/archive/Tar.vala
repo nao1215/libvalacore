@@ -22,6 +22,7 @@ namespace Vala.Archive {
             var cmd = new GLib.StringBuilder ();
             cmd.append ("tar -cf ");
             cmd.append (quote (archive.toString ()));
+            var basenames = new HashSet<string> (GLib.str_hash, GLib.str_equal);
 
             bool hasFile = false;
             for (int i = 0; i < files.size (); i++) {
@@ -29,11 +30,18 @@ namespace Vala.Archive {
                 if (file == null || !Files.isFile (file)) {
                     continue;
                 }
+
+                string name = file.basename ();
+                if (basenames.contains (name)) {
+                    return false;
+                }
+                basenames.add (name);
+
                 hasFile = true;
                 cmd.append (" -C ");
                 cmd.append (quote (file.parent ().toString ()));
                 cmd.append (" ");
-                cmd.append (quote (file.basename ()));
+                cmd.append (quote (name));
             }
 
             if (!hasFile) {
@@ -81,6 +89,21 @@ namespace Vala.Archive {
             if (!Files.exists (dest) && !Files.makeDirs (dest)) {
                 return false;
             }
+            if (containsArchiveLinks (archive)) {
+                return false;
+            }
+
+            ArrayList<string> ? entries = list (archive);
+            if (entries == null) {
+                return false;
+            }
+            for (int i = 0; i < entries.size (); i++) {
+                string ? entry = entries.get (i);
+                if (entry == null || !isSafeArchiveEntry (entry, dest)) {
+                    return false;
+                }
+            }
+
             return Vala.Io.Process.exec (
                 "tar",
                 { "-xf", archive.toString (), "-C", dest.toString () });
@@ -184,6 +207,54 @@ namespace Vala.Archive {
 
         private static string quote (string s) {
             return GLib.Shell.quote (s);
+        }
+
+        private static bool isSafeArchiveEntry (string entry, Vala.Io.Path dest) {
+            string trimmed = entry.strip ();
+            if (trimmed.length == 0 || trimmed.has_prefix ("/")) {
+                return false;
+            }
+
+            string[] parts = trimmed.split ("/");
+            for (int i = 0; i < parts.length; i++) {
+                if (parts[i] == "..") {
+                    return false;
+                }
+            }
+
+            string basePath = dest.normalize ().toString ();
+            string resolved = dest.resolve (trimmed).normalize ().toString ();
+            if (basePath == "/") {
+                return resolved.has_prefix ("/");
+            }
+            if (basePath == ".") {
+                return resolved == "." || !resolved.has_prefix ("..");
+            }
+            if (resolved == basePath) {
+                return true;
+            }
+            return resolved.has_prefix (basePath + "/");
+        }
+
+        private static bool containsArchiveLinks (Vala.Io.Path archive) {
+            string ? output = Vala.Io.Process.execWithOutput ("tar", { "-tvf", archive.toString () });
+            if (output == null) {
+                return true;
+            }
+
+            foreach (string line in output.split ("\n")) {
+                string trimmed = line.strip ();
+                if (trimmed.length == 0) {
+                    continue;
+                }
+
+                // Reject symbolic links and hard links to avoid link traversal on extraction.
+                char kind = trimmed[0];
+                if (kind == 'l' || kind == 'h') {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

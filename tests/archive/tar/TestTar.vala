@@ -8,6 +8,7 @@ void main (string[] args) {
     Test.add_func ("/archive/tar/testCreateFromDirAndList", testCreateFromDirAndList);
     Test.add_func ("/archive/tar/testAddFile", testAddFile);
     Test.add_func ("/archive/tar/testExtractFile", testExtractFile);
+    Test.add_func ("/archive/tar/testExtractRejectsLinkEntries", testExtractRejectsLinkEntries);
     Test.add_func ("/archive/tar/testInvalidInputs", testInvalidInputs);
     Test.run ();
 }
@@ -16,8 +17,16 @@ bool hasTarTool () {
     return Vala.Io.Process.exec ("sh", { "-c", "command -v tar >/dev/null 2>&1" });
 }
 
+bool requireTarTool () {
+    if (hasTarTool ()) {
+        return true;
+    }
+    Test.skip ("tar tool not available");
+    return false;
+}
+
 string rootFor (string name) {
-    return "/tmp/valacore/ut/tar_" + name;
+    return "%s/valacore/ut/tar_%s_%s".printf (Environment.get_tmp_dir (), name, GLib.Uuid.string_random ());
 }
 
 void cleanup (string path) {
@@ -45,7 +54,7 @@ string ? findBySuffix (ArrayList<string> entries, string suffix) {
 }
 
 void testCreateAndExtract () {
-    if (!hasTarTool ()) {
+    if (!requireTarTool ()) {
         return;
     }
 
@@ -72,7 +81,7 @@ void testCreateAndExtract () {
 }
 
 void testCreateFromDirAndList () {
-    if (!hasTarTool ()) {
+    if (!requireTarTool ()) {
         return;
     }
 
@@ -97,7 +106,7 @@ void testCreateFromDirAndList () {
 }
 
 void testAddFile () {
-    if (!hasTarTool ()) {
+    if (!requireTarTool ()) {
         return;
     }
 
@@ -124,7 +133,7 @@ void testAddFile () {
 }
 
 void testExtractFile () {
-    if (!hasTarTool ()) {
+    if (!requireTarTool ()) {
         return;
     }
 
@@ -157,7 +166,7 @@ void testExtractFile () {
 }
 
 void testInvalidInputs () {
-    if (!hasTarTool ()) {
+    if (!requireTarTool ()) {
         return;
     }
 
@@ -172,5 +181,28 @@ void testInvalidInputs () {
                 new Vala.Io.Path (root + "/missing.tar"),
                 new Vala.Io.Path (root + "/out")
     ));
+    cleanup (root);
+}
+
+void testExtractRejectsLinkEntries () {
+    if (!requireTarTool ()) {
+        return;
+    }
+
+    string root = rootFor ("reject_links");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/tree")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/tree/plain.txt"), "plain"));
+
+    int rc = Posix.symlink ("/etc/passwd", root + "/tree/link_out");
+    if (rc != 0) {
+        Test.skip ("symlink is not supported in this environment");
+        cleanup (root);
+        return;
+    }
+
+    var archive = new Vala.Io.Path (root + "/link.tar");
+    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+    assert (!Tar.extract (archive, new Vala.Io.Path (root + "/out")));
     cleanup (root);
 }
