@@ -4,6 +4,13 @@ using Vala.Lang;
 
 namespace Vala.Io {
     /**
+     * Recoverable FileLock argument errors.
+     */
+    public errordomain FileLockError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Callback executed while lock is held.
      */
     public delegate bool WithFileLockFunc ();
@@ -60,11 +67,14 @@ namespace Vala.Io {
          *
          * @param timeout maximum wait duration.
          * @return true when lock is acquired before timeout.
+         * @throws FileLockError.INVALID_ARGUMENT when timeout is negative.
          */
-        public bool acquireTimeout (Duration timeout) {
+        public bool acquireTimeout (Duration timeout) throws FileLockError {
             int64 timeoutMillis = timeout.toMillis ();
             if (timeoutMillis < 0) {
-                error ("timeout must be non-negative, got %" + int64.FORMAT, timeoutMillis);
+                throw new FileLockError.INVALID_ARGUMENT (
+                          ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
+                );
             }
 
             int64 deadlineMicros = GLib.get_monotonic_time () + (timeoutMillis * 1000);

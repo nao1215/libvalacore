@@ -181,7 +181,7 @@ Lock-file based process coordination utility.
 |---|---|
 | `FileLock(Path path)` | Creates a lock bound to the given lock-file path |
 | `acquire()` | Blocks until lock is acquired |
-| `acquireTimeout(Duration timeout)` | Tries to acquire lock within timeout |
+| `acquireTimeout(Duration timeout)` | Tries to acquire lock within timeout (`throws FileLockError.INVALID_ARGUMENT` when timeout is negative) |
 | `tryAcquire()` | Attempts lock acquisition without blocking |
 | `release()` | Releases the lock (removes lock file) |
 | `isHeld()` | Returns whether this instance currently holds the lock |
