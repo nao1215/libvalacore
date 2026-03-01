@@ -1662,7 +1662,7 @@ Probabilistic set membership filter with compact memory usage.
 
 | Method | Description |
 |---|---|
-| `BloomFilter(int expectedInsertions, double falsePositiveRate)` | Creates filter with expected size and FPR |
+| `BloomFilter(int expectedInsertions, double falsePositiveRate)` | Creates filter with expected size and FPR (`throws BloomFilterError.INVALID_ARGUMENT` when parameters are invalid) |
 | `add(T item)` | Adds one item |
 | `addAll(ArrayList<T> items)` | Adds multiple items |
 | `mightContain(T item)` | Returns membership possibility |
