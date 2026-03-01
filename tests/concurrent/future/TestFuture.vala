@@ -18,6 +18,7 @@ void main (string[] args) {
     Test.add_func ("/concurrent/future/testTimeout", testTimeout);
     Test.add_func ("/concurrent/future/testTimeoutInvalid", testTimeoutInvalid);
     Test.add_func ("/concurrent/future/testCancel", testCancel);
+    Test.add_func ("/concurrent/future/testTimeoutInvalid", testTimeoutInvalid);
     Test.add_func ("/concurrent/future/testOrElse", testOrElse);
     Test.add_func ("/concurrent/future/testAll", testAll);
     Test.add_func ("/concurrent/future/testAllFailure", testAllFailure);
@@ -164,6 +165,8 @@ void testTimeoutInvalid () {
 
     Future<int> wrapped = source.timeout (Duration.ofSeconds (-1));
     wrapped.@await ();
+
+    assert (wrapped.isDone () == true);
     assert (wrapped.isFailed () == true);
     assert (wrapped.error () == "timeout must be non-negative");
 }
@@ -272,6 +275,7 @@ void testDelayedInvalid () {
     });
 
     delayed.@await ();
+    assert (delayed.isDone () == true);
     assert (delayed.isFailed () == true);
     assert (delayed.error () == "delay must be non-negative");
 }
