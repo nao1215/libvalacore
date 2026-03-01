@@ -174,6 +174,7 @@ void main (string[] args) {
     Test.add_func ("/net/http/testChunkedResponse", testChunkedResponse);
     Test.add_func ("/net/http/testRequestBuilderSend", testRequestBuilderSend);
     Test.add_func ("/net/http/testRequestBuilderQuery", testRequestBuilderQuery);
+    Test.add_func ("/net/http/testQueryOnlyUrlPath", testQueryOnlyUrlPath);
     Test.add_func ("/net/http/testRequestBuilderHeaders", testRequestBuilderHeaders);
     Test.add_func ("/net/http/testStatus404", testStatus404);
     Test.add_func ("/net/http/testStatus500", testStatus500);
@@ -556,6 +557,23 @@ void testRequestBuilderQuery () {
     assert (req != null);
     assert (req.contains ("q=hello"));
     assert (req.contains ("page=1"));
+}
+
+void testQueryOnlyUrlPath () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "text/plain", "query-only-ok");
+    var t = serveAsync (server);
+
+    var resp = Http.get (server.baseUrl () + "?x=1");
+    t.join ();
+    server.stop ();
+
+    assert (resp != null);
+    assert (resp.isSuccess ());
+
+    string ? req = server.lastRequest ();
+    assert (req != null);
+    assert (req.contains ("GET /?x=1 HTTP/1.1"));
 }
 
 void testRequestBuilderHeaders () {

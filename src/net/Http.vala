@@ -268,7 +268,10 @@ namespace Vala.Net {
         /**
          * Sets the request timeout in milliseconds.
          *
-         * @param ms timeout in milliseconds (default: 30000).
+         * If ms <= 0, the timeout floor of 1000 ms is applied.
+         * Pass a positive value to use a custom timeout.
+         *
+         * @param ms timeout in milliseconds.
          * @return this builder for chaining.
          */
         public HttpRequestBuilder timeoutMillis (int ms) {
@@ -476,18 +479,91 @@ namespace Vala.Net {
          * @return true on success.
          */
         public static bool download (string url, Vala.Io.Path dest) {
-            HttpResponse ? resp = get (url);
-            if (resp == null || !resp.isSuccess ()) {
-                return false;
-            }
-            uint8[] data = resp.bodyBytes ();
-            if (data == null) {
-                return false;
-            }
             try {
-                GLib.FileUtils.set_data (dest.toString (), data);
+                string host;
+                uint16 port;
+                string path;
+                bool useTls;
+                if (!parseUrl (url, out host, out port, out path, out useTls)) {
+                    return false;
+                }
+
+                var client = new GLib.SocketClient ();
+                client.timeout = (uint) ((DEFAULT_TIMEOUT_MS + 999) / 1000);
+                if (useTls) {
+                    client.set_tls (true);
+                }
+
+                var conn = client.connect_to_host (host, port, null);
+                if (conn == null) {
+                    return false;
+                }
+
+                var reqBuilder = new GLib.StringBuilder ();
+                reqBuilder.append ("GET %s HTTP/1.1\r\n".printf (path));
+                reqBuilder.append ("Host: %s\r\n".printf (host));
+                reqBuilder.append ("Connection: close\r\n");
+                reqBuilder.append ("\r\n");
+
+                var os = conn.get_output_stream ();
+                size_t reqWritten = 0;
+                os.write_all (reqBuilder.str.data, out reqWritten);
+                os.flush ();
+
+                var dis = new GLib.DataInputStream (conn.get_input_stream ());
+                dis.set_newline_type (GLib.DataStreamNewlineType.CR_LF);
+                string ? statusLine = dis.read_line ();
+                if (statusLine == null) {
+                    conn.close ();
+                    return false;
+                }
+                int statusCode = parseStatusCode (statusLine);
+                if (statusCode < 200 || statusCode >= 300) {
+                    conn.close ();
+                    return false;
+                }
+
+                int64 contentLen = -1;
+                bool chunked = false;
+                while (true) {
+                    string ? line = dis.read_line ();
+                    if (line == null || line.length == 0) {
+                        break;
+                    }
+                    int colonIdx = line.index_of (":");
+                    if (colonIdx <= 0) {
+                        continue;
+                    }
+                    string hName = line.substring (0, colonIdx).strip ();
+                    string hValue = line.substring (colonIdx + 1).strip ();
+                    if (hName.down () == "content-length") {
+                        int64 cl;
+                        if (int64.try_parse (hValue, out cl)) {
+                            contentLen = cl;
+                        }
+                    }
+                    if (hName.down () == "transfer-encoding" && hValue.down ().contains ("chunked")) {
+                        chunked = true;
+                    }
+                }
+
+                GLib.File outFile = GLib.File.new_for_path (dest.toString ());
+                var outStream = outFile.replace (null,
+                                                 false,
+                                                 GLib.FileCreateFlags.REPLACE_DESTINATION,
+                                                 null);
+                if (chunked) {
+                    copyChunkedToStream (dis, outStream);
+                } else if (contentLen > 0) {
+                    copyFixedLengthToStream (dis, outStream, contentLen);
+                } else if (contentLen == -1) {
+                    copyUntilEofToStream (dis, outStream);
+                }
+                outStream.close ();
+                conn.close ();
                 return true;
-            } catch (GLib.FileError e) {
+            } catch (GLib.Error e) {
+                stderr.printf ("Http.download failed for %s: %s\n", url, e.message);
                 return false;
             }
         }
@@ -627,6 +703,10 @@ namespace Vala.Net {
                 conn.close ();
                 return new HttpResponse (statusCode, respHeaders, (owned) bodyData);
             } catch (GLib.Error e) {
+                stderr.printf ("Http.executeRequest failed for %s %s: %s\n",
+                               method,
+                               url,
+                               e.message);
                 return null;
             }
         }
@@ -714,17 +794,74 @@ namespace Vala.Net {
             int offset = 0;
             while (offset < length) {
                 size_t read = 0;
-                try {
-                    read = dis.read (buf[offset : length]);
-                } catch (GLib.IOError e) {
-                    throw e;
-                }
+                read = dis.read (buf[offset : length]);
                 if (read == 0) {
                     throw new GLib.IOError.FAILED ("unexpected EOF while reading fixed-size body");
                 }
                 offset += (int) read;
             }
             return buf;
+        }
+
+        private static void copyFixedLengthToStream (GLib.DataInputStream dis,
+                                                     GLib.OutputStream outStream,
+                                                     int64 length) throws GLib.IOError {
+            int64 remaining = length;
+            uint8[] buf = new uint8[8192];
+            while (remaining > 0) {
+                int requestLen = (int) ((remaining > buf.length) ? buf.length : remaining);
+                size_t read = dis.read (buf[0 : requestLen]);
+                if (read == 0) {
+                    throw new GLib.IOError.FAILED ("unexpected EOF while downloading fixed-size body");
+                }
+                size_t written = 0;
+                outStream.write_all (buf[0 : read], out written);
+                remaining -= (int64) read;
+            }
+        }
+
+        private static void copyChunkedToStream (GLib.DataInputStream dis,
+                                                 GLib.OutputStream outStream)
+        throws GLib.IOError {
+            while (true) {
+                string ? sizeLine = dis.read_line ();
+                if (sizeLine == null) {
+                    throw new GLib.IOError.FAILED ("unexpected EOF while reading chunk size");
+                }
+                sizeLine = sizeLine.strip ();
+                if (sizeLine.length == 0) {
+                    continue;
+                }
+                string sizeToken = sizeLine;
+                int extIdx = sizeToken.index_of (";");
+                if (extIdx >= 0) {
+                    sizeToken = sizeToken.substring (0, extIdx).strip ();
+                }
+                int64 chunkSize = 0;
+                if (!parseHexInt (sizeToken, out chunkSize)) {
+                    throw new GLib.IOError.FAILED ("invalid chunk size");
+                }
+                if (chunkSize == 0) {
+                    while (true) {
+                        string ? trailer = dis.read_line ();
+                        if (trailer == null) {
+                            throw new GLib.IOError.FAILED ("unexpected EOF while reading chunk trailer");
+                        }
+                        if (trailer.length == 0) {
+                            return;
+                        }
+                    }
+                }
+                if (chunkSize < 0) {
+                    throw new GLib.IOError.FAILED ("chunk size out of range");
+                }
+
+                copyFixedLengthToStream (dis, outStream, chunkSize);
+                string ? chunkTerminator = dis.read_line ();
+                if (chunkTerminator == null || chunkTerminator.length != 0) {
+                    throw new GLib.IOError.FAILED ("invalid chunk terminator");
+                }
+            }
         }
 
         private static uint8[] readChunked (GLib.DataInputStream dis) throws GLib.IOError {
@@ -801,17 +938,27 @@ namespace Vala.Net {
             uint8[] buf = new uint8[4096];
             while (true) {
                 size_t read = 0;
-                try {
-                    read = dis.read (buf);
-                } catch (GLib.IOError e) {
-                    throw e;
-                }
+                read = dis.read (buf);
                 if (read == 0) {
                     break;
                 }
                 result.append (buf[0 : read]);
             }
             return result.data;
+        }
+
+        private static void copyUntilEofToStream (GLib.DataInputStream dis,
+                                                  GLib.OutputStream outStream)
+        throws GLib.IOError {
+            uint8[] buf = new uint8[8192];
+            while (true) {
+                size_t read = dis.read (buf);
+                if (read == 0) {
+                    break;
+                }
+                size_t written = 0;
+                outStream.write_all (buf[0 : read], out written);
+            }
         }
 
         internal static bool hasUnsafeHeaderChars (string value) {
