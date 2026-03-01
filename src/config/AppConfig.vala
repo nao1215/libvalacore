@@ -417,7 +417,7 @@ namespace Vala.Config {
         }
 
         private static void ensureKey (string key) throws AppConfigError {
-            if (key.length == 0) {
+            if (key.strip ().length == 0) {
                 throw new AppConfigError.INVALID_ARGUMENT ("key must not be empty");
             }
         }

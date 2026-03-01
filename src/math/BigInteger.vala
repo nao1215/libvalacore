@@ -376,7 +376,7 @@ namespace Vala.Math {
             return value + digit.to_string ();
         }
 
-        private static string divideAbs (string dividend, string divisor, out string remainder) throws BigIntegerError {
+        private static string divideAbs (string dividend, string divisor, out string remainder) {
             // divide() / mod() validate zero divisor before reaching divideAbs().
             if (compareAbs (dividend, divisor) < 0) {
                 remainder = stripLeadingZeros (dividend);

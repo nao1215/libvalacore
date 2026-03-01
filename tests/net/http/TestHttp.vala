@@ -180,9 +180,6 @@ void main (string[] args) {
     Test.add_func ("/net/http/testRequestBuilderJson", testRequestBuilderJson);
     Test.add_func ("/net/http/testRequestBuilderFormData", testRequestBuilderFormData);
     Test.add_func ("/net/http/testRequestBuilderFollowRedirects", testRequestBuilderFollowRedirects);
-    Test.add_func ("/net/http/testRequestBuilderRejectsUnsafeHeader", testRequestBuilderRejectsUnsafeHeader);
-    Test.add_func ("/net/http/testRedirectCrossOriginStripsSensitiveHeaders",
-                   testRedirectCrossOriginStripsSensitiveHeaders);
 
     // Mock server integration tests
     Test.add_func ("/net/http/testGet", testGet);
@@ -209,6 +206,9 @@ void main (string[] args) {
     Test.add_func ("/net/http/testInvalidUrl", testInvalidUrl);
     Test.add_func ("/net/http/testConnectionRefused", testConnectionRefused);
     Test.add_func ("/net/http/testDownloadInvalid", testDownloadInvalid);
+    Test.add_func ("/net/http/testRequestBuilderRejectsUnsafeHeader", testRequestBuilderRejectsUnsafeHeader);
+    Test.add_func ("/net/http/testRedirectCrossOriginStripsSensitiveHeaders",
+                   testRedirectCrossOriginStripsSensitiveHeaders);
 
     Test.run ();
 }
@@ -444,6 +444,9 @@ void testRequestBuilderRejectsUnsafeHeader () {
     server.stop ();
 
     assert (resp != null);
+    if (resp != null) {
+        assert (resp.statusCode () == 200);
+    }
     string ? req = server.lastRequest ();
     assert (req != null);
     if (req != null) {

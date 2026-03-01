@@ -823,7 +823,7 @@ namespace Vala.Encoding {
          * @param root root value.
          * @param path JSON path expression.
          * @return value at path.
-         * @throws JsonError.INVALID_PATH when path is empty.
+         * @throws JsonError.INVALID_PATH when path is empty or malformed.
          * @throws JsonError.NOT_FOUND when no value exists at path.
          */
         public static JsonValue must (JsonValue root, string path) throws JsonError {
@@ -1552,8 +1552,11 @@ namespace Vala.Encoding {
                     }
 
                     string idx = rest.substring (pos + 1, close - pos - 1);
-                    int64 parsed;
+                    int64 parsed = 0;
                     if (idx.length == 0 || !int64.try_parse (idx, out parsed)) {
+                        return false;
+                    }
+                    if (parsed < 0 || parsed > int.MAX) {
                         return false;
                     }
                     pos = close + 1;

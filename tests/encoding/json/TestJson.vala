@@ -599,6 +599,15 @@ void testMustMissing () {
         assert (e is JsonError.INVALID_PATH);
     }
     assert (emptyPathThrown);
+
+    bool malformedPathThrown = false;
+    try {
+        Json.must (root, "$.user[abc]");
+    } catch (JsonError e) {
+        malformedPathThrown = true;
+        assert (e is JsonError.INVALID_PATH);
+    }
+    assert (malformedPathThrown);
 }
 
 // --- set, remove, merge, flatten ---
