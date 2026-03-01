@@ -806,6 +806,37 @@ Immutable UUID value object.
 | `parse(string s)` | Parses UUID text and returns null for invalid input |
 | `toString()` | Returns the canonical UUID string |
 
+### Vala.Crypto.Identifiers
+Unified utilities for UUID/ULID/KSUID generation, validation, conversion, and timestamp extraction.
+
+| Method | Description |
+|---|---|
+| `uuidV4()` | Generates UUID v4 string |
+| `uuidV7()` | Generates time-ordered UUID v7 string |
+| `ulid()` | Generates ULID string |
+| `ulidMonotonic()` | Generates monotonic ULID string |
+| `ksuid()` | Generates KSUID string |
+| `isUuid(string s)` | Returns whether input is valid UUID |
+| `isUlid(string s)` | Returns whether input is valid ULID |
+| `isKsuid(string s)` | Returns whether input is valid KSUID |
+| `parseUuid(string s)` | Parses UUID into `Identifier` (`null` on invalid) |
+| `parseUlid(string s)` | Parses ULID into `Identifier` (`null` on invalid) |
+| `parseKsuid(string s)` | Parses KSUID into `Identifier` (`null` on invalid) |
+| `toBytes(string id)` | Converts identifier text into bytes (`null` on invalid) |
+| `fromBytes(uint8[] bytes, string type)` | Converts bytes into identifier text (`null` on invalid) |
+| `timestampMillis(string id)` | Extracts timestamp in milliseconds (`null` if unavailable) |
+| `compareByTime(string a, string b)` | Compares by extracted timestamp; ties use lexical order |
+
+#### Vala.Crypto.Identifier
+Immutable identifier value object returned by parse methods.
+
+| Method | Description |
+|---|---|
+| `value()` | Returns identifier text |
+| `type()` | Returns `IdentifierType` |
+| `timestampMillis()` | Extracts timestamp in milliseconds (`null` if unavailable) |
+| `toBytes()` | Converts value to bytes (`null` on invalid) |
+
 ### Vala.Collections.Arrays
 Static utility methods for `int[]`.
 
