@@ -3,6 +3,13 @@ using Vala.Time;
 
 namespace Vala.Concurrent {
     /**
+     * Recoverable generic thread pool configuration errors.
+     */
+    public errordomain ThreadPoolError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Wrapper for queued task function used by invokeAll.
      */
     public class ThreadPoolTaskFunc<T>: GLib.Object {
@@ -63,12 +70,22 @@ namespace Vala.Concurrent {
          * Creates a fixed-size thread pool.
          *
          * @param poolSize number of worker threads (must be > 0).
+         * @throws ThreadPoolError.INVALID_ARGUMENT when poolSize is not positive.
          */
-        public ThreadPool (int poolSize) {
+        public ThreadPool (int poolSize) throws ThreadPoolError {
             if (poolSize <= 0) {
-                error ("poolSize must be positive, got %d", poolSize);
+                throw new ThreadPoolError.INVALID_ARGUMENT (
+                          "poolSize must be positive, got %d".printf (poolSize)
+                );
             }
+            initializePool (poolSize);
+        }
 
+        private ThreadPool.unchecked (int poolSize) {
+            initializePool (poolSize);
+        }
+
+        private void initializePool (int poolSize) {
             _pool_size = poolSize;
             _queue = new GLib.AsyncQueue<ThreadPoolTask> ();
             _shutdown = false;
@@ -96,7 +113,7 @@ namespace Vala.Concurrent {
             if (cpus < 1) {
                 cpus = 1;
             }
-            return new ThreadPool (cpus);
+            return new ThreadPool.unchecked (cpus);
         }
 
         /**
@@ -221,7 +238,7 @@ namespace Vala.Concurrent {
         public bool awaitTermination (Duration timeout) {
             int64 timeout_millis = timeout.toMillis ();
             if (timeout_millis < 0) {
-                error ("timeout must be non-negative");
+                return false;
             }
 
             int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;

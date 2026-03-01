@@ -853,14 +853,14 @@ Generic fixed-size thread pool that integrates with `Future<T>`.
 
 | Method | Description |
 |---|---|
-| `ThreadPool(int poolSize)` | Creates a pool with the specified worker count |
+| `ThreadPool(int poolSize)` | Creates a pool (`throws ThreadPoolError.INVALID_ARGUMENT` when `poolSize <= 0`) |
 | `withDefault()` | Creates a pool sized to CPU core count |
 | `submit<T>(TaskFunc<T> task)` | Submits task and returns `Future<T>` |
 | `execute(VoidTaskFunc task)` | Executes a fire-and-forget task |
 | `invokeAll<T>(ArrayList<ThreadPoolTaskFunc<T>> tasks)` | Submits wrapped tasks and returns futures |
 | `shutdown()` | Stops accepting new tasks and waits running workers |
 | `shutdownNow()` | Requests immediate stop and drops queued tasks |
-| `awaitTermination(Duration timeout)` | Waits for worker termination with timeout |
+| `awaitTermination(Duration timeout)` | Waits for worker termination with timeout (`false` for negative timeout) |
 | `isShutdown()` | Returns whether shutdown has been requested |
 | `activeCount()` | Returns number of executing tasks |
 | `queueSize()` | Returns queued task count |
