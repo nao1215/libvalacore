@@ -89,6 +89,34 @@ High-level recursive tree operations for traversal, search, copy/sync, and aggre
 | `countFiles(Path root)` | Returns number of regular files |
 | `flatten(Path src, Path dst)` | Flattens nested files into destination directory |
 
+### Vala.Io.Watcher
+Filesystem watch API with callback-based events, recursive watch support, glob filtering, and debounce.
+
+| Method | Description |
+|---|---|
+| `watch(Path path)` | Starts watching a file or directory |
+| `watchRecursive(Path root)` | Starts recursive directory watch |
+| `watchGlob(Path root, string glob)` | Starts recursive watch filtered by glob |
+
+#### Vala.Io.FileWatcher
+
+| Method | Description |
+|---|---|
+| `onCreated(WatchCallback fn)` | Registers callback for create events |
+| `onModified(WatchCallback fn)` | Registers callback for modify events |
+| `onDeleted(WatchCallback fn)` | Registers callback for delete events |
+| `onRenamed(RenameCallback fn)` | Registers callback for rename events |
+| `debounce(Duration interval)` | Sets debounce interval (default: 100ms) |
+| `close()` | Stops watch and releases resources |
+
+#### Vala.Io.WatchEvent
+
+| Field | Description |
+|---|---|
+| `path` | Changed file path |
+| `eventType` | Event type (`CREATED`, `MODIFIED`, `DELETED`, `RENAMED`) |
+| `timestamp` | UNIX timestamp in milliseconds |
+
 ### Vala.Io.AtomicFile
 Atomic update helper for safe file replacement with optional backup.
 
