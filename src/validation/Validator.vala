@@ -39,7 +39,13 @@ namespace Vala.Validation {
         private ArrayList<ValidationError> _errors;
 
         public ValidationResult (ArrayList<ValidationError> errors) {
-            _errors = errors;
+            _errors = new ArrayList<ValidationError> ();
+            for (int i = 0; i < errors.size (); i++) {
+                ValidationError ? err = errors.get (i);
+                if (err != null) {
+                    _errors.add (err);
+                }
+            }
         }
 
         /**
@@ -90,6 +96,9 @@ namespace Vala.Validation {
          * @return first error or null.
          */
         public ValidationError ? firstError () {
+            if (_errors.size () == 0) {
+                return null;
+            }
             return _errors.get (0);
         }
 
@@ -133,7 +142,9 @@ namespace Vala.Validation {
          * @return this validator.
          */
         public Validator required (string field, string ? value) {
-            ensureField (field);
+            if (!ensureField (field)) {
+                return this;
+            }
             rememberValue (field, value);
 
             if (value == null || value.strip ().length == 0) {
@@ -151,9 +162,12 @@ namespace Vala.Validation {
          * @return this validator.
          */
         public Validator minLength (string field, string ? value, int min) {
-            ensureField (field);
+            if (!ensureField (field)) {
+                return this;
+            }
             if (min < 0) {
-                GLib.error ("min must be non-negative");
+                addError (field, "min must be non-negative");
+                return this;
             }
             rememberValue (field, value);
 
@@ -172,9 +186,12 @@ namespace Vala.Validation {
          * @return this validator.
          */
         public Validator maxLength (string field, string ? value, int max) {
-            ensureField (field);
+            if (!ensureField (field)) {
+                return this;
+            }
             if (max < 0) {
-                GLib.error ("max must be non-negative");
+                addError (field, "max must be non-negative");
+                return this;
             }
             rememberValue (field, value);
 
@@ -194,9 +211,12 @@ namespace Vala.Validation {
          * @return this validator.
          */
         public Validator range (string field, int value, int min, int max) {
-            ensureField (field);
+            if (!ensureField (field)) {
+                return this;
+            }
             if (min > max) {
-                GLib.error ("min must be less than or equal to max");
+                addError (field, "min must be less than or equal to max");
+                return this;
             }
             rememberValue (field, value.to_string ());
 
@@ -215,10 +235,13 @@ namespace Vala.Validation {
          * @return this validator.
          */
         public Validator pattern (string field, string ? value, string regex) {
-            ensureField (field);
+            if (!ensureField (field)) {
+                return this;
+            }
             rememberValue (field, value);
             if (regex.length == 0) {
-                GLib.error ("regex must not be empty");
+                addError (field, "regex must not be empty");
+                return this;
             }
 
             try {
@@ -267,9 +290,12 @@ namespace Vala.Validation {
          * @return this validator.
          */
         public Validator custom (string field, owned PredicateFunc<string ?> fn, string message) {
-            ensureField (field);
+            if (!ensureField (field)) {
+                return this;
+            }
             if (message.length == 0) {
-                GLib.error ("message must not be empty");
+                addError (field, "message must not be empty");
+                return this;
             }
 
             string ? value = _field_values.get (field);
@@ -307,10 +333,12 @@ namespace Vala.Validation {
             _field_values.put (field, value);
         }
 
-        private static void ensureField (string field) {
+        private bool ensureField (string field) {
             if (field.length == 0) {
-                GLib.error ("field must not be empty");
+                addError ("field", "field must not be empty");
+                return false;
             }
+            return true;
         }
     }
 }
