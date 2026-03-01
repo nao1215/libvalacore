@@ -3,6 +3,14 @@ using Vala.Io;
 
 namespace Vala.Encoding {
     /**
+     * Recoverable JSON operation errors.
+     */
+    public errordomain JsonError {
+        INVALID_PATH,
+        NOT_FOUND
+    }
+
+    /**
      * JSON value type.
      */
     public enum JsonValueType {
@@ -805,7 +813,7 @@ namespace Vala.Encoding {
         }
 
         /**
-         * Returns a value at path or fails fast when missing.
+         * Returns a value at path or throws when missing.
          *
          * Example:
          * {{{
@@ -815,11 +823,16 @@ namespace Vala.Encoding {
          * @param root root value.
          * @param path JSON path expression.
          * @return value at path.
+         * @throws JsonError.INVALID_PATH when path is empty.
+         * @throws JsonError.NOT_FOUND when no value exists at path.
          */
-        public static JsonValue must (JsonValue root, string path) {
+        public static JsonValue must (JsonValue root, string path) throws JsonError {
+            if (path.strip ().length == 0) {
+                throw new JsonError.INVALID_PATH ("path must not be empty");
+            }
             JsonValue ? v = query (root, path);
             if (v == null) {
-                error ("value is required at path: %s", path);
+                throw new JsonError.NOT_FOUND ("value is required at path: %s".printf (path));
             }
             return v;
         }
