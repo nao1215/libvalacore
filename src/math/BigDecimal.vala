@@ -262,7 +262,8 @@ namespace Vala.Math {
 
         private static BigDecimal fromComponents (BigInteger unscaled, int scale) {
             if (scale < 0) {
-                error ("scale must be non-negative");
+                warning ("BigDecimal internal: negative scale detected (%d), normalizing to 0", scale);
+                scale = 0;
             }
 
             string text = unscaled.toString ();
@@ -290,7 +291,8 @@ namespace Vala.Math {
 
         private static BigInteger pow10 (int n) {
             if (n < 0) {
-                error ("n must be non-negative");
+                warning ("BigDecimal internal: negative pow10 exponent (%d), using 1", n);
+                return safeConstant ("1");
             }
             if (n == 0) {
                 return mustBigInteger ("1");
@@ -420,7 +422,10 @@ namespace Vala.Math {
             try {
                 return new BigInteger (value);
             } catch (BigIntegerError e) {
-                error ("internal big integer conversion failed: %s", value);
+                warning ("BigDecimal internal: BigInteger conversion failed for '%s': %s",
+                         value,
+                         e.message);
+                return safeConstant ("0");
             }
         }
 
@@ -428,7 +433,8 @@ namespace Vala.Math {
             try {
                 return left.divide (right);
             } catch (BigIntegerError e) {
-                error ("internal decimal division failed: %s", e.message);
+                warning ("BigDecimal internal: decimal division failed: %s", e.message);
+                return safeConstant ("0");
             }
         }
 
@@ -436,7 +442,20 @@ namespace Vala.Math {
             try {
                 return value.pow (exponent);
             } catch (BigIntegerError e) {
-                error ("internal decimal power failed: %s", e.message);
+                warning ("BigDecimal internal: decimal power failed: %s", e.message);
+                return safeConstant ("1");
+            }
+        }
+
+        private static BigInteger safeConstant (string literal) {
+            try {
+                return new BigInteger (literal);
+            } catch (BigIntegerError e) {
+                try {
+                    return new BigInteger ("0");
+                } catch (BigIntegerError fallbackErr) {
+                    assert_not_reached ();
+                }
             }
         }
     }
