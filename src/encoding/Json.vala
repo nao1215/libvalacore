@@ -745,7 +745,7 @@ namespace Vala.Encoding {
          * @param fallback value to return if path not found or type mismatch.
          * @return string value or fallback.
          */
-        public static string getString (JsonValue root, string path, string fallback) {
+        public static string getString (JsonValue root, string path, string fallback = "") {
             JsonValue ? v = query (root, path);
             if (v == null) {
                 return fallback;
@@ -767,7 +767,7 @@ namespace Vala.Encoding {
          * @param fallback value to return if path not found or type mismatch.
          * @return integer value or fallback.
          */
-        public static int getInt (JsonValue root, string path, int fallback) {
+        public static int getInt (JsonValue root, string path, int fallback = 0) {
             JsonValue ? v = query (root, path);
             if (v == null) {
                 return fallback;
@@ -792,7 +792,7 @@ namespace Vala.Encoding {
          * @param fallback value to return if path not found or type mismatch.
          * @return boolean value or fallback.
          */
-        public static bool getBool (JsonValue root, string path, bool fallback) {
+        public static bool getBool (JsonValue root, string path, bool fallback = false) {
             JsonValue ? v = query (root, path);
             if (v == null) {
                 return fallback;
@@ -802,6 +802,26 @@ namespace Vala.Encoding {
                 return fallback;
             }
             return b;
+        }
+
+        /**
+         * Returns a value at path or fails fast when missing.
+         *
+         * Example:
+         * {{{
+         *     JsonValue value = Json.must (root, "$.user.id");
+         * }}}
+         *
+         * @param root root value.
+         * @param path JSON path expression.
+         * @return value at path.
+         */
+        public static JsonValue must (JsonValue root, string path) {
+            JsonValue ? v = query (root, path);
+            if (v == null) {
+                error ("value is required at path: %s", path);
+            }
+            return v;
         }
 
         /**
@@ -923,6 +943,22 @@ namespace Vala.Encoding {
                     builder.put (key, v);
                 }
             }
+            return builder.build ();
+        }
+
+        /**
+         * Computes structural differences between two JSON values.
+         *
+         * The result is an array of objects:
+         * `[{ "path": "$.x", "left": ..., "right": ... }]`
+         *
+         * @param a left JSON value.
+         * @param b right JSON value.
+         * @return array of diff entries.
+         */
+        public static JsonValue diff (JsonValue a, JsonValue b) {
+            var builder = new JsonArrayBuilder ();
+            diffRecurse (a, b, "$", builder);
             return builder.build ();
         }
 
@@ -1557,6 +1593,94 @@ namespace Vala.Encoding {
                 }
             }
             return builder.build ();
+        }
+
+        // --- Diff helper ---
+
+        private static void diffRecurse (JsonValue left,
+                                         JsonValue right,
+                                         string path,
+                                         JsonArrayBuilder outBuilder) {
+            if (left.valueType () != right.valueType ()) {
+                appendDiff (outBuilder, path, left, right);
+                return;
+            }
+
+            if (left.isObject () && right.isObject ()) {
+                HashMap<string, JsonValue> ? leftMap = left.asObject ();
+                HashMap<string, JsonValue> ? rightMap = right.asObject ();
+                if (leftMap == null || rightMap == null) {
+                    appendDiff (outBuilder, path, left, right);
+                    return;
+                }
+
+                var keySet = new HashSet<string> (GLib.str_hash, GLib.str_equal);
+                GLib.List<unowned string> leftKeys = leftMap.keys ();
+                foreach (unowned string key in leftKeys) {
+                    keySet.add (key);
+                }
+                GLib.List<unowned string> rightKeys = rightMap.keys ();
+                foreach (unowned string key in rightKeys) {
+                    keySet.add (key);
+                }
+
+                ArrayList<string> sortedKeys = new ArrayList<string> (GLib.str_equal);
+                keySet.forEach ((key) => {
+                    sortedKeys.add (key);
+                });
+                sortedKeys.sort ((a, b) => {
+                    return a.collate (b);
+                });
+
+                for (int i = 0; i < sortedKeys.size (); i++) {
+                    string key = sortedKeys.get (i);
+                    JsonValue ? l = leftMap.get (key);
+                    JsonValue ? r = rightMap.get (key);
+                    string childPath = path + "." + key;
+                    if (l == null || r == null) {
+                        appendDiff (outBuilder, childPath, l, r);
+                        continue;
+                    }
+                    diffRecurse (l, r, childPath, outBuilder);
+                }
+                return;
+            }
+
+            if (left.isArray () && right.isArray ()) {
+                ArrayList<JsonValue> ? leftList = left.asArrayList ();
+                ArrayList<JsonValue> ? rightList = right.asArrayList ();
+                if (leftList == null || rightList == null) {
+                    appendDiff (outBuilder, path, left, right);
+                    return;
+                }
+                int max = int.max ((int) leftList.size (), (int) rightList.size ());
+                for (int i = 0; i < max; i++) {
+                    JsonValue ? l = i < leftList.size () ? leftList.get (i) : null;
+                    JsonValue ? r = i < rightList.size () ? rightList.get (i) : null;
+                    string childPath = "%s[%d]".printf (path, i);
+                    if (l == null || r == null) {
+                        appendDiff (outBuilder, childPath, l, r);
+                        continue;
+                    }
+                    diffRecurse (l, r, childPath, outBuilder);
+                }
+                return;
+            }
+
+            if (!left.equals (right)) {
+                appendDiff (outBuilder, path, left, right);
+            }
+        }
+
+        private static void appendDiff (JsonArrayBuilder outBuilder,
+                                        string path,
+                                        JsonValue ? left,
+                                        JsonValue ? right) {
+            outBuilder.add (JsonValue.object ()
+                             .put ("path", JsonValue.ofString (path))
+                             .put ("left", left ?? JsonValue.ofNull ())
+                             .put ("right", right ?? JsonValue.ofNull ())
+                             .build ());
         }
 
         // --- Flatten helper ---

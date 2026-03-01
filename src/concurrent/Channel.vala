@@ -1,4 +1,411 @@
+using Vala.Collections;
+using Vala.Time;
+
 namespace Vala.Concurrent {
+    /**
+     * Generic typed message-passing channel inspired by Go channels.
+     *
+     * Channel supports both unbuffered (synchronous) and buffered modes.
+     * In unbuffered mode, send blocks until a receiver consumes the value.
+     * In buffered mode, send blocks only when the internal buffer is full.
+     */
+    public class Channel<T>: GLib.Object {
+        private GLib.AsyncQueue<ChannelBox<T> > _queue;
+        private int _capacity;
+        private bool _closed;
+        private GLib.Mutex _mutex;
+        private GLib.Cond _notFull;
+        private GLib.Cond _delivered;
+        private int _size;
+
+        /**
+         * Creates an unbuffered channel.
+         */
+        public Channel () {
+            _capacity = 0;
+            _closed = false;
+            _size = 0;
+            _queue = new GLib.AsyncQueue<ChannelBox<T> > ();
+        }
+
+        /**
+         * Creates a buffered channel.
+         *
+         * @param capacity buffer size (must be > 0).
+         * @return buffered channel.
+         */
+        public static Channel<T> buffered<T> (int capacity) {
+            if (capacity <= 0) {
+                error ("capacity must be positive, got %d", capacity);
+            }
+            var ch = new Channel<T> ();
+            ch._capacity = capacity;
+            return ch;
+        }
+
+        /**
+         * Sends a value to the channel.
+         *
+         * @param value value to send.
+         */
+        public void send (T value) {
+            _mutex.lock ();
+            if (_closed) {
+                _mutex.unlock ();
+                warning ("send on closed channel");
+                return;
+            }
+
+            if (_capacity > 0) {
+                while (_size >= _capacity && !_closed) {
+                    _notFull.wait (_mutex);
+                }
+                if (_closed) {
+                    _mutex.unlock ();
+                    warning ("send on closed channel");
+                    return;
+                }
+                _queue.push (new ChannelBox<T> (value));
+                _size++;
+                _mutex.unlock ();
+            } else {
+                while (_size > 0 && !_closed) {
+                    _delivered.wait (_mutex);
+                }
+                if (_closed) {
+                    _mutex.unlock ();
+                    warning ("send on closed channel");
+                    return;
+                }
+                _queue.push (new ChannelBox<T> (value));
+                _size++;
+                while (_size > 0 && !_closed) {
+                    _delivered.wait (_mutex);
+                }
+                _mutex.unlock ();
+            }
+        }
+
+        /**
+         * Tries to send a value without blocking.
+         *
+         * @param value value to send.
+         * @return true on success.
+         */
+        public bool trySend (T value) {
+            _mutex.lock ();
+            if (_closed) {
+                _mutex.unlock ();
+                return false;
+            }
+
+            if (_capacity > 0 && _size >= _capacity) {
+                _mutex.unlock ();
+                return false;
+            }
+            if (_capacity == 0 && _size > 0) {
+                _mutex.unlock ();
+                return false;
+            }
+
+            _queue.push (new ChannelBox<T> (value));
+            _size++;
+            _mutex.unlock ();
+            return true;
+        }
+
+        /**
+         * Receives a value, blocking until one is available.
+         *
+         * Returns null when the channel is closed and drained.
+         *
+         * @return received value or null.
+         */
+        public T ? receive () {
+            ChannelBox<T> ? box = _queue.pop ();
+            if (box == null) {
+                return null;
+            }
+            if (box.sentinel) {
+                _queue.push (box);
+                return null;
+            }
+
+            _mutex.lock ();
+            _size--;
+            if (_capacity > 0) {
+                _notFull.signal ();
+            } else {
+                _delivered.broadcast ();
+            }
+            _mutex.unlock ();
+            return box.value;
+        }
+
+        /**
+         * Tries to receive a value without blocking.
+         *
+         * @return received value or null.
+         */
+        public T ? tryReceive () {
+            ChannelBox<T> ? box = _queue.try_pop ();
+            if (box == null) {
+                return null;
+            }
+            if (box.sentinel) {
+                _queue.push (box);
+                return null;
+            }
+
+            _mutex.lock ();
+            _size--;
+            if (_capacity > 0) {
+                _notFull.signal ();
+            } else {
+                _delivered.broadcast ();
+            }
+            _mutex.unlock ();
+            return box.value;
+        }
+
+        /**
+         * Receives with timeout.
+         *
+         * @param timeout max wait duration.
+         * @return received value or null on timeout/closed.
+         */
+        public T ? receiveTimeout (Duration timeout) {
+            int64 waitMicros = timeout.toMillis () * 1000;
+            if (waitMicros <= 0) {
+                return tryReceive ();
+            }
+
+            ChannelBox<T> ? box = _queue.timeout_pop ((uint64) waitMicros);
+            if (box == null) {
+                return null;
+            }
+            if (box.sentinel) {
+                _queue.push (box);
+                return null;
+            }
+
+            _mutex.lock ();
+            _size--;
+            if (_capacity > 0) {
+                _notFull.signal ();
+            } else {
+                _delivered.broadcast ();
+            }
+            _mutex.unlock ();
+            return box.value;
+        }
+
+        /**
+         * Closes channel for further sends.
+         */
+        public void close () {
+            _mutex.lock ();
+            _closed = true;
+            _notFull.broadcast ();
+            _delivered.broadcast ();
+            _mutex.unlock ();
+
+            var sentinel = new ChannelBox<T> ();
+            sentinel.sentinel = true;
+            _queue.push (sentinel);
+        }
+
+        /**
+         * Returns whether channel is closed.
+         *
+         * @return true if closed.
+         */
+        public bool isClosed () {
+            _mutex.lock ();
+            bool c = _closed;
+            _mutex.unlock ();
+            return c;
+        }
+
+        /**
+         * Returns current buffered size.
+         *
+         * @return buffered item count.
+         */
+        public int size () {
+            _mutex.lock ();
+            int s = _size;
+            _mutex.unlock ();
+            return s;
+        }
+
+        /**
+         * Returns buffer capacity (0 for unbuffered).
+         *
+         * @return channel capacity.
+         */
+        public int capacity () {
+            return _capacity;
+        }
+
+        /**
+         * Waits until one channel becomes receivable.
+         *
+         * @param channels channels to poll.
+         * @return Pair(index, value) or null when all channels are closed.
+         */
+        public static Pair<int, T> ? select<T> (ArrayList<Channel<T> > channels) {
+            if (channels.size () == 0) {
+                return null;
+            }
+            while (true) {
+                bool allClosed = true;
+                for (int i = 0; i < channels.size (); i++) {
+                    Channel<T> ch = channels.get (i);
+                    T ? value = ch.tryReceive ();
+                    if (value != null) {
+                        return new Pair<int, T> (i, value);
+                    }
+                    if (!(ch.isClosed () && ch.size () == 0)) {
+                        allClosed = false;
+                    }
+                }
+                if (allClosed) {
+                    return null;
+                }
+                Thread.usleep (1000);
+            }
+        }
+
+        /**
+         * Distributes values from source channel to n output channels.
+         *
+         * @param src source channel.
+         * @param n number of output channels.
+         * @return output channels.
+         */
+        public static ArrayList<Channel<T> > fanOut<T> (Channel<T> src, int n) {
+            if (n <= 0) {
+                error ("n must be positive, got %d", n);
+            }
+            var outputs = new ArrayList<Channel<T> > ();
+            for (int i = 0; i < n; i++) {
+                outputs.add (new Channel<T> ());
+            }
+
+            new Thread<void *> ("channel-fanout", () => {
+                int idx = 0;
+                while (true) {
+                    T ? value = src.receive ();
+                    if (value == null && src.isClosed () && src.size () == 0) {
+                        break;
+                    }
+                    if (value == null) {
+                        continue;
+                    }
+                    Channel<T> out = outputs.get (idx % n);
+                    out.send (value);
+                    idx++;
+                }
+                for (int i = 0; i < outputs.size (); i++) {
+                    outputs.get (i).close ();
+                }
+                return null;
+            });
+
+            return outputs;
+        }
+
+        /**
+         * Merges multiple source channels into one output channel.
+         *
+         * @param sources source channels.
+         * @return merged output channel.
+         */
+        public static Channel<T> fanIn<T> (ArrayList<Channel<T> > sources) {
+            var out = new Channel<T> ();
+            if (sources.size () == 0) {
+                out.close ();
+                return out;
+            }
+
+            var wg = new WaitGroup ();
+            for (int i = 0; i < sources.size (); i++) {
+                Channel<T> src = sources.get (i);
+                wg.add (1);
+                new Thread<void *> ("channel-fanin-%d".printf (i), () => {
+                    while (true) {
+                        T ? value = src.receive ();
+                        if (value == null && src.isClosed () && src.size () == 0) {
+                            break;
+                        }
+                        if (value != null) {
+                            out.send (value);
+                        }
+                    }
+                    wg.done ();
+                    return null;
+                });
+            }
+
+            new Thread<void *> ("channel-fanin-close", () => {
+                wg.wait ();
+                out.close ();
+                return null;
+            });
+
+            return out;
+        }
+
+        /**
+         * Builds a transform pipeline channel.
+         *
+         * @param input input channel.
+         * @param fn transform function.
+         * @return output channel.
+         */
+        public static Channel<U> pipeline<T, U> (Channel<T> input, owned MapFunc<T, U> fn) {
+            var out = new Channel<U> ();
+            new Thread<void *> ("channel-pipeline", () => {
+                while (true) {
+                    T ? value = input.receive ();
+                    if (value == null && input.isClosed () && input.size () == 0) {
+                        break;
+                    }
+                    if (value != null) {
+                        out.send (fn (value));
+                    }
+                }
+                out.close ();
+                return null;
+            });
+            return out;
+        }
+    }
+
+    /**
+     * Boxed generic value for channel transport.
+     */
+    public class ChannelBox<T>: GLib.Object {
+        /**
+         * Stored value.
+         */
+        public T ? value;
+        /**
+         * Whether this box is a close sentinel.
+         */
+        public bool sentinel = false;
+
+        /**
+         * Creates a box with optional value.
+         *
+         * @param value boxed value.
+         */
+        public ChannelBox (T ? value = null) {
+            this.value = value;
+        }
+    }
+
     /**
      * Thread-safe message-passing channel inspired by Go channels.
      *

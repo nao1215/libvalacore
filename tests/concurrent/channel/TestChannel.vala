@@ -1,4 +1,6 @@
 using Vala.Concurrent;
+using Vala.Collections;
+using Vala.Time;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -17,6 +19,12 @@ void main (string[] args) {
     Test.add_func ("/concurrent/channel/testProducerConsumer", testProducerConsumer);
     Test.add_func ("/concurrent/channel/testReceiveAfterCloseEmpty", testReceiveAfterCloseEmpty);
     Test.add_func ("/concurrent/channel/testUnbufferedMultiSender", testUnbufferedMultiSender);
+    Test.add_func ("/concurrent/channel/testGenericBufferedSendReceive", testGenericBufferedSendReceive);
+    Test.add_func ("/concurrent/channel/testGenericTrySendTryReceive", testGenericTrySendTryReceive);
+    Test.add_func ("/concurrent/channel/testGenericReceiveTimeout", testGenericReceiveTimeout);
+    Test.add_func ("/concurrent/channel/testGenericSelect", testGenericSelect);
+    Test.add_func ("/concurrent/channel/testGenericPipeline", testGenericPipeline);
+    Test.add_func ("/concurrent/channel/testGenericFanInOut", testGenericFanInOut);
     Test.run ();
 }
 
@@ -202,4 +210,85 @@ void testUnbufferedMultiSender () {
 
     wg.wait ();
     assert (total == 60);
+}
+
+void testGenericBufferedSendReceive () {
+    var ch = Channel.buffered<int> (3);
+    ch.send (10);
+    ch.send (20);
+    int ? v1 = ch.receive ();
+    int ? v2 = ch.receive ();
+    assert (v1 != null && v1 == 10);
+    assert (v2 != null && v2 == 20);
+}
+
+void testGenericTrySendTryReceive () {
+    var ch = Channel.buffered<string> (1);
+    assert (ch.trySend ("a"));
+    assert (!ch.trySend ("b"));
+    string ? v = ch.tryReceive ();
+    assert (v != null && v == "a");
+    assert (ch.tryReceive () == null);
+}
+
+void testGenericReceiveTimeout () {
+    var ch = new Channel<string> ();
+    string ? v = ch.receiveTimeout (Duration.ofSeconds (0));
+    assert (v == null);
+}
+
+void testGenericSelect () {
+    var ch1 = Channel.buffered<int> (1);
+    var ch2 = Channel.buffered<int> (1);
+    ch2.send (42);
+
+    var channels = new ArrayList<Channel<int> > ();
+    channels.add (ch1);
+    channels.add (ch2);
+
+    Pair<int, int> ? selected = Channel.select<int> (channels);
+    assert (selected != null);
+    if (selected != null) {
+        assert ((int) selected.first () == 1);
+        assert ((int) selected.second () == 42);
+    }
+}
+
+void testGenericPipeline () {
+    var inCh = Channel.buffered<int> (4);
+    var outCh = Channel.pipeline<int, int> (inCh, (n) => {
+        return n * 2;
+    });
+
+    inCh.send (1);
+    inCh.send (2);
+    inCh.close ();
+
+    int ? v1 = outCh.receiveTimeout (Duration.ofSeconds (1));
+    int ? v2 = outCh.receiveTimeout (Duration.ofSeconds (1));
+    assert (v1 != null && v2 != null);
+    if (v1 != null && v2 != null) {
+        assert (v1 + v2 == 6);
+    }
+}
+
+void testGenericFanInOut () {
+    var src = Channel.buffered<int> (8);
+    for (int i = 1; i <= 4; i++) {
+        src.send (i);
+    }
+    src.close ();
+
+    var outs = Channel.fanOut<int> (src, 2);
+    var merged = Channel.fanIn<int> (outs);
+
+    int sum = 0;
+    for (int i = 0; i < 4; i++) {
+        int ? v = merged.receiveTimeout (Duration.ofSeconds (1));
+        assert (v != null);
+        if (v != null) {
+            sum += v;
+        }
+    }
+    assert (sum == 10);
 }

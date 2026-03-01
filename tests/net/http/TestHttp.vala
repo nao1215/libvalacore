@@ -1,5 +1,6 @@
 using Vala.Net;
 using Vala.Collections;
+using Vala.Encoding;
 using Vala.Io;
 
 // Simple mock HTTP server using GSocketListener.
@@ -13,6 +14,7 @@ class MockHttpServer : GLib.Object {
     private string _response_content_type;
     private string ? _last_request;
     private bool _chunked;
+    private string ? _location;
 
     public MockHttpServer () {
         _listener = new GLib.SocketListener ();
@@ -22,6 +24,7 @@ class MockHttpServer : GLib.Object {
         _response_content_type = "text/plain";
         _last_request = null;
         _chunked = false;
+        _location = null;
 
         try {
             _port = (uint16) _listener.add_any_inet_port (null);
@@ -43,6 +46,7 @@ class MockHttpServer : GLib.Object {
         _response_content_type = contentType;
         _response_body = body;
         _chunked = false;
+        _location = null;
     }
 
     public void setChunkedResponse (int status, string contentType, string body) {
@@ -50,6 +54,15 @@ class MockHttpServer : GLib.Object {
         _response_content_type = contentType;
         _response_body = body;
         _chunked = true;
+        _location = null;
+    }
+
+    public void setRedirectResponse (int status, string location, string body = "redirect") {
+        _response_status = status;
+        _response_content_type = "text/plain";
+        _response_body = body;
+        _chunked = false;
+        _location = location;
     }
 
     public string ? lastRequest () {
@@ -113,6 +126,9 @@ class MockHttpServer : GLib.Object {
                 resp.append ("Content-Type: %s\r\n".printf (_response_content_type));
                 resp.append ("Content-Length: %d\r\n".printf (_response_body.length));
                 resp.append ("X-Custom: test-value\r\n");
+                if (_location != null) {
+                    resp.append ("Location: %s\r\n".printf (_location));
+                }
                 resp.append ("Connection: close\r\n");
                 resp.append ("\r\n");
                 resp.append (_response_body);
@@ -149,6 +165,7 @@ void main (string[] args) {
     Test.add_func ("/net/http/testResponseServerError", testResponseServerError);
     Test.add_func ("/net/http/testResponseBodyText", testResponseBodyText);
     Test.add_func ("/net/http/testResponseBodyBytes", testResponseBodyBytes);
+    Test.add_func ("/net/http/testResponseJson", testResponseJson);
     Test.add_func ("/net/http/testResponseHeaders", testResponseHeaders);
     Test.add_func ("/net/http/testResponseContentLength", testResponseContentLength);
     Test.add_func ("/net/http/testResponseContentType", testResponseContentType);
@@ -158,10 +175,15 @@ void main (string[] args) {
     Test.add_func ("/net/http/testRequestBuilder", testRequestBuilder);
     Test.add_func ("/net/http/testRequestBuilderBasicAuth", testRequestBuilderBasicAuth);
     Test.add_func ("/net/http/testRequestBuilderBearerToken", testRequestBuilderBearerToken);
+    Test.add_func ("/net/http/testRequestBuilderJson", testRequestBuilderJson);
+    Test.add_func ("/net/http/testRequestBuilderFormData", testRequestBuilderFormData);
+    Test.add_func ("/net/http/testRequestBuilderFollowRedirects", testRequestBuilderFollowRedirects);
 
     // Mock server integration tests
     Test.add_func ("/net/http/testGet", testGet);
+    Test.add_func ("/net/http/testGetJson", testGetJson);
     Test.add_func ("/net/http/testPost", testPost);
+    Test.add_func ("/net/http/testPostBytes", testPostBytes);
     Test.add_func ("/net/http/testPostJson", testPostJson);
     Test.add_func ("/net/http/testPutJson", testPutJson);
     Test.add_func ("/net/http/testPatchJson", testPatchJson);
@@ -176,6 +198,7 @@ void main (string[] args) {
     Test.add_func ("/net/http/testRequestBuilderQuery", testRequestBuilderQuery);
     Test.add_func ("/net/http/testQueryOnlyUrlPath", testQueryOnlyUrlPath);
     Test.add_func ("/net/http/testRequestBuilderHeaders", testRequestBuilderHeaders);
+    Test.add_func ("/net/http/testHttpClientGet", testHttpClientGet);
     Test.add_func ("/net/http/testStatus404", testStatus404);
     Test.add_func ("/net/http/testStatus500", testStatus500);
     Test.add_func ("/net/http/testInvalidUrl", testInvalidUrl);
@@ -243,6 +266,16 @@ void testResponseBodyBytes () {
     assert (result[1] == 0x69);
 }
 
+void testResponseJson () {
+    var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+    var resp = new HttpResponse (200, headers, "{\"ok\":true}".data);
+    var json = resp.json ();
+    assert (json != null);
+    if (json != null) {
+        assert (Json.getBool (json, "$.ok", false));
+    }
+}
+
 void testResponseHeaders () {
     var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     headers.put ("Content-Type", "text/html");
@@ -308,6 +341,65 @@ void testRequestBuilderBearerToken () {
     assert (builder != null);
 }
 
+void testRequestBuilderJson () {
+    var payload = JsonValue.object ()
+                   .put ("name", JsonValue.ofString ("alice"))
+                   .build ();
+    var builder = Http.request ("POST", "https://example.com")
+                   .json (payload);
+    assert (builder != null);
+}
+
+void testRequestBuilderFormData () {
+    var fields = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+    fields.put ("name", "alice");
+    fields.put ("city", "tokyo");
+    var builder = Http.request ("POST", "https://example.com")
+                   .formData (fields);
+    assert (builder != null);
+}
+
+void testRequestBuilderFollowRedirects () {
+    var redirectOnly = new MockHttpServer ();
+    string missingTarget = "http://127.0.0.1:65535/final";
+    redirectOnly.setRedirectResponse (302, missingTarget);
+    var redirectOnlyThread = serveAsync (redirectOnly);
+    var noFollowResp = Http.request ("GET", redirectOnly.baseUrl () + "/redirect")
+                        .followRedirects (false)
+                        .send ();
+    redirectOnly.stop ();
+    redirectOnlyThread.join ();
+
+    assert (noFollowResp != null);
+    if (noFollowResp != null) {
+        assert (noFollowResp.statusCode () == 302);
+        assert (noFollowResp.header ("Location") == missingTarget);
+    }
+
+    var finalServer = new MockHttpServer ();
+    finalServer.setResponse (200, "text/plain", "final-ok");
+    var finalThread = serveAsync (finalServer);
+
+    var redirectServer = new MockHttpServer ();
+    string finalUrl = finalServer.baseUrl () + "/final";
+    redirectServer.setRedirectResponse (302, finalUrl);
+    var redirectThread = serveAsync (redirectServer);
+
+    var followResp = Http.request ("GET", redirectServer.baseUrl () + "/redirect")
+                      .followRedirects (true)
+                      .send ();
+    redirectServer.stop ();
+    finalServer.stop ();
+    redirectThread.join ();
+    finalThread.join ();
+
+    assert (followResp != null);
+    if (followResp != null) {
+        assert (followResp.statusCode () == 200);
+        assert (followResp.bodyText () == "final-ok");
+    }
+}
+
 // --- Mock server integration tests ---
 
 void testGet () {
@@ -330,6 +422,21 @@ void testGet () {
     assert (req.contains ("GET /test HTTP/1.1"));
 }
 
+void testGetJson () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "application/json", "{\"ok\":true}");
+    var t = serveAsync (server);
+
+    var json = Http.getJson (server.baseUrl () + "/json");
+    t.join ();
+    server.stop ();
+
+    assert (json != null);
+    if (json != null) {
+        assert (Json.getBool (json, "$.ok", false));
+    }
+}
+
 void testPost () {
     var server = new MockHttpServer ();
     server.setResponse (201, "text/plain", "created");
@@ -347,6 +454,24 @@ void testPost () {
     assert (req != null);
     assert (req.contains ("POST /items HTTP/1.1"));
     assert (req.contains ("new item"));
+}
+
+void testPostBytes () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "text/plain", "ok");
+    var t = serveAsync (server);
+
+    uint8[] body = { 0x41, 0x42, 0x43 }; // "ABC"
+    var resp = Http.postBytes (server.baseUrl () + "/bytes", body);
+    t.join ();
+    server.stop ();
+
+    assert (resp != null);
+    assert (resp.isSuccess ());
+
+    string ? req = server.lastRequest ();
+    assert (req != null);
+    assert (req.contains ("POST /bytes HTTP/1.1"));
 }
 
 void testPostJson () {
@@ -598,6 +723,28 @@ void testRequestBuilderHeaders () {
     assert (req != null);
     assert (req.contains ("X-First: one"));
     assert (req.contains ("X-Second: two"));
+}
+
+void testHttpClientGet () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "text/plain", "client-ok");
+    var t = serveAsync (server);
+
+    var client = Http.client (server.baseUrl ())
+                  .defaultHeader ("X-Token", "abc")
+                  .defaultTimeout (Vala.Time.Duration.ofSeconds (5));
+    var resp = client.get ("/client");
+    t.join ();
+    server.stop ();
+
+    assert (resp != null);
+    assert (resp.isSuccess ());
+    assert (resp.bodyText () == "client-ok");
+
+    string ? req = server.lastRequest ();
+    assert (req != null);
+    assert (req.contains ("X-Token: abc"));
+    assert (req.contains ("GET /client HTTP/1.1"));
 }
 
 void testStatus404 () {

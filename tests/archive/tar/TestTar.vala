@@ -8,6 +8,8 @@ void main (string[] args) {
     Test.add_func ("/archive/tar/testCreateFromDirAndList", testCreateFromDirAndList);
     Test.add_func ("/archive/tar/testAddFile", testAddFile);
     Test.add_func ("/archive/tar/testExtractFile", testExtractFile);
+    Test.add_func ("/archive/tar/testExtractFileFailureKeepsDestination",
+                   testExtractFileFailureKeepsDestination);
     Test.add_func ("/archive/tar/testExtractRejectsLinkEntries", testExtractRejectsLinkEntries);
     Test.add_func ("/archive/tar/testInvalidInputs", testInvalidInputs);
     Test.run ();
@@ -161,6 +163,26 @@ void testExtractFile () {
     var outputPath = new Vala.Io.Path (root + "/single.txt");
     assert (Tar.extractFile (archive, entry, outputPath));
     assert (Files.readAllText (outputPath) == "target");
+    cleanup (root);
+}
+
+void testExtractFileFailureKeepsDestination () {
+    if (!requireTarTool ()) {
+        return;
+    }
+
+    string root = rootFor ("extract_file_fail_keep");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/tree")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/tree/ok.txt"), "ok"));
+
+    var archive = new Vala.Io.Path (root + "/tree.tar");
+    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+
+    var outputPath = new Vala.Io.Path (root + "/single.txt");
+    assert (Files.writeText (outputPath, "keep"));
+    assert (!Tar.extractFile (archive, "missing-entry.txt", outputPath));
+    assert (Files.readAllText (outputPath) == "keep");
     cleanup (root);
 }
 

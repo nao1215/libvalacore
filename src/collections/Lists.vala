@@ -21,6 +21,285 @@ namespace Vala.Collections {
      */
     public class Lists : GLib.Object {
         /**
+         * Splits a list into matching and non-matching lists.
+         *
+         * @param list source list.
+         * @param fn predicate function.
+         * @return Pair of (matching, rest) lists.
+         */
+        public static Pair<ArrayList<T>, ArrayList<T> > partition<T> (ArrayList<T> list,
+                                                                      owned PredicateFunc<T> fn) {
+            var matching = new ArrayList<T> ();
+            var rest = new ArrayList<T> ();
+            for (int i = 0; i < (int) list.size (); i++) {
+                T item = list.get (i);
+                if (fn (item)) {
+                    matching.add (item);
+                } else {
+                    rest.add (item);
+                }
+            }
+            return new Pair<ArrayList<T>, ArrayList<T> > (matching, rest);
+        }
+
+        /**
+         * Splits a list into fixed-size chunks.
+         *
+         * @param list source list.
+         * @param size chunk size (must be > 0, otherwise empty result).
+         * @return list of chunked lists.
+         */
+        public static ArrayList<ArrayList<T> > chunk<T> (ArrayList<T> list, int size) {
+            if (size <= 0) {
+                return new ArrayList<ArrayList<T> > ();
+            }
+            var result = new ArrayList<ArrayList<T> > ();
+            var current = new ArrayList<T> ();
+            for (int i = 0; i < (int) list.size (); i++) {
+                current.add (list.get (i));
+                if ((int) current.size () == size) {
+                    result.add (current);
+                    current = new ArrayList<T> ();
+                }
+            }
+            if (current.size () > 0) {
+                result.add (current);
+            }
+            return result;
+        }
+
+        /**
+         * Combines two lists into list of pairs.
+         * Result size is minimum of both input sizes.
+         *
+         * @param a first list.
+         * @param b second list.
+         * @return zipped pairs.
+         */
+        public static ArrayList<Pair<A, B> > zip<A, B> (ArrayList<A> a, ArrayList<B> b) {
+            var result = new ArrayList<Pair<A, B> > ();
+            int len = int.min ((int) a.size (), (int) b.size ());
+            for (int i = 0; i < len; i++) {
+                result.add (new Pair<A, B> (a.get (i), b.get (i)));
+            }
+            return result;
+        }
+
+        /**
+         * Creates (index, element) pairs for a list.
+         *
+         * @param list source list.
+         * @return index-element pairs.
+         */
+        public static ArrayList<Pair<int, T> > zipWithIndex<T> (ArrayList<T> list) {
+            var result = new ArrayList<Pair<int, T> > ();
+            for (int i = 0; i < (int) list.size (); i++) {
+                result.add (new Pair<int, T> (i, list.get (i)));
+            }
+            return result;
+        }
+
+        /**
+         * Flattens nested lists into one list.
+         *
+         * @param nested nested list.
+         * @return flattened list.
+         */
+        public static ArrayList<T> flatten<T> (ArrayList<ArrayList<T> > nested) {
+            var result = new ArrayList<T> ();
+            for (int i = 0; i < (int) nested.size (); i++) {
+                var inner = nested.get (i);
+                for (int j = 0; j < (int) inner.size (); j++) {
+                    result.add (inner.get (j));
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Groups list elements by computed keys.
+         *
+         * @param list source list.
+         * @param keyFn key extraction function.
+         * @param hash_func hash function for key type K.
+         * @param equal_func equality function for key type K.
+         * @return map of key to grouped elements.
+         */
+        public static HashMap<K, ArrayList<T> > groupBy<T, K> (ArrayList<T> list,
+                                                               owned MapFunc<T, K> keyFn,
+                                                               GLib.HashFunc<K> hash_func,
+                                                               GLib.EqualFunc<K> equal_func) {
+            var result = new HashMap<K, ArrayList<T> > (hash_func, equal_func);
+            for (int i = 0; i < (int) list.size (); i++) {
+                T item = list.get (i);
+                K key = keyFn (item);
+                ArrayList<T> ? group = result.get (key);
+                if (group == null) {
+                    group = new ArrayList<T> ();
+                    result.put (key, group);
+                }
+                group.add (item);
+            }
+            return result;
+        }
+
+        /**
+         * Removes duplicate elements while preserving order.
+         *
+         * @param list source list.
+         * @param hash_func hash function for element type T.
+         * @param equal_func equality function for element type T.
+         * @return list with duplicates removed.
+         */
+        public static ArrayList<T> distinct<T> (ArrayList<T> list,
+                                                GLib.HashFunc<T> hash_func,
+                                                GLib.EqualFunc<T> equal_func) {
+            var seen = new HashSet<T> (hash_func, equal_func);
+            var result = new ArrayList<T> ();
+            for (int i = 0; i < (int) list.size (); i++) {
+                T item = list.get (i);
+                if (!seen.contains (item)) {
+                    seen.add (item);
+                    result.add (item);
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Rotates elements by distance and returns new list.
+         * Positive values rotate right, negative rotate left.
+         *
+         * @param list source list.
+         * @param distance rotation amount.
+         * @return rotated list.
+         */
+        public static ArrayList<T> rotate<T> (ArrayList<T> list, int distance) {
+            var result = new ArrayList<T> ();
+            int len = (int) list.size ();
+            if (len == 0) {
+                return result;
+            }
+            int shift = distance % len;
+            if (shift < 0) {
+                shift += len;
+            }
+            for (int i = 0; i < len; i++) {
+                int src = (i - shift + len) % len;
+                result.add (list.get (src));
+            }
+            return result;
+        }
+
+        /**
+         * Returns a shuffled copy of the list.
+         *
+         * @param list source list.
+         * @return shuffled list.
+         */
+        public static ArrayList<T> shuffle<T> (ArrayList<T> list) {
+            var result = new ArrayList<T> ();
+            for (int i = 0; i < (int) list.size (); i++) {
+                result.add (list.get (i));
+            }
+            for (int i = (int) result.size () - 1; i > 0; i--) {
+                int j = GLib.Random.int_range (0, i + 1);
+                T tmp = result.get (i);
+                result.set (i, result.get (j));
+                result.set (j, tmp);
+            }
+            return result;
+        }
+
+        /**
+         * Returns sliding windows over a list.
+         *
+         * @param list source list.
+         * @param windowSize window size (must be > 0).
+         * @return list of windows.
+         */
+        public static ArrayList<ArrayList<T> > sliding<T> (ArrayList<T> list, int windowSize) {
+            if (windowSize <= 0) {
+                error ("windowSize must be positive, got %d", windowSize);
+            }
+            var result = new ArrayList<ArrayList<T> > ();
+            for (int i = 0; i <= (int) list.size () - windowSize; i++) {
+                var window = new ArrayList<T> ();
+                for (int j = 0; j < windowSize; j++) {
+                    window.add (list.get (i + j));
+                }
+                result.add (window);
+            }
+            return result;
+        }
+
+        /**
+         * Interleaves two lists by alternating elements.
+         *
+         * @param a first list.
+         * @param b second list.
+         * @return interleaved list.
+         */
+        public static ArrayList<T> interleave<T> (ArrayList<T> a, ArrayList<T> b) {
+            var result = new ArrayList<T> ();
+            int max = int.max ((int) a.size (), (int) b.size ());
+            for (int i = 0; i < max; i++) {
+                if (i < (int) a.size ()) {
+                    result.add (a.get (i));
+                }
+                if (i < (int) b.size ()) {
+                    result.add (b.get (i));
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Counts element frequencies in a list.
+         *
+         * @param list source list.
+         * @param hash_func hash function for element type T.
+         * @param equal_func equality function for element type T.
+         * @return map of element to occurrence count.
+         */
+        public static HashMap<T, int> frequency<T> (ArrayList<T> list,
+                                                    GLib.HashFunc<T> hash_func,
+                                                    GLib.EqualFunc<T> equal_func) {
+            var result = new HashMap<T, int> (hash_func, equal_func);
+            for (int i = 0; i < (int) list.size (); i++) {
+                T key = list.get (i);
+                if (result.containsKey (key)) {
+                    int ? count = result.get (key);
+                    result.put (key, (count != null ? count : 0) + 1);
+                } else {
+                    result.put (key, 1);
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Sorts list by computed key using key comparator.
+         *
+         * @param list source list.
+         * @param keyFn key extraction function.
+         * @param cmp comparator for key type K.
+         * @return new sorted list.
+         */
+        public static ArrayList<T> sortBy<T, K> (ArrayList<T> list,
+                                                 owned MapFunc<T, K> keyFn,
+                                                 owned ComparatorFunc<K> cmp) {
+            var result = new ArrayList<T> ();
+            for (int i = 0; i < (int) list.size (); i++) {
+                result.add (list.get (i));
+            }
+            result.sort ((a, b) => {
+                return cmp (keyFn (a), keyFn (b));
+            });
+            return result;
+        }
+
+        /**
          * Splits a string list into two lists based on a predicate.
          * The first list contains elements matching the predicate,
          * the second contains the rest.
@@ -62,12 +341,12 @@ namespace Vala.Collections {
          * }}}
          *
          * @param list the source list.
-         * @param size the chunk size (must be > 0).
+         * @param size the chunk size (must be > 0, otherwise empty result).
          * @return an ArrayList of chunk lists.
          */
         public static ArrayList<ArrayList<string> > chunkString (ArrayList<string> list, int size) {
             if (size <= 0) {
-                error ("chunk size must be positive, got %d", size);
+                return new ArrayList<ArrayList<string> > ();
             }
             var result = new ArrayList<ArrayList<string> > ();
             var current = new ArrayList<string> (GLib.str_equal);

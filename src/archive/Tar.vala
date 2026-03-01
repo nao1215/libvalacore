@@ -196,13 +196,51 @@ namespace Vala.Archive {
             if (safeEntry.has_prefix ("-")) {
                 safeEntry = "./" + safeEntry;
             }
-            string cmd = "tar -xOf %s %s > %s".printf (
-                quote (archive.toString ()),
-                quote (safeEntry),
-                quote (temp.toString ())
-            );
-            bool extracted = Vala.Io.Process.exec ("sh", { "-c", cmd });
-            if (!extracted) {
+
+            try {
+                var process = new GLib.Subprocess (
+                    GLib.SubprocessFlags.STDOUT_PIPE | GLib.SubprocessFlags.STDERR_SILENCE
+                    ,
+                    "tar",
+                    "-xOf",
+                    archive.toString (),
+                    safeEntry,
+                    null
+                );
+                GLib.InputStream ? stdoutPipe = process.get_stdout_pipe ();
+                if (stdoutPipe == null) {
+                    return false;
+                }
+
+                GLib.File tempFile = GLib.File.new_for_path (temp.toString ());
+                var outStream = tempFile.replace (null,
+                                                  false,
+                                                  GLib.FileCreateFlags.REPLACE_DESTINATION,
+                                                  null);
+                uint8[] buf = new uint8[8192];
+                while (true) {
+                    ssize_t read = stdoutPipe.read (buf, null);
+                    if (read == 0) {
+                        break;
+                    }
+                    if (read < 0) {
+                        outStream.close (null);
+                        Files.remove (temp);
+                        return false;
+                    }
+                    size_t written = 0;
+                    outStream.write_all (buf[0 : (size_t) read], out written, null);
+                }
+                outStream.flush (null);
+                outStream.close (null);
+
+                if (!process.wait_check (null)) {
+                    if (Files.exists (temp)) {
+                        Files.remove (temp);
+                    }
+                    return false;
+                }
+            } catch (GLib.Error e) {
                 if (Files.exists (temp)) {
                     Files.remove (temp);
                 }

@@ -643,6 +643,7 @@ HTTP client utilities using raw GIO sockets (no external HTTP library required).
 | `isServerError()` | Returns true if status is 5xx |
 | `bodyText()` | Returns response body as UTF-8 string |
 | `bodyBytes()` | Returns response body as raw bytes |
+| `json()` | Parses response body as `JsonValue` (`null` on parse error) |
 | `header(string name)` | Returns header value (case-insensitive) or null |
 | `headers()` | Returns all response headers |
 | `contentLength()` | Returns Content-Length or -1 |
@@ -655,15 +656,21 @@ HTTP client utilities using raw GIO sockets (no external HTTP library required).
 | `get(string url)` | Sends GET request |
 | `post(string url, string body)` | Sends POST with text body |
 | `postJson(string url, string json)` | Sends POST with JSON body |
+| `postJsonValue(string url, JsonValue json)` | Sends POST with `JsonValue` body |
+| `postBytes(string url, uint8[] body)` | Sends POST with binary body |
 | `putJson(string url, string json)` | Sends PUT with JSON body |
+| `putJsonValue(string url, JsonValue json)` | Sends PUT with `JsonValue` body |
 | `patchJson(string url, string json)` | Sends PATCH with JSON body |
+| `patchJsonValue(string url, JsonValue json)` | Sends PATCH with `JsonValue` body |
 | `delete(string url)` | Sends DELETE request |
 | `head(string url)` | Sends HEAD request |
+| `getJson(string url)` | GET and parse body as JSON |
 | `getText(string url)` | GET and return body as string |
 | `getBytes(string url)` | GET and return body as bytes |
 | `postForm(string url, HashMap fields)` | POST with form-encoded body |
 | `download(string url, Path dest)` | Downloads file to disk |
 | `request(string method, string url)` | Creates HttpRequestBuilder for custom requests |
+| `client(string baseUrl)` | Creates base-URL HttpClient |
 
 **HttpRequestBuilder** — Fluent builder for HTTP requests.
 
@@ -676,7 +683,21 @@ HTTP client utilities using raw GIO sockets (no external HTTP library required).
 | `bearerToken(string token)` | Sets Bearer token authentication |
 | `timeoutMillis(int ms)` | Sets request timeout |
 | `body(string text)` | Sets request body |
+| `json(JsonValue value)` | Sets JSON body and content-type |
+| `formData(HashMap fields)` | Sets URL-encoded form body |
+| `bytes(uint8[] body)` | Sets raw binary body |
+| `followRedirects(bool follow)` | Enables/disables redirect following |
 | `send()` | Sends the request and returns HttpResponse |
+
+**HttpClient** — Base URL client with shared defaults.
+
+| Method | Description |
+|---|---|
+| `defaultHeader(string name, string value)` | Adds a default request header |
+| `defaultTimeout(Duration timeout)` | Sets default timeout for all requests |
+| `withRetry(Retry retry)` | Sets retry strategy for all requests |
+| `get(string path)` | Sends GET relative to base URL |
+| `postJson(string path, JsonValue body)` | Sends JSON POST relative to base URL |
 
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
@@ -725,8 +746,29 @@ Counting semaphore.
 | `release()` | Releases permit |
 | `availablePermits()` | Returns currently available permits |
 
+### Vala.Concurrent.Channel\<T\>
+Generic typed message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+
+| Method | Description |
+|---|---|
+| `Channel()` | Creates an unbuffered channel |
+| `buffered(int capacity)` | Creates a buffered channel with the given capacity |
+| `send(T value)` | Sends a value, blocking if the buffer is full |
+| `trySend(T value)` | Tries to send without blocking |
+| `receive()` | Receives a value, blocking until available |
+| `tryReceive()` | Tries to receive without blocking |
+| `receiveTimeout(Duration timeout)` | Receives with timeout |
+| `close()` | Closes the channel |
+| `isClosed()` | Returns whether the channel is closed |
+| `size()` | Returns the number of items in the buffer |
+| `capacity()` | Returns the buffer capacity (0 = unbuffered) |
+| `select(ArrayList<Channel<T>> channels)` | Returns first receivable `(index, value)` |
+| `fanOut(Channel<T> src, int n)` | Distributes one source to n output channels |
+| `fanIn(ArrayList<Channel<T>> sources)` | Merges many channels into one |
+| `pipeline(Channel<T> input, MapFunc<T,U> fn)` | Creates transform pipeline channel |
+
 ### Vala.Concurrent.ChannelInt
-Thread-safe int message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+Backward-compatible int channel wrapper.
 
 | Method | Description |
 |---|---|
@@ -735,14 +777,14 @@ Thread-safe int message-passing channel inspired by Go channels. Supports unbuff
 | `send(int value)` | Sends a value, blocking if the buffer is full |
 | `trySend(int value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
-| `tryReceive()` | Tries to receive without blocking, returns IntBox? |
+| `tryReceive()` | Tries to receive without blocking |
 | `close()` | Closes the channel |
 | `isClosed()` | Returns whether the channel is closed |
 | `size()` | Returns the number of items in the buffer |
 | `capacity()` | Returns the buffer capacity (0 = unbuffered) |
 
 ### Vala.Concurrent.ChannelString
-Thread-safe string message-passing channel inspired by Go channels. Supports unbuffered and buffered modes.
+Backward-compatible string channel wrapper.
 
 | Method | Description |
 |---|---|
@@ -751,7 +793,7 @@ Thread-safe string message-passing channel inspired by Go channels. Supports unb
 | `send(string value)` | Sends a value, blocking if the buffer is full |
 | `trySend(string value)` | Tries to send without blocking |
 | `receive()` | Receives a value, blocking until available |
-| `tryReceive()` | Tries to receive without blocking, returns StringBox? |
+| `tryReceive()` | Tries to receive without blocking |
 | `close()` | Closes the channel |
 | `isClosed()` | Returns whether the channel is closed |
 | `size()` | Returns the number of items in the buffer |
@@ -1147,10 +1189,15 @@ A fluent pipeline for transforming and aggregating collection data. Supports fil
 
 | Method | Description |
 |---|---|
+| `of(T[] values)` | Creates a Stream from an array |
 | `fromList(ArrayList<T> list)` | Creates a Stream from an ArrayList |
+| `range(int start, int end)` | Creates an integer stream in `[start, end)` |
+| `rangeClosed(int start, int end)` | Creates an integer stream in `[start, end]` |
+| `generate(SupplierFunc<T> fn, int limit)` | Generates a stream from supplier with limit |
 | `empty()` | Creates an empty Stream |
 | `filter(PredicateFunc<T> fn)` | Returns elements matching the predicate |
 | `map<U>(MapFunc<T, U> fn)` | Transforms each element |
+| `flatMap<U>(MapFunc<T, Stream<U>> fn)` | Maps and flattens nested streams |
 | `sorted(ComparatorFunc<T> cmp)` | Sorts elements by comparator |
 | `distinct(EqualFunc<T> equal)` | Removes duplicates |
 | `limit(int n)` | Limits to first n elements |
@@ -1159,14 +1206,23 @@ A fluent pipeline for transforming and aggregating collection data. Supports fil
 | `dropWhile(PredicateFunc<T> fn)` | Drops elements while predicate is true |
 | `peek(ConsumerFunc<T> fn)` | Executes action on each element (for debugging) |
 | `toList()` | Collects into an ArrayList |
+| `toArray()` | Collects into an array |
+| `toHashSet(HashFunc<T>, EqualFunc<T>)` | Collects into a HashSet |
+| `toMap<K,V>(MapFunc<T,K> keyFn, MapFunc<T,V> valFn, HashFunc<K> hashFn, EqualFunc<K> equalFn)` | Collects into a HashMap |
 | `count()` | Returns element count |
 | `findFirst()` | Returns first element (nullable) |
-| `findLast()` | Returns last element (nullable) |
+| `firstOr(T fallback)` | Returns first element or fallback |
 | `anyMatch(PredicateFunc<T> fn)` | Returns true if any element matches |
 | `allMatch(PredicateFunc<T> fn)` | Returns true if all elements match |
 | `noneMatch(PredicateFunc<T> fn)` | Returns true if no elements match |
 | `reduce<U>(U init, ReduceFunc<T, U> fn)` | Folds into a single value |
 | `forEach(ConsumerFunc<T> fn)` | Executes action for each element |
+| `joining(string delimiter = "")` | Joins elements as string |
+| `partitionBy(PredicateFunc<T> fn)` | Splits into matching and non-matching lists |
+| `groupBy<K>(MapFunc<T,K> keyFn, HashFunc<K>, EqualFunc<K>)` | Groups elements by key |
+| `sumInt(MapFunc<T,int> fn)` | Sums projected integer values |
+| `sumDouble(DoubleMapFunc<T> fn)` | Sums projected double values |
+| `average(DoubleMapFunc<T> fn)` | Calculates average projected value |
 | `min(ComparatorFunc<T> cmp)` | Returns minimum element (nullable) |
 | `max(ComparatorFunc<T> cmp)` | Returns maximum element (nullable) |
 
@@ -1314,35 +1370,60 @@ Static utility methods for ArrayList operations (partition, chunk, zip, flatten,
 
 | Method | Description |
 |---|---|
-| `partitionString(list, fn)` | Splits into (matching, non-matching) Pair |
-| `chunkString(list, size)` | Splits into sub-lists of given size |
-| `zipString(a, b)` | Combines two lists into Pair list |
-| `zipWithIndexString(list)` | Creates (index, element) Pair list |
-| `flattenString(nested)` | Flattens nested lists into a single list |
-| `groupByString(list, keyFn)` | Groups by key into HashMap |
-| `distinctString(list)` | Removes duplicates preserving order |
-| `reverseString(list)` | Returns a reversed copy |
-| `slidingString(list, windowSize)` | Returns sliding windows |
-| `interleaveString(a, b)` | Alternates elements from two lists |
-| `frequencyString(list)` | Counts occurrences of each element |
+| `partition<T>(list, fn)` | Splits into (matching, non-matching) Pair |
+| `chunk<T>(list, size)` | Splits into sub-lists of given size |
+| `zip<A, B>(a, b)` | Combines two lists into Pair list |
+| `zipWithIndex<T>(list)` | Creates (index, element) Pair list |
+| `flatten<T>(nested)` | Flattens nested lists into a single list |
+| `groupBy<T, K>(list, keyFn, hashFn, equalFn)` | Groups by key into HashMap |
+| `distinct<T>(list, hashFn, equalFn)` | Removes duplicates preserving order |
+| `rotate<T>(list, distance)` | Returns a rotated copy |
+| `shuffle<T>(list)` | Returns a shuffled copy |
+| `sliding<T>(list, windowSize)` | Returns sliding windows |
+| `interleave<T>(a, b)` | Alternates elements from two lists |
+| `frequency<T>(list, hashFn, equalFn)` | Counts occurrences of each element |
+| `sortBy<T, K>(list, keyFn, cmp)` | Sorts by extracted key |
+| `partitionString(list, fn)` | String specialization for partition |
+| `chunkString(list, size)` | String specialization for chunk |
+| `zipString(a, b)` | String specialization for zip |
+| `zipWithIndexString(list)` | String specialization for zipWithIndex |
+| `flattenString(nested)` | String specialization for flatten |
+| `groupByString(list, keyFn)` | String specialization for groupBy |
+| `distinctString(list)` | String specialization for distinct |
+| `reverseString(list)` | Backward-compatible reverse helper |
+| `slidingString(list, windowSize)` | String specialization for sliding |
+| `interleaveString(a, b)` | String specialization for interleave |
+| `frequencyString(list)` | String specialization for frequency |
 
 ### Vala.Collections.Maps
 Static utility methods for HashMap operations (merge, filter, mapValues, invert, entries, etc.).
 
 | Method | Description |
 |---|---|
-| `mergeString(a, b)` | Merges two maps; second map takes priority |
-| `filterString(map, fn)` | Returns entries matching a bi-predicate |
-| `mapValuesString(map, fn)` | Transforms all values |
-| `mapKeysString(map, fn)` | Transforms all keys |
-| `invertString(map)` | Swaps keys and values |
-| `getOrDefaultString(map, key, defaultValue)` | Gets value or returns default |
-| `computeIfAbsentString(map, key, fn)` | Computes and stores value if key absent |
-| `keysString(map)` | Returns keys as ArrayList |
-| `valuesString(map)` | Returns values as ArrayList |
-| `entriesString(map)` | Returns Pair list of entries |
-| `fromPairsString(pairs)` | Creates HashMap from Pair list |
-| `isEmptyString(map)` | Returns whether the map is empty |
+| `merge<K, V>(a, b, hashFn, equalFn)` | Merges two maps; second map takes priority |
+| `filter<K, V>(map, fn, hashFn, equalFn)` | Returns entries matching a bi-predicate |
+| `mapValues<K, V, U>(map, fn, hashFn, equalFn)` | Transforms all values |
+| `mapKeys<K, V, J>(map, fn, hashFn, equalFn, onConflict = null)` | Transforms all keys |
+| `invert<K, V>(map, hashFn, equalFn, onConflict = null)` | Swaps keys and values |
+| `getOrDefault<K, V>(map, key, defaultValue)` | Gets value or returns default |
+| `computeIfAbsent<K, V>(map, key, fn)` | Computes and stores value if key absent |
+| `keys<K, V>(map)` | Returns keys as ArrayList |
+| `values<K, V>(map)` | Returns values as ArrayList |
+| `entries<K, V>(map)` | Returns Pair list of entries |
+| `fromPairs<K, V>(pairs, hashFn, equalFn)` | Creates HashMap from Pair list |
+| `isEmpty<K, V>(map)` | Returns whether the map is empty |
+| `mergeString(a, b)` | String specialization for merge |
+| `filterString(map, fn)` | String specialization for filter |
+| `mapValuesString(map, fn)` | String specialization for mapValues |
+| `mapKeysString(map, fn)` | String specialization for mapKeys |
+| `invertString(map)` | String specialization for invert |
+| `getOrDefaultString(map, key, defaultValue)` | String specialization for getOrDefault |
+| `computeIfAbsentString(map, key, fn)` | String specialization for computeIfAbsent |
+| `keysString(map)` | String specialization for keys |
+| `valuesString(map)` | String specialization for values |
+| `entriesString(map)` | String specialization for entries |
+| `fromPairsString(pairs)` | String specialization for fromPairs |
+| `isEmptyString(map)` | String specialization for isEmpty |
 
 ### Vala.Collections.LruCache\<K,V\>
 LRU cache with optional TTL and cache-miss loader.
