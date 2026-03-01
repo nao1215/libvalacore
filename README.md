@@ -769,6 +769,18 @@ Promise types representing the pending result of an asynchronous computation.
 | `await()` | Blocks until the result is available and returns it |
 | `isDone()` | Returns whether the computation is complete |
 
+### Vala.Archive.Zip
+Static utility methods for Zip archive creation and extraction.
+
+| Method | Description |
+|---|---|
+| `create(Path archive, ArrayList<Path> files)` | Creates archive from file list |
+| `createFromDir(Path archive, Path dir)` | Creates archive from directory tree |
+| `extract(Path archive, Path dest)` | Extracts all entries into destination directory |
+| `list(Path archive)` | Lists archive entries (`null` on failure) |
+| `addFile(Path archive, Path file)` | Adds one file to existing archive |
+| `extractFile(Path archive, string entry, Path dest)` | Extracts one entry to destination file |
+
 ### Vala.Compress.Gzip
 Static utility methods for Gzip compression and decompression.
 
