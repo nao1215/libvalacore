@@ -6,6 +6,10 @@ void main (string[] args) {
     Test.add_func ("/validation/validator/testInvalidCases", testInvalidCases);
     Test.add_func ("/validation/validator/testValidCases", testValidCases);
     Test.add_func ("/validation/validator/testCustomRule", testCustomRule);
+    Test.add_func ("/validation/validator/testValidateResetsState", testValidateResetsState);
+    Test.add_func ("/validation/validator/testWhitespaceOnlyField", testWhitespaceOnlyField);
+    Test.add_func ("/validation/validator/testCustomWithoutRememberedValue",
+                   testCustomWithoutRememberedValue);
 
     Test.run ();
 }
@@ -59,4 +63,38 @@ void testCustomRule () {
     assert (result.errors ().size () == 1);
     assert (result.firstError ().field () == "token");
     assert (result.firstError ().message () == "token must end with xyz");
+}
+
+void testValidateResetsState () {
+    var validator = new Validator ();
+    validator.required ("name", "");
+    ValidationResult first = validator.validate ();
+    assert (first.errors ().size () == 1);
+
+    ValidationResult second = validator.validate ();
+    assert (second.isValid ());
+    assert (second.errors ().size () == 0);
+}
+
+void testWhitespaceOnlyField () {
+    var validator = new Validator ();
+    validator.required ("   ", "x");
+
+    ValidationResult result = validator.validate ();
+    assert (!result.isValid ());
+    ValidationError ? err = result.firstError ();
+    assert (err != null);
+    assert (err.field () == "field");
+}
+
+void testCustomWithoutRememberedValue () {
+    var validator = new Validator ();
+    validator.custom ("token", (value) => {
+        return value != null;
+    }, "token is invalid");
+
+    ValidationResult result = validator.validate ();
+    assert (!result.isValid ());
+    assert (result.errors ().size () == 1);
+    assert (result.firstError ().message ().contains ("no remembered value"));
 }

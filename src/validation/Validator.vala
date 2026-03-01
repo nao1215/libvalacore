@@ -32,6 +32,17 @@ namespace Vala.Validation {
         }
     }
 
+    private static ArrayList<ValidationError> copyNonNullErrors (ArrayList<ValidationError> src) {
+        var snapshot = new ArrayList<ValidationError> ();
+        for (int i = 0; i < src.size (); i++) {
+            ValidationError ? err = src.get (i);
+            if (err != null) {
+                snapshot.add (err);
+            }
+        }
+        return snapshot;
+    }
+
     /**
      * Validation result object.
      */
@@ -39,13 +50,7 @@ namespace Vala.Validation {
         private ArrayList<ValidationError> _errors;
 
         public ValidationResult (ArrayList<ValidationError> errors) {
-            _errors = new ArrayList<ValidationError> ();
-            for (int i = 0; i < errors.size (); i++) {
-                ValidationError ? err = errors.get (i);
-                if (err != null) {
-                    _errors.add (err);
-                }
-            }
+            _errors = copyNonNullErrors (errors);
         }
 
         /**
@@ -63,14 +68,7 @@ namespace Vala.Validation {
          * @return error list.
          */
         public ArrayList<ValidationError> errors () {
-            var snapshot = new ArrayList<ValidationError> ();
-            for (int i = 0; i < _errors.size (); i++) {
-                ValidationError ? err = _errors.get (i);
-                if (err != null) {
-                    snapshot.add (err);
-                }
-            }
-            return snapshot;
+            return copyNonNullErrors (_errors);
         }
 
         /**
@@ -315,18 +313,10 @@ namespace Vala.Validation {
          * @return validation result.
          */
         public ValidationResult validate () {
-            return new ValidationResult (copyErrors (_errors));
-        }
-
-        private static ArrayList<ValidationError> copyErrors (ArrayList<ValidationError> src) {
-            var snapshot = new ArrayList<ValidationError> ();
-            for (int i = 0; i < src.size (); i++) {
-                ValidationError ? err = src.get (i);
-                if (err != null) {
-                    snapshot.add (err);
-                }
-            }
-            return snapshot;
+            var result = new ValidationResult (_errors);
+            _errors.clear ();
+            _field_values.clear ();
+            return result;
         }
 
         private void addError (string field, string message) {
@@ -338,7 +328,7 @@ namespace Vala.Validation {
         }
 
         private bool ensureField (string field) {
-            if (field.length == 0) {
+            if (field.strip ().length == 0) {
                 addError ("field", "field must not be empty");
                 return false;
             }
