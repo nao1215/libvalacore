@@ -21,6 +21,9 @@ namespace Vala.Concurrent {
         /**
          * Adds delta to the internal counter.
          *
+         * If applying delta would make the counter negative, the update is
+         * ignored and a warning is logged.
+         *
          * @param delta counter delta.
          */
         public void add (int delta) {
@@ -29,7 +32,8 @@ namespace Vala.Concurrent {
             int next = _count + delta;
             if (next < 0) {
                 _mutex.unlock ();
-                error ("WaitGroup counter cannot be negative");
+                message ("WaitGroup counter cannot be negative");
+                return;
             }
 
             _count = next;
@@ -42,6 +46,8 @@ namespace Vala.Concurrent {
 
         /**
          * Decrements the counter by one.
+         *
+         * If the counter is already zero, done() is a no-op.
          */
         public void done () {
             add (-1);

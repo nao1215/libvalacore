@@ -4,6 +4,7 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/concurrent/waitgroup/testBasic", testBasic);
     Test.add_func ("/concurrent/waitgroup/testWaitBlocksUntilDone", testWaitBlocksUntilDone);
+    Test.add_func ("/concurrent/waitgroup/testDoneUnderflowNoOp", testDoneUnderflowNoOp);
     Test.run ();
 }
 
@@ -51,4 +52,17 @@ void testWaitBlocksUntilDone () {
     worker.join ();
 
     assert (worker_done == true);
+}
+
+void testDoneUnderflowNoOp () {
+    Vala.Concurrent.WaitGroup wg = new Vala.Concurrent.WaitGroup ();
+
+    wg.done ();
+    wg.wait ();
+
+    wg.add (1);
+    wg.done ();
+    wg.wait ();
+
+    assert (true);
 }

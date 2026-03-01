@@ -751,8 +751,8 @@ Waits for a collection of tasks to complete.
 
 | Method | Description |
 |---|---|
-| `add(int delta)` | Adds delta to task counter |
-| `done()` | Decrements task counter by one |
+| `add(int delta)` | Adds delta to task counter (ignored if it would go below zero) |
+| `done()` | Decrements task counter by one (no-op when already zero) |
 | `wait()` | Blocks until counter reaches zero |
 
 ### Vala.Concurrent.Semaphore
