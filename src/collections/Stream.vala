@@ -2,6 +2,13 @@ using Vala.Collections;
 
 namespace Vala.Collections {
     /**
+     * Recoverable Stream operation errors.
+     */
+    public errordomain StreamError {
+        UNSUPPORTED_TYPE
+    }
+
+    /**
      * A fluent pipeline for transforming and aggregating collection data.
      *
      * Stream provides a chainable API for filter, map, sort, distinct,
@@ -558,10 +565,13 @@ namespace Vala.Collections {
          *
          * @param delimiter the delimiter string.
          * @return joined string.
+         * @throws StreamError.UNSUPPORTED_TYPE when T is not string.
          */
-        public string joining (string delimiter = "") {
+        public string joining (string delimiter = "") throws StreamError {
             if (typeof (T) != typeof (string)) {
-                return "";
+                throw new StreamError.UNSUPPORTED_TYPE (
+                          "joining() is only supported for Stream<string>; use joiningWith() for non-string types"
+                );
             }
             return joiningWith ((item) => {
                 return (string) item;

@@ -1238,7 +1238,8 @@ A fluent pipeline for transforming and aggregating collection data. Supports fil
 | `noneMatch(PredicateFunc<T> fn)` | Returns true if no elements match |
 | `reduce<U>(U init, ReduceFunc<T, U> fn)` | Folds into a single value |
 | `forEach(ConsumerFunc<T> fn)` | Executes action for each element |
-| `joining(string delimiter = "")` | Joins elements as string |
+| `joining(string delimiter = "")` | Joins `Stream<string>` elements; throws `StreamError.UNSUPPORTED_TYPE` for non-string streams |
+| `joiningWith(MapFunc<T,string> toStr, string delimiter = "")` | Joins elements using an explicit formatter |
 | `partitionBy(PredicateFunc<T> fn)` | Splits into matching and non-matching lists |
 | `groupBy<K>(MapFunc<T,K> keyFn, HashFunc<K>, EqualFunc<K>)` | Groups elements by key |
 | `sumInt(MapFunc<T,int> fn)` | Sums projected integer values |
