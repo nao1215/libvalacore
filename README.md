@@ -604,9 +604,9 @@ Retry policy utility for transient failures.
 | `Retry()` | Creates a retry policy with default settings |
 | `networkDefault()` | Creates recommended retry policy for network operations |
 | `ioDefault()` | Creates recommended retry policy for short I/O contention |
-| `withMaxAttempts(int n)` | Sets maximum attempts |
-| `withBackoff(Duration initial, Duration max)` | Sets exponential backoff strategy |
-| `withFixedDelay(Duration delay)` | Sets fixed delay strategy |
+| `withMaxAttempts(int n)` | Sets maximum attempts (`throws RetryError.INVALID_ARGUMENT` when `n <= 0`) |
+| `withBackoff(Duration initial, Duration max)` | Sets exponential backoff strategy (`throws RetryError.INVALID_ARGUMENT` on invalid range) |
+| `withFixedDelay(Duration delay)` | Sets fixed delay strategy (`throws RetryError.INVALID_ARGUMENT` when delay is negative) |
 | `withJitter(bool enabled)` | Enables or disables jitter |
 | `withRetryOn(RetryOnFunc shouldRetry)` | Sets retry predicate by failure reason |
 | `onRetry(RetryCallback fn)` | Registers callback before each retry wait |
