@@ -1306,7 +1306,7 @@ An immutable list value object backed by an internal copied array.
 | `of(T[] items)` | Static factory that returns immutable list |
 | `size()` | Returns number of elements |
 | `isEmpty()` | Returns whether the list is empty |
-| `get(int index)` | Returns element at index (fails fast when out of bounds) |
+| `get(int index)` | Returns element at index (`throws ImmutableListError.INDEX_OUT_OF_BOUNDS` when out of bounds) |
 | `contains(T value)` | Returns whether value exists in the list |
 | `toArray()` | Returns a copied array of elements |
 
