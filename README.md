@@ -505,7 +505,7 @@ Static utility methods for mathematics.
 | `abs(double x)` | Returns absolute value |
 | `max(double a, double b)` | Returns larger value |
 | `min(double a, double b)` | Returns smaller value |
-| `clamp(double x, double lo, double hi)` | Clamps value into `[lo, hi]` |
+| `clamp(double x, double lo, double hi)` | Clamps value into `[lo, hi]` (`throws MathError.INVALID_ARGUMENT` when `lo > hi`) |
 | `floor(double x)` | Returns floor value |
 | `ceil(double x)` | Returns ceil value |
 | `round(double x)` | Returns rounded value |
@@ -519,7 +519,7 @@ Static utility methods for mathematics.
 | `gcd(int64 a, int64 b)` | Returns greatest common divisor |
 | `lcm(int64 a, int64 b)` | Returns least common multiple |
 | `isPrime(int64 n)` | Returns whether n is prime |
-| `factorial(int n)` | Returns factorial |
+| `factorial(int n)` | Returns factorial (`throws MathError.INVALID_ARGUMENT` when `n < 0`) |
 | `PI` | Circle constant pi |
 | `E` | Euler's number |
 

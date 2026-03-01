@@ -1,5 +1,12 @@
 namespace Vala.Math {
     /**
+     * Recoverable argument errors for math helpers.
+     */
+    public errordomain MathError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Static utility methods for mathematics.
      */
     public class Math : GLib.Object {
@@ -45,10 +52,11 @@ namespace Vala.Math {
          * @param lo lower bound.
          * @param hi upper bound.
          * @return clamped value.
+         * @throws MathError.INVALID_ARGUMENT when lo is greater than hi.
          */
-        public static double clamp (double x, double lo, double hi) {
+        public static double clamp (double x, double lo, double hi) throws MathError {
             if (lo > hi) {
-                error ("lo must be less than or equal to hi");
+                throw new MathError.INVALID_ARGUMENT ("lo must be less than or equal to hi");
             }
 
             if (x < lo) {
@@ -227,10 +235,11 @@ namespace Vala.Math {
          *
          * @param n non-negative integer.
          * @return factorial value.
+         * @throws MathError.INVALID_ARGUMENT when n is negative.
          */
-        public static int64 factorial (int n) {
+        public static int64 factorial (int n) throws MathError {
             if (n < 0) {
-                error ("n must be non-negative");
+                throw new MathError.INVALID_ARGUMENT ("n must be non-negative");
             }
 
             int64 result = 1;

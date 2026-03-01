@@ -10,6 +10,7 @@ void main (string[] args) {
     Test.add_func ("/math/testGcdLcm", testGcdLcm);
     Test.add_func ("/math/testIsPrime", testIsPrime);
     Test.add_func ("/math/testFactorial", testFactorial);
+    Test.add_func ("/math/testInvalidArguments", testInvalidArguments);
     Test.run ();
 }
 
@@ -26,9 +27,13 @@ void testAbsMaxMinClamp () {
     assertClose (Vala.Math.Math.abs (-3.5), 3.5);
     assertClose (Vala.Math.Math.max (2.0, 5.0), 5.0);
     assertClose (Vala.Math.Math.min (2.0, 5.0), 2.0);
-    assertClose (Vala.Math.Math.clamp (5.0, 0.0, 3.0), 3.0);
-    assertClose (Vala.Math.Math.clamp (-2.0, 0.0, 3.0), 0.0);
-    assertClose (Vala.Math.Math.clamp (2.0, 0.0, 3.0), 2.0);
+    try {
+        assertClose (Vala.Math.Math.clamp (5.0, 0.0, 3.0), 3.0);
+        assertClose (Vala.Math.Math.clamp (-2.0, 0.0, 3.0), 0.0);
+        assertClose (Vala.Math.Math.clamp (2.0, 0.0, 3.0), 2.0);
+    } catch (MathError e) {
+        assert_not_reached ();
+    }
 }
 
 void testRoundFunctions () {
@@ -67,8 +72,32 @@ void testIsPrime () {
 }
 
 void testFactorial () {
-    assert (Vala.Math.Math.factorial (0) == 1);
-    assert (Vala.Math.Math.factorial (1) == 1);
-    assert (Vala.Math.Math.factorial (5) == 120);
-    assert (Vala.Math.Math.factorial (10) == 3628800);
+    try {
+        assert (Vala.Math.Math.factorial (0) == 1);
+        assert (Vala.Math.Math.factorial (1) == 1);
+        assert (Vala.Math.Math.factorial (5) == 120);
+        assert (Vala.Math.Math.factorial (10) == 3628800);
+    } catch (MathError e) {
+        assert_not_reached ();
+    }
+}
+
+void testInvalidArguments () {
+    bool clampThrown = false;
+    try {
+        Vala.Math.Math.clamp (1.0, 2.0, 1.0);
+    } catch (MathError e) {
+        clampThrown = true;
+        assert (e is MathError.INVALID_ARGUMENT);
+    }
+    assert (clampThrown);
+
+    bool factorialThrown = false;
+    try {
+        Vala.Math.Math.factorial (-1);
+    } catch (MathError e) {
+        factorialThrown = true;
+        assert (e is MathError.INVALID_ARGUMENT);
+    }
+    assert (factorialThrown);
 }
