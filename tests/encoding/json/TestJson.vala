@@ -51,11 +51,13 @@ void main (string[] args) {
     Test.add_func ("/encoding/json/testGetString", testGetString);
     Test.add_func ("/encoding/json/testGetInt", testGetInt);
     Test.add_func ("/encoding/json/testGetBool", testGetBool);
+    Test.add_func ("/encoding/json/testMust", testMust);
 
-    // Json set, remove, merge, flatten
+    // Json set, remove, merge, diff, flatten
     Test.add_func ("/encoding/json/testSet", testSet);
     Test.add_func ("/encoding/json/testRemove", testRemove);
     Test.add_func ("/encoding/json/testMerge", testMerge);
+    Test.add_func ("/encoding/json/testDiff", testDiff);
     Test.add_func ("/encoding/json/testFlatten", testFlatten);
 
     // Edge cases
@@ -506,6 +508,7 @@ void testGetString () {
     }
     assert (Json.getString (root, "$.msg", "x") == "hello");
     assert (Json.getString (root, "$.missing", "fallback") == "fallback");
+    assert (Json.getString (root, "$.missing") == "");
 }
 
 void testGetInt () {
@@ -516,6 +519,7 @@ void testGetInt () {
     }
     assert (Json.getInt (root, "$.count", 0) == 42);
     assert (Json.getInt (root, "$.missing", 99) == 99);
+    assert (Json.getInt (root, "$.missing") == 0);
 }
 
 void testGetBool () {
@@ -526,6 +530,18 @@ void testGetBool () {
     }
     assert (Json.getBool (root, "$.active", false) == true);
     assert (Json.getBool (root, "$.missing", false) == false);
+    assert (Json.getBool (root, "$.missing") == false);
+}
+
+void testMust () {
+    JsonValue ? root = Json.parse ("{\"user\":{\"id\":123}}");
+    assert (root != null);
+    if (root == null) {
+        return;
+    }
+    JsonValue v = Json.must (root, "$.user.id");
+    int ? id = v.asInt ();
+    assert (id != null && id == 123);
 }
 
 // --- set, remove, merge, flatten ---
@@ -579,6 +595,41 @@ void testMerge () {
         assert (Json.getInt (merged, "$.y", 0) == 3);
         assert (Json.getInt (merged, "$.z", 0) == 4);
     }
+}
+
+void testDiff () {
+    JsonValue ? a = Json.parse ("{\"name\":\"Alice\",\"age\":20,\"tags\":[\"a\",\"b\"]}");
+    JsonValue ? b = Json.parse ("{\"name\":\"Alice\",\"age\":21,\"tags\":[\"a\",\"c\"],\"active\":true}");
+    assert (a != null && b != null);
+    if (a == null || b == null) {
+        return;
+    }
+
+    JsonValue diff = Json.diff (a, b);
+    assert (diff.isArray ());
+    assert (diff.size () == 3);
+
+    // Check that expected changed paths exist in diff output.
+    bool hasAge = false;
+    bool hasTag = false;
+    bool hasActive = false;
+    for (int i = 0; i < diff.size (); i++) {
+        JsonValue ? entry = diff.at (i);
+        if (entry == null) {
+            continue;
+        }
+        string path = Json.getString (entry, "$.path", "");
+        if (path == "$.age") {
+            hasAge = true;
+        } else if (path == "$.tags[1]") {
+            hasTag = true;
+        } else if (path == "$.active") {
+            hasActive = true;
+        }
+    }
+    assert (hasAge);
+    assert (hasTag);
+    assert (hasActive);
 }
 
 void testFlatten () {
