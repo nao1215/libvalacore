@@ -145,13 +145,13 @@ namespace Vala.Concurrent {
         }
 
         /**
-         * Asynchronous version of {@link do}.
+         * Asynchronous version of do().
+         *
+         * Returns a failed future when key is empty.
          *
          * @param key deduplication key.
          * @param fn function to run.
          * @return future of shared result.
-         *
-         * Returns a failed future when key is empty.
          */
         public Future<T> doFuture<T> (string key, owned SingleFlightFunc<T> fn) {
             if (key.length == 0) {
@@ -177,10 +177,9 @@ namespace Vala.Concurrent {
          * Forgets in-flight state for key.
          *
          * This does not cancel already running computation.
+         * Empty key is ignored.
          *
          * @param key deduplication key.
-         *
-         * Empty key is ignored.
          */
         public void forget (string key) {
             if (key.length == 0) {
@@ -207,10 +206,10 @@ namespace Vala.Concurrent {
         /**
          * Returns whether key is currently in flight.
          *
+         * Returns false for empty key.
+         *
          * @param key deduplication key.
          * @return true when key is in flight.
-         *
-         * Returns false for empty key.
          */
         public bool hasInFlight (string key) {
             if (key.length == 0) {
