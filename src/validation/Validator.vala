@@ -171,7 +171,7 @@ namespace Vala.Validation {
             }
             rememberValue (field, value);
 
-            if (value == null || value.length < min) {
+            if (value == null || value.char_count () < min) {
                 addError (field, "%s must be at least %d characters".printf (field, min));
             }
             return this;
@@ -195,7 +195,7 @@ namespace Vala.Validation {
             }
             rememberValue (field, value);
 
-            if (value != null && value.length > max) {
+            if (value != null && value.char_count () > max) {
                 addError (field, "%s must be at most %d characters".printf (field, max));
             }
             return this;
@@ -295,6 +295,10 @@ namespace Vala.Validation {
             }
             if (message.length == 0) {
                 addError (field, "message must not be empty");
+                return this;
+            }
+            if (!_field_values.containsKey (field)) {
+                addError (field, "%s has no remembered value for custom validation".printf (field));
                 return this;
             }
 
