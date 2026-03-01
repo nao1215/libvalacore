@@ -24,10 +24,10 @@ jobs:
 
     - name: Copy Valadoc to docs/
       run: |
-        API_VERSION="${GITHUB_REF_NAME#v}"
-        VALADOC_DIR="build/src/Valacore-${API_VERSION}/Valacore"
-        if [ ! -d "${VALADOC_DIR}" ]; then
-          echo "Error: Valadoc output directory not found: ${VALADOC_DIR}"
+        VALADOC_DIR="$(ls -d build/src/Valacore-*/Valacore 2>/dev/null | sort -V | tail -n 1 || true)"
+        if [ -z "${VALADOC_DIR}" ] || [ ! -d "${VALADOC_DIR}" ]; then
+          echo "Error: Valadoc output directory not found under build/src/Valacore-*/Valacore"
+          ls -la build/src || true
           exit 1
         fi
         # Remove old generated files but keep wiki/, images/, and spec.md
