@@ -10,6 +10,8 @@ void main (string[] args) {
     Test.add_func ("/io/watcher/testWatchGlob", testWatchGlob);
     Test.add_func ("/io/watcher/testOnRenamed", testOnRenamed);
     Test.add_func ("/io/watcher/testDebounce", testDebounce);
+    Test.add_func ("/io/watcher/testWatchMissingPath", testWatchMissingPath);
+    Test.add_func ("/io/watcher/testWatchRecursiveOnFile", testWatchRecursiveOnFile);
     Test.run ();
 }
 
@@ -36,6 +38,45 @@ bool waitUntil (owned ConditionFunc cond, int timeoutMillis) {
     return false;
 }
 
+FileWatcher mustWatch (Vala.Io.Path path) {
+    FileWatcher ? watcher = null;
+    try {
+        watcher = Watcher.watch (path);
+    } catch (WatcherError e) {
+        assert_not_reached ();
+    }
+    if (watcher == null) {
+        assert_not_reached ();
+    }
+    return watcher;
+}
+
+FileWatcher mustWatchRecursive (Vala.Io.Path root) {
+    FileWatcher ? watcher = null;
+    try {
+        watcher = Watcher.watchRecursive (root);
+    } catch (WatcherError e) {
+        assert_not_reached ();
+    }
+    if (watcher == null) {
+        assert_not_reached ();
+    }
+    return watcher;
+}
+
+FileWatcher mustWatchGlob (Vala.Io.Path root, string glob) {
+    FileWatcher ? watcher = null;
+    try {
+        watcher = Watcher.watchGlob (root, glob);
+    } catch (WatcherError e) {
+        assert_not_reached ();
+    }
+    if (watcher == null) {
+        assert_not_reached ();
+    }
+    return watcher;
+}
+
 void testWatchCreateDelete () {
     string root = rootFor ("basic");
     cleanup (root);
@@ -43,7 +84,7 @@ void testWatchCreateDelete () {
 
     int created = 0;
     int deleted = 0;
-    var watcher = Watcher.watch (new Vala.Io.Path (root))
+    var watcher = mustWatch (new Vala.Io.Path (root))
                    .onCreated ((e) => {
         if (e.path.basename () == "a.txt") {
             created++;
@@ -76,7 +117,7 @@ void testWatchRecursive () {
     Files.makeDirs (new Vala.Io.Path (root + "/sub"));
 
     int created = 0;
-    var watcher = Watcher.watchRecursive (new Vala.Io.Path (root))
+    var watcher = mustWatchRecursive (new Vala.Io.Path (root))
                    .onCreated ((e) => {
         if (e.path.basename () == "nested.txt") {
             created++;
@@ -99,7 +140,7 @@ void testWatchGlob () {
     Files.makeDirs (new Vala.Io.Path (root));
 
     int matched = 0;
-    var watcher = Watcher.watchGlob (new Vala.Io.Path (root), "*.vala")
+    var watcher = mustWatchGlob (new Vala.Io.Path (root), "*.vala")
                    .onCreated ((e) => {
         matched++;
     });
@@ -129,7 +170,7 @@ void testOnRenamed () {
     Files.writeText (new Vala.Io.Path (root + "/old.txt"), "x");
 
     bool renamed = false;
-    var watcher = Watcher.watch (new Vala.Io.Path (root + "/old.txt"))
+    var watcher = mustWatch (new Vala.Io.Path (root + "/old.txt"))
                    .onRenamed ((from, to) => {
         if (from.path.basename () == "old.txt" && to.path.basename () == "new.txt") {
             renamed = true;
@@ -152,7 +193,7 @@ void testDebounce () {
     Files.makeDirs (new Vala.Io.Path (root));
 
     int modified = 0;
-    var watcher = Watcher.watch (new Vala.Io.Path (root))
+    var watcher = mustWatch (new Vala.Io.Path (root))
                    .onModified ((e) => {
         if (e.path.basename () == "d.txt") {
             modified++;
@@ -176,5 +217,34 @@ void testDebounce () {
     assert (modified == 1);
 
     watcher.close ();
+    cleanup (root);
+}
+
+void testWatchMissingPath () {
+    bool thrown = false;
+    try {
+        Watcher.watch (new Vala.Io.Path ("/tmp/valacore/ut/missing_watcher_path"));
+    } catch (WatcherError e) {
+        thrown = true;
+        assert (e is WatcherError.PATH_NOT_FOUND);
+    }
+    assert (thrown);
+}
+
+void testWatchRecursiveOnFile () {
+    string root = rootFor ("recursive_file");
+    cleanup (root);
+    Files.makeDirs (new Vala.Io.Path (root));
+    Files.writeText (new Vala.Io.Path (root + "/single.txt"), "x");
+
+    bool thrown = false;
+    try {
+        Watcher.watchRecursive (new Vala.Io.Path (root + "/single.txt"));
+    } catch (WatcherError e) {
+        thrown = true;
+        assert (e is WatcherError.INVALID_ARGUMENT);
+    }
+
+    assert (thrown);
     cleanup (root);
 }

@@ -137,9 +137,9 @@ Filesystem watch API with callback-based events, recursive watch support, glob f
 
 | Method | Description |
 |---|---|
-| `watch(Path path)` | Starts watching a file or directory |
-| `watchRecursive(Path root)` | Starts recursive directory watch |
-| `watchGlob(Path root, string glob)` | Starts recursive watch filtered by glob |
+| `watch(Path path)` | Starts watching a file or directory (`throws WatcherError.PATH_NOT_FOUND` when path does not exist) |
+| `watchRecursive(Path root)` | Starts recursive directory watch (`throws WatcherError.PATH_NOT_FOUND` or `WatcherError.INVALID_ARGUMENT` when root is not a directory) |
+| `watchGlob(Path root, string glob)` | Starts recursive watch filtered by glob (`throws WatcherError.PATH_NOT_FOUND` or `WatcherError.INVALID_ARGUMENT` when root is not a directory) |
 
 #### Vala.Io.FileWatcher
 
