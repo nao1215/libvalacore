@@ -2,6 +2,13 @@ using Vala.Io;
 
 namespace Vala.Encoding {
     /**
+     * Recoverable CSV argument errors.
+     */
+    public errordomain CsvError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Static utility methods for CSV parsing and writing.
      *
      * Example:
@@ -112,11 +119,12 @@ namespace Vala.Encoding {
          * @param data rows and columns to serialize.
          * @param separator field separator (for example ",").
          * @return CSV text.
+         * @throws CsvError.INVALID_ARGUMENT when separator is empty.
          */
         public static string write (Vala.Collections.ArrayList<Vala.Collections.ArrayList<string> > data,
-                                    string separator) {
+                                    string separator) throws CsvError {
             if (separator.length == 0) {
-                error ("separator must not be empty");
+                throw new CsvError.INVALID_ARGUMENT ("separator must not be empty");
             }
 
             var builder = new GLib.StringBuilder ();

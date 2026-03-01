@@ -11,7 +11,16 @@ void main (string[] args) {
     Test.add_func ("/csv/testParseFile", testParseFile);
     Test.add_func ("/csv/testWrite", testWrite);
     Test.add_func ("/csv/testRoundTrip", testRoundTrip);
+    Test.add_func ("/csv/testInvalidSeparator", testInvalidSeparator);
     Test.run ();
+}
+
+string writeCsv (ArrayList<ArrayList<string> > rows, string separator) {
+    try {
+        return Csv.write (rows, separator);
+    } catch (CsvError e) {
+        assert_not_reached ();
+    }
 }
 
 void testConstruct () {
@@ -90,7 +99,7 @@ void testWrite () {
     row2.add ("3");
     rows.add (row2);
 
-    string csv = Csv.write (rows, ",");
+    string csv = writeCsv (rows, ",");
     assert (csv == "a,\"b,c\",\"d\"\"e\"\n1,2,3");
 }
 
@@ -109,7 +118,7 @@ void testRoundTrip () {
     row2.add ("\"q\"");
     rows.add (row2);
 
-    string csv = Csv.write (rows, ",");
+    string csv = writeCsv (rows, ",");
     ArrayList<ArrayList<string> > parsed = Csv.parse (csv);
 
     assert (parsed.size () == rows.size ());
@@ -124,4 +133,18 @@ void testRoundTrip () {
             assert (actual.get (j) == expected.get (j));
         }
     }
+}
+
+void testInvalidSeparator () {
+    ArrayList<ArrayList<string> > rows = new ArrayList<ArrayList<string> > ();
+    rows.add (new ArrayList<string> (GLib.str_equal));
+
+    bool thrown = false;
+    try {
+        Csv.write (rows, "");
+    } catch (CsvError e) {
+        thrown = true;
+        assert (e is CsvError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

@@ -1013,7 +1013,7 @@ Static utility methods for CSV parsing and writing.
 |---|---|
 | `parse(string csv)` | Parses CSV text into `ArrayList<ArrayList<string>>` |
 | `parseFile(Path path)` | Parses a CSV file into `ArrayList<ArrayList<string>>` |
-| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text and returns the result as a string |
+| `write(ArrayList<ArrayList<string>> data, string separator)` | Serializes rows/columns to CSV text and returns the result as a string (`throws CsvError.INVALID_ARGUMENT` when separator is empty) |
 
 ### Vala.Encoding.Hex
 Static utility methods for hexadecimal encoding and decoding.
