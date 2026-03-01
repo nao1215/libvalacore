@@ -70,6 +70,25 @@ Filesystem metadata utility methods.
 | `getOwner(Path path)` | Returns owner username or `null` |
 | `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
 
+### Vala.Io.FileTree
+High-level recursive tree operations for traversal, search, copy/sync, and aggregation.
+
+| Method | Description |
+|---|---|
+| `walk(Path root)` | Recursively walks all files under root |
+| `walkWithDepth(Path root, int maxDepth)` | Recursively walks files with depth limit |
+| `find(Path root, string glob)` | Finds files by glob pattern |
+| `findByRegex(Path root, string pattern)` | Finds files by regex pattern |
+| `findBySize(Path root, int64 minBytes, int64 maxBytes)` | Finds files in size range (inclusive) |
+| `findModifiedAfter(Path root, DateTime after)` | Finds files newer than given timestamp |
+| `copyTree(Path src, Path dst)` | Recursively copies source tree to destination |
+| `copyTreeWithFilter(Path src, Path dst, PredicateFunc<Path> filter)` | Recursively copies source tree with filter |
+| `sync(Path src, Path dst)` | One-way sync based on file size and modification time |
+| `deleteTree(Path root)` | Recursively deletes source tree |
+| `totalSize(Path root)` | Returns total byte size of regular files |
+| `countFiles(Path root)` | Returns number of regular files |
+| `flatten(Path src, Path dst)` | Flattens nested files into destination directory |
+
 ### Vala.Io.AtomicFile
 Atomic update helper for safe file replacement with optional backup.
 
