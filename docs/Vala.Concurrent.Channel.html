@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Concurrent.Channel &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Concurrent.Channel &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">Channel</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Concurrent.Channel" alt="Object hierarchy for Channel" src="img/Vala.Concurrent.Channel.png"/>
+
+      <map id="Vala.Concurrent.Channel" name="Vala.Concurrent.Channel">
+<area shape="rect" id="node1" href="Vala.Concurrent.Channel.html" title="Vala.Concurrent.Channel" alt="" coords="5,101,212,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Channel</span></b>&lt;<b><span>T</span></b>&gt; : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>Generic typed message-passing channel inspired by Go channels.</p>
+          <p>Channel supports both unbuffered (synchronous) and buffered modes. In unbuffered mode, send blocks until a receiver consumes the value. 
+            In buffered mode, send blocks only when the internal buffer is full.</p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Concurrent.Channel.buffered.html" class="static_method">buffered</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_basic_type"><span class="struct">int</span></span> capacity) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.ChannelError.html" class="errordomain">ChannelError</a></span>
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates a buffered channel.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; <b><a href="Vala.Concurrent.Channel.fanIn.html" class="static_method">fanIn</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt;&gt; sources)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Merges multiple source channels into one output channel.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt;&gt; <b><a href="Vala.Concurrent.Channel.fanOut.html" class="static_method">fanOut</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; src, <span class="main_basic_type"><span class="struct">int</span></span> n) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.ChannelError.html" class="errordomain">ChannelError</a></span>
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Distributes values from source channel to n output channels.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>U</span></span>&gt; <b><a href="Vala.Concurrent.Channel.pipeline.html" class="static_method">pipeline</a></b>&lt;<b><span>T</span></b>,<b><span>U</span></b>&gt; (<span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt; input, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Collections.MapFunc.html" class="delegate">MapFunc</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_type"><span>U</span></span>&gt; fn)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Builds a transform pipeline channel.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Pair.html" class="class">Pair</a></span>&lt;<span class="main_basic_type"><span class="struct">int</span></span>,<span class="main_type"><span>T</span></span>&gt;? <b><a href="Vala.Concurrent.Channel.select.html" class="static_method">select</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_type"><span class="class">Channel</span></span>&lt;<span class="main_type"><span>T</span></span>&gt;&gt; channels)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Waits until one channel becomes receivable.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Concurrent.Channel.Channel.html" class="creation_method">Channel</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates an unbuffered channel.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Concurrent.Channel.capacity.html" class="method">capacity</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns buffer capacity (0 for unbuffered).</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.Channel.close.html" class="method">close</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Closes channel for further sends.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Concurrent.Channel.isClosed.html" class="method">isClosed</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether channel is closed.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.Channel.receive.html" class="method">receive</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Receives a value, blocking until one is available.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.Channel.receiveTimeout.html" class="method">receiveTimeout</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Receives with timeout.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.Channel.send.html" class="method">send</a></b> (<span class="main_type"><span>T</span></span> value)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends a value to the channel.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Concurrent.Channel.size.html" class="method">size</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns current buffered size.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.Channel.tryReceive.html" class="method">tryReceive</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Tries to receive a value without blocking.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Concurrent.Channel.trySend.html" class="method">trySend</a></b> (<span class="main_type"><span>T</span></span> value)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Tries to send a value without blocking.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-25')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-25">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

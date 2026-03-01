@@ -36,7 +36,7 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Creation methods:</h3>
         <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Net.RateLimiter.RateLimiter.html" class="creation_method">RateLimiter</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond)
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Net.RateLimiter.RateLimiter.html" class="creation_method">RateLimiter</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates a new rate limiter.</span>
             </div></li>
@@ -47,7 +47,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Tries to acquire one permit immediately.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.RateLimiter.allowN.html" class="method">allowN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.RateLimiter.allowN.html" class="method">allowN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Tries to acquire n permits immediately.</span>
             </div></li>
@@ -64,7 +64,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Resets current tokens to burst capacity.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RateLimiter.setRate.html" class="method">setRate</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RateLimiter.setRate.html" class="method">setRate</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Updates rate.</span>
             </div></li>
@@ -72,19 +72,19 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Waits until one permit is available and acquires it.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RateLimiter.waitN.html" class="method">waitN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RateLimiter.waitN.html" class="method">waitN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Waits until n permits are available and acquires them.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">RateLimiter</span></span> <b><a href="Vala.Net.RateLimiter.withBurst.html" class="method">withBurst</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">RateLimiter</span></span> <b><a href="Vala.Net.RateLimiter.withBurst.html" class="method">withBurst</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets burst capacity.</span>
             </div></li>
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-119')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-119">
+          <div class="headline" onclick="toggle_box (this, 'box-content-122')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-122">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
@@ -151,7 +151,7 @@
         </div>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>

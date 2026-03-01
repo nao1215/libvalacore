@@ -35,11 +35,11 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">AppConfig</span></span> <b><a href="Vala.Config.AppConfig.load.html" class="static_method">load</a></b> (<span class="main_basic_type"><span class="class">string</span></span> appName)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">AppConfig</span></span> <b><a href="Vala.Config.AppConfig.load.html" class="static_method">load</a></b> (<span class="main_basic_type"><span class="class">string</span></span> appName) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Loads config from standard paths using app name.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">AppConfig</span></span> <b><a href="Vala.Config.AppConfig.loadFile.html" class="static_method">loadFile</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">AppConfig</span></span> <b><a href="Vala.Config.AppConfig.loadFile.html" class="static_method">loadFile</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Loads config from explicit file path.</span>
             </div></li>
@@ -53,27 +53,27 @@
         </ul>
         <h3 class="main_title">Methods:</h3>
         <ul class="navi_inline">
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Config.AppConfig.getBool.html" class="method">getBool</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">bool</span></span> fallback = <span class="main_literal">false</span>)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Config.AppConfig.getBool.html" class="method">getBool</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">bool</span></span> fallback = <span class="main_literal">false</span>) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns bool value or fallback on missing/parse failure.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> <b><a href="Vala.Config.AppConfig.getDuration.html" class="method">getDuration</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> fallback)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> <b><a href="Vala.Config.AppConfig.getDuration.html" class="method">getDuration</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> fallback) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns duration value or fallback on missing/parse failure.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Config.AppConfig.getInt.html" class="method">getInt</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> fallback = <span class="main_literal">0</span>)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Config.AppConfig.getInt.html" class="method">getInt</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> fallback = <span class="main_literal">0</span>) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns int value or fallback on missing/parse failure.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Config.AppConfig.getString.html" class="method">getString</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="class">string</span></span> fallback = <span class="main_literal">""</span>)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Config.AppConfig.getString.html" class="method">getString</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="class">string</span></span> fallback = <span class="main_literal">""</span>) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns string value or fallback.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Config.AppConfig.require.html" class="method">require</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Config.AppConfig.require.html" class="method">require</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns required string value.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Config.AppConfig.sourceOf.html" class="method">sourceOf</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Config.AppConfig.sourceOf.html" class="method">sourceOf</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns source name of resolved value.</span>
             </div></li>
@@ -88,8 +88,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-47')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-47">
+          <div class="headline" onclick="toggle_box (this, 'box-content-49')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-49">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
@@ -156,7 +156,7 @@
         </div>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>

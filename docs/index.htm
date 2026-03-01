@@ -153,6 +153,19 @@
             <li class="class"><a href="Vala.Collections.Triple.html">Triple</a> - <span class="brief_description">An immutable triple of three values.
               </span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Collections.BloomFilterError.html">BloomFilterError</a> - <span class="brief_description">
+                Recoverable BloomFilter argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Collections.HyperLogLogError.html">HyperLogLogError</a> - <span class="brief_description">
+                Recoverable HyperLogLog argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Collections.ImmutableListError.html">ImmutableListError</a> - <span class="brief_description">
+                Recoverable ImmutableList argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Collections.LruCacheError.html">LruCacheError</a> - <span class="brief_description">Recoverable LRU 
+                cache operation errors.</span></li>
+            <li class="errordomain"><a href="Vala.Collections.StreamError.html">StreamError</a> - <span class="brief_description">Recoverable Stream 
+                operation errors.</span></li>
+          </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.BiConsumerFunc.html" class="delegate">BiConsumerFunc</a></b>&lt;<b><span>A</span></b>,<b><span>B</span></b>&gt; (<span class="main_type"><span>A</span></span> a, <span class="main_type"><span>B</span></span> b)
@@ -171,9 +184,17 @@
               </span>
               <div class="leaf_brief_description"><span class="brief_description">A function that compares two values for ordering.</span>
               </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Collections.ConflictResolverFunc.html" class="delegate">ConflictResolverFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> existing, <span class="main_type"><span>T</span></span> incoming)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">Resolves collision by choosing one of two values.</span>
+              </div></li>
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Collections.ConsumerFunc.html" class="delegate">ConsumerFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> value)
               </span>
               <div class="leaf_brief_description"><span class="brief_description">A function that takes a value and returns nothing.</span>
+              </div></li>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">double</span></span> <b><a href="Vala.Collections.DoubleMapFunc.html" class="delegate">DoubleMapFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_type"><span>T</span></span> value)
+              </span>
+              <div class="leaf_brief_description"><span class="brief_description">A function that maps a value to a double.</span>
               </div></li>
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>U</span></span> <b><a href="Vala.Collections.MapFunc.html" class="delegate">MapFunc</a></b>&lt;<b><span>T</span></b>,<b><span>U</span></b>&gt; (<span class="main_type"><span>T</span></span> value)
               </span>
@@ -204,6 +225,10 @@
           <li class="namespace"><a href="Vala.Concurrent.html">Concurrent</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
+            <li class="class"><a href="Vala.Concurrent.Channel.html">Channel</a> - <span class="brief_description">Generic typed message-passing 
+                channel inspired by Go channels.</span></li>
+            <li class="class"><a href="Vala.Concurrent.ChannelBox.html">ChannelBox</a> - <span class="brief_description">Boxed generic value for 
+                channel transport.</span></li>
             <li class="class"><a href="Vala.Concurrent.ChannelInt.html">ChannelInt</a> - <span class="brief_description">Thread-safe message-passing 
                 channel inspired by Go channels.</span></li>
             <li class="class"><a href="Vala.Concurrent.ChannelString.html">ChannelString</a> - <span class="brief_description">Thread-safe string 
@@ -243,6 +268,21 @@
             <li class="class"><a href="Vala.Concurrent.WorkerPool.html">WorkerPool</a> - <span class="brief_description">Fixed-size worker pool for 
                 executing tasks concurrently.</span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Concurrent.ChannelError.html">ChannelError</a> - <span class="brief_description">Recoverable channel
+                operation errors.</span></li>
+            <li class="errordomain"><a href="Vala.Concurrent.CountDownLatchError.html">CountDownLatchError</a> - <span class="brief_description">
+                Recoverable countdown latch configuration errors.</span></li>
+            <li class="errordomain"><a href="Vala.Concurrent.SemaphoreError.html">SemaphoreError</a> - <span class="brief_description">Recoverable 
+                semaphore configuration errors.</span></li>
+            <li class="errordomain"><a href="Vala.Concurrent.SingleFlightError.html">SingleFlightError</a> - <span class="brief_description">
+                Recoverable SingleFlight operation errors.</span></li>
+            <li class="errordomain"><a href="Vala.Concurrent.ThreadPoolError.html">ThreadPoolError</a> - <span class="brief_description">Recoverable 
+                generic thread pool configuration errors.</span></li>
+            <li class="errordomain"><a href="Vala.Concurrent.WorkerPoolError.html">WorkerPoolError</a> - <span class="brief_description">Recoverable 
+                worker pool configuration errors.</span></li>
+          </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.OnceFunc.html" class="delegate">OnceFunc</a></b> ()
@@ -280,6 +320,11 @@
             <li class="class"><a href="Vala.Config.Properties.html">Properties</a> - <span class="brief_description">Java-like key-value properties 
                 container.</span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Config.AppConfigError.html">AppConfigError</a> - <span class="brief_description">Recoverable 
+                AppConfig argument and lookup errors.</span></li>
+          </ul>
           <li class="namespace"><a href="Vala.Conv.html">Conv</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
@@ -314,6 +359,15 @@
               </span></li>
             <li class="class"><a href="Vala.Distributed.SnowflakeParts.html">SnowflakeParts</a> - <span class="brief_description">Parsed Snowflake ID 
                 components.</span></li>
+          </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Distributed.ConsistentHashError.html">ConsistentHashError</a> - <span class="brief_description">
+                Recoverable ConsistentHash argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Distributed.RendezvousHashError.html">RendezvousHashError</a> - <span class="brief_description">
+                Recoverable RendezvousHash argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Distributed.SnowflakeError.html">SnowflakeError</a> - <span class="brief_description">Recoverable 
+                Snowflake generator errors.</span></li>
           </ul>
           <li class="namespace"><a href="Vala.Encoding.html">Encoding</a></li>
           <h3 class="main_title">Classes:</h3>
@@ -354,11 +408,23 @@
             <li class="enum"><a href="Vala.Encoding.TomlValueType.html">TomlValueType</a> - <span class="brief_description">TOML value type.</span>
             </li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Encoding.CsvError.html">CsvError</a> - <span class="brief_description">Recoverable CSV argument 
+                errors.</span></li>
+            <li class="errordomain"><a href="Vala.Encoding.JsonError.html">JsonError</a> - <span class="brief_description">Recoverable JSON operation 
+                errors.</span></li>
+          </ul>
           <li class="namespace"><a href="Vala.Event.html">Event</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
             <li class="class"><a href="Vala.Event.EventBus.html">EventBus</a> - <span class="brief_description">In-process publish/subscribe event 
                 bus.</span></li>
+          </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Event.EventBusError.html">EventBusError</a> - <span class="brief_description">Recoverable EventBus 
+                argument errors.</span></li>
           </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
@@ -426,6 +492,17 @@
             <li class="enum"><a href="Vala.Io.WatchEventType.html">WatchEventType</a> - <span class="brief_description">Filesystem watch event type.
               </span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Io.AtomicFileError.html">AtomicFileError</a> - <span class="brief_description">Recoverable 
+                AtomicFile argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Io.FileLockError.html">FileLockError</a> - <span class="brief_description">Recoverable FileLock 
+                argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Io.ShellError.html">ShellError</a> - <span class="brief_description">Recoverable Shell argument 
+                errors.</span></li>
+            <li class="errordomain"><a href="Vala.Io.WatcherError.html">WatcherError</a> - <span class="brief_description">Recoverable watcher 
+                initialization errors.</span></li>
+          </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Io.RenameCallback.html" class="delegate">RenameCallback</a></b> (<span class="main_type"><a href="Vala.Io.WatchEvent.html" class="class">WatchEvent</a></span> from, <span class="main_type"><a href="Vala.Io.WatchEvent.html" class="class">WatchEvent</a></span> to)
@@ -471,6 +548,15 @@
               </span></li>
             <li class="class"><a href="Vala.Lang.Threads.html">Threads</a> - <span class="brief_description">Thread utility methods.</span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Lang.ContextError.html">ContextError</a> - <span class="brief_description">Recoverable context 
+                argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Lang.PreconditionError.html">PreconditionError</a> - <span class="brief_description">Recoverable 
+                precondition validation errors.</span></li>
+            <li class="errordomain"><a href="Vala.Lang.RandomsError.html">RandomsError</a> - <span class="brief_description">Recoverable random 
+                utility argument errors.</span></li>
+          </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Lang.ShutdownHookFunc.html" class="delegate">ShutdownHookFunc</a></b> ()
@@ -505,6 +591,17 @@
             <li class="class"><a href="Vala.Math.Random.html">Random</a> - <span class="brief_description">Static utility methods for random values.
               </span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Math.BigDecimalError.html">BigDecimalError</a> - <span class="brief_description">Recoverable 
+                BigDecimal argument and arithmetic errors.</span></li>
+            <li class="errordomain"><a href="Vala.Math.BigIntegerError.html">BigIntegerError</a> - <span class="brief_description">Recoverable 
+                BigInteger argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Math.MathError.html">MathError</a> - <span class="brief_description">Recoverable argument errors for
+                math helpers.</span></li>
+            <li class="errordomain"><a href="Vala.Math.RandomError.html">RandomError</a> - <span class="brief_description">Recoverable random utility 
+                argument errors.</span></li>
+          </ul>
           <li class="namespace"><a href="Vala.Net.html">Net</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
@@ -512,6 +609,8 @@
                 protecting unstable dependencies.</span></li>
             <li class="class"><a href="Vala.Net.Http.html">Http</a> - <span class="brief_description">Static utility methods for HTTP requests.</span>
             </li>
+            <li class="class"><a href="Vala.Net.HttpClient.html">HttpClient</a> - <span class="brief_description">Base URL HTTP client with reusable 
+                defaults.</span></li>
             <li class="class"><a href="Vala.Net.HttpRequestBuilder.html">HttpRequestBuilder</a> - <span class="brief_description">Builder for 
                 constructing HTTP requests with custom settings.</span></li>
             <li class="class"><a href="Vala.Net.HttpResponse.html">HttpResponse</a> - <span class="brief_description">Represents an HTTP response.
@@ -526,6 +625,15 @@
           <ul class="navi_inline">
             <li class="enum"><a href="Vala.Net.CircuitState.html">CircuitState</a> - <span class="brief_description">Circuit breaker state.</span>
             </li>
+          </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Net.CircuitBreakerError.html">CircuitBreakerError</a> - <span class="brief_description">Recoverable 
+                circuit breaker configuration errors.</span></li>
+            <li class="errordomain"><a href="Vala.Net.RateLimiterError.html">RateLimiterError</a> - <span class="brief_description">Recoverable rate 
+                limiter operation errors.</span></li>
+            <li class="errordomain"><a href="Vala.Net.RetryError.html">RetryError</a> - <span class="brief_description">Recoverable retry policy 
+                configuration errors.</span></li>
           </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
@@ -604,6 +712,13 @@
             <li class="class"><a href="Vala.Time.Stopwatch.html">Stopwatch</a> - <span class="brief_description">Mutable stopwatch for elapsed-time 
                 measurement.</span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Time.CronError.html">CronError</a> - <span class="brief_description">Recoverable Cron configuration 
+                errors.</span></li>
+            <li class="errordomain"><a href="Vala.Time.DateTimeError.html">DateTimeError</a> - <span class="brief_description">Recoverable DateTime 
+                argument/parse errors.</span></li>
+          </ul>
           <h3 class="main_title">Delegates:</h3>
           <ul class="navi_inline">
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Time.CronTask.html" class="delegate">CronTask</a></b> ()
@@ -624,7 +739,7 @@
         </ul>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>

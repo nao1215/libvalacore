@@ -16,7 +16,7 @@
         <img class="main_diagram" usemap="#Vala.Event.EventBus" alt="Object hierarchy for EventBus" src="img/Vala.Event.EventBus.png"/>
 
       <map id="Vala.Event.EventBus" name="Vala.Event.EventBus">
-<area shape="rect" id="node1" href="Vala.Event.EventBus.html" title="Vala.Event.EventBus" alt="" coords="5,101,181,149"/>
+<area shape="rect" id="node1" href="Vala.Event.EventBus.html" title="Vala.Event.EventBus" alt="" coords="5,101,183,149"/>
 </map>
 
         <h2 class="main_title">Description:</h2>
@@ -43,23 +43,23 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Clears all subscriptions.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Event.EventBus.hasSubscribers.html" class="method">hasSubscribers</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Event.EventBus.hasSubscribers.html" class="method">hasSubscribers</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether topic has at least one subscriber.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Event.EventBus.publish.html" class="method">publish</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_type"><span class="class">Variant</span></span> eventData)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Event.EventBus.publish.html" class="method">publish</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_type"><span class="class">Variant</span></span> eventData) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Publishes event to topic.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">EventBus</span></span> <b><a href="Vala.Event.EventBus.subscribe.html" class="method">subscribe</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Event.EventHandler.html" class="delegate">EventHandler</a></span> handler)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">EventBus</span></span> <b><a href="Vala.Event.EventBus.subscribe.html" class="method">subscribe</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Event.EventHandler.html" class="delegate">EventHandler</a></span> handler) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Subscribes topic with handler.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">EventBus</span></span> <b><a href="Vala.Event.EventBus.subscribeOnce.html" class="method">subscribeOnce</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Event.EventHandler.html" class="delegate">EventHandler</a></span> handler)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">EventBus</span></span> <b><a href="Vala.Event.EventBus.subscribeOnce.html" class="method">subscribeOnce</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Event.EventHandler.html" class="delegate">EventHandler</a></span> handler) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Subscribes topic with one-shot handler.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Event.EventBus.unsubscribe.html" class="method">unsubscribe</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Event.EventBus.unsubscribe.html" class="method">unsubscribe</a></b> (<span class="main_basic_type"><span class="class">string</span></span> topic) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Unsubscribes all handlers from topic.</span>
             </div></li>
@@ -70,8 +70,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-73')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-73">
+          <div class="headline" onclick="toggle_box (this, 'box-content-75')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-75">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
@@ -138,7 +138,7 @@
         </div>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>
