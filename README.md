@@ -350,6 +350,27 @@ Static utility methods for string manipulation. All methods are null-safe.
 | `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
 | `wrap(string? s, int width)` | Wraps at specified width |
 
+### Vala.Text.Template
+Simple template engine with Mustache/Handlebars-style syntax.
+
+**Template** — Static utility for one-shot rendering.
+
+| Method | Description |
+|---|---|
+| `render(string template, HashMap vars)` | Renders template with variable substitution |
+| `renderFile(Path templatePath, HashMap vars)` | Reads template from file and renders |
+| `renderJson(string template, JsonValue vars)` | Renders using JSON object as variables |
+| `compile(string template)` | Pre-compiles template for repeated rendering |
+
+**CompiledTemplate** — Pre-compiled template for reuse.
+
+| Method | Description |
+|---|---|
+| `render(HashMap vars)` | Renders with variable map |
+| `renderJson(JsonValue vars)` | Renders with JSON variables |
+
+Template syntax: `{{name}}` (variable), `{{#if flag}}...{{else}}...{{/if}}` (conditional), `{{#each items}}{{.}}{{/each}}` (loop), `{{name | upper}}` (filter: upper, lower, trim, escape), `{{fallback name "default"}}` (fallback value).
+
 ### Vala.Text.Regex
 Static utility methods for regular expressions.
 

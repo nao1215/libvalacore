@@ -107,6 +107,7 @@ valacore_sources = files([
   'regex/Pattern.vala',
   'runtime/SystemProperties.vala',
   'text/Regex.vala',
+  'text/Template.vala',
   'time/Cron.vala',
   'time/DateTime.vala',
   'time/Dates.vala',
