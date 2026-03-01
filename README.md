@@ -760,7 +760,7 @@ Counting semaphore.
 
 | Method | Description |
 |---|---|
-| `Semaphore(int permits)` | Creates with initial permit count |
+| `Semaphore(int permits)` | Creates with initial permit count (`throws SemaphoreError.INVALID_ARGUMENT` when permits is negative) |
 | `acquire()` | Acquires permit, blocking if necessary |
 | `tryAcquire()` | Tries non-blocking permit acquisition |
 | `release()` | Releases permit |

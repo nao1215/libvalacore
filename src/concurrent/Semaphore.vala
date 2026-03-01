@@ -1,5 +1,12 @@
 namespace Vala.Concurrent {
     /**
+     * Recoverable semaphore configuration errors.
+     */
+    public errordomain SemaphoreError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Counting semaphore.
      *
      * Semaphore controls concurrent access with permit counters. acquire()
@@ -25,10 +32,11 @@ namespace Vala.Concurrent {
          * Creates semaphore with initial permits.
          *
          * @param permits initial permit count.
+         * @throws SemaphoreError.INVALID_ARGUMENT when permits is negative.
          */
-        public Semaphore (int permits) {
+        public Semaphore (int permits) throws SemaphoreError {
             if (permits < 0) {
-                error ("permits must be non-negative");
+                throw new SemaphoreError.INVALID_ARGUMENT ("permits must be non-negative");
             }
             _permits = permits;
         }
