@@ -842,6 +842,18 @@ Static utility methods for hexadecimal encoding and decoding.
 | `encode(uint8[] data)` | Encodes bytes to lower-case hexadecimal text |
 | `decode(string hex)` | Decodes hexadecimal text to bytes |
 
+### Vala.Encoding.Toml
+Static utility methods for TOML parsing, query, and rendering.
+
+| Method | Description |
+|---|---|
+| `parse(string toml)` | Parses TOML text into `TomlValue` (`null` on invalid input) |
+| `parseFile(Path path)` | Parses TOML file into `TomlValue` (`null` on read/parse failure) |
+| `stringify(TomlValue value)` | Serializes TOML value tree to TOML text |
+| `get(TomlValue root, string path)` | Gets value by dot path (`null` when not found) |
+| `getStringOr(TomlValue root, string path, string fallback)` | Gets string by path with fallback |
+| `getIntOr(TomlValue root, string path, int fallback)` | Gets int by path with fallback |
+
 ### Vala.Encoding.Url
 Static utility methods for URL percent-encoding.
 
