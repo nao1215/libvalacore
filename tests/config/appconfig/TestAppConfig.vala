@@ -175,6 +175,15 @@ void testInvalidArguments () {
     }
     assert (keyThrown);
 
+    keyThrown = false;
+    try {
+        config.getString ("   ", "x");
+    } catch (AppConfigError e) {
+        keyThrown = true;
+        assert (e is AppConfigError.INVALID_ARGUMENT);
+    }
+    assert (keyThrown);
+
     bool loadFileThrown = false;
     try {
         AppConfig.loadFile (new Vala.Io.Path ("/tmp/valacore/ut/appconfig-missing.properties"));

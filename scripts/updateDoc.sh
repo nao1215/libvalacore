@@ -4,7 +4,6 @@
 # Furthermore, the script copy valadoc at /docs.
 ROOT_DIR=$(git rev-parse --show-toplevel)
 BUILD_DIR="${ROOT_DIR}/build"
-VALADOC_DIR="${BUILD_DIR}/src/Valacore-*/Valacore-*"
 DOC_DIR="${ROOT_DIR}/docs"
 
 source ${ROOT_DIR}/scripts/libbash.sh
@@ -26,7 +25,17 @@ function build() {
 
 function cpValadoc() {
     warnMsg "Copy valadoc at ${DOC_DIR}"
-    cp -rf ${VALADOC_DIR}/* ${DOC_DIR}
+    local valadoc_dir=""
+    valadoc_dir=$(ls -d "${BUILD_DIR}"/src/Valacore-*/Valacore 2>/dev/null | sort -V | tail -n 1 || true)
+
+    if [ -z "${valadoc_dir}" ]; then
+        errMsg "Error: Valadoc output directory not found under ${BUILD_DIR}/src/Valacore-*/Valacore"
+        errMsg "Hint: confirm valadoc is enabled (meson option: enable_valadoc=true)."
+        ls -la "${BUILD_DIR}/src" >&2 || true
+        exit 1
+    fi
+
+    cp -rf "${valadoc_dir}"/* "${DOC_DIR}"
 }
 
 rmBuildDirIfNeeded

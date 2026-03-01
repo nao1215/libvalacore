@@ -37,15 +37,15 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns root context that is never cancelled by parent.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withCancel.html" class="static_method">withCancel</a></b> (<span class="main_type"><span class="class">Context</span></span> parent)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withCancel.html" class="static_method">withCancel</a></b> (<span class="main_type"><span class="class">Context</span></span> parent) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates child context that can be cancelled explicitly.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withDeadline.html" class="static_method">withDeadline</a></b> (<span class="main_type"><span class="class">Context</span></span> parent, <span class="main_type"><a href="Vala.Time.DateTime.html" class="class">DateTime</a></span> deadline)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withDeadline.html" class="static_method">withDeadline</a></b> (<span class="main_type"><span class="class">Context</span></span> parent, <span class="main_type"><a href="Vala.Time.DateTime.html" class="class">DateTime</a></span> deadline) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates child context with absolute deadline.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withTimeout.html" class="static_method">withTimeout</a></b> (<span class="main_type"><span class="class">Context</span></span> parent, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withTimeout.html" class="static_method">withTimeout</a></b> (<span class="main_type"><span class="class">Context</span></span> parent, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates child context cancelled on timeout.</span>
             </div></li>
@@ -72,19 +72,19 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns remaining time until deadline.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Lang.Context.value.html" class="method">value</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Lang.Context.value.html" class="method">value</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns value for key from this context chain.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withValue.html" class="method">withValue</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="class">string</span></span> value)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Context</span></span> <b><a href="Vala.Lang.Context.withValue.html" class="method">withValue</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="class">string</span></span> value) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates child context with additional key/value.</span>
             </div></li>
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-96')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-96">
+          <div class="headline" onclick="toggle_box (this, 'box-content-98')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-98">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
@@ -151,7 +151,7 @@
         </div>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>

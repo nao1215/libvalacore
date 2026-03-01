@@ -113,6 +113,33 @@ void testInvalidArguments () {
     }
     assert (emptyInputThrown);
 
+    bool nonNumericThrown = false;
+    try {
+        new BigInteger ("abc");
+    } catch (BigIntegerError e) {
+        nonNumericThrown = true;
+        assert (e is BigIntegerError.INVALID_ARGUMENT);
+    }
+    assert (nonNumericThrown);
+
+    bool signOnlyThrown = false;
+    try {
+        new BigInteger ("-");
+    } catch (BigIntegerError e) {
+        signOnlyThrown = true;
+        assert (e is BigIntegerError.INVALID_ARGUMENT);
+    }
+    assert (signOnlyThrown);
+
+    bool decimalThrown = false;
+    try {
+        new BigInteger ("12.34");
+    } catch (BigIntegerError e) {
+        decimalThrown = true;
+        assert (e is BigIntegerError.INVALID_ARGUMENT);
+    }
+    assert (decimalThrown);
+
     bool divThrown = false;
     try {
         bi ("10").divide (bi ("0"));

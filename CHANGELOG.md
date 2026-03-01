@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.9.1
+
+### Changed
+- `Vala.Encoding.Json.must` path validation was tightened and related query-path contract tests were expanded.
+- `Vala.Concurrent.Future` now treats negative timeout/delay inputs as recoverable contract failures, with updated tests.
+- `Vala.Math.Math.factorial` now enforces the safe `int64` input range (`0..20`) with boundary coverage.
+- `Vala.Config.AppConfig` now rejects whitespace-only keys.
+
+### Fixed
+- Fixed duplicate `/concurrent/future/testTimeoutInvalid` registration in `Future` tests.
+- `scripts/updateDoc.sh` and docs workflow copy logic now handle generated valadoc output paths more robustly.
+
+### Documentation
+- Regenerated valadoc outputs to match current public API and behavior.
+
 ## 0.9.0
 
 ### Changed

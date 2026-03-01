@@ -77,6 +77,7 @@ void testFactorial () {
         assert (Vala.Math.Math.factorial (1) == 1);
         assert (Vala.Math.Math.factorial (5) == 120);
         assert (Vala.Math.Math.factorial (10) == 3628800);
+        assert (Vala.Math.Math.factorial (20) == 2432902008176640000);
     } catch (MathError e) {
         assert_not_reached ();
     }

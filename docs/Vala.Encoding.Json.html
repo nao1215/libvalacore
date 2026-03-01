@@ -16,7 +16,7 @@
         <img class="main_diagram" usemap="#Vala.Encoding.Json" alt="Object hierarchy for Json" src="img/Vala.Encoding.Json.png"/>
 
       <map id="Vala.Encoding.Json" name="Vala.Encoding.Json">
-<area shape="rect" id="node1" href="Vala.Encoding.Json.html" title="Vala.Encoding.Json" alt="" coords="5,101,171,149"/>
+<area shape="rect" id="node1" href="Vala.Encoding.Json.html" title="Vala.Encoding.Json" alt="" coords="5,101,172,149"/>
 </map>
 
         <h2 class="main_title">Description:</h2>
@@ -40,25 +40,33 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets a value at the given path, returning a new tree.</span>
             </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> <b><a href="Vala.Encoding.Json.diff.html" class="static_method">diff</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> a, <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> b)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Computes structural differences between two JSON values.</span>
+            </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span>&gt;? <b><a href="Vala.Encoding.Json.flatten.html" class="static_method">flatten</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Flattens a nested JSON object into dot-notation keys.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Encoding.Json.getBool.html" class="static_method">getBool</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path, <span class="main_basic_type"><span class="struct">bool</span></span> fallback)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Encoding.Json.getBool.html" class="static_method">getBool</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path, <span class="main_basic_type"><span class="struct">bool</span></span> fallback = <span class="main_literal">false</span>)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns a boolean value at the given path with a fallback.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Encoding.Json.getInt.html" class="static_method">getInt</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path, <span class="main_basic_type"><span class="struct">int</span></span> fallback)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Encoding.Json.getInt.html" class="static_method">getInt</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path, <span class="main_basic_type"><span class="struct">int</span></span> fallback = <span class="main_literal">0</span>)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns an integer value at the given path with a fallback.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Encoding.Json.getString.html" class="static_method">getString</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path, <span class="main_basic_type"><span class="class">string</span></span> fallback)
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Encoding.Json.getString.html" class="static_method">getString</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path, <span class="main_basic_type"><span class="class">string</span></span> fallback = <span class="main_literal">""</span>)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns a string value at the given path with a fallback.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span>? <b><a href="Vala.Encoding.Json.merge.html" class="static_method">merge</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> a, <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> b)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Merges two JSON objects, with the second taking precedence.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> <b><a href="Vala.Encoding.Json.must.html" class="static_method">must</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Encoding.JsonError.html" class="errordomain">JsonError</a></span>
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a value at path or throws when missing.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span>? <b><a href="Vala.Encoding.Json.parse.html" class="static_method">parse</a></b> (<span class="main_basic_type"><span class="class">string</span></span> json)
             </span>
@@ -94,8 +102,8 @@
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-65')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-65">
+          <div class="headline" onclick="toggle_box (this, 'box-content-67')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-67">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
@@ -162,7 +170,7 @@
         </div>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>

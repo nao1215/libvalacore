@@ -1526,7 +1526,11 @@ namespace Vala.Encoding {
 
         // --- Query engine ---
 
-        private static bool isValidQueryPathSyntax (string p) {
+        private static bool isValidQueryPathSyntax (string path) {
+            string p = path.strip ();
+            if (p.length == 0) {
+                return false;
+            }
             if (p == "$") {
                 return true;
             }
@@ -1541,10 +1545,6 @@ namespace Vala.Encoding {
 
             int pos = 0;
             while (pos < rest.length) {
-                if (rest[pos] == '.') {
-                    return false;
-                }
-
                 if (rest[pos] == '[') {
                     int close = rest.index_of ("]", pos);
                     if (close < 0) {
@@ -1570,9 +1570,13 @@ namespace Vala.Encoding {
                     }
                 }
 
-                if (pos < rest.length && rest[pos] == '.') {
-                    pos++;
-                    if (pos >= rest.length) {
+                if (pos < rest.length) {
+                    if (rest[pos] == '.') {
+                        pos++;
+                        if (pos >= rest.length) {
+                            return false;
+                        }
+                    } else if (rest[pos] != '[') {
                         return false;
                     }
                 }

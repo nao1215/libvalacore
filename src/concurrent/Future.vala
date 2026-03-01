@@ -116,7 +116,7 @@ namespace Vala.Concurrent {
         /**
          * Waits for completion up to timeout.
          *
-         * Returns null when timed out, failed, or cancelled.
+         * Returns null when timed out, failed, cancelled, or when timeout is negative.
          *
          * @param timeout wait timeout.
          * @return success value, or null.
@@ -323,6 +323,7 @@ namespace Vala.Concurrent {
          *
          * @param timeout timeout duration.
          * @return future that fails with timeout when deadline expires.
+         *         When timeout is negative, returns failed future immediately.
          */
         public Future<T> timeout (Duration timeout) {
             int64 timeout_millis = timeout.toMillis ();
@@ -487,6 +488,7 @@ namespace Vala.Concurrent {
          * @param delay delay duration.
          * @param task delayed task.
          * @return future for delayed task result.
+         *         When delay is negative, returns failed future immediately.
          */
         public static Future<T> delayed<T> (Duration delay, owned TaskFunc<T> task) {
             int64 delay_millis = delay.toMillis ();

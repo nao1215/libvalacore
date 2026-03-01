@@ -233,7 +233,9 @@ namespace Vala.Math {
         /**
          * Returns factorial.
          *
-         * @param n non-negative integer.
+         * Valid range is 0..20 (fits in signed 64-bit).
+         *
+         * @param n non-negative integer in range 0..20.
          * @return factorial value.
          * @throws MathError.INVALID_ARGUMENT when n is outside [0, 20].
          */

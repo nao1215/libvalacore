@@ -18,7 +18,7 @@
       
 
       <map id="Vala.Distributed.RendezvousHash" name="Vala.Distributed.RendezvousHash">
-<area shape="rect" id="node1" href="Vala.Distributed.RendezvousHash.html" title="Vala.Distributed.RendezvousHash" alt="" coords="5,101,276,149"/>
+<area shape="rect" id="node1" href="Vala.Distributed.RendezvousHash.html" title="Vala.Distributed.RendezvousHash" alt="" coords="5,101,277,149"/>
 </map>
 
         <h2 class="main_title">Description:</h2>
@@ -45,7 +45,7 @@
         </ul>
         <h3 class="main_title">Methods:</h3>
         <ul class="navi_inline">
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.addNode.html" class="method">addNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.addNode.html" class="method">addNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Adds node to the hash set.</span>
             </div></li>
@@ -53,7 +53,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Removes all nodes and weights.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.containsNode.html" class="method">containsNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.containsNode.html" class="method">containsNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether node exists.</span>
             </div></li>
@@ -61,11 +61,11 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns distribution of sample keys per node.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Distributed.RendezvousHash.getNode.html" class="method">getNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Distributed.RendezvousHash.getNode.html" class="method">getNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns assigned node for a key.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.getTopNodes.html" class="method">getTopNodes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> n)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.getTopNodes.html" class="method">getTopNodes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> n) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns top-N nodes for key by score.</span>
             </div></li>
@@ -77,19 +77,19 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Estimates key remap ratio when one node is added.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.removeNode.html" class="method">removeNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.removeNode.html" class="method">removeNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Removes node from the hash set.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.setWeight.html" class="method">setWeight</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId, <span class="main_basic_type"><span class="struct">double</span></span> weight)
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.setWeight.html" class="method">setWeight</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId, <span class="main_basic_type"><span class="struct">double</span></span> weight) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets weight for existing node.</span>
             </div></li>
         </ul>
         <h3 class="main_title">Inherited Members:</h3>
         <div class="box">
-          <div class="headline" onclick="toggle_box (this, 'box-content-56')">All known members inherited from class GLib.Object</div>
-          <div class="content" id="box-content-56">
+          <div class="headline" onclick="toggle_box (this, 'box-content-58')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-58">
             <div class="column">
               <ul class="navi_inline">
                 <li class="method">@get</li>
@@ -156,7 +156,7 @@
         </div>
       </div>
     </div><br/>
-    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    <div class="site_footer">Generated by <a href="https://docs.vala.dev"><kbd>valadoc</kbd></a>
     </div>
   </body>
 </html>
