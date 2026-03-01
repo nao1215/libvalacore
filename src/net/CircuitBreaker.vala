@@ -3,6 +3,13 @@ using Vala.Collections;
 
 namespace Vala.Net {
     /**
+     * Recoverable circuit breaker configuration errors.
+     */
+    public errordomain CircuitBreakerError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Circuit breaker state.
      *
      * - CLOSED: requests pass through normally.
@@ -81,10 +88,11 @@ namespace Vala.Net {
          * Creates a circuit breaker.
          *
          * @param name breaker name.
+         * @throws CircuitBreakerError.INVALID_ARGUMENT when name is empty.
          */
-        public CircuitBreaker (string name) {
+        public CircuitBreaker (string name) throws CircuitBreakerError {
             if (name.length == 0) {
-                error ("name must not be empty");
+                throw new CircuitBreakerError.INVALID_ARGUMENT ("name must not be empty");
             }
             _name = name;
         }
@@ -97,10 +105,11 @@ namespace Vala.Net {
          *
          * @param n failure threshold.
          * @return this breaker.
+         * @throws CircuitBreakerError.INVALID_ARGUMENT when n is not positive.
          */
-        public CircuitBreaker withFailureThreshold (int n) {
+        public CircuitBreaker withFailureThreshold (int n) throws CircuitBreakerError {
             if (n <= 0) {
-                error ("n must be positive, got %d", n);
+                throw new CircuitBreakerError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n));
             }
             _failure_threshold = n;
             return this;
@@ -114,10 +123,11 @@ namespace Vala.Net {
          *
          * @param n success threshold.
          * @return this breaker.
+         * @throws CircuitBreakerError.INVALID_ARGUMENT when n is not positive.
          */
-        public CircuitBreaker withSuccessThreshold (int n) {
+        public CircuitBreaker withSuccessThreshold (int n) throws CircuitBreakerError {
             if (n <= 0) {
-                error ("n must be positive, got %d", n);
+                throw new CircuitBreakerError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n));
             }
             _success_threshold = n;
             return this;
@@ -131,11 +141,14 @@ namespace Vala.Net {
          *
          * @param timeout open timeout.
          * @return this breaker.
+         * @throws CircuitBreakerError.INVALID_ARGUMENT when timeout is negative.
          */
-        public CircuitBreaker withOpenTimeout (Duration timeout) {
+        public CircuitBreaker withOpenTimeout (Duration timeout) throws CircuitBreakerError {
             int64 millis = timeout.toMillis ();
             if (millis < 0) {
-                error ("timeout must be non-negative, got %" + int64.FORMAT, millis);
+                throw new CircuitBreakerError.INVALID_ARGUMENT (
+                          "timeout must be non-negative, got " + millis.to_string ()
+                );
             }
             _open_timeout_millis = millis;
             return this;

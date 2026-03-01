@@ -636,10 +636,10 @@ Circuit breaker for protecting unstable dependencies.
 
 | Method | Description |
 |---|---|
-| `CircuitBreaker(string name)` | Creates breaker with the specified name |
-| `withFailureThreshold(int n)` | Sets consecutive failure threshold |
-| `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN |
-| `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout |
+| `CircuitBreaker(string name)` | Creates breaker (`throws CircuitBreakerError.INVALID_ARGUMENT` when name is empty) |
+| `withFailureThreshold(int n)` | Sets consecutive failure threshold (`throws CircuitBreakerError.INVALID_ARGUMENT` when `n <= 0`) |
+| `withSuccessThreshold(int n)` | Sets success threshold to close from HALF_OPEN (`throws CircuitBreakerError.INVALID_ARGUMENT` when `n <= 0`) |
+| `withOpenTimeout(Duration timeout)` | Sets OPEN-state timeout (`throws CircuitBreakerError.INVALID_ARGUMENT` when timeout is negative) |
 | `onStateChange(StateChangeCallback fn)` | Registers state transition callback |
 | `call<T>(CircuitFunc<T> fn)` | Executes callback through breaker and returns `Result<T,string>` (error when blocked/failed) |
 | `recordFailure()` | Records one failure |
