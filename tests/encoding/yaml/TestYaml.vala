@@ -12,6 +12,8 @@ void main (string[] args) {
     Test.add_func ("/encoding/yaml/testParseBool", testParseBool);
     Test.add_func ("/encoding/yaml/testParseNull", testParseNull);
     Test.add_func ("/encoding/yaml/testParseQuotedString", testParseQuotedString);
+    Test.add_func ("/encoding/yaml/testParseQuotedEscapes", testParseQuotedEscapes);
+    Test.add_func ("/encoding/yaml/testParseNoSpaceAfterColon", testParseNoSpaceAfterColon);
 
     // Mapping
     Test.add_func ("/encoding/yaml/testParseMapping", testParseMapping);
@@ -20,6 +22,8 @@ void main (string[] args) {
     // Sequence
     Test.add_func ("/encoding/yaml/testParseSequence", testParseSequence);
     Test.add_func ("/encoding/yaml/testParseSequenceOfMappings", testParseSequenceOfMappings);
+    Test.add_func ("/encoding/yaml/testParseSequenceInlineMappingNestedFlow",
+                   testParseSequenceInlineMappingNestedFlow);
 
     // Flow style
     Test.add_func ("/encoding/yaml/testParseFlowSequence", testParseFlowSequence);
@@ -43,6 +47,8 @@ void main (string[] args) {
     // Stringify
     Test.add_func ("/encoding/yaml/testStringifyMapping", testStringifyMapping);
     Test.add_func ("/encoding/yaml/testStringifySequence", testStringifySequence);
+    Test.add_func ("/encoding/yaml/testStringifyPreservesEdgeWhitespace",
+                   testStringifyPreservesEdgeWhitespace);
 
     // Query
     Test.add_func ("/encoding/yaml/testQuerySimple", testQuerySimple);
@@ -139,6 +145,22 @@ void testParseQuotedString () {
     assert (num.asString () == "42");
 }
 
+void testParseQuotedEscapes () {
+    YamlValue ? root = Yaml.parse ("text: \"line1\\nline2\\t\\\"ok\\\"\"");
+    assert (root != null);
+    YamlValue ? text = root.get ("text");
+    assert (text != null);
+    assert (text.isString ());
+    assert (text.asString () == "line1\nline2\t\"ok\"");
+}
+
+void testParseNoSpaceAfterColon () {
+    YamlValue ? root = Yaml.parse ("name:Alice\nage:30");
+    assert (root != null);
+    assert (root.get ("name").asString () == "Alice");
+    assert (root.get ("age").asInt () == 30);
+}
+
 // --- Mapping ---
 
 void testParseMapping () {
@@ -196,6 +218,24 @@ void testParseSequenceOfMappings () {
     YamlValue ? bob = users.at (1);
     assert (bob != null);
     assert (bob.get ("name").asString () == "Bob");
+}
+
+void testParseSequenceInlineMappingNestedFlow () {
+    string yaml = "items:\n  - cfg: [1, 2]\n    meta: {x: 1, y: 2}";
+    YamlValue ? root = Yaml.parse (yaml);
+    assert (root != null);
+    YamlValue ? items = root.get ("items");
+    assert (items != null);
+    YamlValue ? first = items.at (0);
+    assert (first != null);
+    YamlValue ? cfg = first.get ("cfg");
+    assert (cfg != null);
+    assert (cfg.isSequence ());
+    assert (cfg.at (1).asInt () == 2);
+    YamlValue ? meta = first.get ("meta");
+    assert (meta != null);
+    assert (meta.isMapping ());
+    assert (meta.get ("y").asInt () == 2);
 }
 
 // --- Flow style ---
@@ -327,6 +367,13 @@ void testStringifySequence () {
     assert (output.contains ("items:"));
     assert (output.contains ("- a"));
     assert (output.contains ("- b"));
+}
+
+void testStringifyPreservesEdgeWhitespace () {
+    YamlValue ? root = Yaml.parse ("v: \" foo \"");
+    assert (root != null);
+    string output = Yaml.stringify (root);
+    assert (output.contains ("\" foo \""));
 }
 
 // --- Query ---

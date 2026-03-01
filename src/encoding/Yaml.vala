@@ -501,14 +501,8 @@ namespace Vala.Encoding {
                 if (valPart.length == 0) {
                     // Value is on next lines (block)
                     val = parseBlock (lines, ref pos, baseIndent + 1) ?? YamlValue.ofNull ();
-                } else if (valPart.has_prefix ("[")) {
-                    val = parseFlowSequence (valPart);
-                } else if (valPart.has_prefix ("{")) {
-                    val = parseFlowMapping (valPart);
-                } else if (valPart.has_prefix ("|") || valPart.has_prefix (">")) {
-                    val = parseMultilineString (lines, ref pos, baseIndent + 1, valPart.has_prefix ("|"));
                 } else {
-                    val = parseScalar (valPart);
+                    val = parseInlineValue (valPart, lines, ref pos, baseIndent + 1);
                 }
                 mapping.mapPut (key, val);
             }
@@ -555,7 +549,11 @@ namespace Vala.Encoding {
                         string key = itemPart.substring (0, colonIdx).strip ();
                         string val = itemPart.substring (colonIdx + 1).strip ();
                         if (val.length > 0) {
-                            inlineMapping.mapPut (key, parseScalar (val));
+                            inlineMapping.mapPut (key,
+                                                  parseInlineValue (val,
+                                                                    lines,
+                                                                    ref pos,
+                                                                    baseIndent + 2));
                         } else {
                             inlineMapping.mapPut (key,
                                                   parseBlock (lines, ref pos, baseIndent + 2)
@@ -581,7 +579,11 @@ namespace Vala.Encoding {
                             string nval = nextTrimmed.substring (nextColon + 1).strip ();
                             pos++;
                             if (nval.length > 0) {
-                                inlineMapping.mapPut (nkey, parseScalar (nval));
+                                inlineMapping.mapPut (nkey,
+                                                      parseInlineValue (nval,
+                                                                        lines,
+                                                                        ref pos,
+                                                                        nextIndent + 1));
                             } else {
                                 inlineMapping.mapPut (nkey,
                                                       parseBlock (lines, ref pos, nextIndent + 1)
@@ -678,6 +680,21 @@ namespace Vala.Encoding {
             return mapping;
         }
 
+        private static YamlValue parseInlineValue (string valuePart, string[] lines, ref int pos,
+                                                   int blockIndent) {
+            string val = valuePart.strip ();
+            if (val.has_prefix ("[")) {
+                return parseFlowSequence (val);
+            }
+            if (val.has_prefix ("{")) {
+                return parseFlowMapping (val);
+            }
+            if (val.has_prefix ("|") || val.has_prefix (">")) {
+                return parseMultilineString (lines, ref pos, blockIndent, val.has_prefix ("|"));
+            }
+            return parseScalar (val);
+        }
+
         private static YamlValue parseFlowValue (string text) {
             string trimmed = text.strip ();
             if (trimmed.has_prefix ("{")) {
@@ -743,7 +760,11 @@ namespace Vala.Encoding {
             if (val.length >= 2) {
                 if ((val[0] == '"' && val[val.length - 1] == '"')
                     || (val[0] == '\'' && val[val.length - 1] == '\'')) {
-                    return YamlValue.ofString (val.substring (1, val.length - 2));
+                    string inner = val.substring (1, val.length - 2);
+                    if (val[0] == '\'') {
+                        return YamlValue.ofString (inner.replace ("''", "'"));
+                    }
+                    return YamlValue.ofString (unescapeQuotedScalar (inner));
                 }
             }
 
@@ -780,6 +801,107 @@ namespace Vala.Encoding {
             }
 
             return YamlValue.ofString (val);
+        }
+
+        private static string unescapeQuotedScalar (string input) {
+            var sb = new GLib.StringBuilder ();
+            for (int i = 0; i < input.length; i++) {
+                char c = input[i];
+                if (c != '\\') {
+                    sb.append_c (c);
+                    continue;
+                }
+                if (i + 1 >= input.length) {
+                    sb.append_c ('\\');
+                    break;
+                }
+
+                i++;
+                char esc = input[i];
+                switch (esc) {
+                    case 'n' :
+                        sb.append_c ('\n');
+                        break;
+                    case 'r' :
+                        sb.append_c ('\r');
+                        break;
+                    case 't' :
+                        sb.append_c ('\t');
+                        break;
+                    case 'b' :
+                        sb.append_c ('\b');
+                        break;
+                    case 'f' :
+                        sb.append_c ('\f');
+                        break;
+                    case '\\' :
+                        sb.append_c ('\\');
+                        break;
+                    case '"' :
+                        sb.append_c ('"');
+                        break;
+                    case '\'' :
+                        sb.append_c ('\'');
+                        break;
+                    case '0':
+                        sb.append_c ('\0');
+                        break;
+                    case 'x':
+                    {
+                        int code = 0;
+                        if (parseHexDigits (input, i + 1, 2, out code)) {
+                            sb.append_unichar ((unichar) code);
+                            i += 2;
+                        } else {
+                            sb.append ("\\x");
+                        }
+                        break;
+                    }
+                    case 'u':
+                    {
+                        int code = 0;
+                        if (parseHexDigits (input, i + 1, 4, out code)) {
+                            sb.append_unichar ((unichar) code);
+                            i += 4;
+                        } else {
+                            sb.append ("\\u");
+                        }
+                        break;
+                    }
+                    default:
+                        sb.append_c (esc);
+                        break;
+                }
+            }
+            return sb.str;
+        }
+
+        private static bool parseHexDigits (string text, int start, int count, out int value) {
+            value = 0;
+            if (start < 0 || start + count > text.length) {
+                return false;
+            }
+            for (int i = 0; i < count; i++) {
+                int d = hexDigitValue (text[start + i]);
+                if (d < 0) {
+                    return false;
+                }
+                value = (value << 4) | d;
+            }
+            return true;
+        }
+
+        private static int hexDigitValue (char c) {
+            if (c >= '0' && c <= '9') {
+                return c - '0';
+            }
+            if (c >= 'a' && c <= 'f') {
+                return 10 + c - 'a';
+            }
+            if (c >= 'A' && c <= 'F') {
+                return 10 + c - 'A';
+            }
+            return -1;
         }
 
         private static int countIndent (string line) {
@@ -826,7 +948,7 @@ namespace Vala.Encoding {
         }
 
         private static int findColonSeparator (string line) {
-            // Find ": " or ":" at end, but not inside quotes
+            // Find ":" that separates key/value, but not inside quotes.
             bool inSingleQuote = false;
             bool inDoubleQuote = false;
             for (int i = 0; i < line.length; i++) {
@@ -836,9 +958,15 @@ namespace Vala.Encoding {
                 } else if (c == '"' && !inSingleQuote) {
                     inDoubleQuote = !inDoubleQuote;
                 } else if (c == ':' && !inSingleQuote && !inDoubleQuote) {
-                    if (i + 1 >= line.length || line[i + 1] == ' ') {
+                    if (i + 1 >= line.length) {
                         return i;
                     }
+                    char next = line[i + 1];
+                    // Keep common URL scheme literals (e.g., "http://...") as scalars.
+                    if (next == '/' && i + 2 < line.length && line[i + 2] == '/') {
+                        continue;
+                    }
+                    return i;
                 }
             }
             return -1;
@@ -986,6 +1114,9 @@ namespace Vala.Encoding {
             if (s.length == 0) {
                 return true;
             }
+            if (s != s.strip ()) {
+                return true;
+            }
             string lower = s.down ();
             if (lower == "true" || lower == "false" || lower == "null"
                 || lower == "yes" || lower == "no"
@@ -1033,7 +1164,7 @@ namespace Vala.Encoding {
                     case '\0' :
                         sb.append ("\\0");
                         break;
-                        default :
+                    default:
                         if ((uint) c < 0x20) {
                             sb.append ("\\u%04X".printf ((uint) c));
                         } else {
