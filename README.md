@@ -1823,8 +1823,8 @@ Fail-fast precondition checks for arguments and object state.
 
 | Method | Description |
 |---|---|
-| `checkArgument(bool cond, string message)` | Validates method arguments and terminates the process immediately when invalid |
-| `checkState(bool cond, string message)` | Validates object state and terminates the process immediately when invalid |
+| `checkArgument(bool cond, string message)` | Validates method arguments and throws `PreconditionError.INVALID_ARGUMENT` when invalid |
+| `checkState(bool cond, string message)` | Validates object state and throws `PreconditionError.INVALID_STATE` when invalid |
 
 ### Vala.Lang.Exceptions
 Exception utility methods.
