@@ -1,5 +1,6 @@
 subdir('collections/arrays')
 subdir('archive/zip')
+subdir('archive/tar')
 subdir('collections/arraylist')
 subdir('collections/bloomfilter')
 subdir('collections/bitset')

@@ -781,6 +781,18 @@ Static utility methods for Zip archive creation and extraction.
 | `addFile(Path archive, Path file)` | Adds one file to existing archive |
 | `extractFile(Path archive, string entry, Path dest)` | Extracts one entry to destination file |
 
+### Vala.Archive.Tar
+Static utility methods for Tar archive creation and extraction.
+
+| Method | Description |
+|---|---|
+| `create(Path archive, ArrayList<Path> files)` | Creates archive from file list |
+| `createFromDir(Path archive, Path dir)` | Creates archive from directory tree |
+| `extract(Path archive, Path dest)` | Extracts all entries into destination directory |
+| `list(Path archive)` | Lists archive entries (`null` on failure) |
+| `addFile(Path archive, Path file)` | Adds one file to existing archive |
+| `extractFile(Path archive, string entry, Path dest)` | Extracts one entry to destination file |
+
 ### Vala.Compress.Gzip
 Static utility methods for Gzip compression and decompression.
 
