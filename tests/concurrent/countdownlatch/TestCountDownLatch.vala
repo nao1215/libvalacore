@@ -6,11 +6,25 @@ void main (string[] args) {
     Test.add_func ("/concurrent/countdownlatch/testAwait", testAwait);
     Test.add_func ("/concurrent/countdownlatch/testAwaitTimeout", testAwaitTimeout);
     Test.add_func ("/concurrent/countdownlatch/testGetCount", testGetCount);
+    Test.add_func ("/concurrent/countdownlatch/testInvalidCount", testInvalidCount);
     Test.run ();
 }
 
+CountDownLatch mustLatch (int count) {
+    CountDownLatch ? latch = null;
+    try {
+        latch = new CountDownLatch (count);
+    } catch (CountDownLatchError e) {
+        assert_not_reached ();
+    }
+    if (latch == null) {
+        assert_not_reached ();
+    }
+    return latch;
+}
+
 void testAwait () {
-    Vala.Concurrent.CountDownLatch latch = new Vala.Concurrent.CountDownLatch (2);
+    Vala.Concurrent.CountDownLatch latch = mustLatch (2);
     bool done1 = false;
     bool done2 = false;
 
@@ -38,7 +52,7 @@ void testAwait () {
 }
 
 void testAwaitTimeout () {
-    Vala.Concurrent.CountDownLatch latch = new Vala.Concurrent.CountDownLatch (1);
+    Vala.Concurrent.CountDownLatch latch = mustLatch (1);
 
     bool result = latch.awaitTimeout (Duration.ofSeconds (0));
     assert (result == false);
@@ -48,11 +62,22 @@ void testAwaitTimeout () {
 }
 
 void testGetCount () {
-    Vala.Concurrent.CountDownLatch latch = new Vala.Concurrent.CountDownLatch (2);
+    Vala.Concurrent.CountDownLatch latch = mustLatch (2);
 
     assert (latch.getCount () == 2);
     latch.countDown ();
     assert (latch.getCount () == 1);
     latch.countDown ();
     assert (latch.getCount () == 0);
+}
+
+void testInvalidCount () {
+    bool thrown = false;
+    try {
+        new CountDownLatch (-1);
+    } catch (CountDownLatchError e) {
+        thrown = true;
+        assert (e is CountDownLatchError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
 }

@@ -1,5 +1,12 @@
 namespace Vala.Concurrent {
     /**
+     * Recoverable countdown latch configuration errors.
+     */
+    public errordomain CountDownLatchError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Countdown latch for one-shot synchronization.
      *
      * CountDownLatch starts with a fixed counter. Worker threads call
@@ -22,10 +29,11 @@ namespace Vala.Concurrent {
          * Creates latch with initial count.
          *
          * @param count initial count.
+         * @throws CountDownLatchError.INVALID_ARGUMENT when count is negative.
          */
-        public CountDownLatch (int count) {
+        public CountDownLatch (int count) throws CountDownLatchError {
             if (count < 0) {
-                error ("count must be non-negative");
+                throw new CountDownLatchError.INVALID_ARGUMENT ("count must be non-negative");
             }
             _count = count;
         }
