@@ -2,6 +2,13 @@ using Vala.Time;
 
 namespace Vala.Collections {
     /**
+     * Recoverable LRU cache operation errors.
+     */
+    public errordomain LruCacheError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Loader function for cache misses.
      */
     public delegate V ? CacheLoaderFunc<K, V> (K key);
@@ -41,12 +48,13 @@ namespace Vala.Collections {
          * @param max_entries maximum number of entries.
          * @param hash_func hash function for key.
          * @param equal_func equality function for key.
+         * @throws LruCacheError.INVALID_ARGUMENT when max_entries is not positive.
          */
         public LruCache (int max_entries,
                          GLib.HashFunc<K> hash_func,
-                         GLib.EqualFunc<K> equal_func) {
+                         GLib.EqualFunc<K> equal_func) throws LruCacheError {
             if (max_entries <= 0) {
-                error ("max_entries must be greater than 0");
+                throw new LruCacheError.INVALID_ARGUMENT ("max_entries must be greater than 0");
             }
 
             _max_entries = max_entries;
@@ -58,10 +66,11 @@ namespace Vala.Collections {
          *
          * @param ttl entry TTL duration.
          * @return this cache instance.
+         * @throws LruCacheError.INVALID_ARGUMENT when ttl is negative.
          */
-        public LruCache<K, V> withTtl (Duration ttl) {
+        public LruCache<K, V> withTtl (Duration ttl) throws LruCacheError {
             if (ttl.toMillis () < 0) {
-                error ("ttl must be non-negative");
+                throw new LruCacheError.INVALID_ARGUMENT ("ttl must be non-negative");
             }
             _ttl_millis = ttl.toMillis ();
             return this;

@@ -1452,8 +1452,8 @@ LRU cache with optional TTL and cache-miss loader.
 
 | Method | Description |
 |---|---|
-| `LruCache(int maxEntries, HashFunc<K>, EqualFunc<K>)` | Creates an LRU cache with key hash/equality functions |
-| `withTtl(Duration ttl)` | Sets entry TTL and returns this instance |
+| `LruCache(int maxEntries, HashFunc<K>, EqualFunc<K>)` | Creates an LRU cache (`throws LruCacheError.INVALID_ARGUMENT` when `maxEntries <= 0`) |
+| `withTtl(Duration ttl)` | Sets entry TTL (`throws LruCacheError.INVALID_ARGUMENT` when negative) and returns this instance |
 | `withLoader(CacheLoaderFunc<K, V> loader)` | Sets cache-miss loader and returns this instance |
 | `get(K key)` | Returns cached value or loader value; updates LRU order |
 | `put(K key, V value)` | Inserts or replaces an entry |
