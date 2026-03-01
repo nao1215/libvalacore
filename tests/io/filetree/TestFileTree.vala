@@ -104,7 +104,8 @@ void testFindBySizeAndModifiedAfter () {
         bool found = false;
         int64 deadline = GLib.get_monotonic_time () + 2 * 1000 * 1000;
         while (GLib.get_monotonic_time () < deadline) {
-            assert (Files.writeText (new Vala.Io.Path (newFile), "newer"));
+            bool wrote = Files.writeText (new Vala.Io.Path (newFile), "newer");
+            assert (wrote);
             var modified = FileTree.findModifiedAfter (new Vala.Io.Path (root), marker);
             if (containsPath (modified, newFile)) {
                 found = true;
