@@ -188,7 +188,7 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder header (string name, string value) {
-            if (hasUnsafeHeaderChars (name) || hasUnsafeHeaderChars (value)) {
+            if (Http.hasUnsafeHeaderChars (name) || Http.hasUnsafeHeaderChars (value)) {
                 return this;
             }
             _headers.put (name, value);
@@ -206,7 +206,7 @@ namespace Vala.Net {
             foreach (unowned string key in keys) {
                 string ? val = map.get (key);
                 if (val != null) {
-                    if (hasUnsafeHeaderChars (key) || hasUnsafeHeaderChars (val)) {
+                    if (Http.hasUnsafeHeaderChars (key) || Http.hasUnsafeHeaderChars (val)) {
                         continue;
                     }
                     _headers.put (key, val);
@@ -242,7 +242,7 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder basicAuth (string user, string password) {
-            if (hasUnsafeHeaderChars (user) || hasUnsafeHeaderChars (password)) {
+            if (Http.hasUnsafeHeaderChars (user) || Http.hasUnsafeHeaderChars (password)) {
                 return this;
             }
             string credentials = user + ":" + password;
@@ -258,7 +258,7 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder bearerToken (string token) {
-            if (hasUnsafeHeaderChars (token)) {
+            if (Http.hasUnsafeHeaderChars (token)) {
                 return this;
             }
             _headers.put ("Authorization", "Bearer " + token);
@@ -298,16 +298,6 @@ namespace Vala.Net {
          */
         public HttpResponse ? send () {
             return Http.executeRequest (_method, _url, _headers, _body_text, _timeout_ms);
-        }
-
-        private static bool hasUnsafeHeaderChars (string value) {
-            for (int i = 0; i < value.length; i++) {
-                char c = value[i];
-                if (c == '\r' || c == '\n' || (uint) c < 0x20 || c == 0x7f) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
@@ -668,7 +658,7 @@ namespace Vala.Net {
                 int queryIdx = rest.index_of ("?");
                 if (queryIdx >= 0) {
                     hostPort = rest.substring (0, queryIdx);
-                    path = rest.substring (queryIdx);
+                    path = "/" + rest.substring (queryIdx);
                 } else {
                     hostPort = rest;
                     path = "/";
@@ -740,14 +730,9 @@ namespace Vala.Net {
         private static uint8[] readChunked (GLib.DataInputStream dis) throws GLib.IOError {
             var result = new GLib.ByteArray ();
             while (true) {
-                string ? sizeLine = null;
-                try {
-                    sizeLine = dis.read_line ();
-                } catch (GLib.IOError e) {
-                    break;
-                }
+                string ? sizeLine = dis.read_line ();
                 if (sizeLine == null) {
-                    break;
+                    throw new GLib.IOError.FAILED ("unexpected EOF while reading chunk size");
                 }
                 sizeLine = sizeLine.strip ();
                 if (sizeLine.length == 0) {
@@ -760,25 +745,28 @@ namespace Vala.Net {
                 }
                 int64 chunkSize = 0;
                 if (!parseHexInt (sizeToken, out chunkSize)) {
-                    break;
+                    throw new GLib.IOError.FAILED ("invalid chunk size");
                 }
                 if (chunkSize == 0) {
-                    try {
-                        dis.read_line ();
-                    } catch (GLib.IOError e) {
-                        // ignore trailing CRLF read error
+                    while (true) {
+                        string ? trailer = dis.read_line ();
+                        if (trailer == null) {
+                            throw new GLib.IOError.FAILED ("unexpected EOF while reading chunk trailer");
+                        }
+                        if (trailer.length == 0) {
+                            break;
+                        }
                     }
                     break;
                 }
                 if (chunkSize < 0 || chunkSize > int.MAX) {
-                    break;
+                    throw new GLib.IOError.FAILED ("chunk size out of range");
                 }
                 uint8[] chunk = readExact (dis, (int) chunkSize);
                 result.append (chunk);
-                try {
-                    dis.read_line ();
-                } catch (GLib.IOError e) {
-                    break;
+                string ? chunkTerminator = dis.read_line ();
+                if (chunkTerminator == null || chunkTerminator.length != 0) {
+                    throw new GLib.IOError.FAILED ("invalid chunk terminator");
                 }
             }
             return result.data;
@@ -800,6 +788,9 @@ namespace Vala.Net {
                 } else {
                     return false;
                 }
+                if (result > (int64.MAX >> 4)) {
+                    return false;
+                }
                 result = (result << 4) | digit;
             }
             return true;
@@ -813,7 +804,7 @@ namespace Vala.Net {
                 try {
                     read = dis.read (buf);
                 } catch (GLib.IOError e) {
-                    break;
+                    throw e;
                 }
                 if (read == 0) {
                     break;
@@ -823,7 +814,7 @@ namespace Vala.Net {
             return result.data;
         }
 
-        private static bool hasUnsafeHeaderChars (string value) {
+        internal static bool hasUnsafeHeaderChars (string value) {
             for (int i = 0; i < value.length; i++) {
                 char c = value[i];
                 if (c == '\r' || c == '\n' || (uint) c < 0x20 || c == 0x7f) {
