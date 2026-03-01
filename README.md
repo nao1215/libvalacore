@@ -1819,7 +1819,7 @@ Wrapper for external process execution.
 Recommended failure checks: verify return value from `exec`/`execAsync`, call `waitFor()` for async runs, then inspect `exitCode()` and `stderr()`.
 
 ### Vala.Lang.Preconditions
-Fail-fast precondition checks for arguments and object state.
+Precondition checks for arguments and object state with recoverable errors.
 
 | Method | Description |
 |---|---|
@@ -1831,7 +1831,7 @@ Exception utility methods.
 
 | Method | Description |
 |---|---|
-| `sneakyThrow(GLib.Error e)` | Terminates the process immediately with the provided error (does not return) |
+| `sneakyThrow(GLib.Error e)` | Rethrows the provided error (preserves domain/code/message) |
 | `getStackTrace(GLib.Error e)` | Returns printable error details |
 
 ### Vala.Lang.SystemInfo

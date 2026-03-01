@@ -2,9 +2,8 @@ namespace Vala.Lang {
     /**
      * Exception utility methods.
      *
-     * This helper provides explicit formatting and fail-fast forwarding of
-     * GLib.Error values. It is useful when you need consistent crash logs in
-     * unrecoverable situations.
+     * This helper provides explicit formatting and forwarding of GLib.Error
+     * values.
      *
      * Example:
      * {{{
@@ -18,12 +17,13 @@ namespace Vala.Lang {
      */
     public class Exceptions : GLib.Object {
         /**
-         * Throws the error as an unrecoverable process termination.
+         * Rethrows the provided error.
          *
-         * @param e error to throw.
+         * @param e error to rethrow.
+         * @throws GLib.Error always throws the provided error.
          */
-        public static void sneakyThrow (GLib.Error e) {
-            error ("%s", getStackTrace (e));
+        public static void sneakyThrow (GLib.Error e) throws GLib.Error {
+            throw e;
         }
 
         /**
