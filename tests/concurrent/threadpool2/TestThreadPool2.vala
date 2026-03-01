@@ -33,21 +33,29 @@ void testExecute () {
     var pool = new Vala.Concurrent.ThreadPool (2);
     var wg = new WaitGroup ();
     int counter = 0;
+    GLib.Mutex mutex = GLib.Mutex ();
 
     wg.add (2);
 
     pool.execute (() => {
+        mutex.lock ();
         counter++;
+        mutex.unlock ();
         wg.done ();
     });
 
     pool.execute (() => {
+        mutex.lock ();
         counter++;
+        mutex.unlock ();
         wg.done ();
     });
 
     wg.wait ();
-    assert (counter == 2);
+    mutex.lock ();
+    int total = counter;
+    mutex.unlock ();
+    assert (total == 2);
 
     pool.shutdown ();
 }

@@ -21,7 +21,7 @@ string rootFor (string name) {
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 bool containsSuffix (ArrayList<string> entries, string suffix) {

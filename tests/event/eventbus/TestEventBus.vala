@@ -61,15 +61,29 @@ void testUnsubscribeAndClear () {
 void testAsyncDispatch () {
     var bus = new EventBus ().withAsync ();
     int count = 0;
+    GLib.Mutex mutex = GLib.Mutex ();
+    GLib.Cond cond = GLib.Cond ();
 
     bus.subscribe ("async", (value) => {
+        mutex.lock ();
         count += value.get_int32 ();
+        cond.signal ();
+        mutex.unlock ();
     });
 
     for (int i = 0; i < 10; i++) {
         bus.publish ("async", new GLib.Variant.int32 (1));
     }
 
-    Posix.usleep (200000);
-    assert (count == 10);
+    int64 deadline = GLib.get_monotonic_time () + 2 * 1000 * 1000;
+    mutex.lock ();
+    while (count < 10) {
+        if (!cond.wait_until (mutex, deadline)) {
+            break;
+        }
+    }
+    int total = count;
+    mutex.unlock ();
+
+    assert (total == 10);
 }

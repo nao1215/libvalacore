@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.8.0
+
+### Added
+- `Vala.Validation.Validator` - Fluent validation API with `ValidationResult` and field-level errors
+- `Vala.Time.Cron` - Interval/daily scheduling with cancellation support
+- `Vala.Event.EventBus` - In-process pub/sub with sync and async dispatch modes
+- `Vala.Io.FileTree` - Recursive tree walk, search, copy/sync, and delete utilities
+- `Vala.Crypto.Identifiers` - Identifier helpers including UUID/ULID/KSUID generation
+- `Vala.Io.Watcher` and `Vala.Io.FileWatcher` - File system watching with recursive and glob modes
+- `Vala.Compress.Gzip` and `Vala.Compress.Zlib` - Byte/file compression and decompression helpers
+- `Vala.Archive.Zip` and `Vala.Archive.Tar` - Archive create/extract/list/update helpers
+- `Vala.Encoding.Json` - JSON value tree, query, immutable update, merge, flatten, and pretty-print
+- `Vala.Net.Http` - One-liner HTTP helpers and request builder with headers/auth/query/body utilities
+- `Vala.Text.Template` - Mustache-style template rendering with conditionals, loops, filters, and fallback values
+- `Vala.Encoding.Xml` - XML parse/serialize helpers with XPath-style query
+- `Vala.Encoding.Toml` - TOML parse/query/stringify helpers
+- `Vala.Encoding.Yaml` - YAML parse/query/stringify helpers including multi-document parsing
+
+### Changed
+- Expanded `README.md` API reference for newly added modules and types
+- Added/expanded Meson test targets for new modules
+
+### Fixed
+- `Gzip`/`Zlib` converter loops no longer rebuild full tail buffers per iteration
+- `Gzip.compressLevel`/`Zlib.compressLevel` now fail gracefully on invalid levels (empty byte array)
+- `Tar.create` now validates input before removing an existing destination archive
+- `Tar.createFromDir` now uses `tar -C` to preserve destination path semantics
+- `Tar.extractFile` now extracts to a temp file and atomically moves on success to avoid destination truncation on failure
+- `Yaml` flow mapping now preserves nested flow values (`{}`/`[]`) and handles commas inside quoted scalars
+- `EventBus` async dispatch now uses bounded `WorkerPool` instead of per-handler thread creation
+- `EventBus.subscribeOnce` now removes one-shot subscribers before dispatch to avoid duplicate delivery under concurrent publish
+- `Http` timeout conversion now validates milliseconds and avoids zero/overflowed socket timeouts
+- `Http` response parser now validates `Content-Length`/chunk sizes and supports chunk-size extensions
+- `Toml.getIntOr` now guards int64-to-int narrowing overflow
+- `Xml` parser now validates closing tag names, and serializer preserves mixed-content order
+- `ValidationResult.errors()` and `Validator.validate()` now return defensive snapshots
+- Replaced shell-based recursive cleanup in tests with filesystem API helpers
+- Synchronized shared counters in concurrency-sensitive tests (`EventBus`, `ThreadPool2`, `Cron`)
+
 ## 0.7.0
 
 ### Added

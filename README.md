@@ -979,6 +979,7 @@ JSON parsing, serialization, and path-based querying. Handles JSON as a `JsonVal
 | `flatten(JsonValue root)` | Flattens nested object to dot-notation `HashMap` |
 
 #### JsonValue
+
 | Method | Description |
 |---|---|
 | `ofString(string v)` / `ofInt(int v)` / `ofDouble(double v)` / `ofBool(bool v)` / `ofNull()` | Factory methods |

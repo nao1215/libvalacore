@@ -340,6 +340,9 @@ namespace Vala.Encoding {
             if (number == null) {
                 return fallback;
             }
+            if (number < int.MIN || number > int.MAX) {
+                return fallback;
+            }
             return (int) number;
         }
 

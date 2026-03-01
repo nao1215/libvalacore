@@ -19,10 +19,6 @@ namespace Vala.Archive {
                 return false;
             }
 
-            if (Files.exists (archive)) {
-                Files.remove (archive);
-            }
-
             var cmd = new GLib.StringBuilder ();
             cmd.append ("tar -cf ");
             cmd.append (quote (archive.toString ()));
@@ -43,6 +39,10 @@ namespace Vala.Archive {
             if (!hasFile) {
                 return false;
             }
+
+            if (Files.exists (archive)) {
+                Files.remove (archive);
+            }
             return Vala.Io.Process.exec ("sh", { "-c", cmd.str });
         }
 
@@ -62,11 +62,9 @@ namespace Vala.Archive {
                 Files.remove (archive);
             }
 
-            string cmd = "cd %s && tar -cf %s .".printf (
-                quote (dir.toString ()),
-                quote (archive.toString ())
-            );
-            return Vala.Io.Process.exec ("sh", { "-c", cmd });
+            return Vala.Io.Process.exec (
+                "tar",
+                { "-cf", archive.toString (), "-C", dir.toString (), "." });
         }
 
         /**
@@ -159,12 +157,29 @@ namespace Vala.Archive {
                 return false;
             }
 
+            Vala.Io.Path temp = parent.resolve (".tar-extract-%s.tmp".printf (GLib.Uuid.string_random ()));
             string cmd = "tar -xOf %s %s > %s".printf (
                 quote (archive.toString ()),
                 quote (entry),
-                quote (dest.toString ())
+                quote (temp.toString ())
             );
-            return Vala.Io.Process.exec ("sh", { "-c", cmd });
+            bool extracted = Vala.Io.Process.exec ("sh", { "-c", cmd });
+            if (!extracted) {
+                if (Files.exists (temp)) {
+                    Files.remove (temp);
+                }
+                return false;
+            }
+
+            if (Files.exists (dest) && !Files.remove (dest)) {
+                Files.remove (temp);
+                return false;
+            }
+            if (!Files.move (temp, dest)) {
+                Files.remove (temp);
+                return false;
+            }
+            return true;
         }
 
         private static string quote (string s) {

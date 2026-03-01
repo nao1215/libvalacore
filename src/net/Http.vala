@@ -260,7 +260,11 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder timeoutMillis (int ms) {
-            _timeout_ms = ms;
+            if (ms <= 0) {
+                _timeout_ms = 1000;
+            } else {
+                _timeout_ms = ms;
+            }
             return this;
         }
 
@@ -506,7 +510,11 @@ namespace Vala.Net {
 
             try {
                 var client = new GLib.SocketClient ();
-                client.timeout = (uint) (timeout_ms / 1000);
+                int effectiveTimeoutMs = timeout_ms;
+                if (effectiveTimeoutMs <= 0) {
+                    effectiveTimeoutMs = DEFAULT_TIMEOUT_MS;
+                }
+                client.timeout = (uint) ((effectiveTimeoutMs + 999) / 1000);
                 if (useTls) {
                     client.set_tls (true);
                 }
@@ -589,6 +597,9 @@ namespace Vala.Net {
                 if (method != "HEAD") {
                     if (chunked) {
                         bodyData = readChunked (dis);
+                    } else if (contentLen > int.MAX) {
+                        conn.close ();
+                        return null;
                     } else if (contentLen > 0) {
                         bodyData = readExact (dis, (int) contentLen);
                     } else if (contentLen == -1) {
@@ -713,8 +724,13 @@ namespace Vala.Net {
                 if (sizeLine.length == 0) {
                     continue;
                 }
+                string sizeToken = sizeLine;
+                int extIdx = sizeToken.index_of (";");
+                if (extIdx >= 0) {
+                    sizeToken = sizeToken.substring (0, extIdx).strip ();
+                }
                 int64 chunkSize = 0;
-                if (!parseHexInt (sizeLine, out chunkSize)) {
+                if (!parseHexInt (sizeToken, out chunkSize)) {
                     break;
                 }
                 if (chunkSize == 0) {
@@ -723,6 +739,9 @@ namespace Vala.Net {
                     } catch (GLib.IOError e) {
                         // ignore trailing CRLF read error
                     }
+                    break;
+                }
+                if (chunkSize < 0 || chunkSize > int.MAX) {
                     break;
                 }
                 uint8[] chunk = readExact (dis, (int) chunkSize);

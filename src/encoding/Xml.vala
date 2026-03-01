@@ -153,6 +153,10 @@ namespace Vala.Encoding {
         public HashMap<string, string> attrs () {
             return _attrs;
         }
+
+        internal ArrayList<XmlNode> allChildren () {
+            return _children;
+        }
     }
 
     /**
@@ -394,11 +398,15 @@ namespace Vala.Encoding {
             while (pos < xml.length) {
                 // Check for closing tag
                 if (pos + 1 < xml.length && xml[pos] == '<' && xml[pos + 1] == '/') {
-                    // Skip closing tag
                     int closeEnd = xml.index_of (">", pos);
-                    if (closeEnd >= 0) {
-                        pos = closeEnd + 1;
+                    if (closeEnd < 0) {
+                        return null;
                     }
+                    string closeName = xml.substring (pos + 2, closeEnd - pos - 2).strip ();
+                    if (closeName != tagName) {
+                        return null;
+                    }
+                    pos = closeEnd + 1;
                     break;
                 }
 
@@ -517,9 +525,8 @@ namespace Vala.Encoding {
                 }
             }
 
-            ArrayList<XmlNode> ch = node.children ();
-            bool hasTextOnly = (ch.size () == 0 && node.text ().length > 0);
-            bool hasNoContent = (ch.size () == 0 && node.text ().length == 0);
+            ArrayList<XmlNode> ch = node.allChildren ();
+            bool hasNoContent = (ch.size () == 0);
 
             if (hasNoContent) {
                 sb.append ("/>");
@@ -528,26 +535,30 @@ namespace Vala.Encoding {
 
             sb.append (">");
 
-            if (hasTextOnly) {
-                sb.append (encodeEntities (node.text ()));
-                sb.append ("</");
-                sb.append (node.name ());
-                sb.append (">");
-                return;
-            }
-
-            // Write child elements
+            bool hasElementChild = false;
+            bool hasTextChild = false;
             for (int i = 0; i < ch.size (); i++) {
-                writeNode (ch.get (i), sb, indent, depth + 1);
+                XmlNode child = ch.get (i);
+                if (child.isTextNode ()) {
+                    hasTextChild = true;
+                } else {
+                    hasElementChild = true;
+                }
+            }
+            bool mixedContent = hasElementChild && hasTextChild;
+
+            for (int i = 0; i < ch.size (); i++) {
+                XmlNode child = ch.get (i);
+                if (child.isTextNode ()) {
+                    writeNode (child, sb, indent, depth + 1);
+                } else if (mixedContent) {
+                    writeNode (child, sb, -1, depth + 1);
+                } else {
+                    writeNode (child, sb, indent, depth + 1);
+                }
             }
 
-            // Also write text if mixed content
-            string text = node.text ();
-            if (text.length > 0) {
-                sb.append (encodeEntities (text));
-            }
-
-            if (indent >= 0 && ch.size () > 0) {
+            if (indent >= 0 && hasElementChild && !mixedContent) {
                 sb.append_c ('\n');
                 appendIndent (sb, indent, depth);
             }

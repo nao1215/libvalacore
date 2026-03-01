@@ -151,6 +151,7 @@ namespace Vala.Concurrent {
             for (int i = 0; i < tasks.size (); i++) {
                 ThreadPoolTaskFunc<T> ? task = tasks.get (i);
                 if (task == null) {
+                    futures.add (Future<T>.failed<T> ("null task at index %d".printf (i)));
                     continue;
                 }
 

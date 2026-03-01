@@ -1135,7 +1135,10 @@ namespace Vala.Encoding {
             }
             int64 i;
             if (int64.try_parse (numStr, out i)) {
-                return JsonValue.ofInt ((int) i);
+                if (i >= int.MIN && i <= int.MAX) {
+                    return JsonValue.ofInt ((int) i);
+                }
+                return JsonValue.ofDouble ((double) i);
             }
             return null;
         }

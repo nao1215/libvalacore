@@ -168,8 +168,9 @@ namespace Vala.Text {
 
         private static string escapeHtml (string input) {
             var sb = new GLib.StringBuilder ();
-            for (int i = 0; i < input.length; i++) {
-                char c = input[i];
+            int i = 0;
+            unichar c;
+            while (input.get_next_char (ref i, out c)) {
                 switch (c) {
                     case '&':
                         sb.append ("&amp;");
@@ -187,7 +188,7 @@ namespace Vala.Text {
                         sb.append ("&#39;");
                         break;
                     default:
-                        sb.append_c (c);
+                        sb.append_unichar (c);
                         break;
                 }
             }
@@ -443,8 +444,14 @@ namespace Vala.Text {
                             new TemplateSegment (TemplateSegment.Kind.VARIABLE, tag));
                     }
                 } else {
-                    literal.append_c (tmpl[pos]);
-                    pos++;
+                    unichar c;
+                    int nextPos = pos;
+                    if (tmpl.get_next_char (ref nextPos, out c)) {
+                        literal.append_unichar (c);
+                        pos = nextPos;
+                    } else {
+                        pos++;
+                    }
                 }
             }
 

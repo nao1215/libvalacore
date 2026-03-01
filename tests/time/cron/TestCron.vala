@@ -14,28 +14,43 @@ void main (string[] args) {
 void testEverySchedule () {
     var cron = Cron.every (Duration.ofSeconds (1));
     int count = 0;
+    GLib.Mutex mutex = GLib.Mutex ();
     cron.schedule (() => {
+        mutex.lock ();
         count++;
+        mutex.unlock ();
     });
 
     Posix.usleep (2300000);
     cron.cancel ();
-    assert (count >= 2);
+    mutex.lock ();
+    int total = count;
+    mutex.unlock ();
+    assert (total >= 2);
 }
 
 void testScheduleWithDelay () {
     var cron = Cron.every (Duration.ofSeconds (1));
     int count = 0;
+    GLib.Mutex mutex = GLib.Mutex ();
     cron.scheduleWithDelay (Duration.ofSeconds (2), () => {
+        mutex.lock ();
         count++;
+        mutex.unlock ();
     });
 
     Posix.usleep (1200000);
-    assert (count == 0);
+    mutex.lock ();
+    int before = count;
+    mutex.unlock ();
+    assert (before == 0);
 
     Posix.usleep (1700000);
     cron.cancel ();
-    assert (count >= 1);
+    mutex.lock ();
+    int after = count;
+    mutex.unlock ();
+    assert (after >= 1);
 }
 
 void testExpressionAndAt () {

@@ -109,7 +109,7 @@ namespace Vala.Compress {
          */
         public static uint8[] compressLevel (uint8[] data, int level) {
             if (level < 1 || level > 9) {
-                error ("compression level must be in [1, 9]");
+                return new uint8[0];
             }
             if (data.length == 0) {
                 return gzipEmptyPayload ();
@@ -131,7 +131,7 @@ namespace Vala.Compress {
             var output = new GLib.ByteArray ();
 
             while (true) {
-                uint8[] inChunk = tailBytes (data, inputOffset);
+                unowned uint8[] inChunk = tailBytes (data, inputOffset);
                 uint8[] outChunk = new uint8[4096];
                 GLib.ConverterFlags flags = GLib.ConverterFlags.NONE;
                 if (inputOffset >= data.length) {
@@ -154,11 +154,7 @@ namespace Vala.Compress {
                 }
 
                 if (bytesWritten > 0) {
-                    uint8[] produced = new uint8[(int) bytesWritten];
-                    for (int i = 0; i < produced.length; i++) {
-                        produced[i] = outChunk[i];
-                    }
-                    output.append (produced);
+                    output.append (outChunk[0 : (int) bytesWritten]);
                 }
 
                 inputOffset += (int) bytesRead;
@@ -183,18 +179,11 @@ namespace Vala.Compress {
             return output.steal ();
         }
 
-        private static uint8[] tailBytes (uint8[] data, int offset) {
+        private static unowned uint8[] tailBytes (uint8[] data, int offset) {
             if (offset >= data.length) {
-                uint8[] empty = new uint8[0];
-                return empty;
+                return data[data.length : data.length];
             }
-
-            int remain = data.length - offset;
-            uint8[] copied = new uint8[remain];
-            for (int i = 0; i < remain; i++) {
-                copied[i] = data[offset + i];
-            }
-            return copied;
+            return data[offset : data.length];
         }
 
         private static uint8[] gzipEmptyPayload () {

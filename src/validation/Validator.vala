@@ -57,7 +57,14 @@ namespace Vala.Validation {
          * @return error list.
          */
         public ArrayList<ValidationError> errors () {
-            return _errors;
+            var snapshot = new ArrayList<ValidationError> ();
+            for (int i = 0; i < _errors.size (); i++) {
+                ValidationError ? err = _errors.get (i);
+                if (err != null) {
+                    snapshot.add (err);
+                }
+            }
+            return snapshot;
         }
 
         /**
@@ -278,7 +285,18 @@ namespace Vala.Validation {
          * @return validation result.
          */
         public ValidationResult validate () {
-            return new ValidationResult (_errors);
+            return new ValidationResult (copyErrors (_errors));
+        }
+
+        private static ArrayList<ValidationError> copyErrors (ArrayList<ValidationError> src) {
+            var snapshot = new ArrayList<ValidationError> ();
+            for (int i = 0; i < src.size (); i++) {
+                ValidationError ? err = src.get (i);
+                if (err != null) {
+                    snapshot.add (err);
+                }
+            }
+            return snapshot;
         }
 
         private void addError (string field, string message) {

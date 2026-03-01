@@ -628,13 +628,7 @@ namespace Vala.Encoding {
             foreach (string item in items) {
                 string trimmed = item.strip ();
                 if (trimmed.length > 0) {
-                    if (trimmed.has_prefix ("{")) {
-                        seq.listAdd (parseFlowMapping (trimmed));
-                    } else if (trimmed.has_prefix ("[")) {
-                        seq.listAdd (parseFlowSequence (trimmed));
-                    } else {
-                        seq.listAdd (parseScalar (trimmed));
-                    }
+                    seq.listAdd (parseFlowValue (trimmed));
                 }
             }
             return seq;
@@ -659,18 +653,51 @@ namespace Vala.Encoding {
                 if (colonIdx > 0) {
                     string key = trimmed.substring (0, colonIdx).strip ();
                     string val = trimmed.substring (colonIdx + 1).strip ();
-                    mapping.mapPut (key, parseScalar (val));
+                    mapping.mapPut (key, parseFlowValue (val));
                 }
             }
             return mapping;
+        }
+
+        private static YamlValue parseFlowValue (string text) {
+            string trimmed = text.strip ();
+            if (trimmed.has_prefix ("{")) {
+                return parseFlowMapping (trimmed);
+            }
+            if (trimmed.has_prefix ("[")) {
+                return parseFlowSequence (trimmed);
+            }
+            return parseScalar (trimmed);
         }
 
         private static string[] splitFlowItems (string text) {
             var items = new GLib.Array<string> ();
             int depth = 0;
             int start = 0;
+            char quote = 0;
+            bool escaped = false;
             for (int i = 0; i < text.length; i++) {
                 char c = text[i];
+
+                if (quote != 0) {
+                    if (escaped) {
+                        escaped = false;
+                        continue;
+                    }
+                    if (quote == '"' && c == '\\') {
+                        escaped = true;
+                        continue;
+                    }
+                    if (c == quote) {
+                        quote = 0;
+                    }
+                    continue;
+                }
+
+                if (c == '"' || c == '\'') {
+                    quote = c;
+                    continue;
+                }
                 if (c == '[' || c == '{') {
                     depth++;
                 } else if (c == ']' || c == '}') {

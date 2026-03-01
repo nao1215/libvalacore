@@ -63,7 +63,7 @@ string rootFor (string name) {
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 // --- Basic variable substitution ---
@@ -262,10 +262,12 @@ void testRenderFile () {
 }
 
 void testRenderFileMissing () {
+    string root = rootFor ("missing");
+    cleanup (root);
     var vars = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
-    string ? result = Template.renderFile (
-        new Vala.Io.Path ("/tmp/valacore/ut/nonexistent.tmpl"), vars);
+    string ? result = Template.renderFile (new Vala.Io.Path (root + "/nonexistent.tmpl"), vars);
     assert (result == null);
+    cleanup (root);
 }
 
 // --- renderJson ---

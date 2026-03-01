@@ -1,4 +1,5 @@
 using Vala.Collections;
+using Vala.Concurrent;
 
 namespace Vala.Event {
     /**
@@ -26,6 +27,7 @@ namespace Vala.Event {
         private GLib.Mutex _mutex;
         private int _next_id;
         private bool _async_mode;
+        private WorkerPool _pool;
 
         /**
          * Creates event bus.
@@ -37,6 +39,11 @@ namespace Vala.Event {
             );
             _next_id = 1;
             _async_mode = false;
+            _pool = WorkerPool.withDefault ();
+        }
+
+        ~EventBus () {
+            _pool.shutdown ();
         }
 
         /**
@@ -80,12 +87,11 @@ namespace Vala.Event {
         public void publish (string topic, GLib.Variant eventData) {
             ensureTopic (topic);
 
-            ArrayList<EventSubscription> snapshot = copySubscriptions (topic);
+            ArrayList<EventSubscription> snapshot = takeSubscriptionsForPublish (topic);
             if (snapshot.size () == 0) {
                 return;
             }
 
-            var once_ids = new ArrayList<int> ();
             for (int i = 0; i < snapshot.size (); i++) {
                 EventSubscription ? sub = snapshot.get (i);
                 if (sub == null) {
@@ -93,21 +99,12 @@ namespace Vala.Event {
                 }
 
                 if (_async_mode) {
-                    new GLib.Thread<void *> ("event-bus-handler", () => {
+                    _pool.execute (() => {
                         sub.handler (eventData);
-                        return null;
                     });
                 } else {
                     sub.handler (eventData);
                 }
-
-                if (sub.once) {
-                    once_ids.add (sub.id);
-                }
-            }
-
-            if (once_ids.size () > 0) {
-                removeSubscriptionsById (topic, once_ids);
             }
         }
 
@@ -162,55 +159,31 @@ namespace Vala.Event {
             return this;
         }
 
-        private ArrayList<EventSubscription> copySubscriptions (string topic) {
-            var copy = new ArrayList<EventSubscription> ();
+        private ArrayList<EventSubscription> takeSubscriptionsForPublish (string topic) {
+            var snapshot = new ArrayList<EventSubscription> ();
 
             _mutex.lock ();
             ArrayList<EventSubscription> ? list = _topics.get (topic);
             if (list != null) {
+                var kept = new ArrayList<EventSubscription> ();
                 for (int i = 0; i < list.size (); i++) {
                     EventSubscription ? sub = list.get (i);
                     if (sub != null) {
-                        copy.add (sub);
+                        snapshot.add (sub);
+                        if (!sub.once) {
+                            kept.add (sub);
+                        }
                     }
                 }
+
+                if (kept.size () == 0) {
+                    _topics.remove (topic);
+                } else {
+                    _topics.put (topic, kept);
+                }
             }
             _mutex.unlock ();
-            return copy;
-        }
-
-        private void removeSubscriptionsById (string topic, ArrayList<int> ids) {
-            _mutex.lock ();
-            ArrayList<EventSubscription> ? list = _topics.get (topic);
-            if (list == null) {
-                _mutex.unlock ();
-                return;
-            }
-
-            for (int i = (int) list.size () - 1; i >= 0; i--) {
-                EventSubscription ? sub = list.get (i);
-                if (sub == null) {
-                    continue;
-                }
-                if (containsId (ids, sub.id)) {
-                    list.removeAt (i);
-                }
-            }
-
-            if (list.size () == 0) {
-                _topics.remove (topic);
-            }
-            _mutex.unlock ();
-        }
-
-        private static bool containsId (ArrayList<int> ids, int id) {
-            for (int i = 0; i < ids.size (); i++) {
-                int ? v = ids.get (i);
-                if (v != null && v == id) {
-                    return true;
-                }
-            }
-            return false;
+            return snapshot;
         }
 
         private ArrayList<EventSubscription> getOrCreateTopicList (string topic) {
