@@ -18,7 +18,6 @@ void main (string[] args) {
     Test.add_func ("/concurrent/future/testTimeout", testTimeout);
     Test.add_func ("/concurrent/future/testTimeoutInvalid", testTimeoutInvalid);
     Test.add_func ("/concurrent/future/testCancel", testCancel);
-    Test.add_func ("/concurrent/future/testTimeoutInvalid", testTimeoutInvalid);
     Test.add_func ("/concurrent/future/testOrElse", testOrElse);
     Test.add_func ("/concurrent/future/testAll", testAll);
     Test.add_func ("/concurrent/future/testAllFailure", testAllFailure);
