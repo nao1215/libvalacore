@@ -769,6 +769,17 @@ Promise types representing the pending result of an asynchronous computation.
 | `await()` | Blocks until the result is available and returns it |
 | `isDone()` | Returns whether the computation is complete |
 
+### Vala.Compress.Gzip
+Static utility methods for Gzip compression and decompression.
+
+| Method | Description |
+|---|---|
+| `compress(uint8[] data)` | Compresses bytes with default level |
+| `decompress(uint8[] data)` | Decompresses Gzip bytes (`null` on invalid input) |
+| `compressFile(Path src, Path dst)` | Compresses source file to destination |
+| `decompressFile(Path src, Path dst)` | Decompresses Gzip file to destination |
+| `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
+
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
 
