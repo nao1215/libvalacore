@@ -23,9 +23,10 @@ namespace Vala.Archive {
                 Files.remove (archive);
             }
 
-            var cmd = new GLib.StringBuilder ();
-            cmd.append ("zip -qj ");
-            cmd.append (quote (archive.toString ()));
+            var args = new GLib.Array<string> ();
+            args.append_val ("-qj");
+            args.append_val (archive.toString ());
+            args.append_val ("--");
 
             bool hasFile = false;
             for (int i = 0; i < files.size (); i++) {
@@ -34,14 +35,18 @@ namespace Vala.Archive {
                     continue;
                 }
                 hasFile = true;
-                cmd.append (" ");
-                cmd.append (quote (file.toString ()));
+                args.append_val (file.toString ());
             }
 
             if (!hasFile) {
                 return false;
             }
-            return Vala.Io.Process.exec ("sh", { "-c", cmd.str });
+
+            string[] execArgs = new string[args.length];
+            for (uint i = 0; i < args.length; i++) {
+                execArgs[i] = args.index (i);
+            }
+            return Vala.Io.Process.exec ("zip", execArgs);
         }
 
         /**
@@ -60,11 +65,15 @@ namespace Vala.Archive {
                 Files.remove (archive);
             }
 
-            string cmd = "cd %s && zip -qr %s .".printf (
-                quote (dir.toString ()),
-                quote (archive.toString ())
-            );
-            return Vala.Io.Process.exec ("sh", { "-c", cmd });
+            try {
+                var launcher = new GLib.SubprocessLauncher (GLib.SubprocessFlags.NONE);
+                launcher.set_cwd (dir.toString ());
+                string[] argv = { "zip", "-qr", archive.toString (), ".", null };
+                var process = launcher.spawnv (argv);
+                return process.wait_check (null);
+            } catch (GLib.Error e) {
+                return false;
+            }
         }
 
         /**
@@ -150,16 +159,70 @@ namespace Vala.Archive {
                 return false;
             }
 
-            string cmd = "unzip -p %s %s > %s".printf (
-                quote (archive.toString ()),
-                quote (entry),
-                quote (dest.toString ())
-            );
-            return Vala.Io.Process.exec ("sh", { "-c", cmd });
-        }
+            Vala.Io.Path temp = parent.resolve (".zip-extract-%s.tmp".printf (GLib.Uuid.string_random ()));
+            try {
+                string safeEntry = entry;
+                if (safeEntry.has_prefix ("-")) {
+                    safeEntry = "./" + safeEntry;
+                }
+                var process = new GLib.Subprocess (
+                    GLib.SubprocessFlags.STDOUT_PIPE | GLib.SubprocessFlags.STDERR_SILENCE
+                    ,
+                    "unzip",
+                    "-p",
+                    archive.toString (),
+                    safeEntry,
+                    null
+                );
+                GLib.InputStream ? stdoutPipe = process.get_stdout_pipe ();
+                if (stdoutPipe == null) {
+                    return false;
+                }
 
-        private static string quote (string s) {
-            return GLib.Shell.quote (s);
+                GLib.File tempFile = GLib.File.new_for_path (temp.toString ());
+                var outStream = tempFile.replace (null,
+                                                  false,
+                                                  GLib.FileCreateFlags.REPLACE_DESTINATION,
+                                                  null);
+                uint8[] buf = new uint8[8192];
+                while (true) {
+                    ssize_t read = stdoutPipe.read (buf, null);
+                    if (read == 0) {
+                        break;
+                    }
+                    if (read < 0) {
+                        outStream.close (null);
+                        Files.remove (temp);
+                        return false;
+                    }
+                    size_t written = 0;
+                    outStream.write_all (buf[0 : (size_t) read], out written, null);
+                }
+                outStream.flush (null);
+                outStream.close (null);
+
+                if (!process.wait_check (null)) {
+                    if (Files.exists (temp)) {
+                        Files.remove (temp);
+                    }
+                    return false;
+                }
+            } catch (GLib.Error e) {
+                if (Files.exists (temp)) {
+                    Files.remove (temp);
+                }
+                return false;
+            }
+
+            if (Files.exists (dest) && !Files.remove (dest)) {
+                Files.remove (temp);
+                return false;
+            }
+            if (!Files.move (temp, dest)) {
+                Files.remove (temp);
+                return false;
+            }
+            return true;
         }
     }
 }

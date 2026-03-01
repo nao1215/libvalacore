@@ -13,17 +13,16 @@ void main (string[] args) {
 }
 
 bool hasZipTools () {
-    return Vala.Io.Process.exec (
-        "sh",
-        { "-c", "command -v zip >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1" });
+    return GLib.Environment.find_program_in_path ("zip") != null
+           && GLib.Environment.find_program_in_path ("unzip") != null;
 }
 
 string rootFor (string name) {
-    return "/tmp/valacore/ut/zip_" + name;
+    return "%s/valacore/ut/zip_%s_%s".printf (Environment.get_tmp_dir (), name, GLib.Uuid.string_random ());
 }
 
 void cleanup (string path) {
-    Posix.system ("rm -rf " + path);
+    FileTree.deleteTree (new Vala.Io.Path (path));
 }
 
 bool containsSuffix (ArrayList<string> entries, string suffix) {
