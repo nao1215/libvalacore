@@ -1241,6 +1241,22 @@ Approximate unique counter with fixed memory footprint.
 | `fromBytes(uint8[] bytes)` | Restores estimator from serialized bytes |
 | `clear()` | Resets estimator state |
 
+## Vala.Validation.Validator
+Fluent input validation with field-level error reporting.
+
+| Method | Description |
+|---|---|
+| `Validator()` | Creates validator |
+| `required(string field, string? value)` | Adds required check |
+| `minLength(string field, string? value, int min)` | Adds min length check |
+| `maxLength(string field, string? value, int max)` | Adds max length check |
+| `range(string field, int value, int min, int max)` | Adds numeric range check |
+| `pattern(string field, string? value, string regex)` | Adds regex check |
+| `email(string field, string? value)` | Adds email format check |
+| `url(string field, string? value)` | Adds URL format check |
+| `custom(string field, PredicateFunc<string?> fn, string message)` | Adds custom rule |
+| `validate()` | Returns `ValidationResult` |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 

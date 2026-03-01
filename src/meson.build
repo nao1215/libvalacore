@@ -98,7 +98,8 @@ valacore_sources = files([
   'time/DateTime.vala',
   'time/Dates.vala',
   'time/Duration.vala',
-  'time/Stopwatch.vala'
+  'time/Stopwatch.vala',
+  'validation/Validator.vala'
 ])
 
 libvalacore = library('valacore-' + API_VERSION,
