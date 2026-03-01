@@ -1,5 +1,6 @@
-[![Build](https://github.com/nao1215/libcore/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/nao1215/libcore/actions/workflows/build.yml)
-[![UnitTest](https://github.com/nao1215/libcore/actions/workflows/unit_test.yml/badge.svg?branch=main)](https://github.com/nao1215/libcore/actions/workflows/unit_test.yml)
+[![Coverage](https://github.com/nao1215/libvalacore/actions/workflows/coverage.yml/badge.svg)](https://github.com/nao1215/libvalacore/actions/workflows/coverage.yml)
+[![Lint](https://github.com/nao1215/libvalacore/actions/workflows/lint.yml/badge.svg)](https://github.com/nao1215/libvalacore/actions/workflows/lint.yml)
+[![Format Check](https://github.com/nao1215/libvalacore/actions/workflows/format.yml/badge.svg)](https://github.com/nao1215/libvalacore/actions/workflows/format.yml)
 ![GitHub](https://img.shields.io/github/license/nao1215/libcore)
 
 ![logo](./docs/images/logo-small.png)
@@ -1830,6 +1831,8 @@ $ sudo apt install lcov
 $ ./scripts/coverage.sh          # Show coverage summary
 $ ./scripts/coverage.sh --check  # Check 80% threshold (fails if below)
 $ ./scripts/coverage.sh --html   # Generate HTML report
+# Reuse existing test results (faster in CI split steps):
+$ ./scripts/coverage.sh --check --skip-test
 ```
 
 ## Code formatting

@@ -22,6 +22,8 @@ meson setup build              # Configure (if not done)
 meson test -C build            # Run all tests
 ./scripts/format.sh --check    # Verify formatting
 ./scripts/coverage.sh --check  # Verify 80%+ line coverage (requires: sudo apt install lcov)
+# If tests were already run with coverage enabled:
+./scripts/coverage.sh --check --skip-test
 ```
 
 ### 4. Code style
