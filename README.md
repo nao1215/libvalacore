@@ -1873,7 +1873,7 @@ Convenience random utility methods. Prefer `Vala.Math.Random` for the full API.
 
 | Method | Description |
 |---|---|
-| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` (`throws RandomsError.INVALID_ARGUMENT` when `bound <= 0`) |
 | `nextDouble()` | Returns random double in `[0.0, 1.0)` |
 | `shuffle<T>(T[] array)` | Shuffles array in place |
 
