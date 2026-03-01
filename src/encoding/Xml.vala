@@ -45,10 +45,6 @@ namespace Vala.Encoding {
             _attrs.put (name, val);
         }
 
-        internal void appendText (string text) {
-            _text += text;
-        }
-
         internal bool isTextNode () {
             return _is_text;
         }
