@@ -884,7 +884,7 @@ Represents the eventual result of an asynchronous computation.
 | `completed<T>(T value)` | Creates an already successful future |
 | `failed<T>(string message)` | Creates an already failed future |
 | `await()` | Waits for completion and returns success value (value-type futures return default value on failure) |
-| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time |
+| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time (`null` when timeout is negative) |
 | `isDone()` | Returns whether the future is completed |
 | `isSuccess()` | Returns whether the future is successful |
 | `isFailed()` | Returns whether the future failed |
@@ -893,13 +893,13 @@ Represents the eventual result of an asynchronous computation.
 | `flatMap<U>(MapFunc<T, Future<U>> fn)` | Chains asynchronous operations |
 | `recover(RecoverFunc<T> fn)` | Converts failure into a fallback success value |
 | `onComplete(ConsumerFunc<T?> fn)` | Registers completion callback |
-| `timeout(Duration timeout)` | Returns a future that fails with `timeout` when deadline expires |
+| `timeout(Duration timeout)` | Returns a future that fails with `timeout` when deadline expires (negative timeout returns failed future) |
 | `orElse(T fallback)` | Returns success value or fallback when failed/cancelled |
 | `cancel()` | Cancels pending future |
 | `isCancelled()` | Returns whether future was cancelled |
 | `all<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns a future of collected values |
 | `any<T>(ArrayList<Future<T>> futures)` | Returns the first completed future result |
-| `delayed<T>(Duration delay, TaskFunc<T> task)` | Starts a task after delay |
+| `delayed<T>(Duration delay, TaskFunc<T> task)` | Starts a task after delay (negative delay returns failed future) |
 | `allSettled<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns settled futures |
 | `race<T>(ArrayList<Future<T>> futures)` | Alias of `any` |
 

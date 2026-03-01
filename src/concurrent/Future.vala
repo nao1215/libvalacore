@@ -124,7 +124,7 @@ namespace Vala.Concurrent {
         public T ? awaitTimeout (Duration timeout) {
             int64 timeout_millis = timeout.toMillis ();
             if (timeout_millis < 0) {
-                GLib.error ("timeout must be non-negative");
+                return null;
             }
 
             int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
@@ -327,7 +327,7 @@ namespace Vala.Concurrent {
         public Future<T> timeout (Duration timeout) {
             int64 timeout_millis = timeout.toMillis ();
             if (timeout_millis < 0) {
-                GLib.error ("timeout must be non-negative");
+                return Future<T>.failed<T> ("timeout must be non-negative");
             }
 
             var wrapped = new Future<T> ();
@@ -491,7 +491,7 @@ namespace Vala.Concurrent {
         public static Future<T> delayed<T> (Duration delay, owned TaskFunc<T> task) {
             int64 delay_millis = delay.toMillis ();
             if (delay_millis < 0) {
-                GLib.error ("delay must be non-negative");
+                return Future<T>.failed<T> ("delay must be non-negative");
             }
 
             return Future<T>.run (() => {
