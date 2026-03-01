@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Net.Http &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Net.Http &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">Http</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Net.Http" alt="Object hierarchy for Http" src="img/Vala.Net.Http.png"/>
+
+      <map id="Vala.Net.Http" name="Vala.Net.Http">
+<area shape="rect" id="node1" href="Vala.Net.Http.html" title="Vala.Net.Http" alt="" coords="5,101,128,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Http</span></b> : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>Static utility methods for HTTP requests.</p>
+          <p>Provides both shortcut one-liner methods and a request builder for more complex scenarios. Uses GIO SocketClient with raw HTTP/1.1 
+            protocol internally. No external HTTP library required.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_comment">// Simple GET</span><br/>    <span class="main_keyword">var</span> resp = Http.<span class="main_keyword">get</span> (<span class="main_literal">"http://localhost:8080/hello"</span>);<br/><br/>    <span class="main_comment">// POST with body</span><br/>    <span class="main_keyword">var</span> resp = Http.post (<span class="main_literal">"http://localhost:8080/data"</span>, <span class="main_literal">"hello"</span>);<br/><br/>    <span class="main_comment">// Builder pattern</span><br/>    <span class="main_keyword">var</span> resp = Http.request (<span class="main_literal">"PUT"</span>, <span class="main_literal">"http://localhost:8080/item"</span>)<br/>        .bearerToken (<span class="main_literal">"my-token"</span>)<br/>        .body (<span class="main_literal">"update data"</span>)<br/>        .send ();</code></pre>
+          </p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Net.html">Vala.Net</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.@delete.html" class="static_method">@delete</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP DELETE request.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.@get.html" class="static_method">@get</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP GET request.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.Http.download.html" class="static_method">download</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url, <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> dest)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Downloads a file from a URL and saves it to disk.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">uint8</span></span>[]? <b><a href="Vala.Net.Http.getBytes.html" class="static_method">getBytes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends a GET request and returns the response body as bytes.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Net.Http.getText.html" class="static_method">getText</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends a GET request and returns the response body as text.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.head.html" class="static_method">head</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP HEAD request.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.patchJson.html" class="static_method">patchJson</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url, <span class="main_basic_type"><span class="class">string</span></span> jsonBody)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP PATCH request with a JSON body.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.post.html" class="static_method">post</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url, <span class="main_basic_type"><span class="class">string</span></span> body)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP POST request with a text body.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.postForm.html" class="static_method">postForm</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url, <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; fields)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP POST request with form-encoded body.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.postJson.html" class="static_method">postJson</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url, <span class="main_basic_type"><span class="class">string</span></span> jsonBody)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP POST request with a JSON body.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpResponse.html" class="class">HttpResponse</a></span>? <b><a href="Vala.Net.Http.putJson.html" class="static_method">putJson</a></b> (<span class="main_basic_type"><span class="class">string</span></span> url, <span class="main_basic_type"><span class="class">string</span></span> jsonBody)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Sends an HTTP PUT request with a JSON body.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.HttpRequestBuilder.html" class="class">HttpRequestBuilder</a></span> <b><a href="Vala.Net.Http.request.html" class="static_method">request</a></b> (<span class="main_basic_type"><span class="class">string</span></span> method, <span class="main_basic_type"><span class="class">string</span></span> url)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates a request builder for custom HTTP requests.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Net.Http.Http.html" class="creation_method">Http</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-117')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-117">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

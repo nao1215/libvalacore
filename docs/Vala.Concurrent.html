@@ -28,6 +28,8 @@
               message-passing channel.</span></li>
           <li class="class"><a href="Vala.Concurrent.CountDownLatch.html">CountDownLatch</a> - <span class="brief_description">Countdown latch for one
               -shot synchronization.</span></li>
+          <li class="class"><a href="Vala.Concurrent.Future.html">Future</a> - <span class="brief_description">Represents the eventual result of an 
+              asynchronous computation.</span></li>
           <li class="class"><a href="Vala.Concurrent.IntBox.html">IntBox</a> - <span class="brief_description">Boxed int value for channel transport.
             </span></li>
           <li class="class"><a href="Vala.Concurrent.Mutex.html">Mutex</a> - <span class="brief_description">Mutex wrapper with utility methods.
@@ -44,10 +46,16 @@
               result from an asynchronous computation.</span></li>
           <li class="class"><a href="Vala.Concurrent.RWMutex.html">RWMutex</a> - <span class="brief_description">Reader-writer mutex.</span></li>
           <li class="class"><a href="Vala.Concurrent.Semaphore.html">Semaphore</a> - <span class="brief_description">Counting semaphore.</span></li>
+          <li class="class"><a href="Vala.Concurrent.SingleFlight.html">SingleFlight</a> - <span class="brief_description">Suppresses duplicate 
+              concurrent work for the same key.</span></li>
           <li class="class"><a href="Vala.Concurrent.StringBox.html">StringBox</a> - <span class="brief_description">Boxed string value for channel 
               transport.</span></li>
           <li class="class"><a href="Vala.Concurrent.TaskWrapper.html">TaskWrapper</a> - <span class="brief_description">Internal task wrapper used by
               WorkerPool.</span></li>
+          <li class="class"><a href="Vala.Concurrent.ThreadPool.html">ThreadPool</a> - <span class="brief_description">Generic fixed-size thread pool 
+              for asynchronous task execution.</span></li>
+          <li class="class"><a href="Vala.Concurrent.ThreadPoolTaskFunc.html">ThreadPoolTaskFunc</a> - <span class="brief_description">Wrapper for 
+              queued task function used by invokeAll.</span></li>
           <li class="class"><a href="Vala.Concurrent.WaitGroup.html">WaitGroup</a> - <span class="brief_description">Waits for a collection of tasks 
               to complete.</span></li>
           <li class="class"><a href="Vala.Concurrent.WorkerPool.html">WorkerPool</a> - <span class="brief_description">Fixed-size worker pool for 
@@ -58,6 +66,15 @@
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Concurrent.OnceFunc.html" class="delegate">OnceFunc</a></b> ()
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Function delegate for Once execution.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.RecoverFunc.html" class="delegate">RecoverFunc</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_basic_type"><span class="class">string</span></span> message)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Function used by <code>recover</code> to turn a failure into a value.
+              </span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.SingleFlightFunc.html" class="delegate">SingleFlightFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Function used by <code>do</code> and <code>doFuture</code>.</span>
             </div></li>
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.TaskFunc.html" class="delegate">TaskFunc</a></b>&lt;<b><span>T</span></b>&gt; ()
             </span>

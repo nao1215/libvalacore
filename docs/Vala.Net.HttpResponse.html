@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Net.HttpResponse &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Net.HttpResponse &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">HttpResponse</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Net.HttpResponse" alt="Object hierarchy for HttpResponse" src="img/Vala.Net.HttpResponse.png"/>
+
+      <map id="Vala.Net.HttpResponse" name="Vala.Net.HttpResponse">
+<area shape="rect" id="node1" href="Vala.Net.HttpResponse.html" title="Vala.Net.HttpResponse" alt="" coords="5,101,196,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">HttpResponse</span></b> : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>Represents an HTTP response.</p>
+          <p>Provides access to the status code, headers, and body of the response returned by an HTTP request.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> resp = Http.<span class="main_keyword">get</span> (<span class="main_literal">"http://localhost:8080/hello"</span>);<br/>    <span class="main_keyword">if</span> (resp.isSuccess ()) {<br/>        print (resp.bodyText ());<br/>    }</code></pre>
+          </p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Net.html">Vala.Net</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Methods:</h3>
+        <ul class="navi_inline">
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">uint8</span></span>[] <b><a href="Vala.Net.HttpResponse.bodyBytes.html" class="method">bodyBytes</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the response body as raw bytes.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Net.HttpResponse.bodyText.html" class="method">bodyText</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the response body as a UTF-8 string.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int64</span></span> <b><a href="Vala.Net.HttpResponse.contentLength.html" class="method">contentLength</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the Content-Length header value.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Net.HttpResponse.contentType.html" class="method">contentType</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the Content-Type header value.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Net.HttpResponse.header.html" class="method">header</a></b> (<span class="main_basic_type"><span class="class">string</span></span> name)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the value of a response header.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.HashMap.html" class="class">HashMap</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Net.HttpResponse.headers.html" class="method">headers</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns all response headers as a HashMap.</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.HttpResponse.isClientError.html" class="method">isClientError</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns true if the status code is 4xx (client error).</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.HttpResponse.isRedirect.html" class="method">isRedirect</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns true if the status code is 3xx (redirect).</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.HttpResponse.isServerError.html" class="method">isServerError</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns true if the status code is 5xx (server error).</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.HttpResponse.isSuccess.html" class="method">isSuccess</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns true if the status code is 2xx (success).</span>
+            </div></li>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Net.HttpResponse.statusCode.html" class="method">statusCode</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns the HTTP status code.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-115')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-115">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

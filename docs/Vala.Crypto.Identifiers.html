@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Vala.Crypto.Identifiers &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
+    </script>
+  </head>
+  <body>
+    <div class="site_header">Vala.Crypto.Identifiers &ndash; Valacore Reference Manual</div>
+    <div class="site_body">
+      <div class="site_content">
+        <h1 class="main_title">Identifiers</h1>
+        <hr class="main_hr"/>
+        <h2 class="main_title">Object Hierarchy:</h2>
+        <img class="main_diagram" usemap="#Vala.Crypto.Identifiers" alt="Object hierarchy for Identifiers" src="img/Vala.Crypto.Identifiers.png"/>
+
+      <map id="Vala.Crypto.Identifiers" name="Vala.Crypto.Identifiers">
+<area shape="rect" id="node1" href="Vala.Crypto.Identifiers.html" title="Vala.Crypto.Identifiers" alt="" coords="5,101,193,149"/>
+</map>
+
+        <h2 class="main_title">Description:</h2>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">class</span> <b><span class="class">Identifiers</span></b> : <span class="main_type"><span class="class">Object</span></span>
+        </div>
+        <div class="description">
+          <p>Utility class for UUID/ULID/KSUID generation and conversion.</p>
+        </div><br/>
+        <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Crypto.html">Vala.Crypto</a>
+        </div>
+        <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
+        </div>
+        <h2 class="main_title">Content:</h2>
+        <h3 class="main_title">Static methods:</h3>
+        <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Crypto.Identifiers.compareByTime.html" class="static_method">compareByTime</a></b> (<span class="main_basic_type"><span class="class">string</span></span> a, <span class="main_basic_type"><span class="class">string</span></span> b)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Compares identifiers by embedded timestamp.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Crypto.Identifiers.fromBytes.html" class="static_method">fromBytes</a></b> (<span class="main_basic_type"><span class="struct">uint8</span></span>[] bytes, <span class="main_basic_type"><span class="class">string</span></span> type)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Converts bytes to identifier string of given type.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Crypto.Identifiers.isKsuid.html" class="static_method">isKsuid</a></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether string is valid KSUID.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Crypto.Identifiers.isUlid.html" class="static_method">isUlid</a></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether string is valid ULID.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Crypto.Identifiers.isUuid.html" class="static_method">isUuid</a></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns whether string is valid UUID.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Crypto.Identifiers.ksuid.html" class="static_method">ksuid</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Generates KSUID string.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Crypto.Identifier.html" class="class">Identifier</a></span>? <b><a href="Vala.Crypto.Identifiers.parseKsuid.html" class="static_method">parseKsuid</a></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Parses KSUID into identifier value object.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Crypto.Identifier.html" class="class">Identifier</a></span>? <b><a href="Vala.Crypto.Identifiers.parseUlid.html" class="static_method">parseUlid</a></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Parses ULID into identifier value object.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Crypto.Identifier.html" class="class">Identifier</a></span>? <b><a href="Vala.Crypto.Identifiers.parseUuid.html" class="static_method">parseUuid</a></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Parses UUID into identifier value object.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">int64</span></span>? <b><a href="Vala.Crypto.Identifiers.timestampMillis.html" class="static_method">timestampMillis</a></b> (<span class="main_basic_type"><span class="class">string</span></span> id)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Extracts timestamp milliseconds from identifier.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">uint8</span></span>[]? <b><a href="Vala.Crypto.Identifiers.toBytes.html" class="static_method">toBytes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> id)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Converts identifier string to bytes.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Crypto.Identifiers.ulid.html" class="static_method">ulid</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Generates ULID string.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Crypto.Identifiers.ulidMonotonic.html" class="static_method">ulidMonotonic</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Generates monotonic ULID string.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Crypto.Identifiers.uuidV4.html" class="static_method">uuidV4</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Generates random UUID v4 string.</span>
+            </div></li>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span> <b><a href="Vala.Crypto.Identifiers.uuidV7.html" class="static_method">uuidV7</a></b> ()
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Generates time-ordered UUID v7 string.</span>
+            </div></li>
+        </ul>
+        <h3 class="main_title">Creation methods:</h3>
+        <ul class="navi_inline">
+          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Crypto.Identifiers.Identifiers.html" class="creation_method">Identifiers</a></b> ()
+            </span>
+            <div class="leaf_brief_description">
+            </div></li>
+        </ul>
+        <h3 class="main_title">Inherited Members:</h3>
+        <div class="box">
+          <div class="headline" onclick="toggle_box (this, 'box-content-53')">All known members inherited from class GLib.Object</div>
+          <div class="content" id="box-content-53">
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">@get</li>
+                <li class="static_method">@new</li>
+                <li class="method">@ref</li>
+                <li class="method">@set</li>
+                <li class="method">add_toggle_ref</li>
+                <li class="method">add_weak_pointer</li>
+                <li class="method">bind_property</li>
+                <li class="method">connect</li>
+                <li class="virtual_method">constructed</li>
+                <li class="method">disconnect</li>
+                <li class="virtual_method">dispose</li>
+                <li class="method">dup_data</li>
+                <li class="method">dup_qdata</li>
+                <li class="method">force_floating</li>
+                <li class="method">freeze_notify</li>
+                <li class="method">get_class</li>
+                <li class="method">get_data</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">get_property</li>
+                <li class="method">get_qdata</li>
+                <li class="method">get_type</li>
+                <li class="method">getv</li>
+                <li class="static_method">interface_find_property</li>
+                <li class="static_method">interface_install_property</li>
+                <li class="static_method">interface_list_properties</li>
+                <li class="method">is_floating</li>
+                <li class="static_method">new_valist</li>
+                <li class="static_method">new_with_properties</li>
+                <li class="static_method">newv</li>
+                <li class="signal">notify</li>
+                <li class="method">notify_property</li>
+                <li class="field">ref_count</li>
+                <li class="method">ref_sink</li>
+                <li class="method">remove_toggle_ref</li>
+                <li class="method">remove_weak_pointer</li>
+              </ul>
+            </div>
+            <div class="column">
+              <ul class="navi_inline">
+                <li class="method">replace_data</li>
+                <li class="method">replace_qdata</li>
+                <li class="method">set_data</li>
+                <li class="method">set_data_full</li>
+                <li class="method">set_property</li>
+                <li class="method">set_qdata</li>
+                <li class="method">set_qdata_full</li>
+                <li class="method">set_valist</li>
+                <li class="method">setv</li>
+                <li class="method">steal_data</li>
+                <li class="method">steal_qdata</li>
+                <li class="method">thaw_notify</li>
+                <li class="method">unref</li>
+                <li class="method">watch_closure</li>
+                <li class="method">weak_ref</li>
+                <li class="method">weak_unref</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+    <div class="site_footer">Generated by <a href="https://wiki.gnome.org/Projects/Valadoc"><kbd>valadoc</kbd></a>
+    </div>
+  </body>
+</html>

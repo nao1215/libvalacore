@@ -34,6 +34,10 @@
               similar to Java's BufferedWriter.</span></li>
           <li class="class"><a href="Vala.Io.Console.html">Console</a> - <span class="brief_description">Console utility methods.</span></li>
           <li class="class"><a href="Vala.Io.FileLock.html">FileLock</a> - <span class="brief_description">File-based inter-process lock.</span></li>
+          <li class="class"><a href="Vala.Io.FileTree.html">FileTree</a> - <span class="brief_description">High-level recursive directory operations.
+            </span></li>
+          <li class="class"><a href="Vala.Io.FileWatcher.html">FileWatcher</a> - <span class="brief_description">Active filesystem watcher with 
+              callback registration.</span></li>
           <li class="class"><a href="Vala.Io.Files.html">Files</a> - <span class="brief_description">Files class provides static utility methods for 
               common file and directory operations.</span></li>
           <li class="class"><a href="Vala.Io.Filesystem.html">Filesystem</a> - <span class="brief_description">Filesystem metadata utility methods.
@@ -58,12 +62,29 @@
           <li class="class"><a href="Vala.Io.Strings.html">Strings</a> - <span class="brief_description">Strings class is a collection of static APIs 
               for manipulating string.</span></li>
           <li class="class"><a href="Vala.Io.Temp.html">Temp</a> - <span class="brief_description">Temporary file and directory helpers.</span></li>
+          <li class="class"><a href="Vala.Io.WatchEvent.html">WatchEvent</a> - <span class="brief_description">Value object that represents one 
+              filesystem event.</span></li>
+          <li class="class"><a href="Vala.Io.Watcher.html">Watcher</a> - <span class="brief_description">Static factory for filesystem watchers.
+            </span></li>
+        </ul>
+        <h3 class="main_title">Enums:</h3>
+        <ul class="navi_inline">
+          <li class="enum"><a href="Vala.Io.WatchEventType.html">WatchEventType</a> - <span class="brief_description">Filesystem watch event type.
+            </span></li>
         </ul>
         <h3 class="main_title">Delegates:</h3>
         <ul class="navi_inline">
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Io.RenameCallback.html" class="delegate">RenameCallback</a></b> (<span class="main_type"><a href="Vala.Io.WatchEvent.html" class="class">WatchEvent</a></span> from, <span class="main_type"><a href="Vala.Io.WatchEvent.html" class="class">WatchEvent</a></span> to)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Rename callback type.</span>
+            </div></li>
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Io.TempFunc.html" class="delegate">TempFunc</a></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Callback delegate used by temporary resource helpers.</span>
+            </div></li>
+          <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Io.WatchCallback.html" class="delegate">WatchCallback</a></b> (<span class="main_type"><a href="Vala.Io.WatchEvent.html" class="class">WatchEvent</a></span> eventData)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Watch callback type.</span>
             </div></li>
           <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.WithFileLockFunc.html" class="delegate">WithFileLockFunc</a></b> ()
             </span>
