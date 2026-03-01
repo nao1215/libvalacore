@@ -1645,7 +1645,7 @@ Approximate unique counter with fixed memory footprint.
 
 | Method | Description |
 |---|---|
-| `HyperLogLog(double errorRate = 0.01)` | Creates estimator with target error rate |
+| `HyperLogLog(double errorRate = 0.01)` | Creates estimator with target error rate (`throws HyperLogLogError.INVALID_ARGUMENT` when `errorRate` is outside `(0, 1)`) |
 | `add(string value)` | Adds one value |
 | `addBytes(uint8[] value)` | Adds raw byte value |
 | `addAll(ArrayList<string> values)` | Adds multiple values |
