@@ -4,6 +4,14 @@ using Vala.Time;
 
 namespace Vala.Config {
     /**
+     * Recoverable AppConfig argument and lookup errors.
+     */
+    public errordomain AppConfigError {
+        INVALID_ARGUMENT,
+        REQUIRED_KEY_MISSING
+    }
+
+    /**
      * Unified application configuration from file, environment, and CLI.
      *
      * Precedence order is `cli > env > file > fallback`.
@@ -42,10 +50,11 @@ namespace Vala.Config {
          *
          * @param appName application name.
          * @return loaded AppConfig.
+         * @throws AppConfigError.INVALID_ARGUMENT when appName is empty.
          */
-        public static AppConfig load (string appName) {
+        public static AppConfig load (string appName) throws AppConfigError {
             if (appName.length == 0) {
-                GLib.error ("appName must not be empty");
+                throw new AppConfigError.INVALID_ARGUMENT ("appName must not be empty");
             }
 
             var config = new AppConfig ();
@@ -149,8 +158,10 @@ namespace Vala.Config {
          * @param key config key.
          * @param fallback value to return when key is missing.
          * @return resolved string value.
+         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
          */
-        public string getString (string key, string fallback = "") {
+        public string getString (string key,
+                                 string fallback = "") throws AppConfigError {
             ensureKey (key);
 
             string source;
@@ -164,8 +175,10 @@ namespace Vala.Config {
          * @param key config key.
          * @param fallback fallback int.
          * @return parsed int or fallback.
+         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
          */
-        public int getInt (string key, int fallback = 0) {
+        public int getInt (string key,
+                           int fallback = 0) throws AppConfigError {
             ensureKey (key);
 
             string source;
@@ -190,8 +203,10 @@ namespace Vala.Config {
          * @param key config key.
          * @param fallback fallback bool.
          * @return parsed bool or fallback.
+         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
          */
-        public bool getBool (string key, bool fallback = false) {
+        public bool getBool (string key,
+                             bool fallback = false) throws AppConfigError {
             ensureKey (key);
 
             string source;
@@ -218,8 +233,10 @@ namespace Vala.Config {
          * @param key config key.
          * @param fallback fallback duration.
          * @return parsed duration or fallback.
+         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
          */
-        public Duration getDuration (string key, Duration fallback) {
+        public Duration getDuration (string key,
+                                     Duration fallback) throws AppConfigError {
             ensureKey (key);
 
             string source;
@@ -237,14 +254,18 @@ namespace Vala.Config {
          *
          * @param key required config key.
          * @return existing value.
+         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
+         * @throws AppConfigError.REQUIRED_KEY_MISSING when key has no value.
          */
-        public string require (string key) {
+        public string require (string key) throws AppConfigError {
             ensureKey (key);
 
             string source;
             string ? value = resolveValue (key, out source);
             if (value == null) {
-                GLib.error ("required config key `%s` is missing", key);
+                throw new AppConfigError.REQUIRED_KEY_MISSING (
+                          "required config key `%s` is missing".printf (key)
+                );
             }
             return value;
         }
@@ -260,8 +281,9 @@ namespace Vala.Config {
          *
          * @param key config key.
          * @return source name.
+         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
          */
-        public string sourceOf (string key) {
+        public string sourceOf (string key) throws AppConfigError {
             ensureKey (key);
 
             string source;
@@ -388,9 +410,9 @@ namespace Vala.Config {
             }
         }
 
-        private static void ensureKey (string key) {
+        private static void ensureKey (string key) throws AppConfigError {
             if (key.length == 0) {
-                GLib.error ("key must not be empty");
+                throw new AppConfigError.INVALID_ARGUMENT ("key must not be empty");
             }
         }
     }

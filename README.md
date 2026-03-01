@@ -1580,16 +1580,16 @@ Unified application configuration from file, environment, and CLI.
 
 | Method | Description |
 |---|---|
-| `load(string appName)` | Loads from standard app config paths |
+| `load(string appName)` | Loads from standard app config paths (`throws AppConfigError.INVALID_ARGUMENT` when appName is empty) |
 | `loadFile(Path path)` | Loads from explicit file |
 | `withEnvPrefix(string prefix)` | Sets env prefix like `MYAPP_` |
 | `withCliArgs(string[] args)` | Parses CLI overrides (`--k=v`, `--k v`, `--flag`) |
-| `getString(string key, string fallback = "")` | Returns string value or fallback |
-| `getInt(string key, int fallback = 0)` | Returns int value or fallback |
-| `getBool(string key, bool fallback = false)` | Returns bool value or fallback |
-| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback |
-| `require(string key)` | Returns required value, fail-fast when missing |
-| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` |
+| `getString(string key, string fallback = "")` | Returns string value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getInt(string key, int fallback = 0)` | Returns int value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getBool(string key, bool fallback = false)` | Returns bool value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `require(string key)` | Returns required value (`throws AppConfigError.INVALID_ARGUMENT` or `AppConfigError.REQUIRED_KEY_MISSING`) |
+| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
 
 ## Vala.Distributed.ConsistentHash
 Consistent hash ring with virtual nodes for stable key distribution.
