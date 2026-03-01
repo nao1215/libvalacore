@@ -1,5 +1,12 @@
 namespace Vala.Math {
     /**
+     * Recoverable random utility argument errors.
+     */
+    public errordomain RandomError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Static utility methods for random values.
      *
      * Provides convenience generators for primitive random values and helper
@@ -17,10 +24,11 @@ namespace Vala.Math {
          *
          * @param bound exclusive upper bound.
          * @return random integer.
+         * @throws RandomError.INVALID_ARGUMENT when bound is not positive.
          */
-        public static int nextInt (int bound) {
+        public static int nextInt (int bound) throws RandomError {
             if (bound <= 0) {
-                error ("bound must be greater than zero");
+                throw new RandomError.INVALID_ARGUMENT ("bound must be greater than zero");
             }
             return GLib.Random.int_range (0, bound);
         }
@@ -31,10 +39,11 @@ namespace Vala.Math {
          * @param min inclusive lower bound.
          * @param max exclusive upper bound.
          * @return random integer.
+         * @throws RandomError.INVALID_ARGUMENT when min is not less than max.
          */
-        public static int nextIntRange (int min, int max) {
+        public static int nextIntRange (int min, int max) throws RandomError {
             if (min >= max) {
-                error ("min must be less than max");
+                throw new RandomError.INVALID_ARGUMENT ("min must be less than max");
             }
             return GLib.Random.int_range (min, max);
         }

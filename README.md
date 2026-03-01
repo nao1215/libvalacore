@@ -562,8 +562,8 @@ Static utility methods for random values.
 
 | Method | Description |
 |---|---|
-| `nextInt(int bound)` | Returns random integer in `[0, bound)` |
-| `nextIntRange(int min, int max)` | Returns random integer in `[min, max)` |
+| `nextInt(int bound)` | Returns random integer in `[0, bound)` (`throws RandomError.INVALID_ARGUMENT` when `bound <= 0`) |
+| `nextIntRange(int min, int max)` | Returns random integer in `[min, max)` (`throws RandomError.INVALID_ARGUMENT` when `min >= max`) |
 | `nextDouble()` | Returns random double in `[0.0, 1.0)` |
 | `nextBool()` | Returns random boolean |
 | `shuffle<T>(T[] array)` | Shuffles array in place |
