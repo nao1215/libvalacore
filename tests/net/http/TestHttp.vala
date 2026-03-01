@@ -14,6 +14,7 @@ class MockHttpServer : GLib.Object {
     private string _response_content_type;
     private string ? _last_request;
     private bool _chunked;
+    private string ? _location;
 
     public MockHttpServer () {
         _listener = new GLib.SocketListener ();
@@ -23,6 +24,7 @@ class MockHttpServer : GLib.Object {
         _response_content_type = "text/plain";
         _last_request = null;
         _chunked = false;
+        _location = null;
 
         try {
             _port = (uint16) _listener.add_any_inet_port (null);
@@ -44,6 +46,7 @@ class MockHttpServer : GLib.Object {
         _response_content_type = contentType;
         _response_body = body;
         _chunked = false;
+        _location = null;
     }
 
     public void setChunkedResponse (int status, string contentType, string body) {
@@ -51,6 +54,15 @@ class MockHttpServer : GLib.Object {
         _response_content_type = contentType;
         _response_body = body;
         _chunked = true;
+        _location = null;
+    }
+
+    public void setRedirectResponse (int status, string location, string body = "redirect") {
+        _response_status = status;
+        _response_content_type = "text/plain";
+        _response_body = body;
+        _chunked = false;
+        _location = location;
     }
 
     public string ? lastRequest () {
@@ -114,6 +126,9 @@ class MockHttpServer : GLib.Object {
                 resp.append ("Content-Type: %s\r\n".printf (_response_content_type));
                 resp.append ("Content-Length: %d\r\n".printf (_response_body.length));
                 resp.append ("X-Custom: test-value\r\n");
+                if (_location != null) {
+                    resp.append ("Location: %s\r\n".printf (_location));
+                }
                 resp.append ("Connection: close\r\n");
                 resp.append ("\r\n");
                 resp.append (_response_body);
@@ -345,10 +360,44 @@ void testRequestBuilderFormData () {
 }
 
 void testRequestBuilderFollowRedirects () {
-    var builder = Http.request ("GET", "https://example.com")
-                   .followRedirects (false)
-                   .followRedirects (true);
-    assert (builder != null);
+    var redirectOnly = new MockHttpServer ();
+    string missingTarget = "http://127.0.0.1:65535/final";
+    redirectOnly.setRedirectResponse (302, missingTarget);
+    var redirectOnlyThread = serveAsync (redirectOnly);
+    var noFollowResp = Http.request ("GET", redirectOnly.baseUrl () + "/redirect")
+                        .followRedirects (false)
+                        .send ();
+    redirectOnly.stop ();
+    redirectOnlyThread.join ();
+
+    assert (noFollowResp != null);
+    if (noFollowResp != null) {
+        assert (noFollowResp.statusCode () == 302);
+        assert (noFollowResp.header ("Location") == missingTarget);
+    }
+
+    var finalServer = new MockHttpServer ();
+    finalServer.setResponse (200, "text/plain", "final-ok");
+    var finalThread = serveAsync (finalServer);
+
+    var redirectServer = new MockHttpServer ();
+    string finalUrl = finalServer.baseUrl () + "/final";
+    redirectServer.setRedirectResponse (302, finalUrl);
+    var redirectThread = serveAsync (redirectServer);
+
+    var followResp = Http.request ("GET", redirectServer.baseUrl () + "/redirect")
+                      .followRedirects (true)
+                      .send ();
+    redirectServer.stop ();
+    finalServer.stop ();
+    redirectThread.join ();
+    finalThread.join ();
+
+    assert (followResp != null);
+    if (followResp != null) {
+        assert (followResp.statusCode () == 200);
+        assert (followResp.bodyText () == "final-ok");
+    }
 }
 
 // --- Mock server integration tests ---

@@ -106,24 +106,35 @@ namespace Vala.Collections {
          * preserved values.
          *
          * If multiple entries map to the same transformed key,
-         * later entries overwrite earlier ones.
+         * later entries overwrite earlier ones unless conflict
+         * resolver is provided.
          *
          * @param map the source map.
          * @param fn key transformation function.
          * @param hash_func hash function for transformed key type J.
          * @param equal_func equality function for transformed key type J.
+         * @param on_conflict optional resolver for key collisions.
          * @return a new map with transformed keys.
          */
         public static HashMap<J, V> mapKeys<K, V, J> (HashMap<K, V> map,
                                                       owned MapFunc<K, J> fn,
                                                       GLib.HashFunc<J> hash_func,
-                                                      GLib.EqualFunc<J> equal_func) {
+                                                      GLib.EqualFunc<J> equal_func,
+                                                      owned ConflictResolverFunc<V> ? on_conflict = null) {
             var result = new HashMap<J, V> (hash_func, equal_func);
             GLib.List<unowned K> keyList = map.keys ();
             foreach (unowned K k in keyList) {
                 V ? v = map.get (k);
                 if (v != null) {
-                    result.put (fn (k), v);
+                    J newKey = fn (k);
+                    if (on_conflict != null && result.containsKey (newKey)) {
+                        V ? existing = result.get (newKey);
+                        if (existing != null) {
+                            result.put (newKey, on_conflict (existing, v));
+                            continue;
+                        }
+                    }
+                    result.put (newKey, v);
                 }
             }
             return result;
@@ -132,19 +143,31 @@ namespace Vala.Collections {
         /**
          * Returns a new map with keys and values swapped.
          *
+         * If multiple entries map to the same value key, later entries
+         * overwrite earlier ones unless conflict resolver is provided.
+         *
          * @param map the source map.
          * @param hash_func hash function for value type V.
          * @param equal_func equality function for value type V.
+         * @param on_conflict optional resolver for value-key collisions.
          * @return a new inverted map.
          */
         public static HashMap<V, K> invert<K, V> (HashMap<K, V> map,
                                                   GLib.HashFunc<V> hash_func,
-                                                  GLib.EqualFunc<V> equal_func) {
+                                                  GLib.EqualFunc<V> equal_func,
+                                                  owned ConflictResolverFunc<K> ? on_conflict = null) {
             var result = new HashMap<V, K> (hash_func, equal_func);
             GLib.List<unowned K> keyList = map.keys ();
             foreach (unowned K k in keyList) {
                 V ? v = map.get (k);
                 if (v != null) {
+                    if (on_conflict != null && result.containsKey (v)) {
+                        K ? existing = result.get (v);
+                        if (existing != null) {
+                            result.put (v, on_conflict (existing, k));
+                            continue;
+                        }
+                    }
                     result.put (v, k);
                 }
             }
@@ -378,7 +401,7 @@ namespace Vala.Collections {
         /**
          * Returns a new map with all keys transformed by the function.
          * Values are preserved. If multiple keys map to the same new key,
-         * later entries overwrite earlier ones.
+         * later entries overwrite earlier ones unless conflict resolver is provided.
          *
          * Example:
          * {{{
@@ -390,16 +413,26 @@ namespace Vala.Collections {
          *
          * @param map the source map.
          * @param fn the key transformation function.
+         * @param on_conflict optional resolver for key collisions.
          * @return a new HashMap with transformed keys.
          */
         public static HashMap<string, string> mapKeysString (HashMap<string, string> map,
-                                                             owned MapFunc<string, string> fn) {
+                                                             owned MapFunc<string, string> fn,
+                                                             owned ConflictResolverFunc<string> ? on_conflict = null) {
             var result = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             GLib.List<unowned string> keyList = map.keys ();
             foreach (unowned string k in keyList) {
                 string ? v = map.get (k);
                 if (v != null) {
-                    result.put (fn (k), v);
+                    string newKey = fn (k);
+                    if (on_conflict != null && result.containsKey (newKey)) {
+                        string ? existing = result.get (newKey);
+                        if (existing != null) {
+                            result.put (newKey, on_conflict (existing, v));
+                            continue;
+                        }
+                    }
+                    result.put (newKey, v);
                 }
             }
             return result;
@@ -408,7 +441,7 @@ namespace Vala.Collections {
         /**
          * Returns a new map with keys and values swapped.
          * If multiple entries have the same value, later entries
-         * overwrite earlier ones in the result.
+         * overwrite earlier ones in the result unless conflict resolver is provided.
          *
          * Example:
          * {{{
@@ -420,14 +453,23 @@ namespace Vala.Collections {
          * }}}
          *
          * @param map the source map.
+         * @param on_conflict optional resolver for value-key collisions.
          * @return a new HashMap with keys and values swapped.
          */
-        public static HashMap<string, string> invertString (HashMap<string, string> map) {
+        public static HashMap<string, string> invertString (HashMap<string, string> map,
+                                                            owned ConflictResolverFunc<string> ? on_conflict = null) {
             var result = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             GLib.List<unowned string> keyList = map.keys ();
             foreach (unowned string k in keyList) {
                 string ? v = map.get (k);
                 if (v != null) {
+                    if (on_conflict != null && result.containsKey (v)) {
+                        string ? existing = result.get (v);
+                        if (existing != null) {
+                            result.put (v, on_conflict (existing, k));
+                            continue;
+                        }
+                    }
                     result.put (v, k);
                 }
             }
@@ -628,4 +670,13 @@ namespace Vala.Collections {
      * @return true or false.
      */
     public delegate bool BiPredicateFunc<A, B> (A a, B b);
+
+    /**
+     * Resolves collision by choosing one of two values.
+     *
+     * @param existing value already stored.
+     * @param incoming new value for the same key.
+     * @return value to keep.
+     */
+    public delegate T ConflictResolverFunc<T> (T existing, T incoming);
 }

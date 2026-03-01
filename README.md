@@ -1208,7 +1208,7 @@ A fluent pipeline for transforming and aggregating collection data. Supports fil
 | `toList()` | Collects into an ArrayList |
 | `toArray()` | Collects into an array |
 | `toHashSet(HashFunc<T>, EqualFunc<T>)` | Collects into a HashSet |
-| `toMap<K,V>(MapFunc<T,K> keyFn, MapFunc<T,V> valFn)` | Collects into a HashMap |
+| `toMap<K,V>(MapFunc<T,K> keyFn, MapFunc<T,V> valFn, HashFunc<K> hashFn, EqualFunc<K> equalFn)` | Collects into a HashMap |
 | `count()` | Returns element count |
 | `findFirst()` | Returns first element (nullable) |
 | `firstOr(T fallback)` | Returns first element or fallback |
@@ -1376,7 +1376,7 @@ Static utility methods for ArrayList operations (partition, chunk, zip, flatten,
 | `zipWithIndex<T>(list)` | Creates (index, element) Pair list |
 | `flatten<T>(nested)` | Flattens nested lists into a single list |
 | `groupBy<T, K>(list, keyFn, hashFn, equalFn)` | Groups by key into HashMap |
-| `distinct<T>(list, equalFn)` | Removes duplicates preserving order |
+| `distinct<T>(list, hashFn, equalFn)` | Removes duplicates preserving order |
 | `rotate<T>(list, distance)` | Returns a rotated copy |
 | `shuffle<T>(list)` | Returns a shuffled copy |
 | `sliding<T>(list, windowSize)` | Returns sliding windows |
@@ -1390,24 +1390,21 @@ Static utility methods for ArrayList operations (partition, chunk, zip, flatten,
 | `flattenString(nested)` | String specialization for flatten |
 | `groupByString(list, keyFn)` | String specialization for groupBy |
 | `distinctString(list)` | String specialization for distinct |
-| `rotateString(list, distance)` | String specialization for rotate |
 | `reverseString(list)` | Backward-compatible reverse helper |
-| `shuffleString(list)` | String specialization for shuffle |
 | `slidingString(list, windowSize)` | String specialization for sliding |
 | `interleaveString(a, b)` | String specialization for interleave |
 | `frequencyString(list)` | String specialization for frequency |
-| `sortByString(list, keyFn, cmp)` | String specialization for sortBy |
 
 ### Vala.Collections.Maps
 Static utility methods for HashMap operations (merge, filter, mapValues, invert, entries, etc.).
 
 | Method | Description |
 |---|---|
-| `merge<K, V>(a, b)` | Merges two maps; second map takes priority |
-| `filter<K, V>(map, fn)` | Returns entries matching a bi-predicate |
-| `mapValues<K, V, U>(map, fn)` | Transforms all values |
-| `mapKeys<K, V, J>(map, fn)` | Transforms all keys |
-| `invert<K, V>(map, hashFn, equalFn)` | Swaps keys and values |
+| `merge<K, V>(a, b, hashFn, equalFn)` | Merges two maps; second map takes priority |
+| `filter<K, V>(map, fn, hashFn, equalFn)` | Returns entries matching a bi-predicate |
+| `mapValues<K, V, U>(map, fn, hashFn, equalFn)` | Transforms all values |
+| `mapKeys<K, V, J>(map, fn, hashFn, equalFn, onConflict = null)` | Transforms all keys |
+| `invert<K, V>(map, hashFn, equalFn, onConflict = null)` | Swaps keys and values |
 | `getOrDefault<K, V>(map, key, defaultValue)` | Gets value or returns default |
 | `computeIfAbsent<K, V>(map, key, fn)` | Computes and stores value if key absent |
 | `keys<K, V>(map)` | Returns keys as ArrayList |

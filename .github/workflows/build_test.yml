@@ -1,7 +1,7 @@
-name: Coverage
+name: Build and Test
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -17,19 +17,19 @@ jobs:
         fetch-depth: 0
 
     - name: Install dependencies
-      run: sudo apt update && sudo apt install -y --no-install-recommends valac build-essential meson libglib2.0-dev ninja-build lcov ccache
+      run: sudo apt update && sudo apt install -y --no-install-recommends valac build-essential meson libglib2.0-dev ninja-build ccache
 
     - name: Cache ccache
       uses: actions/cache@v5
       with:
         path: ~/.cache/ccache
-        key: coverage-ccache-${{ runner.os }}-${{ hashFiles('meson.build', 'src/**/*.vala', 'tests/**/*.vala') }}
+        key: build-test-ccache-${{ runner.os }}-${{ hashFiles('meson.build', 'src/**/*.vala', 'tests/**/*.vala') }}
         restore-keys: |
-          coverage-ccache-${{ runner.os }}-
+          build-test-ccache-${{ runner.os }}-
 
-    - name: Configure build (coverage enabled)
+    - name: Configure build
       run: |
-        CC="ccache gcc" meson setup build -Db_coverage=true -Denable_valadoc=false
+        CC="ccache gcc" meson setup build -Denable_valadoc=false
 
     - name: Build
       run: |
@@ -38,9 +38,6 @@ jobs:
 
     - name: Unit Test
       run: meson test -C build --print-errorlogs --num-processes "$(nproc)" --no-rebuild
-
-    - name: Check coverage (80% threshold)
-      run: ./scripts/coverage.sh --check --skip-test
 
     - name: Show ccache stats
       if: always()

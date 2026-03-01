@@ -553,18 +553,35 @@ namespace Vala.Collections {
         /**
          * Joins stream elements into a string with a delimiter.
          *
-         * This method expects stream elements to be strings.
+         * This method is intended for Stream<string>. For other types,
+         * use joiningWith() and provide an explicit formatter.
          *
          * @param delimiter the delimiter string.
          * @return joined string.
          */
         public string joining (string delimiter = "") {
+            if (typeof (T) != typeof (string)) {
+                return "";
+            }
+            return joiningWith ((item) => {
+                return (string) item;
+            }, delimiter);
+        }
+
+        /**
+         * Joins stream elements into a string with a custom formatter.
+         *
+         * @param toStr function to convert each element to string.
+         * @param delimiter the delimiter string.
+         * @return joined string.
+         */
+        public string joiningWith (owned MapFunc<T, string> toStr, string delimiter = "") {
             var sb = new GLib.StringBuilder ();
             for (int i = 0; i < _data.size (); i++) {
                 if (i > 0) {
                     sb.append (delimiter);
                 }
-                string value = (string) _data.get (i);
+                string value = toStr (_data.get (i));
                 sb.append (value);
             }
             return sb.str;
@@ -613,9 +630,7 @@ namespace Vala.Collections {
                     group = new ArrayList<T> ();
                     result.put (key, group);
                 }
-                if (group != null) {
-                    group.add (item);
-                }
+                group.add (item);
             }
             return result;
         }

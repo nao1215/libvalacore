@@ -30,6 +30,7 @@ void main (string[] args) {
     Test.add_func ("/collections/stream/testToHashSet", testToHashSet);
     Test.add_func ("/collections/stream/testToMap", testToMap);
     Test.add_func ("/collections/stream/testJoining", testJoining);
+    Test.add_func ("/collections/stream/testJoiningWith", testJoiningWith);
     Test.add_func ("/collections/stream/testFirstOr", testFirstOr);
     Test.add_func ("/collections/stream/testGroupBy", testGroupBy);
     Test.add_func ("/collections/stream/testPartitionBy", testPartitionBy);
@@ -325,6 +326,15 @@ void testJoining () {
     string joined = Stream.fromList<string> (list).joining (",");
     assert (joined == "a,b,c");
     assert (Stream.empty<string> ().joining (",") == "");
+}
+
+void testJoiningWith () {
+    var list = Stream.range (1, 4);
+    string joined = list.joiningWith ((n) => {
+        return n.to_string ();
+    }, "-");
+    assert (joined == "1-2-3");
+    assert (Stream.range (1, 2).joining () == "");
 }
 
 void testFirstOr () {

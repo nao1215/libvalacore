@@ -46,12 +46,12 @@ namespace Vala.Collections {
          * Splits a list into fixed-size chunks.
          *
          * @param list source list.
-         * @param size chunk size (must be > 0).
+         * @param size chunk size (must be > 0, otherwise empty result).
          * @return list of chunked lists.
          */
         public static ArrayList<ArrayList<T> > chunk<T> (ArrayList<T> list, int size) {
             if (size <= 0) {
-                error ("chunk size must be positive, got %d", size);
+                return new ArrayList<ArrayList<T> > ();
             }
             var result = new ArrayList<ArrayList<T> > ();
             var current = new ArrayList<T> ();
@@ -341,12 +341,12 @@ namespace Vala.Collections {
          * }}}
          *
          * @param list the source list.
-         * @param size the chunk size (must be > 0).
+         * @param size the chunk size (must be > 0, otherwise empty result).
          * @return an ArrayList of chunk lists.
          */
         public static ArrayList<ArrayList<string> > chunkString (ArrayList<string> list, int size) {
             if (size <= 0) {
-                error ("chunk size must be positive, got %d", size);
+                return new ArrayList<ArrayList<string> > ();
             }
             var result = new ArrayList<ArrayList<string> > ();
             var current = new ArrayList<string> (GLib.str_equal);

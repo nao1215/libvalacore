@@ -11,6 +11,7 @@
 #   ./scripts/coverage.sh --html         # Generate HTML report
 #   ./scripts/coverage.sh --skip-test    # Capture/report only (reuse existing test results)
 #   ./scripts/coverage.sh --clean-build  # Force clean reconfigure
+#   ./scripts/coverage.sh --no-list      # Skip per-file lcov list (faster in CI)
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 BUILD_DIR="${ROOT_DIR}/build"
@@ -19,6 +20,7 @@ THRESHOLD=80
 MODE="text"
 RUN_TESTS=1
 CLEAN_BUILD=0
+SHOW_LIST=1
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -26,22 +28,32 @@ while [ $# -gt 0 ]; do
         --html)        MODE="html" ;;
         --skip-test)   RUN_TESTS=0 ;;
         --clean-build) CLEAN_BUILD=1 ;;
+        --no-list)     SHOW_LIST=0 ;;
         *)
             echo "Error: unknown option: $1"
-            echo "Usage: ./scripts/coverage.sh [--check] [--html] [--skip-test] [--clean-build]"
+            echo "Usage: ./scripts/coverage.sh [--check] [--html] [--skip-test] [--clean-build] [--no-list]"
             exit 1
             ;;
     esac
     shift
 done
 
-for cmd in lcov genhtml; do
+REQUIRED_CMDS=(lcov)
+if [ "${MODE}" = "html" ]; then
+    REQUIRED_CMDS+=(genhtml)
+fi
+for cmd in "${REQUIRED_CMDS[@]}"; do
     if ! command -v "${cmd}" &> /dev/null; then
         echo "Error: ${cmd} is not installed."
         echo "Install it with: sudo apt install lcov"
         exit 1
     fi
 done
+
+# In CI check mode, skip verbose per-file table by default.
+if [ "${MODE}" = "check" ] && [ "${CI:-}" = "true" ] && [ "${SHOW_LIST}" -eq 1 ]; then
+    SHOW_LIST=0
+fi
 
 # Configure build (clean only when explicitly requested)
 if [ "${CLEAN_BUILD}" -eq 1 ] && [ -d "${BUILD_DIR}" ]; then
@@ -121,8 +133,10 @@ fi
 
 # Display results
 echo ""
-lcov --list "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>/dev/null \
-    | grep -v "^Message summary" | grep -v "no messages were reported" || true
+if [ "${SHOW_LIST}" -eq 1 ]; then
+    lcov --list "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>/dev/null \
+        | grep -v "^Message summary" | grep -v "no messages were reported" || true
+fi
 
 # Extract total line coverage percentage
 SUMMARY=$(lcov --summary "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>&1 || true)

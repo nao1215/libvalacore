@@ -554,7 +554,7 @@ namespace Vala.Net {
         /**
          * Creates an HttpClient bound to a base URL.
          *
-         * @param baseUrl base URL such as https://api.example.com.
+         * @param baseUrl base URL (for example, api.example.com over HTTPS).
          * @return HttpClient instance.
          */
         public static HttpClient client (string baseUrl) {
@@ -1019,10 +1019,18 @@ namespace Vala.Net {
                             string nextMethod = switchToGet ? "GET" : method;
                             string ? nextBodyText = switchToGet ? null : body_text;
                             uint8[] ? nextBodyBytes = switchToGet ? null : body_bytes;
+                            HashMap<string, string> ? nextHeaders = sanitizeRedirectHeaders (
+                                url,
+                                nextUrl,
+                                reqHeaders,
+                                switchToGet,
+                                nextBodyText,
+                                nextBodyBytes
+                            );
                             conn.close ();
                             return executeRequest (nextMethod,
                                                    nextUrl,
-                                                   reqHeaders,
+                                                   nextHeaders,
                                                    nextBodyText,
                                                    nextBodyBytes,
                                                    timeout_ms,
@@ -1140,9 +1148,13 @@ namespace Vala.Net {
             }
 
             string scheme = useTls ? "https://" : "http://";
+            string schemeName = useTls ? "https" : "http";
             bool defaultPort = (useTls && port == 443) || (!useTls && port == 80);
             string authority = defaultPort ? host : "%s:%u".printf (host, port);
 
+            if (loc.has_prefix ("//")) {
+                return schemeName + ":" + loc;
+            }
             if (loc.has_prefix ("/")) {
                 return scheme + authority + loc;
             }
@@ -1167,6 +1179,83 @@ namespace Vala.Net {
                 baseDir = "/";
             }
             return scheme + authority + baseDir + loc;
+        }
+
+        private static HashMap<string, string> ? sanitizeRedirectHeaders (string currentUrl,
+                                                                          string nextUrl,
+                                                                          HashMap<string, string> ? reqHeaders,
+                                                                          bool switchToGet,
+                                                                          string ? nextBodyText,
+                                                                          uint8[] ? nextBodyBytes) {
+            if (reqHeaders == null) {
+                return null;
+            }
+
+            var nextHeaders = copyHeaders (reqHeaders);
+            if (crossesOrigin (currentUrl, nextUrl)) {
+                removeHeaderIgnoreCase (nextHeaders, "Authorization");
+                removeHeaderIgnoreCase (nextHeaders, "Cookie");
+                removeHeaderIgnoreCase (nextHeaders, "Proxy-Authorization");
+            }
+
+            if (switchToGet || (nextBodyText == null && nextBodyBytes == null)) {
+                removeHeaderIgnoreCase (nextHeaders, "Content-Length");
+                removeHeaderIgnoreCase (nextHeaders, "Content-Type");
+                removeHeaderIgnoreCase (nextHeaders, "Transfer-Encoding");
+            }
+            return nextHeaders;
+        }
+
+        private static HashMap<string, string> copyHeaders (HashMap<string, string> src) {
+            var copy = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            GLib.List<unowned string> keys = src.keys ();
+            foreach (unowned string key in keys) {
+                string ? value = src.get (key);
+                if (value != null) {
+                    copy.put (key, value);
+                }
+            }
+            return copy;
+        }
+
+        private static void removeHeaderIgnoreCase (HashMap<string, string> headers, string name) {
+            string target = name.down ();
+            GLib.List<unowned string> keys = headers.keys ();
+            string[] removeKeys = {};
+            foreach (unowned string key in keys) {
+                if (key.down () == target) {
+                    removeKeys += key;
+                }
+            }
+            for (int i = 0; i < removeKeys.length; i++) {
+                headers.remove (removeKeys[i]);
+            }
+        }
+
+        private static bool crossesOrigin (string currentUrl, string nextUrl) {
+            string currentOrigin;
+            string nextOrigin;
+            if (!extractOrigin (currentUrl, out currentOrigin)) {
+                return false;
+            }
+            if (!extractOrigin (nextUrl, out nextOrigin)) {
+                return false;
+            }
+            return currentOrigin != nextOrigin;
+        }
+
+        private static bool extractOrigin (string url, out string origin) {
+            origin = "";
+            string host;
+            uint16 port;
+            string path;
+            bool useTls;
+            if (!parseUrl (url, out host, out port, out path, out useTls)) {
+                return false;
+            }
+            string scheme = useTls ? "https" : "http";
+            origin = "%s://%s:%u".printf (scheme, host.down (), port);
+            return true;
         }
 
         private static int parseStatusCode (string statusLine) {

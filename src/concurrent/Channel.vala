@@ -180,18 +180,24 @@ namespace Vala.Concurrent {
                 return tryReceive ();
             }
 
-            int64 deadline = GLib.get_monotonic_time () + waitMicros;
-            while (GLib.get_monotonic_time () < deadline) {
-                T ? v = tryReceive ();
-                if (v != null) {
-                    return v;
-                }
-                if (isClosed () && size () == 0) {
-                    return null;
-                }
-                Thread.usleep (1000);
+            ChannelBox<T> ? box = _queue.timeout_pop ((uint64) waitMicros);
+            if (box == null) {
+                return null;
             }
-            return null;
+            if (box.sentinel) {
+                _queue.push (box);
+                return null;
+            }
+
+            _mutex.lock ();
+            _size--;
+            if (_capacity > 0) {
+                _notFull.signal ();
+            } else {
+                _delivered.broadcast ();
+            }
+            _mutex.unlock ();
+            return box.value;
         }
 
         /**

@@ -10,9 +10,13 @@ void main (string[] args) {
     Test.add_func ("/collections/maps/testMapValuesString", testMapValuesString);
     Test.add_func ("/collections/maps/testMapValuesGeneric", testMapValuesGeneric);
     Test.add_func ("/collections/maps/testMapKeysString", testMapKeysString);
+    Test.add_func ("/collections/maps/testMapKeysStringConflictResolver", testMapKeysStringConflictResolver);
     Test.add_func ("/collections/maps/testMapKeysGeneric", testMapKeysGeneric);
+    Test.add_func ("/collections/maps/testMapKeysGenericConflictResolver", testMapKeysGenericConflictResolver);
     Test.add_func ("/collections/maps/testInvertString", testInvertString);
+    Test.add_func ("/collections/maps/testInvertStringConflictResolver", testInvertStringConflictResolver);
     Test.add_func ("/collections/maps/testInvertGeneric", testInvertGeneric);
+    Test.add_func ("/collections/maps/testInvertGenericConflictResolver", testInvertGenericConflictResolver);
     Test.add_func ("/collections/maps/testGetOrDefaultString", testGetOrDefaultString);
     Test.add_func ("/collections/maps/testGetOrDefaultGeneric", testGetOrDefaultGeneric);
     Test.add_func ("/collections/maps/testComputeIfAbsentString", testComputeIfAbsentString);
@@ -140,6 +144,19 @@ void testMapKeysString () {
     assert (lower.get ("city") == "Tokyo");
 }
 
+void testMapKeysStringConflictResolver () {
+    var map = sm ({ "A", "a" }, { "first", "second" });
+    var merged = Maps.mapKeysString (map,
+                                     (k) => { return k.down (); },
+                                     (existing, incoming) => {
+        return strcmp (existing, incoming) <= 0
+            ? existing + "+" + incoming
+            : incoming + "+" + existing;
+    });
+    assert (merged.size () == 1);
+    assert (merged.get ("a") == "first+second");
+}
+
 void testMapKeysGeneric () {
     var map = sim ({ "a", "bb" }, { 1, 2 });
     var remapped = Maps.mapKeys<string, int, int> (
@@ -157,6 +174,23 @@ void testMapKeysGeneric () {
     assert (len2 != null && len2 == 2);
 }
 
+void testMapKeysGenericConflictResolver () {
+    var map = sim ({ "a", "A" }, { 1, 2 });
+    var remapped = Maps.mapKeys<string, int, string> (
+        map,
+        (k) => {
+        return k.down ();
+    },
+        GLib.str_hash,
+        GLib.str_equal,
+        (existing, incoming) => {
+        return existing + incoming;
+    });
+    assert (remapped.size () == 1);
+    int ? total = remapped.get ("a");
+    assert (total != null && total == 3);
+}
+
 void testInvertString () {
     var map = sm ({ "a", "b", "c" }, { "1", "2", "3" });
     var inv = Maps.invertString (map);
@@ -166,12 +200,38 @@ void testInvertString () {
     assert (inv.get ("3") == "c");
 }
 
+void testInvertStringConflictResolver () {
+    var map = sm ({ "x", "y" }, { "1", "1" });
+    var inv = Maps.invertString (map, (existing, incoming) => {
+        return strcmp (existing, incoming) <= 0
+            ? existing + "," + incoming
+            : incoming + "," + existing;
+    });
+    assert (inv.size () == 1);
+    assert (inv.get ("1") == "x,y");
+}
+
 void testInvertGeneric () {
     var map = sim ({ "x", "y" }, { 10, 20 });
     var inv = Maps.invert<string, int> (map, GLib.direct_hash, GLib.direct_equal);
     assert (inv.size () == 2);
     assert (inv.get (10) == "x");
     assert (inv.get (20) == "y");
+}
+
+void testInvertGenericConflictResolver () {
+    var map = sim ({ "x", "y" }, { 10, 10 });
+    var inv = Maps.invert<string, int> (
+        map,
+        GLib.direct_hash,
+        GLib.direct_equal,
+        (existing, incoming) => {
+        return strcmp (existing, incoming) <= 0
+            ? existing + "+" + incoming
+            : incoming + "+" + existing;
+    });
+    assert (inv.size () == 1);
+    assert (inv.get (10) == "x+y");
 }
 
 void testGetOrDefaultString () {

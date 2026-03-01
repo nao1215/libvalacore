@@ -219,12 +219,17 @@ namespace Vala.Archive {
                                                   null);
                 uint8[] buf = new uint8[8192];
                 while (true) {
-                    size_t read = stdoutPipe.read (buf, null);
+                    ssize_t read = stdoutPipe.read (buf, null);
                     if (read == 0) {
                         break;
                     }
+                    if (read < 0) {
+                        outStream.close (null);
+                        Files.remove (temp);
+                        return false;
+                    }
                     size_t written = 0;
-                    outStream.write_all (buf[0 : read], out written, null);
+                    outStream.write_all (buf[0 : (size_t) read], out written, null);
                 }
                 outStream.flush (null);
                 outStream.close (null);

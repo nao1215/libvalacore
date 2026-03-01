@@ -4,6 +4,7 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/collections/lists/testPartitionGeneric", testPartitionGeneric);
     Test.add_func ("/collections/lists/testChunkGeneric", testChunkGeneric);
+    Test.add_func ("/collections/lists/testChunkGenericInvalidSize", testChunkGenericInvalidSize);
     Test.add_func ("/collections/lists/testZipGeneric", testZipGeneric);
     Test.add_func ("/collections/lists/testZipWithIndexGeneric", testZipWithIndexGeneric);
     Test.add_func ("/collections/lists/testFlattenGeneric", testFlattenGeneric);
@@ -17,6 +18,7 @@ void main (string[] args) {
     Test.add_func ("/collections/lists/testSortByGeneric", testSortByGeneric);
     Test.add_func ("/collections/lists/testPartitionString", testPartitionString);
     Test.add_func ("/collections/lists/testChunkString", testChunkString);
+    Test.add_func ("/collections/lists/testChunkStringInvalidSize", testChunkStringInvalidSize);
     Test.add_func ("/collections/lists/testChunkStringRemainder", testChunkStringRemainder);
     Test.add_func ("/collections/lists/testZipString", testZipString);
     Test.add_func ("/collections/lists/testZipWithIndexString", testZipWithIndexString);
@@ -70,6 +72,12 @@ void testChunkGeneric () {
     assert (c0.get (0) == 1);
     assert (c2.size () == 1);
     assert (c2.get (0) == 5);
+}
+
+void testChunkGenericInvalidSize () {
+    var list = il ({ 1, 2, 3 });
+    assert (Lists.chunk<int> (list, 0).size () == 0);
+    assert (Lists.chunk<int> (list, -1).size () == 0);
 }
 
 void testZipGeneric () {
@@ -224,6 +232,12 @@ void testChunkString () {
     assert (c0.get (1) == "b");
     ArrayList<string> c2 = (ArrayList<string>) chunks.get (2);
     assert (c2.get (0) == "e");
+}
+
+void testChunkStringInvalidSize () {
+    var list = sl ({ "a", "b", "c" });
+    assert (Lists.chunkString (list, 0).size () == 0);
+    assert (Lists.chunkString (list, -2).size () == 0);
 }
 
 void testChunkStringRemainder () {
