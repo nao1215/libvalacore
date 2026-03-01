@@ -188,6 +188,9 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder header (string name, string value) {
+            if (hasUnsafeHeaderChars (name) || hasUnsafeHeaderChars (value)) {
+                return this;
+            }
             _headers.put (name, value);
             return this;
         }
@@ -203,6 +206,9 @@ namespace Vala.Net {
             foreach (unowned string key in keys) {
                 string ? val = map.get (key);
                 if (val != null) {
+                    if (hasUnsafeHeaderChars (key) || hasUnsafeHeaderChars (val)) {
+                        continue;
+                    }
                     _headers.put (key, val);
                 }
             }
@@ -236,6 +242,9 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder basicAuth (string user, string password) {
+            if (hasUnsafeHeaderChars (user) || hasUnsafeHeaderChars (password)) {
+                return this;
+            }
             string credentials = user + ":" + password;
             string encoded = GLib.Base64.encode (credentials.data);
             _headers.put ("Authorization", "Basic " + encoded);
@@ -249,6 +258,9 @@ namespace Vala.Net {
          * @return this builder for chaining.
          */
         public HttpRequestBuilder bearerToken (string token) {
+            if (hasUnsafeHeaderChars (token)) {
+                return this;
+            }
             _headers.put ("Authorization", "Bearer " + token);
             return this;
         }
@@ -286,6 +298,16 @@ namespace Vala.Net {
          */
         public HttpResponse ? send () {
             return Http.executeRequest (_method, _url, _headers, _body_text, _timeout_ms);
+        }
+
+        private static bool hasUnsafeHeaderChars (string value) {
+            for (int i = 0; i < value.length; i++) {
+                char c = value[i];
+                if (c == '\r' || c == '\n' || (uint) c < 0x20 || c == 0x7f) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -469,7 +491,7 @@ namespace Vala.Net {
                 return false;
             }
             uint8[] data = resp.bodyBytes ();
-            if (data == null || data.length == 0) {
+            if (data == null) {
                 return false;
             }
             try {
@@ -534,6 +556,10 @@ namespace Vala.Net {
                     foreach (unowned string key in keys) {
                         string ? val = reqHeaders.get (key);
                         if (val != null) {
+                            if (hasUnsafeHeaderChars (key) || hasUnsafeHeaderChars (val)) {
+                                conn.close ();
+                                return null;
+                            }
                             reqBuilder.append ("%s: %s\r\n".printf (key, val));
                         }
                     }
@@ -548,7 +574,8 @@ namespace Vala.Net {
                 }
 
                 var os = conn.get_output_stream ();
-                os.write (reqBuilder.str.data);
+                size_t written = 0;
+                os.write_all (reqBuilder.str.data, out written);
                 os.flush ();
 
                 var dis = new GLib.DataInputStream (conn.get_input_stream ());
@@ -638,8 +665,14 @@ namespace Vala.Net {
                 hostPort = rest.substring (0, slashIdx);
                 path = rest.substring (slashIdx);
             } else {
-                hostPort = rest;
-                path = "/";
+                int queryIdx = rest.index_of ("?");
+                if (queryIdx >= 0) {
+                    hostPort = rest.substring (0, queryIdx);
+                    path = rest.substring (queryIdx);
+                } else {
+                    hostPort = rest;
+                    path = "/";
+                }
             }
 
             if (path.length == 0) {
@@ -651,9 +684,10 @@ namespace Vala.Net {
                 host = hostPort.substring (0, colonIdx);
                 string portStr = hostPort.substring (colonIdx + 1);
                 int64 p;
-                if (int64.try_parse (portStr, out p) && p > 0 && p < 65536) {
-                    port = (uint16) p;
+                if (!int64.try_parse (portStr, out p) || p <= 0 || p >= 65536) {
+                    return false;
                 }
+                port = (uint16) p;
             } else {
                 host = hostPort;
             }
@@ -693,17 +727,12 @@ namespace Vala.Net {
                 try {
                     read = dis.read (buf[offset : length]);
                 } catch (GLib.IOError e) {
-                    break;
+                    throw e;
                 }
                 if (read == 0) {
-                    break;
+                    throw new GLib.IOError.FAILED ("unexpected EOF while reading fixed-size body");
                 }
                 offset += (int) read;
-            }
-            if (offset < length) {
-                uint8[] trimmed = new uint8[offset];
-                GLib.Memory.copy (trimmed, buf, offset);
-                return trimmed;
             }
             return buf;
         }
@@ -792,6 +821,16 @@ namespace Vala.Net {
                 result.append (buf[0 : read]);
             }
             return result.data;
+        }
+
+        private static bool hasUnsafeHeaderChars (string value) {
+            for (int i = 0; i < value.length; i++) {
+                char c = value[i];
+                if (c == '\r' || c == '\n' || (uint) c < 0x20 || c == 0x7f) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
