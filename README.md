@@ -895,6 +895,32 @@ Static utility methods for Base64 encoding and decoding.
 | `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
 | `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
 
+### Vala.Encoding.Xml
+XML parsing, serialization, and XPath query utilities.
+
+**XmlNode** — Immutable XML node (element or text).
+
+| Method | Description |
+|---|---|
+| `name()` | Returns the tag name |
+| `text()` | Returns text content |
+| `attr(string name)` | Returns attribute value or null |
+| `attrs()` | Returns all attributes as HashMap |
+| `children()` | Returns child element nodes |
+| `child(string name)` | Returns first child with given tag name |
+| `childrenByName(string name)` | Returns all children with given tag name |
+
+**Xml** — Static utility for XML operations.
+
+| Method | Description |
+|---|---|
+| `parse(string xml)` | Parses XML string to XmlNode tree |
+| `parseFile(Path path)` | Reads and parses XML file |
+| `stringify(XmlNode node)` | Serializes to compact XML string |
+| `pretty(XmlNode node, int indent)` | Serializes to formatted XML string |
+| `xpath(XmlNode root, string expr)` | Finds nodes matching XPath expression |
+| `xpathFirst(XmlNode root, string expr)` | Finds first matching node |
+
 ### Vala.Encoding.Csv
 Static utility methods for CSV parsing and writing.
 
