@@ -98,6 +98,15 @@ namespace Vala.Net {
         }
 
         /**
+         * Parses the response body as JSON.
+         *
+         * @return parsed JSON value or null on parse error.
+         */
+        public Vala.Encoding.JsonValue ? json () {
+            return Vala.Encoding.Json.parse (bodyText ());
+        }
+
+        /**
          * Returns the value of a response header.
          *
          * @param name header name (case-insensitive lookup).
@@ -170,14 +179,18 @@ namespace Vala.Net {
         private string _url;
         private HashMap<string, string> _headers;
         private string ? _body_text;
+        private uint8[] ? _body_bytes;
         private int _timeout_ms;
+        private bool _follow_redirects;
 
         internal HttpRequestBuilder (string method, string url) {
             _method = method;
             _url = url;
             _headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             _body_text = null;
+            _body_bytes = null;
             _timeout_ms = 30000;
+            _follow_redirects = true;
         }
 
         /**
@@ -291,6 +304,78 @@ namespace Vala.Net {
          */
         public HttpRequestBuilder body (string text) {
             _body_text = text;
+            _body_bytes = null;
+            return this;
+        }
+
+        /**
+         * Sets the request body to JSON text.
+         *
+         * Content-Type is set to application/json automatically.
+         *
+         * @param value JSON value to serialize.
+         * @return this builder for chaining.
+         */
+        public HttpRequestBuilder json (Vala.Encoding.JsonValue value) {
+            _headers.put ("Content-Type", "application/json; charset=utf-8");
+            _body_text = Vala.Encoding.Json.stringify (value);
+            _body_bytes = null;
+            return this;
+        }
+
+        /**
+         * Sets the request body to URL-encoded form data.
+         *
+         * Content-Type is set to application/x-www-form-urlencoded.
+         *
+         * @param fields key-value form fields.
+         * @return this builder for chaining.
+         */
+        public HttpRequestBuilder formData (HashMap<string, string> fields) {
+            var sb = new GLib.StringBuilder ();
+            bool first = true;
+            GLib.List<unowned string> keys = fields.keys ();
+            foreach (unowned string key in keys) {
+                string ? val = fields.get (key);
+                if (val == null) {
+                    continue;
+                }
+                if (!first) {
+                    sb.append ("&");
+                }
+                sb.append (GLib.Uri.escape_string (key, null, true));
+                sb.append ("=");
+                sb.append (GLib.Uri.escape_string (val, null, true));
+                first = false;
+            }
+            _headers.put ("Content-Type", "application/x-www-form-urlencoded");
+            _body_text = sb.str;
+            _body_bytes = null;
+            return this;
+        }
+
+        /**
+         * Sets the request body to raw bytes.
+         *
+         * @param bytes body bytes.
+         * @return this builder for chaining.
+         */
+        public HttpRequestBuilder bytes (uint8[] bytes) {
+            _body_bytes = bytes;
+            _body_text = null;
+            return this;
+        }
+
+        /**
+         * Enables or disables redirect following.
+         *
+         * By default redirects are followed up to 10 hops.
+         *
+         * @param follow true to follow redirects.
+         * @return this builder for chaining.
+         */
+        public HttpRequestBuilder followRedirects (bool follow) {
+            _follow_redirects = follow;
             return this;
         }
 
@@ -300,7 +385,144 @@ namespace Vala.Net {
          * @return HTTP response, or null on network error.
          */
         public HttpResponse ? send () {
-            return Http.executeRequest (_method, _url, _headers, _body_text, _timeout_ms);
+            return Http.executeRequest (_method,
+                                        _url,
+                                        _headers,
+                                        _body_text,
+                                        _body_bytes,
+                                        _timeout_ms,
+                                        _follow_redirects,
+                                        10);
+        }
+    }
+
+    /**
+     * Base URL HTTP client with reusable defaults.
+     */
+    public class HttpClient : GLib.Object {
+        private string _base_url;
+        private HashMap<string, string> _default_headers;
+        private int _default_timeout_ms;
+        private Retry ? _retry;
+
+        internal HttpClient (string baseUrl) {
+            _base_url = baseUrl;
+            _default_headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            _default_timeout_ms = 30000;
+            _retry = null;
+        }
+
+        /**
+         * Adds a default header for all requests.
+         *
+         * @param name header name.
+         * @param value header value.
+         * @return this client.
+         */
+        public HttpClient defaultHeader (string name, string value) {
+            if (Http.hasUnsafeHeaderChars (name) || Http.hasUnsafeHeaderChars (value)) {
+                return this;
+            }
+            _default_headers.put (name, value);
+            return this;
+        }
+
+        /**
+         * Sets the default timeout for this client.
+         *
+         * @param timeout timeout duration.
+         * @return this client.
+         */
+        public HttpClient defaultTimeout (Vala.Time.Duration timeout) {
+            int64 millis = timeout.toMillis ();
+            if (millis <= 0) {
+                _default_timeout_ms = 1000;
+            } else if (millis > int.MAX) {
+                _default_timeout_ms = int.MAX;
+            } else {
+                _default_timeout_ms = (int) millis;
+            }
+            return this;
+        }
+
+        /**
+         * Sets retry strategy used by this client.
+         *
+         * @param retry retry policy.
+         * @return this client.
+         */
+        public HttpClient withRetry (Retry retry) {
+            _retry = retry;
+            return this;
+        }
+
+        /**
+         * Sends GET request with baseUrl + path.
+         *
+         * @param path request path.
+         * @return response or null.
+         */
+        public new HttpResponse ? get (string path) {
+            return execute ("GET", path, null, null, null);
+        }
+
+        /**
+         * Sends POST request with JSON body.
+         *
+         * @param path request path.
+         * @param body JSON body.
+         * @return response or null.
+         */
+        public HttpResponse ? postJson (string path, Vala.Encoding.JsonValue body) {
+            var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            headers.put ("Content-Type", "application/json; charset=utf-8");
+            return execute ("POST", path, headers, Vala.Encoding.Json.stringify (body), null);
+        }
+
+        private HttpResponse ? execute (string method,
+                                        string path,
+                                        HashMap<string, string> ? headers,
+                                        string ? body_text,
+                                        uint8[] ? body_bytes) {
+            string url = Http.resolveClientUrl (_base_url, path);
+            var mergedHeaders = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            GLib.List<unowned string> defaultKeys = _default_headers.keys ();
+            foreach (unowned string key in defaultKeys) {
+                string ? val = _default_headers.get (key);
+                if (val != null) {
+                    mergedHeaders.put (key, val);
+                }
+            }
+            if (headers != null) {
+                GLib.List<unowned string> keys = headers.keys ();
+                foreach (unowned string key in keys) {
+                    string ? val = headers.get (key);
+                    if (val != null) {
+                        mergedHeaders.put (key, val);
+                    }
+                }
+            }
+
+            if (_retry != null) {
+                return _retry.retryResult<HttpResponse> (() => {
+                    return Http.executeRequest (method,
+                                                url,
+                                                mergedHeaders,
+                                                body_text,
+                                                body_bytes,
+                                                _default_timeout_ms,
+                                                true,
+                                                10);
+                });
+            }
+            return Http.executeRequest (method,
+                                        url,
+                                        mergedHeaders,
+                                        body_text,
+                                        body_bytes,
+                                        _default_timeout_ms,
+                                        true,
+                                        10);
         }
     }
 
@@ -330,13 +552,23 @@ namespace Vala.Net {
         private static int DEFAULT_TIMEOUT_MS = 30000;
 
         /**
+         * Creates an HttpClient bound to a base URL.
+         *
+         * @param baseUrl base URL such as https://api.example.com.
+         * @return HttpClient instance.
+         */
+        public static HttpClient client (string baseUrl) {
+            return new HttpClient (baseUrl);
+        }
+
+        /**
          * Sends an HTTP GET request.
          *
          * @param url target URL.
          * @return HTTP response or null on error.
          */
         public static new HttpResponse ? get (string url) {
-            return executeRequest ("GET", url, null, null, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("GET", url, null, null, null, DEFAULT_TIMEOUT_MS, true, 10);
         }
 
         /**
@@ -349,7 +581,7 @@ namespace Vala.Net {
         public static HttpResponse ? post (string url, string body) {
             var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             headers.put ("Content-Type", "text/plain; charset=utf-8");
-            return executeRequest ("POST", url, headers, body, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("POST", url, headers, body, null, DEFAULT_TIMEOUT_MS, true, 10);
         }
 
         /**
@@ -364,7 +596,31 @@ namespace Vala.Net {
         public static HttpResponse ? postJson (string url, string jsonBody) {
             var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             headers.put ("Content-Type", "application/json; charset=utf-8");
-            return executeRequest ("POST", url, headers, jsonBody, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("POST", url, headers, jsonBody, null, DEFAULT_TIMEOUT_MS, true, 10);
+        }
+
+        /**
+         * Sends an HTTP POST request with a JSON value.
+         *
+         * @param url target URL.
+         * @param jsonBody JSON body.
+         * @return HTTP response or null on error.
+         */
+        public static HttpResponse ? postJsonValue (string url, Vala.Encoding.JsonValue jsonBody) {
+            return postJson (url, Vala.Encoding.Json.stringify (jsonBody));
+        }
+
+        /**
+         * Sends an HTTP POST request with a binary body.
+         *
+         * @param url target URL.
+         * @param body request body bytes.
+         * @return HTTP response or null on error.
+         */
+        public static HttpResponse ? postBytes (string url, uint8[] body) {
+            var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            headers.put ("Content-Type", "application/octet-stream");
+            return executeRequest ("POST", url, headers, null, body, DEFAULT_TIMEOUT_MS, true, 10);
         }
 
         /**
@@ -377,7 +633,18 @@ namespace Vala.Net {
         public static HttpResponse ? putJson (string url, string jsonBody) {
             var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             headers.put ("Content-Type", "application/json; charset=utf-8");
-            return executeRequest ("PUT", url, headers, jsonBody, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("PUT", url, headers, jsonBody, null, DEFAULT_TIMEOUT_MS, true, 10);
+        }
+
+        /**
+         * Sends an HTTP PUT request with a JSON value.
+         *
+         * @param url target URL.
+         * @param jsonBody JSON body.
+         * @return HTTP response or null on error.
+         */
+        public static HttpResponse ? putJsonValue (string url, Vala.Encoding.JsonValue jsonBody) {
+            return putJson (url, Vala.Encoding.Json.stringify (jsonBody));
         }
 
         /**
@@ -390,7 +657,18 @@ namespace Vala.Net {
         public static HttpResponse ? patchJson (string url, string jsonBody) {
             var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             headers.put ("Content-Type", "application/json; charset=utf-8");
-            return executeRequest ("PATCH", url, headers, jsonBody, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("PATCH", url, headers, jsonBody, null, DEFAULT_TIMEOUT_MS, true, 10);
+        }
+
+        /**
+         * Sends an HTTP PATCH request with a JSON value.
+         *
+         * @param url target URL.
+         * @param jsonBody JSON body.
+         * @return HTTP response or null on error.
+         */
+        public static HttpResponse ? patchJsonValue (string url, Vala.Encoding.JsonValue jsonBody) {
+            return patchJson (url, Vala.Encoding.Json.stringify (jsonBody));
         }
 
         /**
@@ -400,7 +678,7 @@ namespace Vala.Net {
          * @return HTTP response or null on error.
          */
         public static HttpResponse ? @delete (string url) {
-            return executeRequest ("DELETE", url, null, null, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("DELETE", url, null, null, null, DEFAULT_TIMEOUT_MS, true, 10);
         }
 
         /**
@@ -410,7 +688,21 @@ namespace Vala.Net {
          * @return HTTP response or null on error.
          */
         public static HttpResponse ? head (string url) {
-            return executeRequest ("HEAD", url, null, null, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("HEAD", url, null, null, null, DEFAULT_TIMEOUT_MS, true, 10);
+        }
+
+        /**
+         * Sends a GET request and parses the response body as JSON.
+         *
+         * @param url target URL.
+         * @return parsed JSON value or null on error.
+         */
+        public static Vala.Encoding.JsonValue ? getJson (string url) {
+            HttpResponse ? resp = get (url);
+            if (resp == null) {
+                return null;
+            }
+            return Vala.Encoding.Json.parse (resp.bodyText ());
         }
 
         /**
@@ -468,7 +760,7 @@ namespace Vala.Net {
 
             var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
             headers.put ("Content-Type", "application/x-www-form-urlencoded");
-            return executeRequest ("POST", url, headers, sb.str, DEFAULT_TIMEOUT_MS);
+            return executeRequest ("POST", url, headers, sb.str, null, DEFAULT_TIMEOUT_MS, true, 10);
         }
 
         /**
@@ -585,9 +877,14 @@ namespace Vala.Net {
          * Builds an HTTP/1.1 request, connects via GSocketClient,
          * and parses the response status line, headers, and body.
          */
-        internal static HttpResponse ? executeRequest (string method, string url,
+        internal static HttpResponse ? executeRequest (string method,
+                                                       string url,
                                                        HashMap<string, string> ? reqHeaders,
-                                                       string ? body, int timeout_ms) {
+                                                       string ? body_text,
+                                                       uint8[] ? body_bytes,
+                                                       int timeout_ms,
+                                                       bool follow_redirects = true,
+                                                       int max_redirects = 10) {
             string host;
             uint16 port;
             string path;
@@ -631,17 +928,28 @@ namespace Vala.Net {
                     }
                 }
 
-                if (body != null && body.length > 0) {
-                    reqBuilder.append ("Content-Length: %d\r\n".printf (body.length));
-                    reqBuilder.append ("\r\n");
-                    reqBuilder.append (body);
-                } else {
-                    reqBuilder.append ("\r\n");
+                int body_len = 0;
+                if (body_bytes != null) {
+                    body_len = body_bytes.length;
+                } else if (body_text != null) {
+                    body_len = body_text.length;
                 }
+                if (body_len > 0) {
+                    reqBuilder.append ("Content-Length: %d\r\n".printf (body_len));
+                }
+                reqBuilder.append ("\r\n");
 
                 var os = conn.get_output_stream ();
                 size_t written = 0;
                 os.write_all (reqBuilder.str.data, out written);
+                if (body_bytes != null && body_bytes.length > 0) {
+                    size_t body_written = 0;
+                    os.write_all (body_bytes, out body_written);
+                } else if (body_text != null && body_text.length > 0) {
+                    uint8[] text_bytes = body_text.data;
+                    size_t body_written = 0;
+                    os.write_all (text_bytes[0 : body_len], out body_written);
+                }
                 os.flush ();
 
                 var dis = new GLib.DataInputStream (conn.get_input_stream ());
@@ -687,7 +995,7 @@ namespace Vala.Net {
                 }
 
                 uint8[] bodyData = {};
-                if (method != "HEAD") {
+                if (method != "HEAD" && method != "head") {
                     if (chunked) {
                         bodyData = readChunked (dis);
                     } else if (contentLen > int.MAX) {
@@ -697,6 +1005,30 @@ namespace Vala.Net {
                         bodyData = readExact (dis, (int) contentLen);
                     } else if (contentLen == -1) {
                         bodyData = readUntilEof (dis);
+                    }
+                }
+
+                if (follow_redirects && max_redirects > 0
+                    && statusCode >= 300 && statusCode < 400) {
+                    string ? location = headerValueIgnoreCase (respHeaders, "location");
+                    if (location != null && location.length > 0) {
+                        string nextUrl = resolveRedirectUrl (url, location);
+                        if (nextUrl.length > 0) {
+                            bool switchToGet = (statusCode == 301 || statusCode == 302 || statusCode == 303)
+                                               && !(method == "GET" || method == "HEAD");
+                            string nextMethod = switchToGet ? "GET" : method;
+                            string ? nextBodyText = switchToGet ? null : body_text;
+                            uint8[] ? nextBodyBytes = switchToGet ? null : body_bytes;
+                            conn.close ();
+                            return executeRequest (nextMethod,
+                                                   nextUrl,
+                                                   reqHeaders,
+                                                   nextBodyText,
+                                                   nextBodyBytes,
+                                                   timeout_ms,
+                                                   follow_redirects,
+                                                   max_redirects - 1);
+                        }
                     }
                 }
 
@@ -763,6 +1095,78 @@ namespace Vala.Net {
             }
 
             return host.length > 0;
+        }
+
+        internal static string resolveClientUrl (string baseUrl, string path) {
+            string p = path.strip ();
+            if (p.has_prefix ("http://") || p.has_prefix ("https://")) {
+                return p;
+            }
+            if (p.length == 0) {
+                return baseUrl;
+            }
+            if (baseUrl.has_suffix ("/") && p.has_prefix ("/")) {
+                return baseUrl + p.substring (1);
+            }
+            if (!baseUrl.has_suffix ("/") && !p.has_prefix ("/")) {
+                return baseUrl + "/" + p;
+            }
+            return baseUrl + p;
+        }
+
+        private static string ? headerValueIgnoreCase (HashMap<string, string> headers, string name) {
+            string target = name.down ();
+            GLib.List<unowned string> keys = headers.keys ();
+            foreach (unowned string key in keys) {
+                if (key.down () == target) {
+                    return headers.get (key);
+                }
+            }
+            return null;
+        }
+
+        private static string resolveRedirectUrl (string currentUrl, string location) {
+            string loc = location.strip ();
+            if (loc.has_prefix ("http://") || loc.has_prefix ("https://")) {
+                return loc;
+            }
+
+            string host;
+            uint16 port;
+            string path;
+            bool useTls;
+            if (!parseUrl (currentUrl, out host, out port, out path, out useTls)) {
+                return "";
+            }
+
+            string scheme = useTls ? "https://" : "http://";
+            bool defaultPort = (useTls && port == 443) || (!useTls && port == 80);
+            string authority = defaultPort ? host : "%s:%u".printf (host, port);
+
+            if (loc.has_prefix ("/")) {
+                return scheme + authority + loc;
+            }
+            if (loc.has_prefix ("?")) {
+                int qIdx = path.index_of ("?");
+                string basePath = qIdx >= 0 ? path.substring (0, qIdx) : path;
+                if (basePath.length == 0) {
+                    basePath = "/";
+                }
+                return scheme + authority + basePath + loc;
+            }
+
+            string baseDir = path;
+            int q = baseDir.index_of ("?");
+            if (q >= 0) {
+                baseDir = baseDir.substring (0, q);
+            }
+            int lastSlash = baseDir.last_index_of ("/");
+            if (lastSlash >= 0) {
+                baseDir = baseDir.substring (0, lastSlash + 1);
+            } else {
+                baseDir = "/";
+            }
+            return scheme + authority + baseDir + loc;
         }
 
         private static int parseStatusCode (string statusLine) {

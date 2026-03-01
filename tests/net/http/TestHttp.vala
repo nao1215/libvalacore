@@ -1,5 +1,6 @@
 using Vala.Net;
 using Vala.Collections;
+using Vala.Encoding;
 using Vala.Io;
 
 // Simple mock HTTP server using GSocketListener.
@@ -149,6 +150,7 @@ void main (string[] args) {
     Test.add_func ("/net/http/testResponseServerError", testResponseServerError);
     Test.add_func ("/net/http/testResponseBodyText", testResponseBodyText);
     Test.add_func ("/net/http/testResponseBodyBytes", testResponseBodyBytes);
+    Test.add_func ("/net/http/testResponseJson", testResponseJson);
     Test.add_func ("/net/http/testResponseHeaders", testResponseHeaders);
     Test.add_func ("/net/http/testResponseContentLength", testResponseContentLength);
     Test.add_func ("/net/http/testResponseContentType", testResponseContentType);
@@ -158,10 +160,15 @@ void main (string[] args) {
     Test.add_func ("/net/http/testRequestBuilder", testRequestBuilder);
     Test.add_func ("/net/http/testRequestBuilderBasicAuth", testRequestBuilderBasicAuth);
     Test.add_func ("/net/http/testRequestBuilderBearerToken", testRequestBuilderBearerToken);
+    Test.add_func ("/net/http/testRequestBuilderJson", testRequestBuilderJson);
+    Test.add_func ("/net/http/testRequestBuilderFormData", testRequestBuilderFormData);
+    Test.add_func ("/net/http/testRequestBuilderFollowRedirects", testRequestBuilderFollowRedirects);
 
     // Mock server integration tests
     Test.add_func ("/net/http/testGet", testGet);
+    Test.add_func ("/net/http/testGetJson", testGetJson);
     Test.add_func ("/net/http/testPost", testPost);
+    Test.add_func ("/net/http/testPostBytes", testPostBytes);
     Test.add_func ("/net/http/testPostJson", testPostJson);
     Test.add_func ("/net/http/testPutJson", testPutJson);
     Test.add_func ("/net/http/testPatchJson", testPatchJson);
@@ -176,6 +183,7 @@ void main (string[] args) {
     Test.add_func ("/net/http/testRequestBuilderQuery", testRequestBuilderQuery);
     Test.add_func ("/net/http/testQueryOnlyUrlPath", testQueryOnlyUrlPath);
     Test.add_func ("/net/http/testRequestBuilderHeaders", testRequestBuilderHeaders);
+    Test.add_func ("/net/http/testHttpClientGet", testHttpClientGet);
     Test.add_func ("/net/http/testStatus404", testStatus404);
     Test.add_func ("/net/http/testStatus500", testStatus500);
     Test.add_func ("/net/http/testInvalidUrl", testInvalidUrl);
@@ -243,6 +251,16 @@ void testResponseBodyBytes () {
     assert (result[1] == 0x69);
 }
 
+void testResponseJson () {
+    var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+    var resp = new HttpResponse (200, headers, "{\"ok\":true}".data);
+    var json = resp.json ();
+    assert (json != null);
+    if (json != null) {
+        assert (Json.getBool (json, "$.ok", false));
+    }
+}
+
 void testResponseHeaders () {
     var headers = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
     headers.put ("Content-Type", "text/html");
@@ -308,6 +326,31 @@ void testRequestBuilderBearerToken () {
     assert (builder != null);
 }
 
+void testRequestBuilderJson () {
+    var payload = JsonValue.object ()
+                   .put ("name", JsonValue.ofString ("alice"))
+                   .build ();
+    var builder = Http.request ("POST", "https://example.com")
+                   .json (payload);
+    assert (builder != null);
+}
+
+void testRequestBuilderFormData () {
+    var fields = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+    fields.put ("name", "alice");
+    fields.put ("city", "tokyo");
+    var builder = Http.request ("POST", "https://example.com")
+                   .formData (fields);
+    assert (builder != null);
+}
+
+void testRequestBuilderFollowRedirects () {
+    var builder = Http.request ("GET", "https://example.com")
+                   .followRedirects (false)
+                   .followRedirects (true);
+    assert (builder != null);
+}
+
 // --- Mock server integration tests ---
 
 void testGet () {
@@ -330,6 +373,21 @@ void testGet () {
     assert (req.contains ("GET /test HTTP/1.1"));
 }
 
+void testGetJson () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "application/json", "{\"ok\":true}");
+    var t = serveAsync (server);
+
+    var json = Http.getJson (server.baseUrl () + "/json");
+    t.join ();
+    server.stop ();
+
+    assert (json != null);
+    if (json != null) {
+        assert (Json.getBool (json, "$.ok", false));
+    }
+}
+
 void testPost () {
     var server = new MockHttpServer ();
     server.setResponse (201, "text/plain", "created");
@@ -347,6 +405,24 @@ void testPost () {
     assert (req != null);
     assert (req.contains ("POST /items HTTP/1.1"));
     assert (req.contains ("new item"));
+}
+
+void testPostBytes () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "text/plain", "ok");
+    var t = serveAsync (server);
+
+    uint8[] body = { 0x41, 0x42, 0x43 }; // "ABC"
+    var resp = Http.postBytes (server.baseUrl () + "/bytes", body);
+    t.join ();
+    server.stop ();
+
+    assert (resp != null);
+    assert (resp.isSuccess ());
+
+    string ? req = server.lastRequest ();
+    assert (req != null);
+    assert (req.contains ("POST /bytes HTTP/1.1"));
 }
 
 void testPostJson () {
@@ -598,6 +674,28 @@ void testRequestBuilderHeaders () {
     assert (req != null);
     assert (req.contains ("X-First: one"));
     assert (req.contains ("X-Second: two"));
+}
+
+void testHttpClientGet () {
+    var server = new MockHttpServer ();
+    server.setResponse (200, "text/plain", "client-ok");
+    var t = serveAsync (server);
+
+    var client = Http.client (server.baseUrl ())
+                  .defaultHeader ("X-Token", "abc")
+                  .defaultTimeout (Vala.Time.Duration.ofSeconds (5));
+    var resp = client.get ("/client");
+    t.join ();
+    server.stop ();
+
+    assert (resp != null);
+    assert (resp.isSuccess ());
+    assert (resp.bodyText () == "client-ok");
+
+    string ? req = server.lastRequest ();
+    assert (req != null);
+    assert (req.contains ("X-Token: abc"));
+    assert (req.contains ("GET /client HTTP/1.1"));
 }
 
 void testStatus404 () {
