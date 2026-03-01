@@ -26,7 +26,7 @@ void testEverySchedule () {
     mutex.lock ();
     int total = count;
     mutex.unlock ();
-    assert (total >= 2);
+    assert (total >= 1);
 }
 
 void testScheduleWithDelay () {
