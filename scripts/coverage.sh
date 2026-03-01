@@ -71,7 +71,7 @@ if [ "${RUN_TESTS}" -eq 1 ]; then
     lcov --zerocounters --directory "${BUILD_DIR}/tests" \
         --ignore-errors gcov,source,deprecated,inconsistent \
         --quiet > /dev/null 2>&1 || true
-    ninja -C "${BUILD_DIR}" test > /dev/null 2>&1
+    meson test -C "${BUILD_DIR}" > /dev/null 2>&1
 fi
 
 # Capture coverage in one pass
