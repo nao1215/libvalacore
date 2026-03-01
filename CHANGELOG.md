@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.9.0
+
+### Changed
+- Unified failure handling across core modules from process-abort style to recoverable errors:
+  - `Vala.Lang.Context` now throws `ContextError` for invalid parent/key/timeout arguments
+  - `Vala.Time.Cron` now throws `CronError` for invalid schedule/interval inputs
+  - `Vala.Io.Watcher`/`Vala.Io.FileWatcher` now throw `WatcherError` on invalid watch targets
+  - `Vala.Concurrent.SingleFlight` now reports invalid key/type mismatch via `SingleFlightError` (and failed futures)
+  - `Vala.Lang.Preconditions` now throws `PreconditionError` instead of terminating the process
+- `Vala.Lang.Exceptions.sneakyThrow` now rethrows the original `GLib.Error` instead of aborting
+- `Vala.Concurrent.ChannelInt` / `Vala.Concurrent.ChannelString` `buffered(int)` now throw `ChannelError.INVALID_ARGUMENT` when `capacity <= 0`
+
+### Fixed
+- Removed remaining shell-command construction in archive helpers:
+  - `Tar.create` now executes `tar` directly without `sh -c`
+  - `Zip.create`/`Zip.createFromDir`/`Zip.extractFile` now avoid `sh -c` and use direct subprocess execution/streaming
+- Improved archive safety and compatibility:
+  - archive entry names starting with `-` are handled safely in create/extract paths
+  - single-file extraction paths in Zip use temp-file write + move semantics
+- Removed dead XML node code path (`XmlNode.appendText`) and strengthened XML node snapshot behavior tests
+- Added regression tests for JSON builder snapshot semantics (`build()` result immutability against later builder reuse)
+- Standardized temp test directory cleanup in JSON/XML/ZIP tests to filesystem API based deletion (no shell cleanup calls)
+
 ## 0.8.0
 
 ### Added
