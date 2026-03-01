@@ -54,12 +54,12 @@ namespace Vala.Collections {
          * New trailing elements are zero when expanded.
          *
          * @param arr source array.
-         * @param newLen target length.
+         * @param newLen target length (must be >= 0, otherwise empty array).
          * @return copied array.
          */
         public static int[] copyOf (int[] arr, int newLen) {
             if (newLen < 0) {
-                error ("newLen must be non-negative");
+                return {};
             }
 
             int[] copied = new int[newLen];
