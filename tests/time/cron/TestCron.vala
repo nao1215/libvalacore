@@ -58,17 +58,24 @@ void testEverySchedule () {
     var cron = mustEvery (Duration.ofSeconds (1));
     int count = 0;
     GLib.Mutex mutex = GLib.Mutex ();
+    GLib.Cond cond = GLib.Cond ();
     cron.schedule (() => {
         mutex.lock ();
         count++;
+        cond.signal ();
         mutex.unlock ();
     });
 
-    Posix.usleep (2300000);
-    cron.cancel ();
+    int64 deadline = GLib.get_monotonic_time () + (3 * 1000 * 1000);
     mutex.lock ();
+    while (count < 1) {
+        if (!cond.wait_until (mutex, deadline)) {
+            break;
+        }
+    }
     int total = count;
     mutex.unlock ();
+    cron.cancel ();
     assert (total >= 1);
 }
 
@@ -76,27 +83,39 @@ void testScheduleWithDelay () {
     var cron = mustEvery (Duration.ofSeconds (1));
     int count = 0;
     GLib.Mutex mutex = GLib.Mutex ();
+    GLib.Cond cond = GLib.Cond ();
     try {
         cron.scheduleWithDelay (Duration.ofSeconds (2), () => {
             mutex.lock ();
             count++;
+            cond.signal ();
             mutex.unlock ();
         });
     } catch (CronError e) {
         assert_not_reached ();
     }
 
-    Posix.usleep (1200000);
+    int64 early_deadline = GLib.get_monotonic_time () + (1200 * 1000);
     mutex.lock ();
+    while (count == 0) {
+        if (!cond.wait_until (mutex, early_deadline)) {
+            break;
+        }
+    }
     int before = count;
     mutex.unlock ();
     assert (before == 0);
 
-    Posix.usleep (1700000);
-    cron.cancel ();
+    int64 run_deadline = GLib.get_monotonic_time () + (2500 * 1000);
     mutex.lock ();
+    while (count < 1) {
+        if (!cond.wait_until (mutex, run_deadline)) {
+            break;
+        }
+    }
     int after = count;
     mutex.unlock ();
+    cron.cancel ();
     assert (after >= 1);
 }
 
