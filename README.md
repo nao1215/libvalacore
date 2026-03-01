@@ -1274,6 +1274,20 @@ Fluent input validation with field-level error reporting.
 | `custom(string field, PredicateFunc<string?> fn, string message)` | Adds custom rule |
 | `validate()` | Returns `ValidationResult` |
 
+## Vala.Time.Cron
+Lightweight task scheduler with interval and daily-time modes.
+
+| Method | Description |
+|---|---|
+| `Cron(string expression)` | Creates scheduler from cron expression |
+| `every(Duration interval)` | Creates fixed-interval scheduler |
+| `at(int hour, int minute)` | Creates daily scheduler |
+| `schedule(CronTask task)` | Starts schedule immediately |
+| `scheduleWithDelay(Duration initialDelay, CronTask task)` | Starts with initial delay |
+| `cancel()` | Stops running schedule |
+| `isRunning()` | Returns running state |
+| `nextFireTime()` | Returns next execution time |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
