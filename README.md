@@ -835,7 +835,7 @@ Fixed-size worker pool for executing tasks concurrently. Manages worker threads 
 
 | Method | Description |
 |---|---|
-| `WorkerPool(int poolSize)` | Creates a pool with the specified number of workers |
+| `WorkerPool(int poolSize)` | Creates a pool with the specified number of workers (`throws WorkerPoolError.INVALID_ARGUMENT` when `poolSize <= 0`) |
 | `withDefault()` | Creates a pool sized to CPU core count |
 | `submitInt(TaskFunc<int> task)` | Submits an int-returning task and returns a PromiseInt |
 | `submitString(TaskFunc<string> task)` | Submits a string-returning task and returns a PromiseString |

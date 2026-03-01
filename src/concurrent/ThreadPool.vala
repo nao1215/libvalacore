@@ -1,5 +1,12 @@
 namespace Vala.Concurrent {
     /**
+     * Recoverable worker pool configuration errors.
+     */
+    public errordomain WorkerPoolError {
+        INVALID_ARGUMENT
+    }
+
+    /**
      * Function delegate that returns a value of type T.
      */
     public delegate T TaskFunc<T> ();
@@ -50,11 +57,22 @@ namespace Vala.Concurrent {
          * }}}
          *
          * @param poolSize the number of worker threads (must be > 0).
+         * @throws WorkerPoolError.INVALID_ARGUMENT when poolSize is not positive.
          */
-        public WorkerPool (int poolSize) {
+        public WorkerPool (int poolSize) throws WorkerPoolError {
             if (poolSize <= 0) {
-                error ("poolSize must be positive, got %d", poolSize);
+                throw new WorkerPoolError.INVALID_ARGUMENT (
+                          "poolSize must be positive, got %d".printf (poolSize)
+                );
             }
+            initializePool (poolSize);
+        }
+
+        private WorkerPool.unchecked (int poolSize) {
+            initializePool (poolSize);
+        }
+
+        private void initializePool (int poolSize) {
             _poolSize = poolSize;
             _queue = new GLib.AsyncQueue<TaskWrapper> ();
             _shutdown = false;
@@ -85,7 +103,7 @@ namespace Vala.Concurrent {
             if (cpus < 1) {
                 cpus = 1;
             }
-            return new WorkerPool (cpus);
+            return new WorkerPool.unchecked (cpus);
         }
 
         /**
