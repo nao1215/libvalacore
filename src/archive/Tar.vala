@@ -243,7 +243,8 @@ namespace Vala.Archive {
                 return resolved.has_prefix ("/");
             }
             if (basePath == ".") {
-                return resolved == "." || !resolved.has_prefix ("..");
+                return resolved == "."
+                       || !(resolved == ".." || resolved.has_prefix ("../"));
             }
             if (resolved == basePath) {
                 return true;
