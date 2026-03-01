@@ -151,7 +151,15 @@ namespace Vala.Encoding {
          * @return attribute map.
          */
         public HashMap<string, string> attrs () {
-            return _attrs;
+            var copy = new HashMap<string, string> (GLib.str_hash, GLib.str_equal);
+            GLib.List<unowned string> keys = _attrs.keys ();
+            foreach (unowned string key in keys) {
+                string ? value = _attrs.get (key);
+                if (value != null) {
+                    copy.put (key, value);
+                }
+            }
+            return copy;
         }
 
         internal ArrayList<XmlNode> allChildren () {
@@ -240,11 +248,40 @@ namespace Vala.Encoding {
         public static ArrayList<XmlNode> xpath (XmlNode root, string expr) {
             var results = new ArrayList<XmlNode> ();
             if (expr.has_prefix ("//")) {
-                string tagName = expr.substring (2);
-                string ? attrFilter = null;
-                string ? attrValue = null;
-                parseAttrFilter (ref tagName, out attrFilter, out attrValue);
-                findDescendants (root, tagName, attrFilter, attrValue, results);
+                string[] parts = expr.substring (2).split ("/");
+                var current = new ArrayList<XmlNode> ();
+                bool initialized = false;
+
+                for (int i = 0; i < parts.length; i++) {
+                    string part = parts[i].strip ();
+                    if (part.length == 0) {
+                        continue;
+                    }
+
+                    string ? attrFilter = null;
+                    string ? attrValue = null;
+                    parseAttrFilter (ref part, out attrFilter, out attrValue);
+
+                    if (!initialized) {
+                        findDescendants (root, part, attrFilter, attrValue, current);
+                        initialized = true;
+                        continue;
+                    }
+
+                    var next = new ArrayList<XmlNode> ();
+                    for (int j = 0; j < current.size (); j++) {
+                        XmlNode n = current.get (j);
+                        ArrayList<XmlNode> children = n.children ();
+                        for (int k = 0; k < children.size (); k++) {
+                            findDescendants (children.get (k), part, attrFilter, attrValue, next);
+                        }
+                    }
+                    current = next;
+                }
+
+                for (int i = 0; i < current.size (); i++) {
+                    results.add (current.get (i));
+                }
             } else if (expr.has_prefix ("/")) {
                 string[] parts = expr.substring (1).split ("/");
                 var current = new ArrayList<XmlNode> ();
@@ -316,7 +353,7 @@ namespace Vala.Encoding {
             skipWhitespace (xml, ref pos);
             // Skip DOCTYPE
             if (pos + 8 < xml.length && xml.substring (pos, 9) == "<!DOCTYPE") {
-                int end = xml.index_of (">", pos);
+                int end = findDoctypeEnd (xml, pos);
                 if (end >= 0) {
                     pos = end + 1;
                 }
@@ -486,11 +523,11 @@ namespace Vala.Encoding {
 
         private static string decodeEntities (string text) {
             string result = text;
-            result = result.replace ("&amp;", "&");
             result = result.replace ("&lt;", "<");
             result = result.replace ("&gt;", ">");
             result = result.replace ("&quot;", "\"");
             result = result.replace ("&apos;", "'");
+            result = result.replace ("&amp;", "&");
             return result;
         }
 
@@ -574,7 +611,39 @@ namespace Vala.Encoding {
             result = result.replace ("<", "&lt;");
             result = result.replace (">", "&gt;");
             result = result.replace ("\"", "&quot;");
+            result = result.replace ("'", "&apos;");
             return result;
+        }
+
+        private static int findDoctypeEnd (string xml, int start) {
+            bool inSingleQuote = false;
+            bool inDoubleQuote = false;
+            int subsetDepth = 0;
+            for (int i = start; i < xml.length; i++) {
+                char c = xml[i];
+                if (c == '\'' && !inDoubleQuote) {
+                    inSingleQuote = !inSingleQuote;
+                    continue;
+                }
+                if (c == '"' && !inSingleQuote) {
+                    inDoubleQuote = !inDoubleQuote;
+                    continue;
+                }
+                if (inSingleQuote || inDoubleQuote) {
+                    continue;
+                }
+
+                if (c == '[') {
+                    subsetDepth++;
+                } else if (c == ']') {
+                    if (subsetDepth > 0) {
+                        subsetDepth--;
+                    }
+                } else if (c == '>' && subsetDepth == 0) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         private static void appendIndent (GLib.StringBuilder sb, int indent, int depth) {
