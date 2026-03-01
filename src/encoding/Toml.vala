@@ -350,30 +350,31 @@ namespace Vala.Encoding {
             bool inQuote = false;
             bool escaped = false;
             var out = new GLib.StringBuilder ();
-            for (int i = 0; i < line.length; i++) {
-                char c = line[i];
+            int i = 0;
+            unichar c;
+            while (line.get_next_char (ref i, out c)) {
                 if (escaped) {
-                    out.append_c (c);
+                    out.append_unichar (c);
                     escaped = false;
                     continue;
                 }
 
                 if (c == '\\') {
-                    out.append_c (c);
+                    out.append_unichar (c);
                     escaped = true;
                     continue;
                 }
 
                 if (c == '"') {
                     inQuote = !inQuote;
-                    out.append_c (c);
+                    out.append_unichar (c);
                     continue;
                 }
 
                 if (c == '#' && !inQuote) {
                     break;
                 }
-                out.append_c (c);
+                out.append_unichar (c);
             }
             return out.str;
         }
