@@ -3,23 +3,37 @@
 # Generate test coverage report for Vala source code.
 # Vala compiles to C, so coverage is measured with gcov/lcov on generated C code.
 # Each test executable contains all library sources, so we capture coverage from
-# each test directory, merge with lcov, then filter out test-directory duplicates.
+# build/tests in one lcov pass, then filter out test-directory duplicates.
 #
 # Usage:
-#   ./scripts/coverage.sh          # Show coverage summary
-#   ./scripts/coverage.sh --check  # Check 80% threshold (CI mode, fails if below)
-#   ./scripts/coverage.sh --html   # Generate HTML report
+#   ./scripts/coverage.sh                # Show coverage summary
+#   ./scripts/coverage.sh --check        # Check 80% threshold (CI mode, fails if below)
+#   ./scripts/coverage.sh --html         # Generate HTML report
+#   ./scripts/coverage.sh --skip-test    # Capture/report only (reuse existing test results)
+#   ./scripts/coverage.sh --clean-build  # Force clean reconfigure
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 BUILD_DIR="${ROOT_DIR}/build"
 THRESHOLD=80
 
 MODE="text"
-if [ "${1:-}" = "--check" ]; then
-    MODE="check"
-elif [ "${1:-}" = "--html" ]; then
-    MODE="html"
-fi
+RUN_TESTS=1
+CLEAN_BUILD=0
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --check)       MODE="check" ;;
+        --html)        MODE="html" ;;
+        --skip-test)   RUN_TESTS=0 ;;
+        --clean-build) CLEAN_BUILD=1 ;;
+        *)
+            echo "Error: unknown option: $1"
+            echo "Usage: ./scripts/coverage.sh [--check] [--html] [--skip-test] [--clean-build]"
+            exit 1
+            ;;
+    esac
+    shift
+done
 
 for cmd in lcov genhtml; do
     if ! command -v "${cmd}" &> /dev/null; then
@@ -29,51 +43,69 @@ for cmd in lcov genhtml; do
     fi
 done
 
-# Clean and rebuild with coverage enabled
-if [ -d "${BUILD_DIR}" ]; then
+# Configure build (clean only when explicitly requested)
+if [ "${CLEAN_BUILD}" -eq 1 ] && [ -d "${BUILD_DIR}" ]; then
     rm -rf "${BUILD_DIR}"
 fi
 
-echo "==> Configuring build with coverage..."
-meson setup "${BUILD_DIR}" -Db_coverage=true > /dev/null
-
-echo "==> Building and running tests..."
-ninja -C "${BUILD_DIR}" test > /dev/null 2>&1
-
-# Capture coverage from each test directory and merge
-echo "==> Capturing coverage data..."
-TMPDIR=$(mktemp -d)
-MERGE_ARGS=""
-TEST_DIRS=$(find "${BUILD_DIR}/tests" -name "*.gcda" -printf '%h\n' | sort -u)
-
-i=0
-for dir in ${TEST_DIRS}; do
-    TRACE="${TMPDIR}/trace_${i}.info"
-    lcov --capture --directory "${dir}" --output-file "${TRACE}" \
-        --ignore-errors inconsistent,gcov,source,deprecated \
-        --rc branch_coverage=0 \
-        --quiet > /dev/null 2>&1 || true
-    if [ -f "${TRACE}" ]; then
-        MERGE_ARGS="${MERGE_ARGS} --add-tracefile ${TRACE}"
+if [ ! -d "${BUILD_DIR}" ]; then
+    echo "==> Configuring build with coverage..."
+    meson setup "${BUILD_DIR}" -Db_coverage=true > /dev/null
+else
+    if ! meson configure "${BUILD_DIR}" > /dev/null 2>&1; then
+        echo "==> Build directory is invalid. Recreating..."
+        rm -rf "${BUILD_DIR}"
+        meson setup "${BUILD_DIR}" -Db_coverage=true > /dev/null
+    else
+        COVERAGE_ENABLED=$(meson configure "${BUILD_DIR}" | awk '$1=="b_coverage"{print $2; exit}')
+        if [ "${COVERAGE_ENABLED}" != "true" ]; then
+            echo "==> Enabling coverage in existing build..."
+            meson configure "${BUILD_DIR}" -Db_coverage=true > /dev/null
+        fi
     fi
-    i=$((i + 1))
-done
+fi
 
-# Merge all tracefiles
-MERGED="${TMPDIR}/merged.info"
-if [ -z "${MERGE_ARGS}" ]; then
-    echo "Error: No coverage data captured."
-    rm -rf "${TMPDIR}"
+if [ "${RUN_TESTS}" -eq 1 ]; then
+    echo "==> Building and running tests..."
+    # Reset counters to avoid stale accumulation when reusing build dir
+    lcov --zerocounters --directory "${BUILD_DIR}/tests" \
+        --ignore-errors gcov,source,deprecated,inconsistent \
+        --quiet > /dev/null 2>&1 || true
+    ninja -C "${BUILD_DIR}" test > /dev/null 2>&1
+fi
+
+# Capture coverage in one pass
+echo "==> Capturing coverage data..."
+GCDA_COUNT=$(find "${BUILD_DIR}/tests" -name "*.gcda" | wc -l | tr -d ' ')
+if [ "${GCDA_COUNT}" -eq 0 ]; then
+    echo "Error: No .gcda files found in ${BUILD_DIR}/tests."
+    if [ "${RUN_TESTS}" -eq 0 ]; then
+        echo "Hint: run without --skip-test once, or ensure tests were run with coverage enabled."
+    fi
     exit 1
 fi
-eval lcov ${MERGE_ARGS} --output-file "${MERGED}" \
-    --ignore-errors inconsistent,source,deprecated \
+
+MERGED="${BUILD_DIR}/coverage.raw.info"
+
+# Use --parallel if supported (lcov 2.x+)
+PARALLEL_ARGS=()
+if lcov --help 2>/dev/null | grep -q -- "--parallel"; then
+    PARALLEL_ARGS=(--parallel "$(nproc)")
+fi
+
+lcov --capture --directory "${BUILD_DIR}/tests" \
+    --output-file "${MERGED}" \
+    --ignore-errors inconsistent,gcov,source,deprecated \
     --rc branch_coverage=0 \
+    "${PARALLEL_ARGS[@]}" \
     --quiet > /dev/null 2>&1 || true
 
-# Filter: keep only library C source files in build root.
-# Ignore 'inconsistent' and 'missing' errors to tolerate partial .gcda files
-# from parallel test runs and generated C files that may not perfectly align.
+if [ ! -f "${MERGED}" ] || ! grep -q '^SF:' "${MERGED}"; then
+    echo "Error: No coverage data captured."
+    exit 1
+fi
+
+# Filter: keep only library C source files in build root
 FILTERED="${BUILD_DIR}/coverage.info"
 lcov --remove "${MERGED}" \
     '*/tests/*' '*/Test*.c' '*.vapi' '*.vala' '/usr/*' \
@@ -82,8 +114,6 @@ lcov --remove "${MERGED}" \
     --rc branch_coverage=0 \
     --quiet > /dev/null 2>&1 || true
 
-rm -rf "${TMPDIR}"
-
 if [ ! -f "${FILTERED}" ]; then
     echo "Error: coverage info file was not generated."
     exit 1
@@ -91,12 +121,12 @@ fi
 
 # Display results
 echo ""
-lcov --list "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>/dev/null | grep -v "^Message summary" | grep -v "no messages were reported" || true
+lcov --list "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>/dev/null \
+    | grep -v "^Message summary" | grep -v "no messages were reported" || true
 
 # Extract total line coverage percentage
 SUMMARY=$(lcov --summary "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>&1 || true)
 TOTAL_COVER=$(echo "${SUMMARY}" | grep 'lines' | sed 's/.*: *\([0-9]*\.[0-9]*\)%.*/\1/' | head -1)
-# Convert to integer for comparison (truncate decimal)
 TOTAL_COVER_INT=${TOTAL_COVER%.*}
 
 if [ -z "${TOTAL_COVER}" ]; then

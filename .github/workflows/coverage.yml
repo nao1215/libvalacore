@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  coverage:
+  ci:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
@@ -17,5 +17,24 @@ jobs:
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y valac build-essential meson valadoc libglib2.0-dev ninja-build lcov
 
+    - name: Cache build
+      uses: actions/cache@v5
+      with:
+        path: build
+        key: coverage-${{ runner.os }}-${{ hashFiles('meson.build', 'src/**/*.vala', 'tests/**/*.vala') }}
+        restore-keys: coverage-${{ runner.os }}-
+
+    - name: Configure build (coverage enabled)
+      run: |
+        if [ ! -d build ]; then
+          meson setup build -Db_coverage=true
+        fi
+
+    - name: Build
+      run: ninja -C build
+
+    - name: Unit Test
+      run: meson test -C build --print-errorlogs
+
     - name: Check coverage (80% threshold)
-      run: ./scripts/coverage.sh --check
+      run: ./scripts/coverage.sh --check --skip-test

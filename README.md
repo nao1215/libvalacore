@@ -1,17 +1,40 @@
-[![Build](https://github.com/nao1215/libcore/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/nao1215/libcore/actions/workflows/build.yml)
-[![UnitTest](https://github.com/nao1215/libcore/actions/workflows/unit_test.yml/badge.svg?branch=main)](https://github.com/nao1215/libcore/actions/workflows/unit_test.yml)
+[![Coverage](https://github.com/nao1215/libvalacore/actions/workflows/coverage.yml/badge.svg)](https://github.com/nao1215/libvalacore/actions/workflows/coverage.yml)
+[![Lint](https://github.com/nao1215/libvalacore/actions/workflows/lint.yml/badge.svg)](https://github.com/nao1215/libvalacore/actions/workflows/lint.yml)
+[![Format Check](https://github.com/nao1215/libvalacore/actions/workflows/format.yml/badge.svg)](https://github.com/nao1215/libvalacore/actions/workflows/format.yml)
 ![GitHub](https://img.shields.io/github/license/nao1215/libcore)
 
 ![logo](./docs/images/logo-small.png)
 
-libvalacore is an ambitious effort to build a powerful core standard library for the Vala language.
+libvalacore is a comprehensive core library for Vala — just add one dependency and get everything you need for daily development.
 
-Vala has a solid GLib/GObject foundation, but lacks the kind of rich, batteries-included standard library that developers in Java, Go, Python, or OCaml take for granted. libvalacore fills that gap: it provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
-
-Our goal is to make Vala a language where everyday programming tasks can be accomplished with a single import, without hunting for scattered third-party packages or reinventing the wheel.
+Vala has a solid GLib/GObject foundation, but lacks the kind of rich standard library that languages like Java, Go, or OCaml provide out of the box. libvalacore fills that gap, aiming to be for Vala what Boost is for C++, Base for OCaml, or the standard library for Go and Java. It provides intuitive, consistent, and well-tested APIs for file I/O, collections, string processing, encoding, cryptography, networking, concurrency, and much more — all designed to feel natural in idiomatic Vala.
 
 >[!NOTE]
-> This library is under active development. The API is not yet stable and may change without notice.
+> Until v1.0.0, breaking changes may be introduced between minor versions.
+
+## Dependencies
+
+libvalacore keeps external dependencies minimal — no libsoup, no libxml2, no third-party libraries.
+
+```mermaid
+graph TD
+    LVC[libvalacore]
+
+    LVC --> GLib[glib-2.0<br><i>Core utilities, collections, testing</i>]
+    LVC --> GIO[gio-2.0<br><i>File I/O, sockets, networking</i>]
+    LVC --> GObject[gobject-2.0<br><i>Object system, type foundation</i>]
+    LVC --> libm[libm<br><i>Math functions</i>]
+    LVC --> linux[linux vapi<br><i>Linux system calls</i>]
+    LVC --> posix[posix vapi<br><i>POSIX API</i>]
+
+    style LVC fill:#4a90d9,color:#fff
+    style GLib fill:#e8a838,color:#fff
+    style GIO fill:#e8a838,color:#fff
+    style GObject fill:#e8a838,color:#fff
+    style libm fill:#7cb342,color:#fff
+    style linux fill:#7cb342,color:#fff
+    style posix fill:#7cb342,color:#fff
+```
 
 ## API Reference
 
@@ -69,6 +92,53 @@ Filesystem metadata utility methods.
 | `isExecutable(Path path)` | Returns whether file is executable |
 | `getOwner(Path path)` | Returns owner username or `null` |
 | `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
+
+### Vala.Io.FileTree
+High-level recursive tree operations for traversal, search, copy/sync, and aggregation.
+
+| Method | Description |
+|---|---|
+| `walk(Path root)` | Recursively walks all files under root |
+| `walkWithDepth(Path root, int maxDepth)` | Recursively walks files with depth limit |
+| `find(Path root, string glob)` | Finds files by glob pattern |
+| `findByRegex(Path root, string pattern)` | Finds files by regex pattern |
+| `findBySize(Path root, int64 minBytes, int64 maxBytes)` | Finds files in size range (inclusive) |
+| `findModifiedAfter(Path root, DateTime after)` | Finds files newer than given timestamp |
+| `copyTree(Path src, Path dst)` | Recursively copies source tree to destination |
+| `copyTreeWithFilter(Path src, Path dst, PredicateFunc<Path> filter)` | Recursively copies source tree with filter |
+| `sync(Path src, Path dst)` | One-way sync based on file size and modification time |
+| `deleteTree(Path root)` | Recursively deletes source tree |
+| `totalSize(Path root)` | Returns total byte size of regular files |
+| `countFiles(Path root)` | Returns number of regular files |
+| `flatten(Path src, Path dst)` | Flattens nested files into destination directory |
+
+### Vala.Io.Watcher
+Filesystem watch API with callback-based events, recursive watch support, glob filtering, and debounce.
+
+| Method | Description |
+|---|---|
+| `watch(Path path)` | Starts watching a file or directory |
+| `watchRecursive(Path root)` | Starts recursive directory watch |
+| `watchGlob(Path root, string glob)` | Starts recursive watch filtered by glob |
+
+#### Vala.Io.FileWatcher
+
+| Method | Description |
+|---|---|
+| `onCreated(WatchCallback fn)` | Registers callback for create events |
+| `onModified(WatchCallback fn)` | Registers callback for modify events |
+| `onDeleted(WatchCallback fn)` | Registers callback for delete events |
+| `onRenamed(RenameCallback fn)` | Registers callback for rename events |
+| `debounce(Duration interval)` | Sets debounce interval (default: 100ms) |
+| `close()` | Stops watch and releases resources |
+
+#### Vala.Io.WatchEvent
+
+| Field | Description |
+|---|---|
+| `path` | Changed file path |
+| `eventType` | Event type (`CREATED`, `MODIFIED`, `DELETED`, `RENAMED`) |
+| `timestamp` | UNIX timestamp in milliseconds |
 
 ### Vala.Io.AtomicFile
 Atomic update helper for safe file replacement with optional backup.
@@ -302,6 +372,27 @@ Static utility methods for string manipulation. All methods are null-safe.
 | `words(string? s)` | Splits by whitespace (non-empty tokens) |
 | `truncate(string? s, int maxLen, string ellipsis)` | Truncates with ellipsis |
 | `wrap(string? s, int width)` | Wraps at specified width |
+
+### Vala.Text.Template
+Simple template engine with Mustache/Handlebars-style syntax.
+
+**Template** — Static utility for one-shot rendering.
+
+| Method | Description |
+|---|---|
+| `render(string template, HashMap vars)` | Renders template with variable substitution |
+| `renderFile(Path templatePath, HashMap vars)` | Reads template from file and renders |
+| `renderJson(string template, JsonValue vars)` | Renders using JSON object as variables |
+| `compile(string template)` | Pre-compiles template for repeated rendering |
+
+**CompiledTemplate** — Pre-compiled template for reuse.
+
+| Method | Description |
+|---|---|
+| `render(HashMap vars)` | Renders with variable map |
+| `renderJson(JsonValue vars)` | Renders with JSON variables |
+
+Template syntax: `{{name}}` (variable), `{{#if flag}}...{{else}}...{{/if}}` (conditional), `{{#each items}}{{.}}{{/each}}` (loop), `{{name | upper}}` (filter: upper, lower, trim, escape), `{{fallback name "default"}}` (fallback value).
 
 ### Vala.Text.Regex
 Static utility methods for regular expressions.
@@ -538,6 +629,55 @@ Circuit breaker for protecting unstable dependencies.
 | `reset()` | Resets breaker state and counters |
 | `name()` | Returns breaker name |
 
+### Vala.Net.Http
+HTTP client utilities using raw GIO sockets (no external HTTP library required).
+
+**HttpResponse** — Immutable HTTP response.
+
+| Method | Description |
+|---|---|
+| `statusCode()` | Returns the HTTP status code |
+| `isSuccess()` | Returns true if status is 2xx |
+| `isRedirect()` | Returns true if status is 3xx |
+| `isClientError()` | Returns true if status is 4xx |
+| `isServerError()` | Returns true if status is 5xx |
+| `bodyText()` | Returns response body as UTF-8 string |
+| `bodyBytes()` | Returns response body as raw bytes |
+| `header(string name)` | Returns header value (case-insensitive) or null |
+| `headers()` | Returns all response headers |
+| `contentLength()` | Returns Content-Length or -1 |
+| `contentType()` | Returns Content-Type or null |
+
+**Http** — Static utility for sending HTTP requests.
+
+| Method | Description |
+|---|---|
+| `get(string url)` | Sends GET request |
+| `post(string url, string body)` | Sends POST with text body |
+| `postJson(string url, string json)` | Sends POST with JSON body |
+| `putJson(string url, string json)` | Sends PUT with JSON body |
+| `patchJson(string url, string json)` | Sends PATCH with JSON body |
+| `delete(string url)` | Sends DELETE request |
+| `head(string url)` | Sends HEAD request |
+| `getText(string url)` | GET and return body as string |
+| `getBytes(string url)` | GET and return body as bytes |
+| `postForm(string url, HashMap fields)` | POST with form-encoded body |
+| `download(string url, Path dest)` | Downloads file to disk |
+| `request(string method, string url)` | Creates HttpRequestBuilder for custom requests |
+
+**HttpRequestBuilder** — Fluent builder for HTTP requests.
+
+| Method | Description |
+|---|---|
+| `header(string name, string value)` | Adds a request header |
+| `headers(HashMap map)` | Adds multiple headers |
+| `query(string key, string value)` | Adds URL query parameter |
+| `basicAuth(string user, string password)` | Sets Basic Authentication |
+| `bearerToken(string token)` | Sets Bearer token authentication |
+| `timeoutMillis(int ms)` | Sets request timeout |
+| `body(string text)` | Sets request body |
+| `send()` | Sends the request and returns HttpResponse |
+
 ### Vala.Concurrent.Mutex
 Mutex wrapper with utility methods.
 
@@ -646,6 +786,74 @@ Fixed-size worker pool for executing tasks concurrently. Manages worker threads 
 | `poolSize()` | Returns the number of worker threads |
 | `queueSize()` | Returns the number of tasks waiting in the queue |
 
+### Vala.Concurrent.ThreadPool
+Generic fixed-size thread pool that integrates with `Future<T>`.
+
+| Method | Description |
+|---|---|
+| `ThreadPool(int poolSize)` | Creates a pool with the specified worker count |
+| `withDefault()` | Creates a pool sized to CPU core count |
+| `submit<T>(TaskFunc<T> task)` | Submits task and returns `Future<T>` |
+| `execute(VoidTaskFunc task)` | Executes a fire-and-forget task |
+| `invokeAll<T>(ArrayList<ThreadPoolTaskFunc<T>> tasks)` | Submits wrapped tasks and returns futures |
+| `shutdown()` | Stops accepting new tasks and waits running workers |
+| `shutdownNow()` | Requests immediate stop and drops queued tasks |
+| `awaitTermination(Duration timeout)` | Waits for worker termination with timeout |
+| `isShutdown()` | Returns whether shutdown has been requested |
+| `activeCount()` | Returns number of executing tasks |
+| `queueSize()` | Returns queued task count |
+| `global()` | Returns process-wide shared thread pool |
+| `go(VoidTaskFunc task)` | Runs task on global pool |
+
+### Vala.Concurrent.ThreadPoolTaskFunc\<T\>
+Task wrapper used by `ThreadPool.invokeAll`.
+
+| Method | Description |
+|---|---|
+| `ThreadPoolTaskFunc(TaskFunc<T> task)` | Wraps a task function |
+| `run()` | Executes wrapped task |
+
+### Vala.Concurrent.Future\<T\>
+Represents the eventual result of an asynchronous computation.
+
+| Method | Description |
+|---|---|
+| `run<T>(TaskFunc<T> task)` | Starts asynchronous execution and returns a pending future |
+| `completed<T>(T value)` | Creates an already successful future |
+| `failed<T>(string message)` | Creates an already failed future |
+| `await()` | Waits for completion and returns success value (value-type futures return default value on failure) |
+| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time |
+| `isDone()` | Returns whether the future is completed |
+| `isSuccess()` | Returns whether the future is successful |
+| `isFailed()` | Returns whether the future failed |
+| `error()` | Returns failure reason (`null` for successful futures) |
+| `map<U>(MapFunc<T, U> fn)` | Transforms success value into a new future |
+| `flatMap<U>(MapFunc<T, Future<U>> fn)` | Chains asynchronous operations |
+| `recover(RecoverFunc<T> fn)` | Converts failure into a fallback success value |
+| `onComplete(ConsumerFunc<T?> fn)` | Registers completion callback |
+| `timeout(Duration timeout)` | Returns a future that fails with `timeout` when deadline expires |
+| `orElse(T fallback)` | Returns success value or fallback when failed/cancelled |
+| `cancel()` | Cancels pending future |
+| `isCancelled()` | Returns whether future was cancelled |
+| `all<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns a future of collected values |
+| `any<T>(ArrayList<Future<T>> futures)` | Returns the first completed future result |
+| `delayed<T>(Duration delay, TaskFunc<T> task)` | Starts a task after delay |
+| `allSettled<T>(ArrayList<Future<T>> futures)` | Waits all futures and returns settled futures |
+| `race<T>(ArrayList<Future<T>> futures)` | Alias of `any` |
+
+### Vala.Concurrent.SingleFlight
+Suppresses duplicate concurrent work for the same key.
+
+| Method | Description |
+|---|---|
+| `SingleFlight()` | Creates empty singleflight group |
+| `do<T>(string key, SingleFlightFunc<T> fn)` | Executes function once per key and shares result |
+| `doFuture<T>(string key, SingleFlightFunc<T> fn)` | Asynchronous version returning `Future<T>` |
+| `forget(string key)` | Removes in-flight state for a key |
+| `inFlightCount()` | Returns number of in-flight keys |
+| `hasInFlight(string key)` | Returns whether key is in flight |
+| `clear()` | Clears all tracked in-flight keys |
+
 ### Vala.Concurrent.PromiseInt / PromiseString / PromiseBool / PromiseDouble
 Promise types representing the pending result of an asynchronous computation.
 
@@ -653,6 +861,52 @@ Promise types representing the pending result of an asynchronous computation.
 |---|---|
 | `await()` | Blocks until the result is available and returns it |
 | `isDone()` | Returns whether the computation is complete |
+
+### Vala.Archive.Zip
+Static utility methods for Zip archive creation and extraction.
+
+| Method | Description |
+|---|---|
+| `create(Path archive, ArrayList<Path> files)` | Creates archive from file list |
+| `createFromDir(Path archive, Path dir)` | Creates archive from directory tree |
+| `extract(Path archive, Path dest)` | Extracts all entries into destination directory |
+| `list(Path archive)` | Lists archive entries (`null` on failure) |
+| `addFile(Path archive, Path file)` | Adds one file to existing archive |
+| `extractFile(Path archive, string entry, Path dest)` | Extracts one entry to destination file |
+
+### Vala.Archive.Tar
+Static utility methods for Tar archive creation and extraction.
+
+| Method | Description |
+|---|---|
+| `create(Path archive, ArrayList<Path> files)` | Creates archive from file list |
+| `createFromDir(Path archive, Path dir)` | Creates archive from directory tree |
+| `extract(Path archive, Path dest)` | Extracts all entries into destination directory |
+| `list(Path archive)` | Lists archive entries (`null` on failure) |
+| `addFile(Path archive, Path file)` | Adds one file to existing archive |
+| `extractFile(Path archive, string entry, Path dest)` | Extracts one entry to destination file |
+
+### Vala.Compress.Gzip
+Static utility methods for Gzip compression and decompression.
+
+| Method | Description |
+|---|---|
+| `compress(uint8[] data)` | Compresses bytes with default level |
+| `decompress(uint8[] data)` | Decompresses Gzip bytes (`null` on invalid input) |
+| `compressFile(Path src, Path dst)` | Compresses source file to destination |
+| `decompressFile(Path src, Path dst)` | Decompresses Gzip file to destination |
+| `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
+
+### Vala.Compress.Zlib
+Static utility methods for Zlib compression and decompression.
+
+| Method | Description |
+|---|---|
+| `compress(uint8[] data)` | Compresses bytes with default level |
+| `decompress(uint8[] data)` | Decompresses Zlib bytes (empty on invalid input) |
+| `compressFile(Path src, Path dst)` | Compresses source file to destination |
+| `decompressFile(Path src, Path dst)` | Decompresses Zlib file to destination |
+| `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
 
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
@@ -663,6 +917,32 @@ Static utility methods for Base64 encoding and decoding.
 | `decode(string encoded)` | Decodes Base64 text to bytes |
 | `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
 | `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
+
+### Vala.Encoding.Xml
+XML parsing, serialization, and XPath query utilities.
+
+**XmlNode** — Immutable XML node (element or text).
+
+| Method | Description |
+|---|---|
+| `name()` | Returns the tag name |
+| `text()` | Returns text content |
+| `attr(string name)` | Returns attribute value or null |
+| `attrs()` | Returns all attributes as HashMap |
+| `children()` | Returns child element nodes |
+| `child(string name)` | Returns first child with given tag name |
+| `childrenByName(string name)` | Returns all children with given tag name |
+
+**Xml** — Static utility for XML operations.
+
+| Method | Description |
+|---|---|
+| `parse(string xml)` | Parses XML string to XmlNode tree |
+| `parseFile(Path path)` | Reads and parses XML file |
+| `stringify(XmlNode node)` | Serializes to compact XML string |
+| `pretty(XmlNode node, int indent)` | Serializes to formatted XML string |
+| `xpath(XmlNode root, string expr)` | Finds nodes matching XPath expression |
+| `xpathFirst(XmlNode root, string expr)` | Finds first matching node |
 
 ### Vala.Encoding.Csv
 Static utility methods for CSV parsing and writing.
@@ -680,6 +960,76 @@ Static utility methods for hexadecimal encoding and decoding.
 |---|---|
 | `encode(uint8[] data)` | Encodes bytes to lower-case hexadecimal text |
 | `decode(string hex)` | Decodes hexadecimal text to bytes |
+
+### Vala.Encoding.Json
+JSON parsing, serialization, and path-based querying. Handles JSON as a `JsonValue` tree with immutable operations.
+
+| Method | Description |
+|---|---|
+| `parse(string json)` | Parses JSON string into `JsonValue` (`null` on invalid input) |
+| `parseFile(Path path)` | Parses JSON file into `JsonValue` (`null` on read/parse failure) |
+| `stringify(JsonValue value)` | Serializes `JsonValue` to compact JSON string |
+| `pretty(JsonValue value, int indent = 2)` | Serializes `JsonValue` to indented JSON string |
+| `query(JsonValue root, string path)` | Queries value by JSON path (e.g. `$.users[0].name`) |
+| `getString(JsonValue root, string path, string fallback)` | Gets string by path with fallback |
+| `getInt(JsonValue root, string path, int fallback)` | Gets int by path with fallback |
+| `getBool(JsonValue root, string path, bool fallback)` | Gets bool by path with fallback |
+| `set(JsonValue root, string path, JsonValue value)` | Sets value at top-level object key path (`$.key`, e.g. `$.name`; `$.a.b` is unsupported) and returns new tree |
+| `remove(JsonValue root, string path)` | Removes a top-level object key path (`$.key`) and returns new tree |
+| `merge(JsonValue a, JsonValue b)` | Merges two objects (b overrides a, returns new tree) |
+| `flatten(JsonValue root)` | Flattens nested object to dot-notation `HashMap` |
+
+#### JsonValue
+
+| Method | Description |
+|---|---|
+| `ofString(string v)` / `ofInt(int v)` / `ofDouble(double v)` / `ofBool(bool v)` / `ofNull()` | Factory methods |
+| `object()` → `JsonObjectBuilder` | Builds JSON objects fluently with `.put(key, value).build()` |
+| `array()` → `JsonArrayBuilder` | Builds JSON arrays fluently with `.add(value).build()` |
+| `isObject()` / `isArray()` / `isString()` / `isNumber()` / `isBool()` / `isNull()` | Type checks |
+| `asString()` / `asInt()` / `asDouble()` / `asBool()` | Type-safe getters (`null` on mismatch) |
+| `asStringOr(string fallback)` / `asIntOr(int fallback)` | Fallback getters |
+| `get(string key)` | Object key lookup |
+| `at(int index)` | Array index access |
+| `keys()` / `size()` / `toList()` | Collection accessors |
+| `equals(JsonValue other)` | Structural equality comparison |
+
+### Vala.Encoding.Toml
+Static utility methods for TOML parsing, query, and rendering.
+
+| Method | Description |
+|---|---|
+| `parse(string toml)` | Parses TOML text into `TomlValue` (`null` on invalid input) |
+| `parseFile(Path path)` | Parses TOML file into `TomlValue` (`null` on read/parse failure) |
+| `stringify(TomlValue value)` | Serializes TOML value tree to TOML text |
+| `get(TomlValue root, string path)` | Gets value by dot path (`null` when not found) |
+| `getStringOr(TomlValue root, string path, string fallback)` | Gets string by path with fallback |
+| `getIntOr(TomlValue root, string path, int fallback)` | Gets int by path with fallback |
+
+### Vala.Encoding.Yaml
+YAML parsing, serialization, and query utilities.
+
+**YamlValue** — Immutable YAML node (scalar, mapping, or sequence).
+
+| Method | Description |
+|---|---|
+| `isString()` / `isInt()` / `isDouble()` / `isBool()` / `isNull()` | Type-check predicates |
+| `isMapping()` / `isSequence()` | Container type checks |
+| `asString()` / `asInt()` / `asDouble()` / `asBool()` | Type-safe value accessors |
+| `get(string key)` | Returns child value by key (mappings only) |
+| `at(int index)` | Returns child value by index (sequences only) |
+| `size()` | Number of children (mappings or sequences) |
+| `keys()` | Returns mapping keys in insertion order |
+
+**Yaml** — Static utility methods.
+
+| Method | Description |
+|---|---|
+| `parse(string yaml)` | Parses YAML text into `YamlValue` (`null` on invalid input) |
+| `parseFile(Path path)` | Parses YAML file into `YamlValue` (`null` on read/parse failure) |
+| `parseAll(string yaml)` | Parses multi-document YAML into a list of `YamlValue` |
+| `stringify(YamlValue value)` | Serializes YAML value tree to YAML text |
+| `query(YamlValue root, string path)` | Gets value by dot-path with array index (`"a.b[0].c"`) |
 
 ### Vala.Encoding.Url
 Static utility methods for URL percent-encoding.
@@ -718,6 +1068,37 @@ Immutable UUID value object.
 | `v4()` | Generates a random UUID v4 |
 | `parse(string s)` | Parses UUID text and returns null for invalid input |
 | `toString()` | Returns the canonical UUID string |
+
+### Vala.Crypto.Identifiers
+Unified utilities for UUID/ULID/KSUID generation, validation, conversion, and timestamp extraction.
+
+| Method | Description |
+|---|---|
+| `uuidV4()` | Generates UUID v4 string |
+| `uuidV7()` | Generates time-ordered UUID v7 string |
+| `ulid()` | Generates ULID string |
+| `ulidMonotonic()` | Generates monotonic ULID string |
+| `ksuid()` | Generates KSUID string |
+| `isUuid(string s)` | Returns whether input is valid UUID |
+| `isUlid(string s)` | Returns whether input is valid ULID |
+| `isKsuid(string s)` | Returns whether input is valid KSUID |
+| `parseUuid(string s)` | Parses UUID into `Identifier` (`null` on invalid) |
+| `parseUlid(string s)` | Parses ULID into `Identifier` (`null` on invalid) |
+| `parseKsuid(string s)` | Parses KSUID into `Identifier` (`null` on invalid) |
+| `toBytes(string id)` | Converts identifier text into bytes (`null` on invalid) |
+| `fromBytes(uint8[] bytes, string type)` | Converts bytes into identifier text (`null` on invalid) |
+| `timestampMillis(string id)` | Extracts timestamp in milliseconds (`null` if unavailable) |
+| `compareByTime(string a, string b)` | Compares by extracted timestamp; ties use lexical order |
+
+#### Vala.Crypto.Identifier
+Immutable identifier value object returned by parse methods.
+
+| Method | Description |
+|---|---|
+| `value()` | Returns identifier text |
+| `type()` | Returns `IdentifierType` |
+| `timestampMillis()` | Extracts timestamp in milliseconds (`null` if unavailable) |
+| `toBytes()` | Converts value to bytes (`null` on invalid) |
 
 ### Vala.Collections.Arrays
 Static utility methods for `int[]`.
@@ -1091,6 +1472,149 @@ Java-like key-value configuration file utility.
 | `keys()` | Returns all keys |
 | `size()` | Returns number of entries |
 
+## Vala.Config.AppConfig
+Unified application configuration from file, environment, and CLI.
+
+| Method | Description |
+|---|---|
+| `load(string appName)` | Loads from standard app config paths |
+| `loadFile(Path path)` | Loads from explicit file |
+| `withEnvPrefix(string prefix)` | Sets env prefix like `MYAPP_` |
+| `withCliArgs(string[] args)` | Parses CLI overrides (`--k=v`, `--k v`, `--flag`) |
+| `getString(string key, string fallback = "")` | Returns string value or fallback |
+| `getInt(string key, int fallback = 0)` | Returns int value or fallback |
+| `getBool(string key, bool fallback = false)` | Returns bool value or fallback |
+| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback |
+| `require(string key)` | Returns required value, fail-fast when missing |
+| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` |
+
+## Vala.Distributed.ConsistentHash
+Consistent hash ring with virtual nodes for stable key distribution.
+
+| Method | Description |
+|---|---|
+| `ConsistentHash()` | Creates empty hash ring |
+| `withVirtualNodes(int replicas)` | Sets virtual node count per physical node |
+| `addNode(string nodeId)` | Adds physical node to ring |
+| `removeNode(string nodeId)` | Removes physical node from ring |
+| `containsNode(string nodeId)` | Returns whether node exists |
+| `getNode(string key)` | Returns assigned node for a key |
+| `getNodes(string key, int count)` | Returns distinct replica nodes for a key |
+| `nodeCount()` | Returns physical node count |
+| `virtualNodeCount()` | Returns virtual node count |
+| `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
+| `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
+| `clear()` | Clears all nodes and ring state |
+
+## Vala.Distributed.RendezvousHash
+Weighted highest-random-weight hash for routing and replica selection.
+
+| Method | Description |
+|---|---|
+| `RendezvousHash()` | Creates empty node set |
+| `addNode(string nodeId)` | Adds node |
+| `removeNode(string nodeId)` | Removes node |
+| `containsNode(string nodeId)` | Returns whether node exists |
+| `getNode(string key)` | Returns assigned node for a key |
+| `getTopNodes(string key, int n)` | Returns top-N nodes by score |
+| `setWeight(string nodeId, double weight)` | Sets node weight |
+| `nodeCount()` | Returns number of nodes |
+| `distribution(ArrayList<string> sampleKeys)` | Returns node -> key count distribution |
+| `rebalanceEstimate(ArrayList<string> sampleKeys)` | Estimates remapping ratio when one node is added |
+| `clear()` | Clears all nodes and weights |
+
+## Vala.Distributed.Snowflake
+64-bit distributed unique ID generator with sortable timestamp prefix.
+
+| Method | Description |
+|---|---|
+| `Snowflake(int nodeId)` | Creates generator for node ID (0-1023) |
+| `withEpoch(DateTime epoch)` | Sets custom epoch |
+| `nextId()` | Returns next unique 64-bit ID |
+| `nextString()` | Returns next ID as decimal string |
+| `parse(int64 id)` | Parses ID into `SnowflakeParts` |
+| `timestampMillis(int64 id)` | Extracts timestamp in milliseconds |
+| `nodeIdOf(int64 id)` | Extracts node ID |
+| `sequenceOf(int64 id)` | Extracts sequence number |
+
+## Vala.Collections.HyperLogLog
+Approximate unique counter with fixed memory footprint.
+
+| Method | Description |
+|---|---|
+| `HyperLogLog(double errorRate = 0.01)` | Creates estimator with target error rate |
+| `add(string value)` | Adds one value |
+| `addBytes(uint8[] value)` | Adds raw byte value |
+| `addAll(ArrayList<string> values)` | Adds multiple values |
+| `count()` | Returns estimated unique count |
+| `merge(HyperLogLog other)` | Merges another estimator with same precision |
+| `errorRate()` | Returns configured error rate |
+| `registerCount()` | Returns internal register count |
+| `toBytes()` | Serializes estimator state |
+| `fromBytes(uint8[] bytes)` | Restores estimator from serialized bytes |
+| `clear()` | Resets estimator state |
+
+## Vala.Collections.BloomFilter<T>
+Probabilistic set membership filter with compact memory usage.
+
+| Method | Description |
+|---|---|
+| `BloomFilter(int expectedInsertions, double falsePositiveRate)` | Creates filter with expected size and FPR |
+| `add(T item)` | Adds one item |
+| `addAll(ArrayList<T> items)` | Adds multiple items |
+| `mightContain(T item)` | Returns membership possibility |
+| `clear()` | Clears all bits |
+| `bitSize()` | Returns bit-array size |
+| `hashCount()` | Returns number of hash functions |
+| `estimatedFalsePositiveRate()` | Returns current estimated FPR |
+| `merge(BloomFilter<T> other)` | Merges compatible filter |
+| `toBytes()` | Serializes filter state |
+| `fromBytes(uint8[] bytes)` | Restores filter from bytes |
+
+## Vala.Validation.Validator
+Fluent input validation with field-level error reporting.
+
+| Method | Description |
+|---|---|
+| `Validator()` | Creates validator |
+| `required(string field, string? value)` | Adds required check |
+| `minLength(string field, string? value, int min)` | Adds min length check |
+| `maxLength(string field, string? value, int max)` | Adds max length check |
+| `range(string field, int value, int min, int max)` | Adds numeric range check |
+| `pattern(string field, string? value, string regex)` | Adds regex check |
+| `email(string field, string? value)` | Adds email format check |
+| `url(string field, string? value)` | Adds URL format check |
+| `custom(string field, PredicateFunc<string?> fn, string message)` | Adds custom rule |
+| `validate()` | Returns `ValidationResult` |
+
+## Vala.Time.Cron
+Lightweight task scheduler with interval and daily-time modes.
+
+| Method | Description |
+|---|---|
+| `Cron(string expression)` | Creates scheduler from cron expression |
+| `every(Duration interval)` | Creates fixed-interval scheduler |
+| `at(int hour, int minute)` | Creates daily scheduler |
+| `schedule(CronTask task)` | Starts schedule immediately |
+| `scheduleWithDelay(Duration initialDelay, CronTask task)` | Starts with initial delay |
+| `cancel()` | Stops running schedule |
+| `isRunning()` | Returns running state |
+| `nextFireTime()` | Returns next execution time |
+
+## Vala.Event.EventBus
+In-process pub/sub bus with optional asynchronous dispatch.
+
+| Method | Description |
+|---|---|
+| `EventBus()` | Creates event bus |
+| `withAsync()` | Enables asynchronous dispatch mode |
+| `subscribe(string topic, EventHandler handler)` | Subscribes topic handler |
+| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler |
+| `publish(string topic, Variant eventData)` | Publishes event payload |
+| `unsubscribe(string topic)` | Removes all subscribers for topic |
+| `hasSubscribers(string topic)` | Returns subscriber existence |
+| `clear()` | Clears all subscriptions |
+
 ## Vala.Conv.Convert
 Type conversion utilities similar to Go's `strconv`.
 
@@ -1149,6 +1673,23 @@ Static utility methods for null checking.
 |---|---|
 | `isNull<T>(T? obj)` | Returns whether the object is null |
 | `nonNull<T>(T? obj)` | Returns whether the object is not null |
+
+### Vala.Lang.Context
+Cancellation and timeout context propagated across call boundaries.
+
+| Method | Description |
+|---|---|
+| `background()` | Creates root context |
+| `withCancel(Context parent)` | Creates cancellable child context |
+| `withTimeout(Context parent, Duration timeout)` | Creates timeout child context |
+| `withDeadline(Context parent, DateTime deadline)` | Creates deadline child context |
+| `cancel()` | Cancels this context |
+| `isCancelled()` | Returns cancellation state |
+| `error()` | Returns cancellation reason (`cancelled` / `timeout`) |
+| `remaining()` | Returns remaining time until deadline, or `null` when no deadline |
+| `done()` | Returns notification channel closed on cancellation |
+| `value(string key)` | Returns scoped value by key |
+| `withValue(string key, string value)` | Creates child context with key-value |
 
 ### Vala.Lang.Os
 Operating system interface methods.
@@ -1290,6 +1831,8 @@ $ sudo apt install lcov
 $ ./scripts/coverage.sh          # Show coverage summary
 $ ./scripts/coverage.sh --check  # Check 80% threshold (fails if below)
 $ ./scripts/coverage.sh --html   # Generate HTML report
+# Reuse existing test results (faster in CI split steps):
+$ ./scripts/coverage.sh --check --skip-test
 ```
 
 ## Code formatting
