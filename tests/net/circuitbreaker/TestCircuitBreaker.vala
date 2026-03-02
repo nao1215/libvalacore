@@ -15,25 +15,15 @@ void main (string[] args) {
 }
 
 CircuitBreaker mustBreaker (string name) {
-    CircuitBreaker ? breaker = null;
-    try {
-        breaker = new CircuitBreaker (name);
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
-    if (breaker == null) {
-        assert_not_reached ();
-    }
-    return breaker;
+    var created = CircuitBreaker.of (name);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testOpenAfterThreshold () {
     var cb = mustBreaker ("api");
-    try {
-        cb.withFailureThreshold (2);
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
+    var configured = cb.withFailureThreshold (2);
+    assert (configured.isOk ());
 
     assert (cb.state () == CircuitState.CLOSED);
 
@@ -51,12 +41,10 @@ void testOpenAfterThreshold () {
 
 void testOpenShortCircuit () {
     var cb = mustBreaker ("api");
-    try {
-        cb.withFailureThreshold (1)
-         .withOpenTimeout (Duration.ofSeconds (10));
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
+    var configured = cb.withFailureThreshold (1);
+    assert (configured.isOk ());
+    configured = cb.withOpenTimeout (Duration.ofSeconds (10));
+    assert (configured.isOk ());
 
     cb.call<string> (() => { return Result.error<string, string> ("boom"); });
     assert (cb.state () == CircuitState.OPEN);
@@ -73,13 +61,12 @@ void testOpenShortCircuit () {
 
 void testHalfOpenToClosed () {
     var cb = mustBreaker ("api");
-    try {
-        cb.withFailureThreshold (1)
-         .withSuccessThreshold (1)
-         .withOpenTimeout (Duration.ofSeconds (0));
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
+    var configured = cb.withFailureThreshold (1);
+    assert (configured.isOk ());
+    configured = cb.withSuccessThreshold (1);
+    assert (configured.isOk ());
+    configured = cb.withOpenTimeout (Duration.ofSeconds (0));
+    assert (configured.isOk ());
 
     cb.call<string> (() => {
         return Result.error<string, string> ("first attempt failed");
@@ -96,12 +83,10 @@ void testHalfOpenToClosed () {
 
 void testHalfOpenFailureReopens () {
     var cb = mustBreaker ("api");
-    try {
-        cb.withFailureThreshold (1)
-         .withOpenTimeout (Duration.ofSeconds (1));
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
+    var configured = cb.withFailureThreshold (1);
+    assert (configured.isOk ());
+    configured = cb.withOpenTimeout (Duration.ofSeconds (1));
+    assert (configured.isOk ());
 
     cb.call<string> (() => {
         return Result.error<string, string> ("initial failure");
@@ -123,12 +108,10 @@ void testHalfOpenFailureReopens () {
 
 void testStateChangeCallback () {
     var cb = mustBreaker ("api");
-    try {
-        cb.withFailureThreshold (1)
-         .withOpenTimeout (Duration.ofSeconds (0));
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
+    var configured = cb.withFailureThreshold (1);
+    assert (configured.isOk ());
+    configured = cb.withOpenTimeout (Duration.ofSeconds (0));
+    assert (configured.isOk ());
 
     int transitions = 0;
     cb.onStateChange ((from, to) => {
@@ -144,11 +127,8 @@ void testStateChangeCallback () {
 
 void testReset () {
     var cb = mustBreaker ("api");
-    try {
-        cb.withFailureThreshold (2);
-    } catch (CircuitBreakerError e) {
-        assert_not_reached ();
-    }
+    var configured = cb.withFailureThreshold (2);
+    assert (configured.isOk ());
 
     cb.recordFailure ();
     assert (cb.failureCount () == 1);
@@ -161,41 +141,25 @@ void testReset () {
 }
 
 void testInvalidConfiguration () {
-    bool nameThrown = false;
-    try {
-        new CircuitBreaker ("");
-    } catch (CircuitBreakerError e) {
-        nameThrown = true;
-        assert (e is CircuitBreakerError.INVALID_ARGUMENT);
-    }
-    assert (nameThrown);
+    var invalidName = CircuitBreaker.of ("");
+    assert (invalidName.isError ());
+    assert (invalidName.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidName.unwrapError ().message == "name must not be empty");
 
     var cb = mustBreaker ("api");
 
-    bool failureThresholdThrown = false;
-    try {
-        cb.withFailureThreshold (0);
-    } catch (CircuitBreakerError e) {
-        failureThresholdThrown = true;
-        assert (e is CircuitBreakerError.INVALID_ARGUMENT);
-    }
-    assert (failureThresholdThrown);
+    var invalidFailureThreshold = cb.withFailureThreshold (0);
+    assert (invalidFailureThreshold.isError ());
+    assert (invalidFailureThreshold.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidFailureThreshold.unwrapError ().message == "n must be positive, got 0");
 
-    bool successThresholdThrown = false;
-    try {
-        cb.withSuccessThreshold (0);
-    } catch (CircuitBreakerError e) {
-        successThresholdThrown = true;
-        assert (e is CircuitBreakerError.INVALID_ARGUMENT);
-    }
-    assert (successThresholdThrown);
+    var invalidSuccessThreshold = cb.withSuccessThreshold (0);
+    assert (invalidSuccessThreshold.isError ());
+    assert (invalidSuccessThreshold.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidSuccessThreshold.unwrapError ().message == "n must be positive, got 0");
 
-    bool openTimeoutThrown = false;
-    try {
-        cb.withOpenTimeout (Duration.ofSeconds (-1));
-    } catch (CircuitBreakerError e) {
-        openTimeoutThrown = true;
-        assert (e is CircuitBreakerError.INVALID_ARGUMENT);
-    }
-    assert (openTimeoutThrown);
+    var invalidOpenTimeout = cb.withOpenTimeout (Duration.ofSeconds (-1));
+    assert (invalidOpenTimeout.isError ());
+    assert (invalidOpenTimeout.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidOpenTimeout.unwrapError ().message == "timeout must be non-negative, got -1000");
 }
