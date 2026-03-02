@@ -17,13 +17,13 @@ namespace Vala.Lang {
      */
     public class Exceptions : GLib.Object {
         /**
-         * Rethrows the provided error.
+         * Converts the provided error into a failed Result.
          *
-         * @param e error to rethrow.
-         * @throws GLib.Error always throws the provided error.
+         * @param e error to propagate.
+         * @return Result.error carrying the provided error.
          */
-        public static void sneakyThrow (GLib.Error e) throws GLib.Error {
-            throw e;
+        public static Result<bool, GLib.Error> sneakyThrow (GLib.Error e) {
+            return Result.error<bool, GLib.Error> (e);
         }
 
         /**

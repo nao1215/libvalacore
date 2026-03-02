@@ -1831,7 +1831,7 @@ Exception utility methods.
 
 | Method | Description |
 |---|---|
-| `sneakyThrow(GLib.Error e)` | Rethrows the provided error (preserves domain/code/message) |
+| `sneakyThrow(GLib.Error e)` | Returns `Result<bool, Error>` carrying the provided error |
 | `getStackTrace(GLib.Error e)` | Returns printable error details |
 
 ### Vala.Lang.SystemInfo
