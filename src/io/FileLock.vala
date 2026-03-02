@@ -24,7 +24,8 @@ namespace Vala.Io {
      * Example:
      * {{{
      *     var lock = new FileLock (new Path ("/tmp/myjob.lock"));
-     *     if (lock.acquireTimeout (Duration.ofSeconds (5))) {
+     *     var acquired = lock.acquireTimeout (Duration.ofSeconds (5));
+     *     if (acquired.isOk () && acquired.unwrap ()) {
      *         try {
      *             run_critical_job ();
      *         } finally {
@@ -66,14 +67,16 @@ namespace Vala.Io {
          * Attempts to acquire lock within timeout.
          *
          * @param timeout maximum wait duration.
-         * @return true when lock is acquired before timeout.
-         * @throws FileLockError.INVALID_ARGUMENT when timeout is negative.
+         * @return Result.ok(true/false) depending on acquisition success,
+         *         or Result.error(FileLockError.INVALID_ARGUMENT) when timeout is negative.
          */
-        public bool acquireTimeout (Duration timeout) throws FileLockError {
+        public Vala.Collections.Result<bool, GLib.Error> acquireTimeout (Duration timeout) {
             int64 timeoutMillis = timeout.toMillis ();
             if (timeoutMillis < 0) {
-                throw new FileLockError.INVALID_ARGUMENT (
-                          ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new FileLockError.INVALID_ARGUMENT (
+                        ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
+                    )
                 );
             }
 
@@ -93,14 +96,14 @@ namespace Vala.Io {
             }
             while (true) {
                 if (GLib.get_monotonic_time () > deadlineMicros) {
-                    return false;
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (false);
                 }
                 if (tryAcquire ()) {
-                    return true;
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
                 }
                 int64 remainingMicros = deadlineMicros - GLib.get_monotonic_time ();
                 if (remainingMicros <= 0) {
-                    return false;
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (false);
                 }
 
                 int64 sleepMillis = (remainingMicros + 999) / 1000;
