@@ -27,13 +27,17 @@ void testAbsMaxMinClamp () {
     assertClose (Vala.Math.Math.abs (-3.5), 3.5);
     assertClose (Vala.Math.Math.max (2.0, 5.0), 5.0);
     assertClose (Vala.Math.Math.min (2.0, 5.0), 2.0);
-    try {
-        assertClose (Vala.Math.Math.clamp (5.0, 0.0, 3.0), 3.0);
-        assertClose (Vala.Math.Math.clamp (-2.0, 0.0, 3.0), 0.0);
-        assertClose (Vala.Math.Math.clamp (2.0, 0.0, 3.0), 2.0);
-    } catch (MathError e) {
-        assert_not_reached ();
-    }
+    var clampUpper = Vala.Math.Math.clamp (5.0, 0.0, 3.0);
+    assert (clampUpper.isOk ());
+    assertClose (clampUpper.unwrap (), 3.0);
+
+    var clampLower = Vala.Math.Math.clamp (-2.0, 0.0, 3.0);
+    assert (clampLower.isOk ());
+    assertClose (clampLower.unwrap (), 0.0);
+
+    var clampMiddle = Vala.Math.Math.clamp (2.0, 0.0, 3.0);
+    assert (clampMiddle.isOk ());
+    assertClose (clampMiddle.unwrap (), 2.0);
 }
 
 void testRoundFunctions () {
@@ -72,42 +76,40 @@ void testIsPrime () {
 }
 
 void testFactorial () {
-    try {
-        assert (Vala.Math.Math.factorial (0) == 1);
-        assert (Vala.Math.Math.factorial (1) == 1);
-        assert (Vala.Math.Math.factorial (5) == 120);
-        assert (Vala.Math.Math.factorial (10) == 3628800);
-        assert (Vala.Math.Math.factorial (20) == 2432902008176640000);
-    } catch (MathError e) {
-        assert_not_reached ();
-    }
+    var fact0 = Vala.Math.Math.factorial (0);
+    assert (fact0.isOk ());
+    assert (fact0.unwrap () == 1);
+
+    var fact1 = Vala.Math.Math.factorial (1);
+    assert (fact1.isOk ());
+    assert (fact1.unwrap () == 1);
+
+    var fact5 = Vala.Math.Math.factorial (5);
+    assert (fact5.isOk ());
+    assert (fact5.unwrap () == 120);
+
+    var fact10 = Vala.Math.Math.factorial (10);
+    assert (fact10.isOk ());
+    assert (fact10.unwrap () == 3628800);
+
+    var fact20 = Vala.Math.Math.factorial (20);
+    assert (fact20.isOk ());
+    assert (fact20.unwrap () == 2432902008176640000);
 }
 
 void testInvalidArguments () {
-    bool clampThrown = false;
-    try {
-        Vala.Math.Math.clamp (1.0, 2.0, 1.0);
-    } catch (MathError e) {
-        clampThrown = true;
-        assert (e is MathError.INVALID_ARGUMENT);
-    }
-    assert (clampThrown);
+    var clampInvalid = Vala.Math.Math.clamp (1.0, 2.0, 1.0);
+    assert (clampInvalid.isError ());
+    assert (clampInvalid.unwrapError () is MathError.INVALID_ARGUMENT);
+    assert (clampInvalid.unwrapError ().message == "lo must be less than or equal to hi");
 
-    bool factorialThrown = false;
-    try {
-        Vala.Math.Math.factorial (-1);
-    } catch (MathError e) {
-        factorialThrown = true;
-        assert (e is MathError.INVALID_ARGUMENT);
-    }
-    assert (factorialThrown);
+    var factorialNegative = Vala.Math.Math.factorial (-1);
+    assert (factorialNegative.isError ());
+    assert (factorialNegative.unwrapError () is MathError.INVALID_ARGUMENT);
+    assert (factorialNegative.unwrapError ().message == "n must be non-negative");
 
-    factorialThrown = false;
-    try {
-        Vala.Math.Math.factorial (21);
-    } catch (MathError e) {
-        factorialThrown = true;
-        assert (e is MathError.INVALID_ARGUMENT);
-    }
-    assert (factorialThrown);
+    var factorialOverflow = Vala.Math.Math.factorial (21);
+    assert (factorialOverflow.isError ());
+    assert (factorialOverflow.unwrapError () is MathError.INVALID_ARGUMENT);
+    assert (factorialOverflow.unwrapError ().message == "n must be in range [0, 20]");
 }
