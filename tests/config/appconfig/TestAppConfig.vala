@@ -34,7 +34,7 @@ string mustGetString (AppConfig config, string key, string fallback = "") {
 }
 
 int mustGetInt (AppConfig config, string key, int fallback = 0) {
-    var value = config.getInt (key, fallback);
+    Result<int, GLib.Error> value = config.getInt (key, fallback);
     assert (value.isOk ());
     return value.unwrap ();
 }
