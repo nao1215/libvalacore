@@ -16,41 +16,27 @@ void testConstruct () {
 }
 
 void testCheckArgument () {
-    try {
-        Preconditions.checkArgument (true, "must not fail");
-    } catch (PreconditionError e) {
-        assert_not_reached ();
-    }
+    var result = Preconditions.checkArgument (true, "must not fail");
+    assert (result.isOk ());
+    assert (result.unwrap () == true);
 }
 
 void testCheckArgumentFailure () {
-    bool thrown = false;
-    try {
-        Preconditions.checkArgument (false, "bad argument");
-    } catch (PreconditionError e) {
-        thrown = true;
-        assert (e is PreconditionError.INVALID_ARGUMENT);
-        assert (e.message == "bad argument");
-    }
-    assert (thrown);
+    var result = Preconditions.checkArgument (false, "bad argument");
+    assert (result.isError ());
+    assert (result.unwrapError () is PreconditionError.INVALID_ARGUMENT);
+    assert (result.unwrapError ().message == "bad argument");
 }
 
 void testCheckState () {
-    try {
-        Preconditions.checkState (true, "must not fail");
-    } catch (PreconditionError e) {
-        assert_not_reached ();
-    }
+    var result = Preconditions.checkState (true, "must not fail");
+    assert (result.isOk ());
+    assert (result.unwrap () == true);
 }
 
 void testCheckStateFailure () {
-    bool thrown = false;
-    try {
-        Preconditions.checkState (false, "");
-    } catch (PreconditionError e) {
-        thrown = true;
-        assert (e is PreconditionError.INVALID_STATE);
-        assert (e.message == "Invalid state");
-    }
-    assert (thrown);
+    var result = Preconditions.checkState (false, "");
+    assert (result.isError ());
+    assert (result.unwrapError () is PreconditionError.INVALID_STATE);
+    assert (result.unwrapError ().message == "Invalid state");
 }

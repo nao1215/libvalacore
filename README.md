@@ -1823,8 +1823,8 @@ Precondition checks for arguments and object state with recoverable errors.
 
 | Method | Description |
 |---|---|
-| `checkArgument(bool cond, string message)` | Validates method arguments and throws `PreconditionError.INVALID_ARGUMENT` when invalid |
-| `checkState(bool cond, string message)` | Validates object state and throws `PreconditionError.INVALID_STATE` when invalid |
+| `checkArgument(bool cond, string message)` | Returns `Result<bool, Error>` (error: `PreconditionError.INVALID_ARGUMENT` when invalid) |
+| `checkState(bool cond, string message)` | Returns `Result<bool, Error>` (error: `PreconditionError.INVALID_STATE` when invalid) |
 
 ### Vala.Lang.Exceptions
 Exception utility methods.

@@ -10,14 +10,20 @@ namespace Vala.Lang {
     /**
      * Utility methods for precondition checks.
      *
-     * Methods in this class throw recoverable errors when a condition is
+     * Methods in this class return Result values when a condition is
      * violated. Use these checks for programmer errors (invalid arguments or
-     * illegal state), and propagate the failure to callers.
+     * illegal state), and propagate the failure contract to callers.
      *
      * Example:
      * {{{
-     *     Preconditions.checkArgument (port > 0, "port must be positive");
-     *     Preconditions.checkState (is_initialized, "not initialized");
+     *     var argOk = Preconditions.checkArgument (port > 0, "port must be positive");
+     *     if (argOk.isError ()) {
+     *         return;
+     *     }
+     *     var stateOk = Preconditions.checkState (is_initialized, "not initialized");
+     *     if (stateOk.isError ()) {
+     *         return;
+     *     }
      * }}}
      */
     public class Preconditions : GLib.Object {
@@ -28,19 +34,23 @@ namespace Vala.Lang {
             return message;
         }
 
-        private static void validate (bool cond,
-                                      string message,
-                                      string defaultMessage,
-                                      bool argumentError) throws PreconditionError {
+        private static Vala.Collections.Result<bool, GLib.Error> validate (bool cond,
+                                                                           string message,
+                                                                           string defaultMessage,
+                                                                           bool argumentError) {
             if (cond) {
-                return;
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
             }
 
             string finalMessage = normalizeMessage (message, defaultMessage);
             if (argumentError) {
-                throw new PreconditionError.INVALID_ARGUMENT (finalMessage);
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new PreconditionError.INVALID_ARGUMENT (finalMessage)
+                );
             }
-            throw new PreconditionError.INVALID_STATE (finalMessage);
+            return Vala.Collections.Result.error<bool, GLib.Error> (
+                new PreconditionError.INVALID_STATE (finalMessage)
+            );
         }
 
         /**
@@ -48,15 +58,19 @@ namespace Vala.Lang {
          *
          * Example:
          * {{{
-         *     Preconditions.checkArgument (name.length > 0, "name must not be empty");
+         *     var result = Preconditions.checkArgument (name.length > 0, "name must not be empty");
+         *     if (result.isError ()) {
+         *         return;
+         *     }
          * }}}
          *
          * @param cond condition that must be true.
          * @param message error message when condition is false.
-         * @throws PreconditionError.INVALID_ARGUMENT when condition is false.
+         * @return Result.ok(true) on success, or
+         *         Result.error(PreconditionError.INVALID_ARGUMENT) when condition is false.
          */
-        public static void checkArgument (bool cond, string message) throws PreconditionError {
-            validate (cond, message, "Invalid argument", true);
+        public static Vala.Collections.Result<bool, GLib.Error> checkArgument (bool cond, string message) {
+            return validate (cond, message, "Invalid argument", true);
         }
 
         /**
@@ -64,15 +78,19 @@ namespace Vala.Lang {
          *
          * Example:
          * {{{
-         *     Preconditions.checkState (isOpen, "resource is closed");
+         *     var result = Preconditions.checkState (isOpen, "resource is closed");
+         *     if (result.isError ()) {
+         *         return;
+         *     }
          * }}}
          *
          * @param cond condition that must be true.
          * @param message error message when condition is false.
-         * @throws PreconditionError.INVALID_STATE when condition is false.
+         * @return Result.ok(true) on success, or
+         *         Result.error(PreconditionError.INVALID_STATE) when condition is false.
          */
-        public static void checkState (bool cond, string message) throws PreconditionError {
-            validate (cond, message, "Invalid state", false);
+        public static Vala.Collections.Result<bool, GLib.Error> checkState (bool cond, string message) {
+            return validate (cond, message, "Invalid state", false);
         }
     }
 }
