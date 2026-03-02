@@ -50,58 +50,70 @@ namespace Vala.Distributed {
          * Adds node to the hash set.
          *
          * @param nodeId node identifier.
-         * @return true if node was newly added.
-         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty.
+         * @return Result.ok(true/false) for add outcome, or
+         *         Result.error(RendezvousHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public bool addNode (string nodeId) throws RendezvousHashError {
-            ensureNodeId (nodeId);
+        public Result<bool, GLib.Error> addNode (string nodeId) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
 
             bool added = _nodes.add (nodeId);
             if (added) {
                 _weights.put (nodeId, 1.0);
             }
-            return added;
+            return Result.ok<bool, GLib.Error> (added);
         }
 
         /**
          * Removes node from the hash set.
          *
          * @param nodeId node identifier.
-         * @return true if node existed.
-         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty.
+         * @return Result.ok(true/false) for remove outcome, or
+         *         Result.error(RendezvousHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public bool removeNode (string nodeId) throws RendezvousHashError {
-            ensureNodeId (nodeId);
+        public Result<bool, GLib.Error> removeNode (string nodeId) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
 
             bool removed = _nodes.remove (nodeId);
             if (removed) {
                 _weights.remove (nodeId);
             }
-            return removed;
+            return Result.ok<bool, GLib.Error> (removed);
         }
 
         /**
          * Returns whether node exists.
          *
          * @param nodeId node identifier.
-         * @return true if node exists.
-         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty.
+         * @return Result.ok(true/false) for existence, or
+         *         Result.error(RendezvousHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public bool containsNode (string nodeId) throws RendezvousHashError {
-            ensureNodeId (nodeId);
-            return _nodes.contains (nodeId);
+        public Result<bool, GLib.Error> containsNode (string nodeId) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
+            return Result.ok<bool, GLib.Error> (_nodes.contains (nodeId));
         }
 
         /**
          * Returns assigned node for a key.
          *
          * @param key lookup key.
-         * @return assigned node, or null when no nodes are registered.
-         * @throws RendezvousHashError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(assigned node, or null when no nodes are registered), or
+         *         Result.error(RendezvousHashError.INVALID_ARGUMENT) when key is empty.
          */
-        public string ? getNode (string key) throws RendezvousHashError {
-            ensureKey (key);
-            return locateBestNode (key, null, 1.0);
+        public Result<string ?, GLib.Error> getNode (string key) {
+            GLib.Error ? keyError = validateKey (key);
+            if (keyError != null) {
+                return Result.error<string ?, GLib.Error> (keyError);
+            }
+            return Result.ok<string ?, GLib.Error> (locateBestNode (key, null, 1.0));
         }
 
         /**
@@ -109,14 +121,19 @@ namespace Vala.Distributed {
          *
          * @param key lookup key.
          * @param n number of nodes to return.
-         * @return sorted node list by descending score.
-         * @throws RendezvousHashError.INVALID_ARGUMENT when key is empty or n is not positive.
+         * @return Result.ok(sorted node list by descending score), or
+         *         Result.error(RendezvousHashError.INVALID_ARGUMENT) when key is empty or n is not positive.
          */
-        public ArrayList<string> getTopNodes (string key,
-                                              int n) throws RendezvousHashError {
-            ensureKey (key);
+        public Result<ArrayList<string>, GLib.Error> getTopNodes (string key,
+                                                                  int n) {
+            GLib.Error ? keyError = validateKey (key);
+            if (keyError != null) {
+                return Result.error<ArrayList<string>, GLib.Error> (keyError);
+            }
             if (n <= 0) {
-                throw new RendezvousHashError.INVALID_ARGUMENT ("n must be positive");
+                return Result.error<ArrayList<string>, GLib.Error> (
+                    new RendezvousHashError.INVALID_ARGUMENT ("n must be positive")
+                );
             }
 
             var scores = collectScores (key);
@@ -131,7 +148,7 @@ namespace Vala.Distributed {
                 }
             }
 
-            return result;
+            return Result.ok<ArrayList<string>, GLib.Error> (result);
         }
 
         /**
@@ -139,21 +156,26 @@ namespace Vala.Distributed {
          *
          * @param nodeId node identifier.
          * @param weight positive node weight.
-         * @return true when weight is updated.
-         * @throws RendezvousHashError.INVALID_ARGUMENT when nodeId is empty or weight is not positive.
+         * @return Result.ok(true/false) where false means node does not exist, or
+         *         Result.error(RendezvousHashError.INVALID_ARGUMENT) for invalid input.
          */
-        public bool setWeight (string nodeId,
-                               double weight) throws RendezvousHashError {
-            ensureNodeId (nodeId);
+        public Result<bool, GLib.Error> setWeight (string nodeId,
+                                                   double weight) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
             if (weight <= 0.0) {
-                throw new RendezvousHashError.INVALID_ARGUMENT ("weight must be positive");
+                return Result.error<bool, GLib.Error> (
+                    new RendezvousHashError.INVALID_ARGUMENT ("weight must be positive")
+                );
             }
             if (!_nodes.contains (nodeId)) {
-                return false;
+                return Result.ok<bool, GLib.Error> (false);
             }
 
             _weights.put (nodeId, weight);
-            return true;
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         /**
@@ -329,16 +351,18 @@ namespace Vala.Distributed {
             return hash;
         }
 
-        private static void ensureNodeId (string nodeId) throws RendezvousHashError {
+        private static GLib.Error ? validateNodeId (string nodeId) {
             if (nodeId.length == 0) {
-                throw new RendezvousHashError.INVALID_ARGUMENT ("nodeId must not be empty");
+                return new RendezvousHashError.INVALID_ARGUMENT ("nodeId must not be empty");
             }
+            return null;
         }
 
-        private static void ensureKey (string key) throws RendezvousHashError {
+        private static GLib.Error ? validateKey (string key) {
             if (key.length == 0) {
-                throw new RendezvousHashError.INVALID_ARGUMENT ("key must not be empty");
+                return new RendezvousHashError.INVALID_ARGUMENT ("key must not be empty");
             }
+            return null;
         }
     }
 }
