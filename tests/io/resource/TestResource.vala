@@ -1,4 +1,5 @@
 using Vala.Io;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -19,8 +20,7 @@ void testReadResource () {
 
     try {
         assert (Files.writeBytes (tmp, { 'a', 'b', 'c' }) == true);
-        uint8[] ? data = Vala.Io.Resource.readResource (tmp.toString ());
-        assert (data != null);
+        uint8[] data = unwrapBytes (Vala.Io.Resource.readResource (tmp.toString ()));
         assert (data.length == 3);
         assert (data[0] == 'a');
         assert (data[1] == 'b');
@@ -33,6 +33,25 @@ void testReadResource () {
 }
 
 void testReadResourceInvalid () {
-    assert (Vala.Io.Resource.readResource ("") == null);
-    assert (Vala.Io.Resource.readResource ("/path/that/does/not/exist") == null);
+    Result<GLib.Bytes, GLib.Error> empty = Vala.Io.Resource.readResource ("");
+    assert (empty.isError ());
+    assert (empty.unwrapError () is Vala.Io.ResourceError.INVALID_ARGUMENT);
+
+    Result<GLib.Bytes, GLib.Error> missing = Vala.Io.Resource.readResource ("/path/that/does/not/exist");
+    assert (missing.isError ());
+    assert (missing.unwrapError () is Vala.Io.ResourceError.NOT_FOUND);
+}
+
+uint8[] unwrapBytes (Result<GLib.Bytes, GLib.Error> result) {
+    assert (result.isOk ());
+    return copyBytes (result.unwrap ());
+}
+
+uint8[] copyBytes (GLib.Bytes bytes) {
+    uint8[] raw = bytes.get_data ();
+    uint8[] copied = new uint8[raw.length];
+    for (int i = 0; i < raw.length; i++) {
+        copied[i] = raw[i];
+    }
+    return copied;
 }

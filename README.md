@@ -268,7 +268,7 @@ Resource loading utilities.
 
 | Method | Description |
 |---|---|
-| `readResource(string name)` | Reads resource bytes from a file path (`null` on failure) |
+| `readResource(string name)` | Returns `Result<Bytes, Error>` (errors: `ResourceError.INVALID_ARGUMENT`, `ResourceError.NOT_FOUND`, `ResourceError.IO`) |
 
 ### Vala.Io.Scanner
 Tokenized input reader inspired by Java's Scanner and Go's bufio.Scanner. Reads from files, strings, or stdin and splits input by a configurable delimiter.
