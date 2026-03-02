@@ -17,14 +17,14 @@ void testConstruct () {
 }
 
 void testNextInt () {
-    try {
-        for (int i = 0; i < 100; i++) {
-            int n = Randoms.nextInt (10);
-            assert (n >= 0);
-            assert (n < 10);
-        }
-    } catch (RandomsError e) {
-        assert_not_reached ();
+    for (int i = 0; i < 100; i++) {
+        var result = Randoms.nextInt (10);
+        assert (result.isOk ());
+
+        int ? n = result.unwrap ();
+        assert (n != null);
+        assert (n >= 0);
+        assert (n < 10);
     }
 }
 
@@ -75,23 +75,19 @@ void testShuffle () {
 }
 
 void testNextIntInvalidBound () {
-    bool thrown = false;
-    try {
-        Randoms.nextInt (0);
-    } catch (RandomsError e) {
-        thrown = true;
-        assert (e is RandomsError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var result = Randoms.nextInt (0);
+    assert (result.isError ());
+
+    GLib.Error ? err = result.unwrapError ();
+    assert (err != null);
+    assert (err.message == "bound must be greater than zero");
 }
 
 void testNextIntNegativeBound () {
-    bool thrown = false;
-    try {
-        Randoms.nextInt (-10);
-    } catch (RandomsError e) {
-        thrown = true;
-        assert (e is RandomsError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var result = Randoms.nextInt (-10);
+    assert (result.isError ());
+
+    GLib.Error ? err = result.unwrapError ();
+    assert (err != null);
+    assert (err.message == "bound must be greater than zero");
 }

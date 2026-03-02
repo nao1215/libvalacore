@@ -14,7 +14,10 @@ namespace Vala.Lang {
      *
      * Example:
      * {{{
-     *     int id = Randoms.nextInt (1000);
+     *     var idResult = Randoms.nextInt (1000);
+     *     if (idResult.isOk ()) {
+     *         int? id = idResult.unwrap ();
+     *     }
      *     double ratio = Randoms.nextDouble ();
      *
      *     int[] values = { 1, 2, 3, 4 };
@@ -26,14 +29,15 @@ namespace Vala.Lang {
          * Returns a random integer in [0, bound).
          *
          * @param bound exclusive upper bound.
-         * @return random integer.
-         * @throws RandomsError.INVALID_ARGUMENT when bound is not positive.
+         * @return Result containing random integer, or INVALID_ARGUMENT error.
          */
-        public static int nextInt (int bound) throws RandomsError {
+        public static Vala.Collections.Result<int, GLib.Error> nextInt (int bound) {
             if (bound <= 0) {
-                throw new RandomsError.INVALID_ARGUMENT ("bound must be greater than zero");
+                return Vala.Collections.Result.error<int, GLib.Error> (
+                    new RandomsError.INVALID_ARGUMENT ("bound must be greater than zero")
+                );
             }
-            return GLib.Random.int_range (0, bound);
+            return Vala.Collections.Result.ok<int, GLib.Error> (GLib.Random.int_range (0, bound));
         }
 
         /**
