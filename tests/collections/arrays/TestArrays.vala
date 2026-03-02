@@ -2,13 +2,23 @@ using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/arrays/testConstruct", testConstruct);
     Test.add_func ("/arrays/testSort", testSort);
+    Test.add_func ("/arrays/testSortEdgeCases", testSortEdgeCases);
     Test.add_func ("/arrays/testBinarySearch", testBinarySearch);
+    Test.add_func ("/arrays/testBinarySearchEdgeCases", testBinarySearchEdgeCases);
     Test.add_func ("/arrays/testCopyOf", testCopyOf);
     Test.add_func ("/arrays/testCopyOfInvalidLength", testCopyOfInvalidLength);
+    Test.add_func ("/arrays/testCopyOfZeroLength", testCopyOfZeroLength);
     Test.add_func ("/arrays/testFill", testFill);
     Test.add_func ("/arrays/testEquals", testEquals);
+    Test.add_func ("/arrays/testEqualsEmpty", testEqualsEmpty);
     Test.run ();
+}
+
+void testConstruct () {
+    var arrays = new Arrays ();
+    assert (arrays != null);
 }
 
 void testSort () {
@@ -22,6 +32,21 @@ void testSort () {
     assert (arr[4] == 5);
 }
 
+void testSortEdgeCases () {
+    int[] empty = {};
+    Arrays.sort (empty);
+    assert (empty.length == 0);
+
+    int[] single = { 42 };
+    Arrays.sort (single);
+    assert (single[0] == 42);
+
+    int[] sorted = { 1, 2, 3, 4 };
+    Arrays.sort (sorted);
+    assert (sorted[0] == 1);
+    assert (sorted[3] == 4);
+}
+
 void testBinarySearch () {
     int[] arr = { 1, 3, 5, 7, 9 };
 
@@ -29,6 +54,17 @@ void testBinarySearch () {
     assert (Arrays.binarySearch (arr, 5) == 2);
     assert (Arrays.binarySearch (arr, 9) == 4);
     assert (Arrays.binarySearch (arr, 2) == -1);
+}
+
+void testBinarySearchEdgeCases () {
+    int[] empty = {};
+    assert (Arrays.binarySearch (empty, 1) == -1);
+
+    int[] duplicates = { 1, 2, 2, 2, 3 };
+    int idx = Arrays.binarySearch (duplicates, 2);
+    assert (idx >= 1);
+    assert (idx <= 3);
+    assert (duplicates[idx] == 2);
 }
 
 void testCopyOf () {
@@ -54,6 +90,12 @@ void testCopyOfInvalidLength () {
     assert (copied.length == 0);
 }
 
+void testCopyOfZeroLength () {
+    int[] arr = { 1, 2, 3 };
+    int[] copied = Arrays.copyOf (arr, 0);
+    assert (copied.length == 0);
+}
+
 void testFill () {
     int[] arr = { 1, 2, 3, 4 };
     Arrays.fill (arr, 7);
@@ -73,4 +115,11 @@ void testEquals () {
     assert (Arrays.equals (a, b) == true);
     assert (Arrays.equals (a, c) == false);
     assert (Arrays.equals (a, d) == false);
+}
+
+void testEqualsEmpty () {
+    int[] a = {};
+    int[] b = {};
+
+    assert (Arrays.equals (a, b) == true);
 }
