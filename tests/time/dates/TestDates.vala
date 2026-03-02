@@ -2,12 +2,18 @@ using Vala.Time;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/time/dates/testConstruct", testConstruct);
     Test.add_func ("/time/dates/testNow", testNow);
     Test.add_func ("/time/dates/testParseAndFormat", testParseAndFormat);
     Test.add_func ("/time/dates/testParseInvalid", testParseInvalid);
     Test.add_func ("/time/dates/testAddDays", testAddDays);
     Test.add_func ("/time/dates/testIsLeapYear", testIsLeapYear);
     Test.run ();
+}
+
+void testConstruct () {
+    var helper = new Dates ();
+    assert (helper != null);
 }
 
 Vala.Time.DateTime createDateTime (int year,
