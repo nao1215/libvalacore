@@ -15,19 +15,23 @@ void main (string[] args) {
 void testToInt () {
     assert (unwrapInt (Convert.toInt ("42")) == 42);
     assert (unwrapInt (Convert.toInt ("-7")) == -7);
+    assert (unwrapInt (Convert.toInt (int.MIN.to_string ())) == int.MIN);
     assertParseErrorInt (Convert.toInt ("abc"));
 }
 
 void testToInt64 () {
     assert (unwrapInt64 (Convert.toInt64 ("9223372036854775807")) == int64.MAX);
+    assert (unwrapInt64 (Convert.toInt64 ("-9223372036854775808")) == int64.MIN);
     assertParseErrorInt64 (Convert.toInt64 ("x"));
 }
 
 void testToDouble () {
     double pi = unwrapDouble (Convert.toDouble ("3.14"));
     double minus = unwrapDouble (Convert.toDouble ("-2.5"));
+    double exp = unwrapDouble (Convert.toDouble ("1e2"));
     assert (GLib.Math.fabs (pi - 3.14) < 1e-9);
     assert (GLib.Math.fabs (minus + 2.5) < 1e-9);
+    assert (GLib.Math.fabs (exp - 100.0) < 1e-9);
     assertParseErrorDouble (Convert.toDouble ("abc"));
 }
 
@@ -36,6 +40,7 @@ void testToBool () {
     assert (unwrapBool (Convert.toBool ("FALSE")) == false);
     assert (unwrapBool (Convert.toBool ("1")) == true);
     assert (unwrapBool (Convert.toBool ("0")) == false);
+    assert (unwrapBool (Convert.toBool ("  TrUe  ")) == true);
     assertParseErrorBool (Convert.toBool ("yes"));
 }
 
@@ -44,15 +49,19 @@ void testToString () {
     assert (Convert.doubleToString (3.14159, 2) == "3.14");
     assert (Convert.doubleToString (3.9, -1) == "4");
     assert (Convert.boolToString (true) == "true");
+    assert (Convert.boolToString (false) == "false");
 }
 
 void testToBase () {
     assert (Convert.intToHex (255) == "ff");
     assert (Convert.intToHex (-255) == "-ff");
+    assert (Convert.intToHex (int.MIN) == "-80000000");
     assert (Convert.intToOctal (8) == "10");
     assert (Convert.intToOctal (-8) == "-10");
+    assert (Convert.intToOctal (int.MIN) == "-20000000000");
     assert (Convert.intToBinary (5) == "101");
     assert (Convert.intToBinary (-5) == "-101");
+    assert (Convert.intToBinary (int.MIN) == "-10000000000000000000000000000000");
     assert (Convert.intToBinary (0) == "0");
 }
 
