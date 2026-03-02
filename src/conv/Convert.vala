@@ -72,15 +72,15 @@ namespace Vala.Conv {
          * @return Result.ok(parsed bool), or
          *         Result.error(ConvertError.PARSE) when parsing fails.
          */
-        public static Result<bool ?, GLib.Error> toBool (string s) {
+        public static Result<bool, GLib.Error> toBool (string s) {
             string normalized = s.strip ().down ();
             if (normalized == "true" || normalized == "1") {
-                return Result.ok<bool ?, GLib.Error> (true);
+                return Result.ok<bool, GLib.Error> (true);
             }
             if (normalized == "false" || normalized == "0") {
-                return Result.ok<bool ?, GLib.Error> (false);
+                return Result.ok<bool, GLib.Error> (false);
             }
-            return Result.error<bool ?, GLib.Error> (
+            return Result.error<bool, GLib.Error> (
                 new ConvertError.PARSE ("failed to parse bool: %s".printf (s))
             );
         }

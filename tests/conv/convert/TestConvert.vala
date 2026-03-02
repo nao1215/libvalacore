@@ -71,7 +71,7 @@ double unwrapDouble (Result<double ?, GLib.Error> result) {
     return result.unwrap ();
 }
 
-bool unwrapBool (Result<bool ?, GLib.Error> result) {
+bool unwrapBool (Result<bool, GLib.Error> result) {
     assert (result.isOk ());
     return result.unwrap ();
 }
@@ -91,7 +91,7 @@ void assertParseErrorDouble (Result<double ?, GLib.Error> result) {
     assert (result.unwrapError () is Vala.Conv.ConvertError.PARSE);
 }
 
-void assertParseErrorBool (Result<bool ?, GLib.Error> result) {
+void assertParseErrorBool (Result<bool, GLib.Error> result) {
     assert (result.isError ());
     assert (result.unwrapError () is Vala.Conv.ConvertError.PARSE);
 }
