@@ -2,12 +2,18 @@ using Vala.Encoding;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/base64/testConstruct", testConstruct);
     Test.add_func ("/base64/testEncode", testEncode);
     Test.add_func ("/base64/testDecode", testDecode);
     Test.add_func ("/base64/testEncodeString", testEncodeString);
     Test.add_func ("/base64/testDecodeString", testDecodeString);
     Test.add_func ("/base64/testEmpty", testEmpty);
     Test.run ();
+}
+
+void testConstruct () {
+    var codec = new Vala.Encoding.Base64 ();
+    assert (codec != null);
 }
 
 void testEncode () {
