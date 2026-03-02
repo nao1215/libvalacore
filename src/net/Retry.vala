@@ -66,9 +66,12 @@ namespace Vala.Net {
      *
      * Example:
      * {{{
-     *     Retry retry = Retry.networkDefault ()
-     *         .withMaxAttempts (3)
-     *         .onRetry ((attempt, reason, delay) => {
+     *     Retry retry = Retry.networkDefault ();
+     *     var configured = retry.withMaxAttempts (3);
+     *     if (configured.isError ()) {
+     *         return;
+     *     }
+     *     retry.onRetry ((attempt, reason, delay) => {
      *             print ("retry %d: %s (%" + int64.FORMAT + "ms)\n", attempt, reason, delay);
      *         });
      *
@@ -152,15 +155,17 @@ namespace Vala.Net {
          * The first execution counts as attempt 1.
          *
          * @param n maximum attempts (must be positive).
-         * @return this retry instance.
-         * @throws RetryError.INVALID_ARGUMENT when n is not positive.
+         * @return Result.ok(this retry instance), or
+         *         Result.error(RetryError.INVALID_ARGUMENT) when n is not positive.
          */
-        public Retry withMaxAttempts (int n) throws RetryError {
+        public Result<Retry, GLib.Error> withMaxAttempts (int n) {
             if (n <= 0) {
-                throw new RetryError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n));
+                return Result.error<Retry, GLib.Error> (
+                    new RetryError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n))
+                );
             }
             _max_attempts = n;
-            return this;
+            return Result.ok<Retry, GLib.Error> (this);
         }
 
         /**
@@ -171,28 +176,36 @@ namespace Vala.Net {
          *
          * @param initial initial delay.
          * @param max maximum delay cap.
-         * @return this retry instance.
-         * @throws RetryError.INVALID_ARGUMENT when initial/max are invalid.
+         * @return Result.ok(this retry instance), or
+         *         Result.error(RetryError.INVALID_ARGUMENT) when initial/max are invalid.
          */
-        public Retry withBackoff (Duration initial, Duration max) throws RetryError {
+        public Result<Retry, GLib.Error> withBackoff (Duration initial, Duration max) {
             int64 initial_millis = initial.toMillis ();
             int64 max_millis = max.toMillis ();
 
             if (initial_millis < 0) {
-                throw new RetryError.INVALID_ARGUMENT (
-                          "initial must be non-negative, got " + initial_millis.to_string ()
+                return Result.error<Retry, GLib.Error> (
+                    new RetryError.INVALID_ARGUMENT (
+                        "initial must be non-negative, got " + initial_millis.to_string ()
+                    )
                 );
             }
             if (max_millis < 0) {
-                throw new RetryError.INVALID_ARGUMENT (
-                          "max must be non-negative, got " + max_millis.to_string ()
+                return Result.error<Retry, GLib.Error> (
+                    new RetryError.INVALID_ARGUMENT (
+                        "max must be non-negative, got " + max_millis.to_string ()
+                    )
                 );
             }
             if (max_millis < initial_millis) {
-                throw new RetryError.INVALID_ARGUMENT ("max must be greater than or equal to initial");
+                return Result.error<Retry, GLib.Error> (
+                    new RetryError.INVALID_ARGUMENT ("max must be greater than or equal to initial")
+                );
             }
 
-            return setBackoffUnchecked (RetryBackoffMode.EXPONENTIAL, initial_millis, max_millis);
+            return Result.ok<Retry, GLib.Error> (
+                setBackoffUnchecked (RetryBackoffMode.EXPONENTIAL, initial_millis, max_millis)
+            );
         }
 
         /**
@@ -201,18 +214,22 @@ namespace Vala.Net {
          * All retries use the same sleep duration.
          *
          * @param delay fixed delay between attempts.
-         * @return this retry instance.
-         * @throws RetryError.INVALID_ARGUMENT when delay is negative.
+         * @return Result.ok(this retry instance), or
+         *         Result.error(RetryError.INVALID_ARGUMENT) when delay is negative.
          */
-        public Retry withFixedDelay (Duration delay) throws RetryError {
+        public Result<Retry, GLib.Error> withFixedDelay (Duration delay) {
             int64 delay_millis = delay.toMillis ();
             if (delay_millis < 0) {
-                throw new RetryError.INVALID_ARGUMENT (
-                          "delay must be non-negative, got " + delay_millis.to_string ()
+                return Result.error<Retry, GLib.Error> (
+                    new RetryError.INVALID_ARGUMENT (
+                        "delay must be non-negative, got " + delay_millis.to_string ()
+                    )
                 );
             }
 
-            return setBackoffUnchecked (RetryBackoffMode.FIXED, delay_millis, delay_millis);
+            return Result.ok<Retry, GLib.Error> (
+                setBackoffUnchecked (RetryBackoffMode.FIXED, delay_millis, delay_millis)
+            );
         }
 
         /**
