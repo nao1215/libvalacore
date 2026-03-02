@@ -2,11 +2,18 @@ using Vala.Lang;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/lang/randoms/testConstruct", testConstruct);
     Test.add_func ("/lang/randoms/testNextInt", testNextInt);
     Test.add_func ("/lang/randoms/testNextDouble", testNextDouble);
     Test.add_func ("/lang/randoms/testShuffle", testShuffle);
     Test.add_func ("/lang/randoms/testNextIntInvalidBound", testNextIntInvalidBound);
+    Test.add_func ("/lang/randoms/testNextIntNegativeBound", testNextIntNegativeBound);
     Test.run ();
+}
+
+void testConstruct () {
+    var randoms = new Randoms ();
+    assert (randoms != null);
 }
 
 void testNextInt () {
@@ -71,6 +78,17 @@ void testNextIntInvalidBound () {
     bool thrown = false;
     try {
         Randoms.nextInt (0);
+    } catch (RandomsError e) {
+        thrown = true;
+        assert (e is RandomsError.INVALID_ARGUMENT);
+    }
+    assert (thrown);
+}
+
+void testNextIntNegativeBound () {
+    bool thrown = false;
+    try {
+        Randoms.nextInt (-10);
     } catch (RandomsError e) {
         thrown = true;
         assert (e is RandomsError.INVALID_ARGUMENT);
