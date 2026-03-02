@@ -71,10 +71,10 @@ namespace Vala.Io {
          * @return Result.ok(true/false) depending on acquisition success,
          *         or Result.error(FileLockError.INVALID_ARGUMENT) when timeout is negative.
          */
-        public Vala.Collections.Result<bool ?, GLib.Error> acquireTimeout (Duration timeout) {
+        public Vala.Collections.Result<bool, GLib.Error> acquireTimeout (Duration timeout) {
             int64 timeoutMillis = timeout.toMillis ();
             if (timeoutMillis < 0) {
-                return Vala.Collections.Result.error<bool ?, GLib.Error> (
+                return Vala.Collections.Result.error<bool, GLib.Error> (
                     new FileLockError.INVALID_ARGUMENT (
                         ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
                     )
@@ -97,14 +97,14 @@ namespace Vala.Io {
             }
             while (true) {
                 if (GLib.get_monotonic_time () > deadlineMicros) {
-                    return Vala.Collections.Result.ok<bool ?, GLib.Error> (false);
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (false);
                 }
                 if (tryAcquire ()) {
-                    return Vala.Collections.Result.ok<bool ?, GLib.Error> (true);
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
                 }
                 int64 remainingMicros = deadlineMicros - GLib.get_monotonic_time ();
                 if (remainingMicros <= 0) {
-                    return Vala.Collections.Result.ok<bool ?, GLib.Error> (false);
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (false);
                 }
 
                 int64 sleepMillis = (remainingMicros + 999) / 1000;
