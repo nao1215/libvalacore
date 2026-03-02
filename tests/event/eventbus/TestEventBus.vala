@@ -16,59 +16,82 @@ void testSubscribePublish () {
     var bus = new EventBus ();
     int sum = 0;
 
-    try {
-        bus.subscribe ("numbers", (value) => {
-            sum += value.get_int32 ();
-        });
+    var subscribed = bus.subscribe ("numbers", (value) => {
+        sum += value.get_int32 ();
+    });
+    assert (subscribed.isOk ());
 
-        bus.publish ("numbers", new GLib.Variant.int32 (2));
-        bus.publish ("numbers", new GLib.Variant.int32 (3));
-        assert (sum == 5);
-    } catch (EventBusError e) {
-        assert_not_reached ();
-    }
+    var published1 = bus.publish ("numbers", new GLib.Variant.int32 (2));
+    assert (published1.isOk ());
+    assert (published1.unwrap () == true);
+
+    var published2 = bus.publish ("numbers", new GLib.Variant.int32 (3));
+    assert (published2.isOk ());
+    assert (published2.unwrap () == true);
+
+    assert (sum == 5);
 }
 
 void testSubscribeOnce () {
     var bus = new EventBus ();
     int count = 0;
 
-    try {
-        bus.subscribeOnce ("once", (eventData) => {
-            count++;
-        });
+    var subscribed = bus.subscribeOnce ("once", (eventData) => {
+        count++;
+    });
+    assert (subscribed.isOk ());
 
-        bus.publish ("once", new GLib.Variant.string ("a"));
-        bus.publish ("once", new GLib.Variant.string ("b"));
-        assert (count == 1);
-    } catch (EventBusError e) {
-        assert_not_reached ();
-    }
+    var published1 = bus.publish ("once", new GLib.Variant.string ("a"));
+    assert (published1.isOk ());
+    assert (published1.unwrap () == true);
+
+    var published2 = bus.publish ("once", new GLib.Variant.string ("b"));
+    assert (published2.isOk ());
+    assert (published2.unwrap () == false);
+
+    assert (count == 1);
 }
 
 void testUnsubscribeAndClear () {
     var bus = new EventBus ();
     int count = 0;
 
-    try {
-        bus.subscribe ("flag", (value) => {
-            count++;
-        });
-        assert (bus.hasSubscribers ("flag") == true);
+    var subscribedFlag = bus.subscribe ("flag", (value) => {
+        count++;
+    });
+    assert (subscribedFlag.isOk ());
 
-        bus.unsubscribe ("flag");
-        assert (bus.hasSubscribers ("flag") == false);
-        bus.publish ("flag", new GLib.Variant.boolean (true));
-        assert (count == 0);
+    var hasFlag = bus.hasSubscribers ("flag");
+    assert (hasFlag.isOk ());
+    assert (hasFlag.unwrap () == true);
 
-        bus.subscribe ("x", (value) => {});
-        bus.subscribe ("y", (value) => {});
-        bus.clear ();
-        assert (bus.hasSubscribers ("x") == false);
-        assert (bus.hasSubscribers ("y") == false);
-    } catch (EventBusError e) {
-        assert_not_reached ();
-    }
+    var unsubscribedFlag = bus.unsubscribe ("flag");
+    assert (unsubscribedFlag.isOk ());
+    assert (unsubscribedFlag.unwrap () == true);
+
+    hasFlag = bus.hasSubscribers ("flag");
+    assert (hasFlag.isOk ());
+    assert (hasFlag.unwrap () == false);
+
+    var publishNoSubscribers = bus.publish ("flag", new GLib.Variant.boolean (true));
+    assert (publishNoSubscribers.isOk ());
+    assert (publishNoSubscribers.unwrap () == false);
+    assert (count == 0);
+
+    var subscribedX = bus.subscribe ("x", (value) => {});
+    assert (subscribedX.isOk ());
+    var subscribedY = bus.subscribe ("y", (value) => {});
+    assert (subscribedY.isOk ());
+
+    bus.clear ();
+
+    var hasX = bus.hasSubscribers ("x");
+    assert (hasX.isOk ());
+    assert (hasX.unwrap () == false);
+
+    var hasY = bus.hasSubscribers ("y");
+    assert (hasY.isOk ());
+    assert (hasY.unwrap () == false);
 }
 
 void testAsyncDispatch () {
@@ -77,19 +100,18 @@ void testAsyncDispatch () {
     GLib.Mutex mutex = GLib.Mutex ();
     GLib.Cond cond = GLib.Cond ();
 
-    try {
-        bus.subscribe ("async", (value) => {
-            mutex.lock ();
-            count += value.get_int32 ();
-            cond.signal ();
-            mutex.unlock ();
-        });
+    var subscribed = bus.subscribe ("async", (value) => {
+        mutex.lock ();
+        count += value.get_int32 ();
+        cond.signal ();
+        mutex.unlock ();
+    });
+    assert (subscribed.isOk ());
 
-        for (int i = 0; i < 10; i++) {
-            bus.publish ("async", new GLib.Variant.int32 (1));
-        }
-    } catch (EventBusError e) {
-        assert_not_reached ();
+    for (int i = 0; i < 10; i++) {
+        var published = bus.publish ("async", new GLib.Variant.int32 (1));
+        assert (published.isOk ());
+        assert (published.unwrap () == true);
     }
 
     int64 deadline = GLib.get_monotonic_time () + 2 * 1000 * 1000;
@@ -107,12 +129,8 @@ void testAsyncDispatch () {
 
 void testInvalidTopic () {
     var bus = new EventBus ();
-    bool thrown = false;
-    try {
-        bus.publish ("", new GLib.Variant.string ("x"));
-    } catch (EventBusError e) {
-        thrown = true;
-        assert (e is EventBusError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var published = bus.publish ("", new GLib.Variant.string ("x"));
+    assert (published.isError ());
+    assert (published.unwrapError () is EventBusError.INVALID_ARGUMENT);
+    assert (published.unwrapError ().message == "topic must not be empty");
 }
