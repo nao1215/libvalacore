@@ -1,4 +1,5 @@
 using Vala.Encoding;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -20,20 +21,29 @@ void testEncode () {
 }
 
 void testDecode () {
-    assert (Url.decode ("a%20b%2Bc") == "a b+c");
+    Result<string, GLib.Error> decoded = Url.decode ("a%20b%2Bc");
+    assert (decoded.isOk ());
+    assert (decoded.unwrap () == "a b+c");
 }
 
 void testRoundTrip () {
     string original = "Hello / こんにちは";
     string encoded = Url.encode (original);
-    string decoded = Url.decode (encoded);
-    assert (decoded == original);
+    Result<string, GLib.Error> decoded = Url.decode (encoded);
+    assert (decoded.isOk ());
+    assert (decoded.unwrap () == original);
 }
 
 void testInvalidDecode () {
-    assert (Url.decode ("%ZZ") == "");
-    assert (Url.decode ("%") == "");
-    assert (Url.decode ("%A") == "");
-    assert (Url.decode ("%1G") == "");
-    assert (Url.decode ("%20%ZZ") == "");
+    assertParseError ("%ZZ");
+    assertParseError ("%");
+    assertParseError ("%A");
+    assertParseError ("%1G");
+    assertParseError ("%20%ZZ");
+}
+
+void assertParseError (string input) {
+    Result<string, GLib.Error> decoded = Url.decode (input);
+    assert (decoded.isError ());
+    assert (decoded.unwrapError () is UrlError.PARSE);
 }

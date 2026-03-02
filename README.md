@@ -1100,7 +1100,7 @@ Static utility methods for URL percent-encoding.
 | Method | Description |
 |---|---|
 | `encode(string s)` | Encodes a URL component with percent-encoding |
-| `decode(string s)` | Decodes a percent-encoded URL component |
+| `decode(string s)` | Returns `Result<string, Error>` (error: `UrlError.PARSE` on malformed percent-encoding) |
 
 ### Vala.Crypto.Hash
 Static utility methods for cryptographic hashes.
