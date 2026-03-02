@@ -14,35 +14,27 @@ void main (string[] args) {
 }
 
 BigInteger bi (string value) {
-    try {
-        return new BigInteger (value);
-    } catch (BigIntegerError e) {
-        assert_not_reached ();
-    }
+    var parsed = BigInteger.of (value);
+    assert (parsed.isOk ());
+    return parsed.unwrap ();
 }
 
 BigInteger divideOk (BigInteger left, BigInteger right) {
-    try {
-        return left.divide (right);
-    } catch (BigIntegerError e) {
-        assert_not_reached ();
-    }
+    var quotient = left.divide (right);
+    assert (quotient.isOk ());
+    return quotient.unwrap ();
 }
 
 BigInteger modOk (BigInteger left, BigInteger right) {
-    try {
-        return left.mod (right);
-    } catch (BigIntegerError e) {
-        assert_not_reached ();
-    }
+    var remainder = left.mod (right);
+    assert (remainder.isOk ());
+    return remainder.unwrap ();
 }
 
 BigInteger powOk (BigInteger value, int exponent) {
-    try {
-        return value.pow (exponent);
-    } catch (BigIntegerError e) {
-        assert_not_reached ();
-    }
+    var powered = value.pow (exponent);
+    assert (powered.isOk ());
+    return powered.unwrap ();
 }
 
 void testNormalize () {
@@ -104,66 +96,31 @@ void testLargeValues () {
 }
 
 void testInvalidArguments () {
-    bool emptyInputThrown = false;
-    try {
-        new BigInteger ("");
-    } catch (BigIntegerError e) {
-        emptyInputThrown = true;
-        assert (e is BigIntegerError.INVALID_ARGUMENT);
-    }
-    assert (emptyInputThrown);
+    var emptyInput = BigInteger.of ("");
+    assert (emptyInput.isError ());
+    assert (emptyInput.unwrapError () is BigIntegerError.INVALID_ARGUMENT);
 
-    bool nonNumericThrown = false;
-    try {
-        new BigInteger ("abc");
-    } catch (BigIntegerError e) {
-        nonNumericThrown = true;
-        assert (e is BigIntegerError.INVALID_ARGUMENT);
-    }
-    assert (nonNumericThrown);
+    var nonNumeric = BigInteger.of ("abc");
+    assert (nonNumeric.isError ());
+    assert (nonNumeric.unwrapError () is BigIntegerError.INVALID_ARGUMENT);
 
-    bool signOnlyThrown = false;
-    try {
-        new BigInteger ("-");
-    } catch (BigIntegerError e) {
-        signOnlyThrown = true;
-        assert (e is BigIntegerError.INVALID_ARGUMENT);
-    }
-    assert (signOnlyThrown);
+    var signOnly = BigInteger.of ("-");
+    assert (signOnly.isError ());
+    assert (signOnly.unwrapError () is BigIntegerError.INVALID_ARGUMENT);
 
-    bool decimalThrown = false;
-    try {
-        new BigInteger ("12.34");
-    } catch (BigIntegerError e) {
-        decimalThrown = true;
-        assert (e is BigIntegerError.INVALID_ARGUMENT);
-    }
-    assert (decimalThrown);
+    var decimal = BigInteger.of ("12.34");
+    assert (decimal.isError ());
+    assert (decimal.unwrapError () is BigIntegerError.INVALID_ARGUMENT);
 
-    bool divThrown = false;
-    try {
-        bi ("10").divide (bi ("0"));
-    } catch (BigIntegerError e) {
-        divThrown = true;
-        assert (e is BigIntegerError.DIVISION_BY_ZERO);
-    }
-    assert (divThrown);
+    var div = bi ("10").divide (bi ("0"));
+    assert (div.isError ());
+    assert (div.unwrapError () is BigIntegerError.DIVISION_BY_ZERO);
 
-    bool modThrown = false;
-    try {
-        bi ("10").mod (bi ("0"));
-    } catch (BigIntegerError e) {
-        modThrown = true;
-        assert (e is BigIntegerError.DIVISION_BY_ZERO);
-    }
-    assert (modThrown);
+    var mod = bi ("10").mod (bi ("0"));
+    assert (mod.isError ());
+    assert (mod.unwrapError () is BigIntegerError.DIVISION_BY_ZERO);
 
-    bool powThrown = false;
-    try {
-        bi ("2").pow (-1);
-    } catch (BigIntegerError e) {
-        powThrown = true;
-        assert (e is BigIntegerError.INVALID_ARGUMENT);
-    }
-    assert (powThrown);
+    var pow = bi ("2").pow (-1);
+    assert (pow.isError ());
+    assert (pow.unwrapError () is BigIntegerError.INVALID_ARGUMENT);
 }

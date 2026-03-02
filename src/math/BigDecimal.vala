@@ -419,44 +419,47 @@ namespace Vala.Math {
         }
 
         private static BigInteger mustBigInteger (string value) {
-            try {
-                return new BigInteger (value);
-            } catch (BigIntegerError e) {
+            var parsed = BigInteger.of (value);
+            if (parsed.isError ()) {
                 warning ("BigDecimal internal: BigInteger conversion failed for '%s': %s",
                          value,
-                         e.message);
+                         parsed.unwrapError ().message);
                 return safeConstant ("0");
             }
+            return parsed.unwrap ();
         }
 
         private static BigInteger mustDivide (BigInteger left, BigInteger right) {
-            try {
-                return left.divide (right);
-            } catch (BigIntegerError e) {
-                warning ("BigDecimal internal: decimal division failed: %s", e.message);
+            var quotient = left.divide (right);
+            if (quotient.isError ()) {
+                warning ("BigDecimal internal: decimal division failed: %s",
+                         quotient.unwrapError ().message);
                 return safeConstant ("0");
             }
+            return quotient.unwrap ();
         }
 
         private static BigInteger mustPow (BigInteger value, int exponent) {
-            try {
-                return value.pow (exponent);
-            } catch (BigIntegerError e) {
-                warning ("BigDecimal internal: decimal power failed: %s", e.message);
+            var powered = value.pow (exponent);
+            if (powered.isError ()) {
+                warning ("BigDecimal internal: decimal power failed: %s",
+                         powered.unwrapError ().message);
                 return safeConstant ("1");
             }
+            return powered.unwrap ();
         }
 
         private static BigInteger safeConstant (string literal) {
-            try {
-                return new BigInteger (literal);
-            } catch (BigIntegerError e) {
-                try {
-                    return new BigInteger ("0");
-                } catch (BigIntegerError fallbackErr) {
-                    assert_not_reached ();
-                }
+            var parsed = BigInteger.of (literal);
+            if (parsed.isOk ()) {
+                return parsed.unwrap ();
             }
+
+            var fallback = BigInteger.of ("0");
+            if (fallback.isError ()) {
+                assert_not_reached ();
+            }
+            return fallback.unwrap ();
         }
     }
 }
