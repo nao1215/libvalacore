@@ -42,7 +42,7 @@ namespace Vala.Encoding {
                 return Result.ok<GLib.Bytes, GLib.Error> (new GLib.Bytes (new uint8[0]));
             }
 
-            Result<bool ?, GLib.Error> validated = validateBase64Input (encoded);
+            Result<bool, GLib.Error> validated = validateBase64Input (encoded);
             if (validated.isError ()) {
                 return Result.error<GLib.Bytes, GLib.Error> (validated.unwrapError ());
             }
@@ -82,9 +82,9 @@ namespace Vala.Encoding {
             return Result.ok<string, GLib.Error> (builder.str);
         }
 
-        private static Result<bool ?, GLib.Error> validateBase64Input (string encoded) {
+        private static Result<bool, GLib.Error> validateBase64Input (string encoded) {
             if (encoded.length % 4 != 0) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new Base64Error.INVALID_ARGUMENT (
                         "base64 text length must be a multiple of 4: %d".printf (encoded.length)
                     )
@@ -98,7 +98,7 @@ namespace Vala.Encoding {
                 unichar c = encoded.get_char (i);
                 if (c == '=') {
                     if (i < encoded.length - 2) {
-                        return Result.error<bool ?, GLib.Error> (
+                        return Result.error<bool, GLib.Error> (
                             new Base64Error.PARSE (
                                 "padding '=' is only allowed in the last two characters: position=%d".printf (i)
                             )
@@ -110,7 +110,7 @@ namespace Vala.Encoding {
                 }
 
                 if (seen_padding) {
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new Base64Error.PARSE (
                             "base64 text has non-padding character after '=' at position %d".printf (i)
                         )
@@ -118,7 +118,7 @@ namespace Vala.Encoding {
                 }
 
                 if (!isBase64Char (c)) {
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new Base64Error.PARSE (
                             "invalid base64 character at position %d".printf (i)
                         )
@@ -127,11 +127,11 @@ namespace Vala.Encoding {
             }
 
             if (padding_count > 2) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new Base64Error.PARSE ("base64 text can contain at most two '=' padding characters")
                 );
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         private static bool isBase64Char (unichar c) {
