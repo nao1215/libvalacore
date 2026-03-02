@@ -30,6 +30,12 @@ int mustDoInt (SingleFlight group, string key, owned SingleFlightFunc<int> fn) {
     return result;
 }
 
+CountDownLatch mustLatch (int count) {
+    var created = CountDownLatch.of (count);
+    assert (created.isOk ());
+    return created.unwrap ();
+}
+
 void testDo () {
     var group = new SingleFlight ();
     int called = 0;
@@ -46,9 +52,9 @@ void testDo () {
 
 void testDoSharesExecution () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
-    var done = new CountDownLatch (2);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
+    var done = mustLatch (2);
 
     int called = 0;
     int first = 0;
@@ -100,8 +106,8 @@ void testDoSharesExecution () {
 
 void testDoFutureSharesExecution () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
     int called = 0;
 
     Future<int> first = group.doFuture<int> ("future-key", () => {
@@ -130,9 +136,9 @@ void testDoFutureSharesExecution () {
 
 void testForget () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
-    var done = new CountDownLatch (1);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
+    var done = mustLatch (1);
 
     new GLib.Thread<void *> ("singleflight-test-forget", () => {
         try {
@@ -161,8 +167,8 @@ void testForget () {
 
 void testClear () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (2);
-    var release = new CountDownLatch (1);
+    var started = mustLatch (2);
+    var release = mustLatch (1);
 
     Future<int> first = group.doFuture<int> ("k1", () => {
         started.countDown ();
@@ -215,9 +221,9 @@ void testDoFutureInvalidKey () {
 
 void testDoTypeMismatch () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
-    var done = new CountDownLatch (1);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
+    var done = mustLatch (1);
 
     new GLib.Thread<void *> ("singleflight-type-mismatch", () => {
         try {
