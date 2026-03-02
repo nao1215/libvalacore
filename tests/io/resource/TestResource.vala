@@ -2,9 +2,15 @@ using Vala.Io;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/io/resource/testConstruct", testConstruct);
     Test.add_func ("/io/resource/testReadResource", testReadResource);
     Test.add_func ("/io/resource/testReadResourceInvalid", testReadResourceInvalid);
     Test.run ();
+}
+
+void testConstruct () {
+    var helper = new Vala.Io.Resource ();
+    assert (helper != null);
 }
 
 void testReadResource () {
