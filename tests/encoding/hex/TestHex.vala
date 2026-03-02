@@ -2,12 +2,18 @@ using Vala.Encoding;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/hex/testConstruct", testConstruct);
     Test.add_func ("/hex/testEncode", testEncode);
     Test.add_func ("/hex/testDecode", testDecode);
     Test.add_func ("/hex/testDecodeUpperCase", testDecodeUpperCase);
     Test.add_func ("/hex/testEmpty", testEmpty);
     Test.add_func ("/hex/testInvalid", testInvalid);
     Test.run ();
+}
+
+void testConstruct () {
+    var codec = new Hex ();
+    assert (codec != null);
 }
 
 void testEncode () {
