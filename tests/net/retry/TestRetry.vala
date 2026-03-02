@@ -96,8 +96,9 @@ void testRetryVoid () {
     bool ok = retry.retryVoid (() => {
         calls++;
         if (calls < 2) {
-            throw new RetryTestError.FAIL ("temporary");
+            return Result.error<bool, GLib.Error> (new RetryTestError.FAIL ("temporary"));
         }
+        return Result.ok<bool, GLib.Error> (true);
     });
 
     assert (ok == true);
@@ -110,7 +111,7 @@ void testRetryVoidFailure () {
 
     bool ok = retry.retryVoid (() => {
         calls++;
-        throw new RetryTestError.FAIL ("permanent");
+        return Result.error<bool, GLib.Error> (new RetryTestError.FAIL ("permanent"));
     });
 
     assert (ok == false);
@@ -128,8 +129,11 @@ void testHttpStatusRetry503 () {
     bool ok = retry.retryVoid (() => {
         calls++;
         if (calls == 1) {
-            throw new RetryTestError.FAIL ("HTTP 503 Service Unavailable");
+            return Result.error<bool, GLib.Error> (
+                new RetryTestError.FAIL ("HTTP 503 Service Unavailable")
+            );
         }
+        return Result.ok<bool, GLib.Error> (true);
     });
 
     assert (ok == true);
@@ -146,7 +150,7 @@ void testHttpStatusRetry404 () {
     int calls = 0;
     bool ng = retry.retryVoid (() => {
         calls++;
-        throw new RetryTestError.FAIL ("HTTP 404 Not Found");
+        return Result.error<bool, GLib.Error> (new RetryTestError.FAIL ("HTTP 404 Not Found"));
     });
 
     assert (ng == false);

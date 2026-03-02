@@ -613,7 +613,7 @@ Retry policy utility for transient failures.
 | `httpStatusRetry(ArrayList<int> statusCodes)` | Retries only for matching HTTP status codes in failure reason text |
 | `retry(RetryFunc fn)` | Retries bool callback until success or attempts exhausted |
 | `retryResult<T>(RetryResultFunc<T> fn)` | Retries nullable callback until non-null result |
-| `retryVoid(RetryVoidFunc fn)` | Retries callback that may throw `GLib.Error` |
+| `retryVoid(RetryVoidFunc fn)` | Retries callback returning `Result<bool, Error>` |
 
 ### Vala.Net.RateLimiter
 Token-bucket based rate limiter.

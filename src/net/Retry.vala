@@ -25,12 +25,12 @@ namespace Vala.Net {
     public delegate T ? RetryResultFunc<T> ();
 
     /**
-     * Callback invoked by retry loop that may throw recoverable GLib.Error.
+     * Callback invoked by retry loop with Result-style failure contract.
      *
-     * Throwing an error is treated as a retryable failure unless predicate
-     * configured by withRetryOn() rejects it.
+     * Returning Result.error is treated as a retryable failure unless
+     * predicate configured by withRetryOn() rejects it.
      */
-    public delegate void RetryVoidFunc () throws GLib.Error;
+    public delegate Result<bool, GLib.Error> RetryVoidFunc ();
 
     /**
      * Predicate used to decide whether retry should continue.
@@ -351,12 +351,12 @@ namespace Vala.Net {
         }
 
         /**
-         * Retries callback that may throw GLib.Error.
+         * Retries callback that returns Result.
          *
          * Example:
          * {{{
          *     bool ok = retry.retryVoid (() => {
-         *         do_operation_that_may_throw ();
+         *         return do_operation ();
          *     });
          * }}}
          *
@@ -365,13 +365,13 @@ namespace Vala.Net {
          */
         public bool retryVoid (owned RetryVoidFunc fn) {
             for (int attempt = 1; attempt <= _max_attempts; attempt++) {
-                try {
-                    fn ();
+                var result = fn ();
+                if (result.isOk ()) {
                     return true;
-                } catch (GLib.Error e) {
-                    if (!shouldContinue (attempt, e.message)) {
-                        return false;
-                    }
+                }
+
+                if (!shouldContinue (attempt, result.unwrapError ().message)) {
+                    return false;
                 }
             }
             return false;
