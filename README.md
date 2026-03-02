@@ -941,12 +941,12 @@ Static utility methods for Tar archive creation and extraction.
 
 | Method | Description |
 |---|---|
-| `create(Path archive, ArrayList<Path> files)` | Returns `Result<bool?, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
-| `createFromDir(Path archive, Path dir)` | Returns `Result<bool?, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.IO`) |
-| `extract(Path archive, Path dest)` | Returns `Result<bool?, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`, `TarError.SECURITY`) |
+| `create(Path archive, ArrayList<Path> files)` | Returns `Result<bool, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
+| `createFromDir(Path archive, Path dir)` | Returns `Result<bool, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.IO`) |
+| `extract(Path archive, Path dest)` | Returns `Result<bool, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`, `TarError.SECURITY`) |
 | `list(Path archive)` | Returns `Result<ArrayList<string>, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
-| `addFile(Path archive, Path file)` | Returns `Result<bool?, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
-| `extractFile(Path archive, string entry, Path dest)` | Returns `Result<bool?, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
+| `addFile(Path archive, Path file)` | Returns `Result<bool, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
+| `extractFile(Path archive, string entry, Path dest)` | Returns `Result<bool, Error>` (errors: `TarError.INVALID_ARGUMENT`, `TarError.NOT_FOUND`, `TarError.IO`) |
 
 ### Vala.Compress.Gzip
 Static utility methods for Gzip compression and decompression.
