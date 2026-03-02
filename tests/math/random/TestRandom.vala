@@ -25,8 +25,7 @@ void testNextInt () {
         var result = Vala.Math.Random.nextInt (10);
         assert (result.isOk ());
 
-        int ? n = result.unwrap ();
-        assert (n != null);
+        int n = result.unwrap ();
         assert (n >= 0);
         assert (n < 10);
     }
@@ -37,8 +36,7 @@ void testNextIntRange () {
         var result = Vala.Math.Random.nextIntRange (-3, 7);
         assert (result.isOk ());
 
-        int ? n = result.unwrap ();
-        assert (n != null);
+        int n = result.unwrap ();
         assert (n >= -3);
         assert (n < 7);
     }
