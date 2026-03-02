@@ -77,19 +77,31 @@ namespace Vala.Distributed {
          * Creates a generator with node ID.
          *
          * @param nodeId node ID in [0, 1023].
-         * @throws SnowflakeError.INVALID_ARGUMENT when nodeId is out of range.
          */
-        public Snowflake (int nodeId) throws SnowflakeError {
-            if (nodeId < 0 || nodeId > MAX_NODE_ID) {
-                throw new SnowflakeError.INVALID_ARGUMENT (
-                          "nodeId must be in range [0, %s]".printf (MAX_NODE_ID.to_string ())
-                );
-            }
-
+        private Snowflake (int nodeId) {
             _node_id = nodeId;
             _epoch_millis = DEFAULT_EPOCH_MILLIS;
             _last_timestamp_millis = -1L;
             _sequence = 0L;
+        }
+
+        /**
+         * Creates a generator with node ID.
+         *
+         * @param nodeId node ID in [0, 1023].
+         * @return Result.ok(generator), or
+         *         Result.error(SnowflakeError.INVALID_ARGUMENT) when nodeId is out of range.
+         */
+        public static Vala.Collections.Result<Snowflake, GLib.Error> of (int nodeId) {
+            if (nodeId < 0 || nodeId > MAX_NODE_ID) {
+                return Vala.Collections.Result.error<Snowflake, GLib.Error> (
+                    new SnowflakeError.INVALID_ARGUMENT (
+                        "nodeId must be in range [0, %s]".printf (MAX_NODE_ID.to_string ())
+                    )
+                );
+            }
+
+            return Vala.Collections.Result.ok<Snowflake, GLib.Error> (new Snowflake (nodeId));
         }
 
         /**
@@ -106,11 +118,10 @@ namespace Vala.Distributed {
         /**
          * Generates next Snowflake ID.
          *
-         * @return next unique ID.
-         * @throws SnowflakeError.CLOCK_BEFORE_EPOCH when current clock is before configured epoch.
-         * @throws SnowflakeError.TIMESTAMP_OVERFLOW when 41-bit timestamp capacity is exceeded.
+         * @return Result.ok(next unique ID), or
+         *         Result.error(SnowflakeError.CLOCK_BEFORE_EPOCH/TIMESTAMP_OVERFLOW).
          */
-        public int64 nextId () throws SnowflakeError {
+        public Vala.Collections.Result<int64, GLib.Error> nextId () {
             _mutex.lock ();
 
             int64 now = currentTimeMillis ();
@@ -130,11 +141,15 @@ namespace Vala.Distributed {
             int64 elapsed = now - _epoch_millis;
             if (elapsed < 0L) {
                 _mutex.unlock ();
-                throw new SnowflakeError.CLOCK_BEFORE_EPOCH ("current time is before configured epoch");
+                return Vala.Collections.Result.error<int64, GLib.Error> (
+                    new SnowflakeError.CLOCK_BEFORE_EPOCH ("current time is before configured epoch")
+                );
             }
             if (elapsed > TIMESTAMP_MASK) {
                 _mutex.unlock ();
-                throw new SnowflakeError.TIMESTAMP_OVERFLOW ("snowflake timestamp overflow");
+                return Vala.Collections.Result.error<int64, GLib.Error> (
+                    new SnowflakeError.TIMESTAMP_OVERFLOW ("snowflake timestamp overflow")
+                );
             }
 
             _last_timestamp_millis = now;
@@ -143,17 +158,21 @@ namespace Vala.Distributed {
                        (((int64) _node_id & NODE_MASK) << SEQUENCE_BITS) |
                        _sequence;
             _mutex.unlock ();
-            return id;
+            return Vala.Collections.Result.ok<int64, GLib.Error> (id);
         }
 
         /**
          * Generates next Snowflake ID as string.
          *
-         * @return next unique ID string.
-         * @throws SnowflakeError when nextId fails.
+         * @return Result.ok(next unique ID string), or
+         *         Result.error(...) when nextId fails.
          */
-        public string nextString () throws SnowflakeError {
-            return nextId ().to_string ();
+        public Vala.Collections.Result<string, GLib.Error> nextString () {
+            var id = nextId ();
+            if (id.isError ()) {
+                return Vala.Collections.Result.error<string, GLib.Error> (id.unwrapError ());
+            }
+            return Vala.Collections.Result.ok<string, GLib.Error> (id.unwrap ().to_string ());
         }
 
         /**
