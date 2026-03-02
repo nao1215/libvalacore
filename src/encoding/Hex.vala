@@ -1,4 +1,14 @@
+using Vala.Collections;
+
 namespace Vala.Encoding {
+    /**
+     * Error domain for hex codec operations.
+     */
+    public errordomain HexError {
+        INVALID_ARGUMENT,
+        PARSE
+    }
+
     /**
      * Static utility methods for hexadecimal encoding and decoding.
      *
@@ -31,17 +41,18 @@ namespace Vala.Encoding {
          * non-hex characters).
          *
          * @param hex hexadecimal text.
-         * @return decoded bytes.
+         * @return Result.ok(decoded bytes), or
+         *         Result.error(HexError.INVALID_ARGUMENT/PARSE) on invalid input.
          */
-        public static uint8[] decode (string hex) {
+        public static Result<GLib.Bytes, GLib.Error> decode (string hex) {
             if (hex == "") {
-                uint8[] empty = {};
-                return empty;
+                return Result.ok<GLib.Bytes, GLib.Error> (new GLib.Bytes (new uint8[0]));
             }
 
             if (hex.length % 2 != 0) {
-                uint8[] empty = {};
-                return empty;
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new HexError.INVALID_ARGUMENT ("hex text length must be even: %d".printf (hex.length))
+                );
             }
 
             uint8[] result = new uint8[hex.length / 2];
@@ -50,13 +61,14 @@ namespace Vala.Encoding {
                 int high = _hex_value (hex.get_char (i));
                 int low = _hex_value (hex.get_char (i + 1));
                 if (high < 0 || low < 0) {
-                    uint8[] empty = {};
-                    return empty;
+                    return Result.error<GLib.Bytes, GLib.Error> (
+                        new HexError.PARSE ("invalid hex character at position %d".printf (i))
+                    );
                 }
                 result[out_index] = (uint8) ((high << 4) | low);
                 out_index++;
             }
-            return result;
+            return Result.ok<GLib.Bytes, GLib.Error> (new GLib.Bytes (result));
         }
 
         private static int _hex_value (unichar c) {

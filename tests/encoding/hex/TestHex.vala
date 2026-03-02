@@ -1,4 +1,5 @@
 using Vala.Encoding;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -30,23 +31,43 @@ void assertHelloBytes (uint8[] decoded) {
     assert (decoded[4] == 0x6F);
 }
 
+uint8[] copyBytes (GLib.Bytes bytes) {
+    uint8[] raw = bytes.get_data ();
+    uint8[] copied = new uint8[raw.length];
+    for (int i = 0; i < raw.length; i++) {
+        copied[i] = raw[i];
+    }
+    return copied;
+}
+
+uint8[] unwrapBytes (Result<GLib.Bytes, GLib.Error> result) {
+    assert (result.isOk ());
+    return copyBytes (result.unwrap ());
+}
+
 void testDecode () {
-    uint8[] decoded = Hex.decode ("48656c6c6f");
+    uint8[] decoded = unwrapBytes (Hex.decode ("48656c6c6f"));
     assertHelloBytes (decoded);
 }
 
 void testDecodeUpperCase () {
-    uint8[] decoded = Hex.decode ("48656C6C6F");
+    uint8[] decoded = unwrapBytes (Hex.decode ("48656C6C6F"));
     assertHelloBytes (decoded);
 }
 
 void testEmpty () {
     uint8[] empty = {};
     assert (Hex.encode (empty) == "");
-    assert (Hex.decode ("").length == 0);
+    uint8[] decoded = unwrapBytes (Hex.decode (""));
+    assert (decoded.length == 0);
 }
 
 void testInvalid () {
-    assert (Hex.decode ("0").length == 0);
-    assert (Hex.decode ("GG").length == 0);
+    var odd = Hex.decode ("0");
+    assert (odd.isError ());
+    assert (odd.unwrapError () is HexError.INVALID_ARGUMENT);
+
+    var badChar = Hex.decode ("GG");
+    assert (badChar.isError ());
+    assert (badChar.unwrapError () is HexError.PARSE);
 }

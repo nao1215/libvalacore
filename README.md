@@ -1021,7 +1021,7 @@ Static utility methods for hexadecimal encoding and decoding.
 | Method | Description |
 |---|---|
 | `encode(uint8[] data)` | Encodes bytes to lower-case hexadecimal text |
-| `decode(string hex)` | Decodes hexadecimal text to bytes |
+| `decode(string hex)` | Returns `Result<Bytes, Error>` (errors: `HexError.INVALID_ARGUMENT`, `HexError.PARSE`) |
 
 ### Vala.Encoding.Json
 JSON parsing, serialization, and path-based querying. Handles JSON as a `JsonValue` tree with immutable operations.
