@@ -929,12 +929,12 @@ Static utility methods for Zip archive creation and extraction.
 
 | Method | Description |
 |---|---|
-| `create(Path archive, ArrayList<Path> files)` | Creates archive from file list |
-| `createFromDir(Path archive, Path dir)` | Creates archive from directory tree |
-| `extract(Path archive, Path dest)` | Extracts all entries into destination directory |
-| `list(Path archive)` | Lists archive entries (`null` on failure) |
-| `addFile(Path archive, Path file)` | Adds one file to existing archive |
-| `extractFile(Path archive, string entry, Path dest)` | Extracts one entry to destination file |
+| `create(Path archive, ArrayList<Path> files)` | Returns `Result<bool?, Error>` (errors: `ZipError.INVALID_ARGUMENT`, `ZipError.NOT_FOUND`, `ZipError.IO`) |
+| `createFromDir(Path archive, Path dir)` | Returns `Result<bool?, Error>` (errors: `ZipError.INVALID_ARGUMENT`, `ZipError.IO`) |
+| `extract(Path archive, Path dest)` | Returns `Result<bool?, Error>` (errors: `ZipError.INVALID_ARGUMENT`, `ZipError.NOT_FOUND`, `ZipError.IO`, `ZipError.SECURITY`) |
+| `list(Path archive)` | Returns `Result<ArrayList<string>, Error>` (errors: `ZipError.INVALID_ARGUMENT`, `ZipError.NOT_FOUND`, `ZipError.IO`) |
+| `addFile(Path archive, Path file)` | Returns `Result<bool?, Error>` (errors: `ZipError.INVALID_ARGUMENT`, `ZipError.NOT_FOUND`, `ZipError.IO`) |
+| `extractFile(Path archive, string entry, Path dest)` | Returns `Result<bool?, Error>` (errors: `ZipError.INVALID_ARGUMENT`, `ZipError.NOT_FOUND`, `ZipError.IO`) |
 
 ### Vala.Archive.Tar
 Static utility methods for Tar archive creation and extraction.
