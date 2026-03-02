@@ -964,11 +964,11 @@ Static utility methods for Zlib compression and decompression.
 
 | Method | Description |
 |---|---|
-| `compress(uint8[] data)` | Compresses bytes with default level |
-| `decompress(uint8[] data)` | Decompresses Zlib bytes (empty on invalid input) |
-| `compressFile(Path src, Path dst)` | Compresses source file to destination |
-| `decompressFile(Path src, Path dst)` | Decompresses Zlib file to destination |
-| `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
+| `compress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `ZlibError.IO`) |
+| `decompress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `ZlibError.PARSE`) |
+| `compressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.NOT_FOUND`, `ZlibError.IO`) |
+| `decompressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.NOT_FOUND`, `ZlibError.PARSE`, `ZlibError.IO`) |
+| `compressLevel(uint8[] data, int level)` | Returns `Result<Bytes, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.IO`) |
 
 ### Vala.Encoding.Base64
 Static utility methods for Base64 encoding and decoding.
