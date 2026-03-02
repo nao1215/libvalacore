@@ -2,6 +2,7 @@ using Vala.Math;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/random/testConstruct", testConstruct);
     Test.add_func ("/random/testNextInt", testNextInt);
     Test.add_func ("/random/testNextIntRange", testNextIntRange);
     Test.add_func ("/random/testNextDouble", testNextDouble);
@@ -10,7 +11,13 @@ void main (string[] args) {
     Test.add_func ("/random/testChoice", testChoice);
     Test.add_func ("/random/testChoiceEmpty", testChoiceEmpty);
     Test.add_func ("/random/testInvalidArguments", testInvalidArguments);
+    Test.add_func ("/random/testInvalidArgumentsAdditional", testInvalidArgumentsAdditional);
     Test.run ();
+}
+
+void testConstruct () {
+    var random = new Vala.Math.Random ();
+    assert (random != null);
 }
 
 void testNextInt () {
@@ -107,6 +114,26 @@ void testInvalidArguments () {
     bool rangeThrown = false;
     try {
         Vala.Math.Random.nextIntRange (5, 5);
+    } catch (RandomError e) {
+        rangeThrown = true;
+        assert (e is RandomError.INVALID_ARGUMENT);
+    }
+    assert (rangeThrown);
+}
+
+void testInvalidArgumentsAdditional () {
+    bool nextIntThrown = false;
+    try {
+        Vala.Math.Random.nextInt (-1);
+    } catch (RandomError e) {
+        nextIntThrown = true;
+        assert (e is RandomError.INVALID_ARGUMENT);
+    }
+    assert (nextIntThrown);
+
+    bool rangeThrown = false;
+    try {
+        Vala.Math.Random.nextIntRange (10, 0);
     } catch (RandomError e) {
         rangeThrown = true;
         assert (e is RandomError.INVALID_ARGUMENT);
