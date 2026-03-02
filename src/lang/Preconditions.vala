@@ -35,21 +35,21 @@ namespace Vala.Lang {
             return message;
         }
 
-        private static Vala.Collections.Result<bool ?, GLib.Error> validate (bool cond,
-                                                                             string message,
-                                                                             string defaultMessage,
-                                                                             bool argumentError) {
+        private static Vala.Collections.Result<bool, GLib.Error> validate (bool cond,
+                                                                           string message,
+                                                                           string defaultMessage,
+                                                                           bool argumentError) {
             if (cond) {
-                return Vala.Collections.Result.ok<bool ?, GLib.Error> (true);
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
             }
 
             string finalMessage = normalizeMessage (message, defaultMessage);
             if (argumentError) {
-                return Vala.Collections.Result.error<bool ?, GLib.Error> (
+                return Vala.Collections.Result.error<bool, GLib.Error> (
                     new PreconditionError.INVALID_ARGUMENT (finalMessage)
                 );
             }
-            return Vala.Collections.Result.error<bool ?, GLib.Error> (
+            return Vala.Collections.Result.error<bool, GLib.Error> (
                 new PreconditionError.INVALID_STATE (finalMessage)
             );
         }
@@ -70,7 +70,7 @@ namespace Vala.Lang {
          * @return Result.ok(true) on success, or
          *         Result.error(PreconditionError.INVALID_ARGUMENT) when condition is false.
          */
-        public static Vala.Collections.Result<bool ?, GLib.Error> checkArgument (bool cond, string message) {
+        public static Vala.Collections.Result<bool, GLib.Error> checkArgument (bool cond, string message) {
             return validate (cond, message, "Invalid argument", true);
         }
 
@@ -90,7 +90,7 @@ namespace Vala.Lang {
          * @return Result.ok(true) on success, or
          *         Result.error(PreconditionError.INVALID_STATE) when condition is false.
          */
-        public static Vala.Collections.Result<bool ?, GLib.Error> checkState (bool cond, string message) {
+        public static Vala.Collections.Result<bool, GLib.Error> checkState (bool cond, string message) {
             return validate (cond, message, "Invalid state", false);
         }
     }
