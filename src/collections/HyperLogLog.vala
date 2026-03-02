@@ -24,16 +24,28 @@ namespace Vala.Collections {
          * Creates HyperLogLog with target error rate.
          *
          * @param errorRate target relative error rate.
-         * @throws HyperLogLogError.INVALID_ARGUMENT when errorRate is outside (0, 1).
          */
-        public HyperLogLog (double errorRate = 0.01) throws HyperLogLogError {
-            if (errorRate <= 0.0 || errorRate >= 1.0) {
-                throw new HyperLogLogError.INVALID_ARGUMENT ("errorRate must be in range (0, 1)");
-            }
-
+        private HyperLogLog (double errorRate = 0.01) {
             _precision = precisionForErrorRate (errorRate);
             _registers = new uint8[1 << _precision];
             _actual_error_rate = 1.04 / GLib.Math.sqrt ((double) _registers.length);
+        }
+
+        /**
+         * Creates HyperLogLog with target error rate.
+         *
+         * @param errorRate target relative error rate.
+         * @return Result.ok(estimator), or
+         *         Result.error(HyperLogLogError.INVALID_ARGUMENT) when errorRate is outside (0, 1).
+         */
+        public static Result<HyperLogLog, GLib.Error> of (double errorRate = 0.01) {
+            if (errorRate <= 0.0 || errorRate >= 1.0) {
+                return Result.error<HyperLogLog, GLib.Error> (
+                    new HyperLogLogError.INVALID_ARGUMENT ("errorRate must be in range (0, 1)")
+                );
+            }
+
+            return Result.ok<HyperLogLog, GLib.Error> (new HyperLogLog (errorRate));
         }
 
         private HyperLogLog.withPrecision (int precision) {
