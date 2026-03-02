@@ -14,6 +14,54 @@ void main (string[] args) {
     Test.run ();
 }
 
+AppConfig mustLoad (string appName) {
+    var loaded = AppConfig.load (appName);
+    assert (loaded.isOk ());
+    return loaded.unwrap ();
+}
+
+AppConfig mustLoadFile (Vala.Io.Path path) {
+    var loaded = AppConfig.loadFile (path);
+    assert (loaded.isOk ());
+    return loaded.unwrap ();
+}
+
+string mustGetString (AppConfig config, string key, string fallback = "") {
+    var value = config.getString (key, fallback);
+    assert (value.isOk ());
+    return value.unwrap ();
+}
+
+int mustGetInt (AppConfig config, string key, int fallback = 0) {
+    var value = config.getInt (key, fallback);
+    assert (value.isOk ());
+    return value.unwrap ();
+}
+
+bool mustGetBool (AppConfig config, string key, bool fallback = false) {
+    var value = config.getBool (key, fallback);
+    assert (value.isOk ());
+    return value.unwrap ();
+}
+
+Duration mustGetDuration (AppConfig config, string key, Duration fallback) {
+    var value = config.getDuration (key, fallback);
+    assert (value.isOk ());
+    return value.unwrap ();
+}
+
+string mustRequire (AppConfig config, string key) {
+    var value = config.require (key);
+    assert (value.isOk ());
+    return value.unwrap ();
+}
+
+string mustSourceOf (AppConfig config, string key) {
+    var value = config.sourceOf (key);
+    assert (value.isOk ());
+    return value.unwrap ();
+}
+
 void testLoadFile () {
     Vala.Io.Path ? file = Files.tempFile ("appconfig", ".properties");
     assert (file != null);
@@ -21,20 +69,11 @@ void testLoadFile () {
     try {
         assert (Files.writeText (file, "host=127.0.0.1\nport=8080\n") == true);
 
-        AppConfig config;
-        try {
-            config = AppConfig.loadFile (file);
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
-        try {
-            assert (config.getString ("host", "") == "127.0.0.1");
-            assert (config.getInt ("port", 0) == 8080);
-            assert (config.sourceOf ("host") == "file");
-            assert (config.sourceOf ("missing") == "default");
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
+        AppConfig config = mustLoadFile (file);
+        assert (mustGetString (config, "host", "") == "127.0.0.1");
+        assert (mustGetInt (config, "port", 0) == 8080);
+        assert (mustSourceOf (config, "host") == "file");
+        assert (mustSourceOf (config, "missing") == "default");
     } finally {
         if (file != null) {
             Files.remove (file);
@@ -53,38 +92,21 @@ void testPrecedence () {
         assert (Files.writeText (file, "host=file-host\n") == true);
 
         string[] cli = { "--host=cli-host" };
-        AppConfig config;
-        try {
-            config = AppConfig.loadFile (file)
-                      .withEnvPrefix ("MYAPP_")
-                      .withCliArgs (cli);
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
+        AppConfig config = mustLoadFile (file)
+                            .withEnvPrefix ("MYAPP_")
+                            .withCliArgs (cli);
 
-        try {
-            assert (config.getString ("host", "") == "cli-host");
-            assert (config.sourceOf ("host") == "cli");
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
+        assert (mustGetString (config, "host", "") == "cli-host");
+        assert (mustSourceOf (config, "host") == "cli");
 
         string[] emptyCli = {};
         config.withCliArgs (emptyCli);
-        try {
-            assert (config.getString ("host", "") == "env-host");
-            assert (config.sourceOf ("host") == "env");
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
+        assert (mustGetString (config, "host", "") == "env-host");
+        assert (mustSourceOf (config, "host") == "env");
 
         GLib.Environment.unset_variable (envKey);
-        try {
-            assert (config.getString ("host", "") == "file-host");
-            assert (config.sourceOf ("host") == "file");
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
+        assert (mustGetString (config, "host", "") == "file-host");
+        assert (mustSourceOf (config, "host") == "file");
     } finally {
         GLib.Environment.unset_variable (envKey);
         if (file != null) {
@@ -107,24 +129,20 @@ void testTypedGetters () {
     };
     config.withCliArgs (cli);
 
-    try {
-        assert (config.getInt ("workers", 0) == 16);
-        assert (config.getBool ("enabled", false) == true);
-        assert (config.getBool ("debug", false) == true);
+    assert (mustGetInt (config, "workers", 0) == 16);
+    assert (mustGetBool (config, "enabled", false) == true);
+    assert (mustGetBool (config, "debug", false) == true);
 
-        Duration timeout = config.getDuration ("timeout", Duration.ofSeconds (1));
-        assert (timeout.toSeconds () == 120);
+    Duration timeout = mustGetDuration (config, "timeout", Duration.ofSeconds (1));
+    assert (timeout.toSeconds () == 120);
 
-        assert (config.getInt ("invalid_int", 7) == 7);
-        assert (config.getBool ("invalid_bool", false) == false);
+    assert (mustGetInt (config, "invalid_int", 7) == 7);
+    assert (mustGetBool (config, "invalid_bool", false) == false);
 
-        Duration fallback = Duration.ofSeconds (9);
-        assert (config.getDuration ("invalid_duration", fallback).toSeconds () == 9);
+    Duration fallback = Duration.ofSeconds (9);
+    assert (mustGetDuration (config, "invalid_duration", fallback).toSeconds () == 9);
 
-        assert (config.require ("workers") == "16");
-    } catch (AppConfigError e) {
-        assert_not_reached ();
-    }
+    assert (mustRequire (config, "workers") == "16");
 }
 
 void testLoadStandardPath () {
@@ -134,62 +152,33 @@ void testLoadStandardPath () {
 
     try {
         assert (Files.writeText (file, "name=std-path\n") == true);
-        try {
-            AppConfig config = AppConfig.load (appName);
-            assert (config.getString ("name", "") == "std-path");
-            assert (config.sourceOf ("name") == "file");
-        } catch (AppConfigError e) {
-            assert_not_reached ();
-        }
+        AppConfig config = mustLoad (appName);
+        assert (mustGetString (config, "name", "") == "std-path");
+        assert (mustSourceOf (config, "name") == "file");
     } finally {
         Files.remove (file);
     }
 }
 
 void testInvalidArguments () {
-    bool loadThrown = false;
-    try {
-        AppConfig.load ("");
-    } catch (AppConfigError e) {
-        loadThrown = true;
-        assert (e is AppConfigError.INVALID_ARGUMENT);
-    }
-    assert (loadThrown);
+    var load = AppConfig.load ("");
+    assert (load.isError ());
+    assert (load.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 
     AppConfig config = new AppConfig ();
-    bool requireThrown = false;
-    try {
-        config.require ("missing");
-    } catch (AppConfigError e) {
-        requireThrown = true;
-        assert (e is AppConfigError.REQUIRED_KEY_MISSING);
-    }
-    assert (requireThrown);
+    var required = config.require ("missing");
+    assert (required.isError ());
+    assert (required.unwrapError () is AppConfigError.REQUIRED_KEY_MISSING);
 
-    bool keyThrown = false;
-    try {
-        config.getString ("", "x");
-    } catch (AppConfigError e) {
-        keyThrown = true;
-        assert (e is AppConfigError.INVALID_ARGUMENT);
-    }
-    assert (keyThrown);
+    var key = config.getString ("", "x");
+    assert (key.isError ());
+    assert (key.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 
-    keyThrown = false;
-    try {
-        config.getString ("   ", "x");
-    } catch (AppConfigError e) {
-        keyThrown = true;
-        assert (e is AppConfigError.INVALID_ARGUMENT);
-    }
-    assert (keyThrown);
+    key = config.getString ("   ", "x");
+    assert (key.isError ());
+    assert (key.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 
-    bool loadFileThrown = false;
-    try {
-        AppConfig.loadFile (new Vala.Io.Path ("/tmp/valacore/ut/appconfig-missing.properties"));
-    } catch (AppConfigError e) {
-        loadFileThrown = true;
-        assert (e is AppConfigError.INVALID_ARGUMENT);
-    }
-    assert (loadFileThrown);
+    var loadFile = AppConfig.loadFile (new Vala.Io.Path ("/tmp/valacore/ut/appconfig-missing.properties"));
+    assert (loadFile.isError ());
+    assert (loadFile.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 }

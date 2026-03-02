@@ -1580,16 +1580,16 @@ Unified application configuration from file, environment, and CLI.
 
 | Method | Description |
 |---|---|
-| `load(string appName)` | Loads from standard app config paths (`throws AppConfigError.INVALID_ARGUMENT` when appName is empty) |
-| `loadFile(Path path)` | Loads from explicit file |
+| `load(string appName)` | Returns `Result<AppConfig, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when appName is empty) |
+| `loadFile(Path path)` | Returns `Result<AppConfig, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when path is invalid) |
 | `withEnvPrefix(string prefix)` | Sets env prefix like `MYAPP_` |
 | `withCliArgs(string[] args)` | Parses CLI overrides (`--k=v`, `--k v`, `--flag`) |
-| `getString(string key, string fallback = "")` | Returns string value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
-| `getInt(string key, int fallback = 0)` | Returns int value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
-| `getBool(string key, bool fallback = false)` | Returns bool value or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
-| `getDuration(string key, Duration fallback)` | Returns duration (`s/m/h/d`) or fallback (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
-| `require(string key)` | Returns required value (`throws AppConfigError.INVALID_ARGUMENT` or `AppConfigError.REQUIRED_KEY_MISSING`) |
-| `sourceOf(string key)` | Returns `cli`, `env`, `file`, or `default` (`throws AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getString(string key, string fallback = "")` | Returns `Result<string, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getInt(string key, int fallback = 0)` | Returns `Result<int, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getBool(string key, bool fallback = false)` | Returns `Result<bool, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `getDuration(string key, Duration fallback)` | Returns `Result<Duration, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when key is empty) |
+| `require(string key)` | Returns `Result<string, Error>` (error: `AppConfigError.INVALID_ARGUMENT` / `REQUIRED_KEY_MISSING`) |
+| `sourceOf(string key)` | Returns `Result<string, Error>` (error: `AppConfigError.INVALID_ARGUMENT` when key is empty) |
 
 ## Vala.Distributed.ConsistentHash
 Consistent hash ring with virtual nodes for stable key distribution.

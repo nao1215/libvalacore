@@ -18,11 +18,19 @@ namespace Vala.Config {
      *
      * Example:
      * {{{
-     *     var cfg = AppConfig.load ("myapp")
+     *     var loaded = AppConfig.load ("myapp");
+     *     if (loaded.isError ()) {
+     *         return;
+     *     }
+     *
+     *     var cfg = loaded.unwrap ()
      *         .withEnvPrefix ("MYAPP_")
      *         .withCliArgs (args);
      *
-     *     int port = cfg.getInt ("port", 8080);
+     *     var port = cfg.getInt ("port", 8080);
+     *     if (port.isError ()) {
+     *         return;
+     *     }
      * }}}
      */
     public class AppConfig : GLib.Object {
@@ -49,12 +57,14 @@ namespace Vala.Config {
          * - `/etc/<appName>/config.properties`
          *
          * @param appName application name.
-         * @return loaded AppConfig.
-         * @throws AppConfigError.INVALID_ARGUMENT when appName is empty.
+         * @return Result.ok(loaded AppConfig), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when appName is empty.
          */
-        public static AppConfig load (string appName) throws AppConfigError {
+        public static Result<AppConfig, GLib.Error> load (string appName) {
             if (appName.length == 0) {
-                throw new AppConfigError.INVALID_ARGUMENT ("appName must not be empty");
+                return Result.error<AppConfig, GLib.Error> (
+                    new AppConfigError.INVALID_ARGUMENT ("appName must not be empty")
+                );
             }
 
             var config = new AppConfig ();
@@ -77,25 +87,27 @@ namespace Vala.Config {
                 }
             }
 
-            return config;
+            return Result.ok<AppConfig, GLib.Error> (config);
         }
 
         /**
          * Loads config from explicit file path.
          *
          * @param path config file path.
-         * @return loaded AppConfig.
-         * @throws AppConfigError.INVALID_ARGUMENT when path is empty or not a file.
+         * @return Result.ok(loaded AppConfig), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when path is empty or not a file.
          */
-        public static AppConfig loadFile (Vala.Io.Path path) throws AppConfigError {
+        public static Result<AppConfig, GLib.Error> loadFile (Vala.Io.Path path) {
             if (path.toString ().strip ().length == 0 || !Files.isFile (path)) {
-                throw new AppConfigError.INVALID_ARGUMENT (
-                          "path must reference an existing file: %s".printf (path.toString ())
+                return Result.error<AppConfig, GLib.Error> (
+                    new AppConfigError.INVALID_ARGUMENT (
+                        "path must reference an existing file: %s".printf (path.toString ())
+                    )
                 );
             }
             var config = new AppConfig ();
             config.loadFromFile (path);
-            return config;
+            return Result.ok<AppConfig, GLib.Error> (config);
         }
 
         /**
@@ -163,16 +175,18 @@ namespace Vala.Config {
          *
          * @param key config key.
          * @param fallback value to return when key is missing.
-         * @return resolved string value.
-         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(resolved string value), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public string getString (string key,
-                                 string fallback = "") throws AppConfigError {
-            ensureKey (key);
+        public Result<string, GLib.Error> getString (string key, string fallback = "") {
+            GLib.Error ? keyError = ensureKey (key);
+            if (keyError != null) {
+                return Result.error<string, GLib.Error> (keyError);
+            }
 
             string source;
             string ? value = resolveValue (key, out source);
-            return value ?? fallback;
+            return Result.ok<string, GLib.Error> (value ?? fallback);
         }
 
         /**
@@ -180,24 +194,26 @@ namespace Vala.Config {
          *
          * @param key config key.
          * @param fallback fallback int.
-         * @return parsed int or fallback.
-         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(parsed int or fallback), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public int getInt (string key,
-                           int fallback = 0) throws AppConfigError {
-            ensureKey (key);
+        public Result<int, GLib.Error> getInt (string key, int fallback = 0) {
+            GLib.Error ? keyError = ensureKey (key);
+            if (keyError != null) {
+                return Result.error<int, GLib.Error> (keyError);
+            }
 
             string source;
             string ? raw = resolveValue (key, out source);
             if (raw == null) {
-                return fallback;
+                return Result.ok<int, GLib.Error> (fallback);
             }
 
             int parsed;
             if (int.try_parse (raw.strip (), out parsed)) {
-                return parsed;
+                return Result.ok<int, GLib.Error> (parsed);
             }
-            return fallback;
+            return Result.ok<int, GLib.Error> (fallback);
         }
 
         /**
@@ -208,21 +224,23 @@ namespace Vala.Config {
          *
          * @param key config key.
          * @param fallback fallback bool.
-         * @return parsed bool or fallback.
-         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(parsed bool or fallback), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public bool getBool (string key,
-                             bool fallback = false) throws AppConfigError {
-            ensureKey (key);
+        public Result<bool, GLib.Error> getBool (string key, bool fallback = false) {
+            GLib.Error ? keyError = ensureKey (key);
+            if (keyError != null) {
+                return Result.error<bool, GLib.Error> (keyError);
+            }
 
             string source;
             string ? raw = resolveValue (key, out source);
             if (raw == null) {
-                return fallback;
+                return Result.ok<bool, GLib.Error> (fallback);
             }
 
             bool ? parsed = parseBool (raw);
-            return parsed ?? fallback;
+            return Result.ok<bool, GLib.Error> (parsed ?? fallback);
         }
 
         /**
@@ -238,42 +256,48 @@ namespace Vala.Config {
          *
          * @param key config key.
          * @param fallback fallback duration.
-         * @return parsed duration or fallback.
-         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(parsed duration or fallback), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public Duration getDuration (string key,
-                                     Duration fallback) throws AppConfigError {
-            ensureKey (key);
+        public Result<Duration, GLib.Error> getDuration (string key, Duration fallback) {
+            GLib.Error ? keyError = ensureKey (key);
+            if (keyError != null) {
+                return Result.error<Duration, GLib.Error> (keyError);
+            }
 
             string source;
             string ? raw = resolveValue (key, out source);
             if (raw == null) {
-                return fallback;
+                return Result.ok<Duration, GLib.Error> (fallback);
             }
 
             Duration ? parsed = parseDuration (raw);
-            return parsed ?? fallback;
+            return Result.ok<Duration, GLib.Error> (parsed ?? fallback);
         }
 
         /**
          * Returns required string value.
          *
          * @param key required config key.
-         * @return existing value.
-         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
-         * @throws AppConfigError.REQUIRED_KEY_MISSING when key has no value.
+         * @return Result.ok(existing value), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT / REQUIRED_KEY_MISSING).
          */
-        public string require (string key) throws AppConfigError {
-            ensureKey (key);
+        public Result<string, GLib.Error> require (string key) {
+            GLib.Error ? keyError = ensureKey (key);
+            if (keyError != null) {
+                return Result.error<string, GLib.Error> (keyError);
+            }
 
             string source;
             string ? value = resolveValue (key, out source);
             if (value == null) {
-                throw new AppConfigError.REQUIRED_KEY_MISSING (
-                          "required config key `%s` is missing".printf (key)
+                return Result.error<string, GLib.Error> (
+                    new AppConfigError.REQUIRED_KEY_MISSING (
+                        "required config key `%s` is missing".printf (key)
+                    )
                 );
             }
-            return value;
+            return Result.ok<string, GLib.Error> (value);
         }
 
         /**
@@ -286,15 +310,18 @@ namespace Vala.Config {
          * - `default`
          *
          * @param key config key.
-         * @return source name.
-         * @throws AppConfigError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(source name), or
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public string sourceOf (string key) throws AppConfigError {
-            ensureKey (key);
+        public Result<string, GLib.Error> sourceOf (string key) {
+            GLib.Error ? keyError = ensureKey (key);
+            if (keyError != null) {
+                return Result.error<string, GLib.Error> (keyError);
+            }
 
             string source;
             resolveValue (key, out source);
-            return source;
+            return Result.ok<string, GLib.Error> (source);
         }
 
         private void loadFromFile (Vala.Io.Path path) {
@@ -406,20 +433,21 @@ namespace Vala.Config {
                 case "yes" :
                 case "on" :
                     return true;
-                case "0":
-                case "false":
-                case "no":
-                case "off":
+                case "0" :
+                case "false" :
+                case "no" :
+                case "off" :
                     return false;
-                default:
+                    default :
                     return null;
             }
         }
 
-        private static void ensureKey (string key) throws AppConfigError {
+        private static GLib.Error ? ensureKey (string key) {
             if (key.strip ().length == 0) {
-                throw new AppConfigError.INVALID_ARGUMENT ("key must not be empty");
+                return new AppConfigError.INVALID_ARGUMENT ("key must not be empty");
             }
+            return null;
         }
     }
 }
