@@ -976,9 +976,9 @@ Static utility methods for Base64 encoding and decoding.
 | Method | Description |
 |---|---|
 | `encode(uint8[] data)` | Encodes bytes to Base64 text |
-| `decode(string encoded)` | Decodes Base64 text to bytes |
+| `decode(string encoded)` | Returns `Result<Bytes, Error>` (errors: `Base64Error.INVALID_ARGUMENT`, `Base64Error.PARSE`) |
 | `encodeString(string s)` | Encodes a UTF-8 string to Base64 |
-| `decodeString(string s)` | Decodes Base64 text to a UTF-8 string |
+| `decodeString(string s)` | Returns `Result<string, Error>` (errors: `Base64Error.INVALID_ARGUMENT`, `Base64Error.PARSE`) |
 
 ### Vala.Encoding.Xml
 XML parsing, serialization, and XPath query utilities.
