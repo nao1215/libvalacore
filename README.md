@@ -105,13 +105,13 @@ Filesystem metadata utility methods.
 
 | Method | Description |
 |---|---|
-| `getFileAttributes(Path path)` | Returns file attributes (`GLib.FileInfo`) or `null` |
-| `setLastModifiedTime(Path path, DateTime t)` | Sets file modification time |
+| `getFileAttributes(Path path)` | Returns `Result<FileInfo, Error>` (errors: `FilesystemError.NOT_FOUND`, `FilesystemError.IO`) |
+| `setLastModifiedTime(Path path, DateTime t)` | Returns `Result<bool, Error>` (errors: `FilesystemError.INVALID_ARGUMENT`, `FilesystemError.NOT_FOUND`, `FilesystemError.IO`) |
 | `isReadable(Path path)` | Returns whether file is readable |
 | `isWritable(Path path)` | Returns whether file is writable |
 | `isExecutable(Path path)` | Returns whether file is executable |
-| `getOwner(Path path)` | Returns owner username or `null` |
-| `setOwner(Path path, string owner)` | Sets owner by username (`true` on success) |
+| `getOwner(Path path)` | Returns `Result<string, Error>` (errors: `FilesystemError.NOT_FOUND`, `FilesystemError.IO`) |
+| `setOwner(Path path, string owner)` | Returns `Result<bool, Error>` (errors: `FilesystemError.INVALID_ARGUMENT`, `FilesystemError.NOT_FOUND`, `FilesystemError.IO`) |
 
 ### Vala.Io.FileTree
 High-level recursive tree operations for traversal, search, copy/sync, and aggregation.

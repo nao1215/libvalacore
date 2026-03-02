@@ -1,5 +1,6 @@
 using Vala.Io;
 using Vala.Time;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -34,8 +35,7 @@ void testGetFileAttributes () {
     assert (tmp != null);
 
     try {
-        GLib.FileInfo ? info = Filesystem.getFileAttributes (tmp);
-        assert (info != null);
+        GLib.FileInfo info = unwrapFileInfo (Filesystem.getFileAttributes (tmp));
         assert (info.get_file_type () == GLib.FileType.REGULAR);
     } finally {
         Files.remove (tmp);
@@ -48,7 +48,7 @@ void testSetLastModifiedTime () {
 
     try {
         Vala.Time.DateTime target = createDateTime (2001, 2, 3, 4, 5, 6);
-        assert (Filesystem.setLastModifiedTime (tmp, target) == true);
+        assert (unwrapBool (Filesystem.setLastModifiedTime (tmp, target)) == true);
 
         GLib.DateTime ? modified = Files.lastModified (tmp);
         assert (modified != null);
@@ -87,8 +87,7 @@ void testGetOwner () {
     assert (tmp != null);
 
     try {
-        string ? owner = Filesystem.getOwner (tmp);
-        assert (owner != null);
+        string owner = unwrapString (Filesystem.getOwner (tmp));
         assert (owner.length > 0);
     } finally {
         Files.remove (tmp);
@@ -101,7 +100,9 @@ void testSetOwnerInvalid () {
 
     try {
         string invalid_user = "libvalacore-no-such-user-%d".printf (Posix.getpid ());
-        assert (Filesystem.setOwner (tmp, invalid_user) == false);
+        Result<bool, GLib.Error> updated = Filesystem.setOwner (tmp, invalid_user);
+        assert (updated.isError ());
+        assert (updated.unwrapError () is FilesystemError.NOT_FOUND);
     } finally {
         Files.remove (tmp);
     }
@@ -112,13 +113,32 @@ void testInvalidPathOperations () {
     Vala.Io.Path missing = new Vala.Io.Path (missingPath);
     Vala.Time.DateTime target = createDateTime (2001, 2, 3, 4, 5, 6);
 
-    GLib.FileInfo ? info = Filesystem.getFileAttributes (missing);
-    bool setMtime = Filesystem.setLastModifiedTime (missing, target);
-    string ? owner = Filesystem.getOwner (missing);
-    bool setOwnerEmpty = Filesystem.setOwner (missing, "");
+    Result<GLib.FileInfo, GLib.Error> info = Filesystem.getFileAttributes (missing);
+    Result<bool, GLib.Error> setMtime = Filesystem.setLastModifiedTime (missing, target);
+    Result<string, GLib.Error> owner = Filesystem.getOwner (missing);
+    Result<bool, GLib.Error> setOwnerEmpty = Filesystem.setOwner (missing, "");
 
-    assert (info == null);
-    assert (setMtime == false);
-    assert (owner == null);
-    assert (setOwnerEmpty == false);
+    assert (info.isError ());
+    assert (info.unwrapError () is FilesystemError.NOT_FOUND);
+    assert (setMtime.isError ());
+    assert (setMtime.unwrapError () is FilesystemError.NOT_FOUND);
+    assert (owner.isError ());
+    assert (owner.unwrapError () is FilesystemError.NOT_FOUND);
+    assert (setOwnerEmpty.isError ());
+    assert (setOwnerEmpty.unwrapError () is FilesystemError.NOT_FOUND);
+}
+
+GLib.FileInfo unwrapFileInfo (Result<GLib.FileInfo, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
+bool unwrapBool (Result<bool, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
+string unwrapString (Result<string, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
 }
