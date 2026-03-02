@@ -16,42 +16,21 @@ void main (string[] args) {
 }
 
 Cron mustEvery (Duration interval) {
-    Cron ? cron = null;
-    try {
-        cron = Cron.every (interval);
-    } catch (CronError e) {
-        assert_not_reached ();
-    }
-    if (cron == null) {
-        assert_not_reached ();
-    }
-    return cron;
+    var created = Cron.every (interval);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 Cron mustAt (int hour, int minute) {
-    Cron ? cron = null;
-    try {
-        cron = Cron.at (hour, minute);
-    } catch (CronError e) {
-        assert_not_reached ();
-    }
-    if (cron == null) {
-        assert_not_reached ();
-    }
-    return cron;
+    var created = Cron.at (hour, minute);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 Cron mustExpression (string expr) {
-    Cron ? cron = null;
-    try {
-        cron = new Cron (expr);
-    } catch (CronError e) {
-        assert_not_reached ();
-    }
-    if (cron == null) {
-        assert_not_reached ();
-    }
-    return cron;
+    var created = Cron.of (expr);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testEverySchedule () {
@@ -84,16 +63,13 @@ void testScheduleWithDelay () {
     int count = 0;
     GLib.Mutex mutex = GLib.Mutex ();
     GLib.Cond cond = GLib.Cond ();
-    try {
-        cron.scheduleWithDelay (Duration.ofSeconds (2), () => {
-            mutex.lock ();
-            count++;
-            cond.signal ();
-            mutex.unlock ();
-        });
-    } catch (CronError e) {
-        assert_not_reached ();
-    }
+    var scheduled = cron.scheduleWithDelay (Duration.ofSeconds (2), () => {
+        mutex.lock ();
+        count++;
+        cond.signal ();
+        mutex.unlock ();
+    });
+    assert (scheduled.isOk ());
 
     int64 early_deadline = GLib.get_monotonic_time () + (1200 * 1000);
     mutex.lock ();
@@ -140,47 +116,27 @@ void testCancel () {
 }
 
 void testEveryInvalidInterval () {
-    bool thrown = false;
-    try {
-        Cron.every (Duration.ofSeconds (0));
-    } catch (CronError e) {
-        thrown = true;
-        assert (e is CronError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = Cron.every (Duration.ofSeconds (0));
+    assert (created.isError ());
+    assert (created.unwrapError () is CronError.INVALID_ARGUMENT);
 }
 
 void testAtInvalidRange () {
-    bool thrown = false;
-    try {
-        Cron.at (24, 0);
-    } catch (CronError e) {
-        thrown = true;
-        assert (e is CronError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = Cron.at (24, 0);
+    assert (created.isError ());
+    assert (created.unwrapError () is CronError.INVALID_ARGUMENT);
 }
 
 void testExpressionInvalid () {
-    bool thrown = false;
-    try {
-        new Cron ("invalid expression");
-    } catch (CronError e) {
-        thrown = true;
-        assert (e is CronError.INVALID_EXPRESSION);
-    }
-    assert (thrown);
+    var created = Cron.of ("invalid expression");
+    assert (created.isError ());
+    assert (created.unwrapError () is CronError.INVALID_EXPRESSION);
 }
 
 void testScheduleWithDelayInvalid () {
     var cron = mustEvery (Duration.ofSeconds (1));
-    bool thrown = false;
-    try {
-        cron.scheduleWithDelay (Duration.ofSeconds (-1), () => {});
-    } catch (CronError e) {
-        thrown = true;
-        assert (e is CronError.INVALID_ARGUMENT);
-    }
+    var scheduled = cron.scheduleWithDelay (Duration.ofSeconds (-1), () => {});
+    assert (scheduled.isError ());
+    assert (scheduled.unwrapError () is CronError.INVALID_ARGUMENT);
     cron.cancel ();
-    assert (thrown);
 }

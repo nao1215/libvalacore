@@ -1695,11 +1695,11 @@ Lightweight task scheduler with interval and daily-time modes.
 
 | Method | Description |
 |---|---|
-| `Cron(string expression)` | Creates scheduler from cron expression (`throws CronError.INVALID_EXPRESSION`) |
-| `every(Duration interval)` | Creates fixed-interval scheduler (`throws CronError.INVALID_ARGUMENT` when interval is not positive) |
-| `at(int hour, int minute)` | Creates daily scheduler (`throws CronError.INVALID_ARGUMENT` when hour/minute is out of range) |
+| `of(string expression)` | Returns `Result<Cron, Error>` (error: `CronError.INVALID_EXPRESSION` when expression is unsupported) |
+| `every(Duration interval)` | Returns `Result<Cron, Error>` (error: `CronError.INVALID_ARGUMENT` when interval is not positive) |
+| `at(int hour, int minute)` | Returns `Result<Cron, Error>` (error: `CronError.INVALID_ARGUMENT` when hour/minute is out of range) |
 | `schedule(CronTask task)` | Starts schedule immediately |
-| `scheduleWithDelay(Duration initialDelay, CronTask task)` | Starts with initial delay (`throws CronError.INVALID_ARGUMENT` when delay is negative) |
+| `scheduleWithDelay(Duration initialDelay, CronTask task)` | Returns `Result<Cron, Error>` (error: `CronError.INVALID_ARGUMENT` when delay is negative) |
 | `cancel()` | Stops running schedule |
 | `isRunning()` | Returns running state |
 | `nextFireTime()` | Returns next execution time |
