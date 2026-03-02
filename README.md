@@ -909,7 +909,7 @@ Suppresses duplicate concurrent work for the same key.
 | Method | Description |
 |---|---|
 | `SingleFlight()` | Creates empty singleflight group |
-| `do<T>(string key, SingleFlightFunc<T> fn)` | Executes function once per key and shares result (`throws SingleFlightError.INVALID_ARGUMENT` for empty key, `TYPE_MISMATCH` for concurrent mixed types) |
+| `do<T>(string key, SingleFlightFunc<T> fn)` | Returns `Result<T, Error>` (error: `SingleFlightError.INVALID_ARGUMENT` / `TYPE_MISMATCH` / `INTERNAL_STATE`) |
 | `doFuture<T>(string key, SingleFlightFunc<T> fn)` | Asynchronous version returning `Future<T>` (failed future when key is empty) |
 | `forget(string key)` | Removes in-flight state for a key (empty key is ignored) |
 | `inFlightCount()` | Returns number of in-flight keys |

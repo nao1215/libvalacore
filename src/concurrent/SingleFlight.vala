@@ -95,14 +95,14 @@ namespace Vala.Concurrent {
          *
          * @param key deduplication key.
          * @param fn function to run.
-         * @return shared result.
-         * @throws SingleFlightError.INVALID_ARGUMENT when key is empty.
-         * @throws SingleFlightError.TYPE_MISMATCH when the key is in flight with another value type.
-         * @throws SingleFlightError.INTERNAL_STATE when internal entry state is corrupted.
+         * @return Result.ok(shared result), or
+         *         Result.error(SingleFlightError.INVALID_ARGUMENT / TYPE_MISMATCH / INTERNAL_STATE).
          */
-        public T @do<T> (string key, SingleFlightFunc<T> fn) throws SingleFlightError {
+        public Result<T, GLib.Error>@do<T> (string key, SingleFlightFunc<T> fn) {
             if (key.length == 0) {
-                throw new SingleFlightError.INVALID_ARGUMENT ("key must not be empty");
+                return Result.error<T, GLib.Error> (
+                    new SingleFlightError.INVALID_ARGUMENT ("key must not be empty")
+                );
             }
 
             _mutex.lock ();
@@ -110,8 +110,10 @@ namespace Vala.Concurrent {
             if (existing != null) {
                 if (existing.valueType != typeof (T)) {
                     _mutex.unlock ();
-                    throw new SingleFlightError.TYPE_MISMATCH (
-                              "key `%s` is already in flight with different type".printf (key)
+                    return Result.error<T, GLib.Error> (
+                        new SingleFlightError.TYPE_MISMATCH (
+                            "key `%s` is already in flight with different type".printf (key)
+                        )
                     );
                 }
 
@@ -119,12 +121,14 @@ namespace Vala.Concurrent {
                 _mutex.unlock ();
 
                 if (waiter == null) {
-                    throw new SingleFlightError.INTERNAL_STATE (
-                              "internal singleflight state is invalid"
+                    return Result.error<T, GLib.Error> (
+                        new SingleFlightError.INTERNAL_STATE (
+                            "internal singleflight state is invalid"
+                        )
                     );
                 }
 
-                return waiter.waitResult ();
+                return Result.ok<T, GLib.Error> (waiter.waitResult ());
             }
 
             var call = new InFlightCall<T> ();
@@ -141,7 +145,7 @@ namespace Vala.Concurrent {
             }
             _mutex.unlock ();
 
-            return result;
+            return Result.ok<T, GLib.Error> (result);
         }
 
         /**
@@ -163,12 +167,13 @@ namespace Vala.Concurrent {
 
             var group = this;
             ThreadPool.go (() => {
-                try {
-                    T result = group.@do<T> (key, captured);
-                    future.completeSuccess ((owned) result);
-                } catch (SingleFlightError e) {
-                    future.completeFailure (e.message);
+                var result = group.@do<T> (key, captured);
+                if (result.isError ()) {
+                    future.completeFailure (result.unwrapError ().message);
+                    return;
                 }
+
+                future.completeSuccess ((owned) result.unwrap ());
             });
             return future;
         }

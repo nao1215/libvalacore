@@ -16,18 +16,9 @@ void main (string[] args) {
 }
 
 int mustDoInt (SingleFlight group, string key, owned SingleFlightFunc<int> fn) {
-    int result = 0;
-    bool succeeded = false;
-    try {
-        result = group.@do<int> (key, fn);
-        succeeded = true;
-    } catch (SingleFlightError e) {
-        assert_not_reached ();
-    }
-    if (!succeeded) {
-        assert_not_reached ();
-    }
-    return result;
+    var result = group.@do<int> (key, fn);
+    assert (result.isOk ());
+    return result.unwrap ();
 }
 
 CountDownLatch mustLatch (int count) {
@@ -61,16 +52,14 @@ void testDoSharesExecution () {
     int second = 0;
 
     new GLib.Thread<void *> ("singleflight-test-1", () => {
-        try {
-            first = group.@do<int> ("same-key", () => {
-                called++;
-                started.countDown ();
-                release.@await ();
-                return 7;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("same-key", () => {
+            called++;
+            started.countDown ();
+            release.@await ();
+            return 7;
+        });
+        assert (result.isOk ());
+        first = result.unwrap ();
         done.countDown ();
         return null;
     });
@@ -78,14 +67,12 @@ void testDoSharesExecution () {
     started.@await ();
 
     new GLib.Thread<void *> ("singleflight-test-2", () => {
-        try {
-            second = group.@do<int> ("same-key", () => {
-                called += 100;
-                return 999;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("same-key", () => {
+            called += 100;
+            return 999;
+        });
+        assert (result.isOk ());
+        second = result.unwrap ();
         done.countDown ();
         return null;
     });
@@ -141,15 +128,12 @@ void testForget () {
     var done = mustLatch (1);
 
     new GLib.Thread<void *> ("singleflight-test-forget", () => {
-        try {
-            group.@do<int> ("forget-key", () => {
-                started.countDown ();
-                release.@await ();
-                return 1;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("forget-key", () => {
+            started.countDown ();
+            release.@await ();
+            return 1;
+        });
+        assert (result.isOk ());
         done.countDown ();
         return null;
     });
@@ -197,16 +181,11 @@ void testClear () {
 
 void testDoInvalidKey () {
     var group = new SingleFlight ();
-    bool thrown = false;
-    try {
-        group.@do<int> ("", () => {
-            return 0;
-        });
-    } catch (SingleFlightError e) {
-        thrown = true;
-        assert (e is SingleFlightError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var result = group.@do<int> ("", () => {
+        return 0;
+    });
+    assert (result.isError ());
+    assert (result.unwrapError () is SingleFlightError.INVALID_ARGUMENT);
 }
 
 void testDoFutureInvalidKey () {
@@ -226,31 +205,23 @@ void testDoTypeMismatch () {
     var done = mustLatch (1);
 
     new GLib.Thread<void *> ("singleflight-type-mismatch", () => {
-        try {
-            group.@do<int> ("mixed-key", () => {
-                started.countDown ();
-                release.@await ();
-                return 10;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("mixed-key", () => {
+            started.countDown ();
+            release.@await ();
+            return 10;
+        });
+        assert (result.isOk ());
         done.countDown ();
         return null;
     });
 
     started.@await ();
 
-    bool thrown = false;
-    try {
-        group.@do<string> ("mixed-key", () => {
-            return "x";
-        });
-    } catch (SingleFlightError e) {
-        thrown = true;
-        assert (e is SingleFlightError.TYPE_MISMATCH);
-    }
-    assert (thrown);
+    var mismatch = group.@do<string> ("mixed-key", () => {
+        return "x";
+    });
+    assert (mismatch.isError ());
+    assert (mismatch.unwrapError () is SingleFlightError.TYPE_MISMATCH);
 
     release.countDown ();
     done.@await ();
