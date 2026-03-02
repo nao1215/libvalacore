@@ -2,6 +2,7 @@ using Vala.Crypto;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/hash/testConstruct", testConstruct);
     Test.add_func ("/hash/testMd5", testMd5);
     Test.add_func ("/hash/testMd5Bytes", testMd5Bytes);
     Test.add_func ("/hash/testSha1", testSha1);
@@ -9,6 +10,11 @@ void main (string[] args) {
     Test.add_func ("/hash/testSha256Bytes", testSha256Bytes);
     Test.add_func ("/hash/testSha512", testSha512);
     Test.run ();
+}
+
+void testConstruct () {
+    var hash = new Hash ();
+    assert (hash != null);
 }
 
 void testMd5 () {
