@@ -853,7 +853,7 @@ Generic fixed-size thread pool that integrates with `Future<T>`.
 
 | Method | Description |
 |---|---|
-| `ThreadPool(int poolSize)` | Creates a pool (`throws ThreadPoolError.INVALID_ARGUMENT` when `poolSize <= 0`) |
+| `of(int poolSize)` | Returns `Result<ThreadPool, Error>` (error: `ThreadPoolError.INVALID_ARGUMENT` when `poolSize <= 0`) |
 | `withDefault()` | Creates a pool sized to CPU core count |
 | `submit<T>(TaskFunc<T> task)` | Submits task and returns `Future<T>` |
 | `execute(VoidTaskFunc task)` | Executes a fire-and-forget task |

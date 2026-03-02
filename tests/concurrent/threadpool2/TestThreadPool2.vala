@@ -18,16 +18,9 @@ void main (string[] args) {
 }
 
 Vala.Concurrent.ThreadPool mustThreadPool (int poolSize) {
-    Vala.Concurrent.ThreadPool ? pool = null;
-    try {
-        pool = new Vala.Concurrent.ThreadPool (poolSize);
-    } catch (ThreadPoolError e) {
-        assert_not_reached ();
-    }
-    if (pool == null) {
-        assert_not_reached ();
-    }
-    return pool;
+    var created = Vala.Concurrent.ThreadPool.of (poolSize);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testSubmit () {
@@ -151,12 +144,8 @@ void testGo () {
 }
 
 void testInvalidPoolSize () {
-    bool thrown = false;
-    try {
-        new Vala.Concurrent.ThreadPool (0);
-    } catch (ThreadPoolError e) {
-        thrown = true;
-        assert (e is ThreadPoolError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = Vala.Concurrent.ThreadPool.of (0);
+    assert (created.isError ());
+    assert (created.unwrapError () is ThreadPoolError.INVALID_ARGUMENT);
+    assert (created.unwrapError ().message == "poolSize must be positive, got 0");
 }

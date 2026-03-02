@@ -70,19 +70,31 @@ namespace Vala.Concurrent {
          * Creates a fixed-size thread pool.
          *
          * @param poolSize number of worker threads (must be > 0).
-         * @throws ThreadPoolError.INVALID_ARGUMENT when poolSize is not positive.
          */
-        public ThreadPool (int poolSize) throws ThreadPoolError {
-            if (poolSize <= 0) {
-                throw new ThreadPoolError.INVALID_ARGUMENT (
-                          "poolSize must be positive, got %d".printf (poolSize)
-                );
-            }
+        private ThreadPool (int poolSize) {
             initializePool (poolSize);
         }
 
         private ThreadPool.unchecked (int poolSize) {
             initializePool (poolSize);
+        }
+
+        /**
+         * Creates a fixed-size thread pool.
+         *
+         * @param poolSize number of worker threads (must be > 0).
+         * @return Result.ok(pool), or
+         *         Result.error(ThreadPoolError.INVALID_ARGUMENT) when poolSize is not positive.
+         */
+        public static Result<ThreadPool, GLib.Error> of (int poolSize) {
+            if (poolSize <= 0) {
+                return Result.error<ThreadPool, GLib.Error> (
+                    new ThreadPoolError.INVALID_ARGUMENT (
+                        "poolSize must be positive, got %d".printf (poolSize)
+                    )
+                );
+            }
+            return Result.ok<ThreadPool, GLib.Error> (new ThreadPool (poolSize));
         }
 
         private void initializePool (int poolSize) {
