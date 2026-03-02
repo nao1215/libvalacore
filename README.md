@@ -955,8 +955,8 @@ Static utility methods for Gzip compression and decompression.
 |---|---|
 | `compress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `GzipError.IO`) |
 | `decompress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `GzipError.PARSE`) |
-| `compressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.NOT_FOUND`, `GzipError.IO`) |
-| `decompressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.NOT_FOUND`, `GzipError.PARSE`, `GzipError.IO`) |
+| `compressFile(Path src, Path dst)` | Returns `Result<bool, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.NOT_FOUND`, `GzipError.IO`) |
+| `decompressFile(Path src, Path dst)` | Returns `Result<bool, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.NOT_FOUND`, `GzipError.PARSE`, `GzipError.IO`) |
 | `compressLevel(uint8[] data, int level)` | Returns `Result<Bytes, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.IO`) |
 
 ### Vala.Compress.Zlib
