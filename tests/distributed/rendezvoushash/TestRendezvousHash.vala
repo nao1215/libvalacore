@@ -15,6 +15,11 @@ void main (string[] args) {
     Test.run ();
 }
 
+bool unwrapBoolResult (Result<bool, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
 void testBasic () {
     var hash = new RendezvousHash ();
     var firstNode = hash.getNode ("key-1");
@@ -22,20 +27,16 @@ void testBasic () {
     assert (firstNode.unwrap () == null);
 
     var addA = hash.addNode ("node-a");
-    assert (addA.isOk ());
-    assert (addA.unwrap () == true);
+    assert (unwrapBoolResult (addA) == true);
 
     var addB = hash.addNode ("node-b");
-    assert (addB.isOk ());
-    assert (addB.unwrap () == true);
+    assert (unwrapBoolResult (addB) == true);
 
     var addADuplicate = hash.addNode ("node-a");
-    assert (addADuplicate.isOk ());
-    assert (addADuplicate.unwrap () == false);
+    assert (unwrapBoolResult (addADuplicate) == false);
 
     var containsA = hash.containsNode ("node-a");
-    assert (containsA.isOk ());
-    assert (containsA.unwrap () == true);
+    assert (unwrapBoolResult (containsA) == true);
     assert (hash.nodeCount () == 2);
 
     var nodeResult = hash.getNode ("user:42");
@@ -44,20 +45,18 @@ void testBasic () {
     assert (node == "node-a" || node == "node-b");
 
     var removedB = hash.removeNode ("node-b");
-    assert (removedB.isOk ());
-    assert (removedB.unwrap () == true);
+    assert (unwrapBoolResult (removedB) == true);
 
     removedB = hash.removeNode ("node-b");
-    assert (removedB.isOk ());
-    assert (removedB.unwrap () == false);
+    assert (unwrapBoolResult (removedB) == false);
     assert (hash.nodeCount () == 1);
 }
 
 void testGetTopNodes () {
     var hash = new RendezvousHash ();
-    assert (hash.addNode ("n1").isOk ());
-    assert (hash.addNode ("n2").isOk ());
-    assert (hash.addNode ("n3").isOk ());
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n3")) == true);
 
     var top2Result = hash.getTopNodes ("key", 2);
     assert (top2Result.isOk ());
@@ -78,16 +77,14 @@ void testGetTopNodes () {
 
 void testSetWeight () {
     var hash = new RendezvousHash ();
-    assert (hash.addNode ("slow").isOk ());
-    assert (hash.addNode ("fast").isOk ());
+    assert (unwrapBoolResult (hash.addNode ("slow")) == true);
+    assert (unwrapBoolResult (hash.addNode ("fast")) == true);
 
     var weightedFast = hash.setWeight ("fast", 3.0);
-    assert (weightedFast.isOk ());
-    assert (weightedFast.unwrap () == true);
+    assert (unwrapBoolResult (weightedFast) == true);
 
     var weightedMissing = hash.setWeight ("missing", 2.0);
-    assert (weightedMissing.isOk ());
-    assert (weightedMissing.unwrap () == false);
+    assert (unwrapBoolResult (weightedMissing) == false);
 
     var keys = new ArrayList<string> ();
     for (int i = 0; i < 3000; i++) {
@@ -102,9 +99,9 @@ void testSetWeight () {
 
 void testDistribution () {
     var hash = new RendezvousHash ();
-    assert (hash.addNode ("n1").isOk ());
-    assert (hash.addNode ("n2").isOk ());
-    assert (hash.addNode ("n3").isOk ());
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n3")) == true);
 
     var keys = new ArrayList<string> ();
     for (int i = 0; i < 200; i++) {
@@ -121,9 +118,9 @@ void testDistribution () {
 
 void testRebalanceEstimate () {
     var hash = new RendezvousHash ();
-    assert (hash.addNode ("n1").isOk ());
-    assert (hash.addNode ("n2").isOk ());
-    assert (hash.addNode ("n3").isOk ());
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n3")) == true);
 
     var keys = new ArrayList<string> ();
     for (int i = 0; i < 200; i++) {
@@ -140,8 +137,8 @@ void testRebalanceEstimate () {
 
 void testClear () {
     var hash = new RendezvousHash ();
-    assert (hash.addNode ("n1").isOk ());
-    assert (hash.addNode ("n2").isOk ());
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
     hash.clear ();
 
     assert (hash.nodeCount () == 0);
@@ -164,7 +161,7 @@ void testInvalidArguments () {
     assert (invalidKey.unwrapError () is RendezvousHashError.INVALID_ARGUMENT);
     assert (invalidKey.unwrapError ().message == "key must not be empty");
 
-    assert (hash.addNode ("n1").isOk ());
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
 
     var invalidTopN = hash.getTopNodes ("k", 0);
     assert (invalidTopN.isError ());
