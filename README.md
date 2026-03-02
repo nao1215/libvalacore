@@ -620,15 +620,15 @@ Token-bucket based rate limiter.
 
 | Method | Description |
 |---|---|
-| `RateLimiter(int permitsPerSecond)` | Creates limiter (`throws RateLimiterError.INVALID_ARGUMENT` when `permitsPerSecond <= 0`) |
-| `withBurst(int permits)` | Sets burst capacity (`throws RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) and returns this limiter |
+| `of(int permitsPerSecond)` | Returns `Result<RateLimiter, Error>` (error: `RateLimiterError.INVALID_ARGUMENT` when `permitsPerSecond <= 0`) |
+| `withBurst(int permits)` | Returns `Result<RateLimiter, Error>` (error: `RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
 | `allow()` | Tries to acquire one permit immediately |
-| `allowN(int permits)` | Tries to acquire multiple permits immediately (`throws RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
+| `allowN(int permits)` | Returns `Result<bool, Error>` (error: `RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
 | `wait()` | Waits until one permit is available |
-| `waitN(int permits)` | Waits until multiple permits are available (`throws RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
+| `waitN(int permits)` | Returns `Result<bool, Error>` (error: `RateLimiterError.INVALID_ARGUMENT` when `permits <= 0`) |
 | `reserve()` | Returns estimated wait milliseconds for one permit |
 | `availableTokens()` | Returns currently available permits (floored) |
-| `setRate(int permitsPerSecond)` | Updates permit generation rate (`throws RateLimiterError.INVALID_ARGUMENT` when `permitsPerSecond <= 0`) |
+| `setRate(int permitsPerSecond)` | Returns `Result<bool, Error>` (error: `RateLimiterError.INVALID_ARGUMENT` when `permitsPerSecond <= 0`) |
 | `reset()` | Refills tokens to burst capacity |
 
 ### Vala.Net.CircuitBreaker
