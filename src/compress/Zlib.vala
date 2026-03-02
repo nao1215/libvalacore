@@ -68,16 +68,16 @@ namespace Vala.Compress {
          * @param dst destination file path.
          * @return Result.ok(true) on success, or Result.error(ZlibError) on failure.
          */
-        public static Result<bool ?, GLib.Error> compressFile (Vala.Io.Path src, Vala.Io.Path dst) {
+        public static Result<bool, GLib.Error> compressFile (Vala.Io.Path src, Vala.Io.Path dst) {
             if (Objects.isNull (src) || Objects.isNull (dst)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.INVALID_ARGUMENT ("source and destination must not be null")
                 );
             }
 
             uint8[] ? bytes = Files.readBytes (src);
             if (bytes == null) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.NOT_FOUND ("source file not found or unreadable: %s".printf (src.toString ()))
                 );
             }
@@ -87,16 +87,16 @@ namespace Vala.Compress {
                 new GLib.ZlibCompressor (GLib.ZlibCompressorFormat.ZLIB, -1)
             );
             if (compressed == null) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.IO ("failed to compress source file: %s".printf (src.toString ()))
                 );
             }
             if (!Files.writeBytes (dst, compressed)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.IO ("failed to write compressed file: %s".printf (dst.toString ()))
                 );
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         /**
@@ -106,30 +106,30 @@ namespace Vala.Compress {
          * @param dst destination plain file path.
          * @return Result.ok(true) on success, or Result.error(ZlibError) on failure.
          */
-        public static Result<bool ?, GLib.Error> decompressFile (Vala.Io.Path src, Vala.Io.Path dst) {
+        public static Result<bool, GLib.Error> decompressFile (Vala.Io.Path src, Vala.Io.Path dst) {
             if (Objects.isNull (src) || Objects.isNull (dst)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.INVALID_ARGUMENT ("source and destination must not be null")
                 );
             }
 
             uint8[] ? bytes = Files.readBytes (src);
             if (bytes == null) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.NOT_FOUND ("source file not found or unreadable: %s".printf (src.toString ()))
                 );
             }
 
             var plain = decompress (bytes);
             if (plain.isError ()) {
-                return Result.error<bool ?, GLib.Error> (plain.unwrapError ());
+                return Result.error<bool, GLib.Error> (plain.unwrapError ());
             }
             if (!Files.writeBytes (dst, plain.unwrap ().get_data ())) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZlibError.IO ("failed to write decompressed file: %s".printf (dst.toString ()))
                 );
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         /**

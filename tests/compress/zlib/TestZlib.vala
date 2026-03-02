@@ -52,7 +52,7 @@ uint8[] copyBytes (GLib.Bytes bytes) {
     return copied;
 }
 
-void assertOk (Result<bool ?, GLib.Error> result) {
+void assertOk (Result<bool, GLib.Error> result) {
     assert (result.isOk ());
     assert (result.unwrap ());
 }

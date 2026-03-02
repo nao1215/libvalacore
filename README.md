@@ -966,8 +966,8 @@ Static utility methods for Zlib compression and decompression.
 |---|---|
 | `compress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `ZlibError.IO`) |
 | `decompress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `ZlibError.PARSE`) |
-| `compressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.NOT_FOUND`, `ZlibError.IO`) |
-| `decompressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.NOT_FOUND`, `ZlibError.PARSE`, `ZlibError.IO`) |
+| `compressFile(Path src, Path dst)` | Returns `Result<bool, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.NOT_FOUND`, `ZlibError.IO`) |
+| `decompressFile(Path src, Path dst)` | Returns `Result<bool, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.NOT_FOUND`, `ZlibError.PARSE`, `ZlibError.IO`) |
 | `compressLevel(uint8[] data, int level)` | Returns `Result<Bytes, Error>` (errors: `ZlibError.INVALID_ARGUMENT`, `ZlibError.IO`) |
 
 ### Vala.Encoding.Base64
