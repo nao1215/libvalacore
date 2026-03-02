@@ -19,12 +19,12 @@ namespace Vala.Conv {
          * @return Result.ok(parsed integer), or
          *         Result.error(ConvertError.PARSE) when parsing fails.
          */
-        public static Result<int ?, GLib.Error> toInt (string s) {
+        public static Result<int, GLib.Error> toInt (string s) {
             int value = 0;
             if (int.try_parse (s, out value)) {
-                return Result.ok<int ?, GLib.Error> (value);
+                return Result.ok<int, GLib.Error> (value);
             }
-            return Result.error<int ?, GLib.Error> (
+            return Result.error<int, GLib.Error> (
                 new ConvertError.PARSE ("failed to parse int: %s".printf (s))
             );
         }

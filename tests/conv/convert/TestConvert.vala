@@ -56,7 +56,7 @@ void testToBase () {
     assert (Convert.intToBinary (0) == "0");
 }
 
-int unwrapInt (Result<int ?, GLib.Error> result) {
+int unwrapInt (Result<int, GLib.Error> result) {
     assert (result.isOk ());
     return result.unwrap ();
 }
@@ -76,7 +76,7 @@ bool unwrapBool (Result<bool, GLib.Error> result) {
     return result.unwrap ();
 }
 
-void assertParseErrorInt (Result<int ?, GLib.Error> result) {
+void assertParseErrorInt (Result<int, GLib.Error> result) {
     assert (result.isError ());
     assert (result.unwrapError () is Vala.Conv.ConvertError.PARSE);
 }
