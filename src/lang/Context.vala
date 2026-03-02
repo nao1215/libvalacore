@@ -56,11 +56,15 @@ namespace Vala.Lang {
          * Creates child context that can be cancelled explicitly.
          *
          * @param parent parent context.
-         * @return cancellable child context.
+         * @return Result.ok(cancellable child context), or
+         *         Result.error(ContextError.INVALID_ARGUMENT) when parent is null.
          */
-        public static Context withCancel (Context parent) throws ContextError {
-            ensureParent (parent);
-            return new Context (parent, parent._deadline_mono_usec);
+        public static Result<Context, GLib.Error> withCancel (Context parent) {
+            GLib.Error ? parentError = validateParent (parent);
+            if (parentError != null) {
+                return Result.error<Context, GLib.Error> (parentError);
+            }
+            return Result.ok<Context, GLib.Error> (new Context (parent, parent._deadline_mono_usec));
         }
 
         /**
@@ -68,14 +72,20 @@ namespace Vala.Lang {
          *
          * @param parent parent context.
          * @param timeout timeout duration.
-         * @return timeout child context.
+         * @return Result.ok(timeout child context), or
+         *         Result.error(ContextError.INVALID_ARGUMENT) on invalid inputs.
          */
-        public static Context withTimeout (Context parent, Duration timeout) throws ContextError {
-            ensureParent (parent);
+        public static Result<Context, GLib.Error> withTimeout (Context parent, Duration timeout) {
+            GLib.Error ? parentError = validateParent (parent);
+            if (parentError != null) {
+                return Result.error<Context, GLib.Error> (parentError);
+            }
 
             int64 timeout_millis = timeout.toMillis ();
             if (timeout_millis < 0) {
-                throw new ContextError.INVALID_ARGUMENT ("timeout must be non-negative");
+                return Result.error<Context, GLib.Error> (
+                    new ContextError.INVALID_ARGUMENT ("timeout must be non-negative")
+                );
             }
 
             int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
@@ -83,7 +93,7 @@ namespace Vala.Lang {
                 deadline = parent._deadline_mono_usec;
             }
 
-            return new Context (parent, deadline);
+            return Result.ok<Context, GLib.Error> (new Context (parent, deadline));
         }
 
         /**
@@ -91,10 +101,14 @@ namespace Vala.Lang {
          *
          * @param parent parent context.
          * @param deadline absolute deadline.
-         * @return deadline child context.
+         * @return Result.ok(deadline child context), or
+         *         Result.error(ContextError.INVALID_ARGUMENT) when parent is null.
          */
-        public static Context withDeadline (Context parent, Vala.Time.DateTime deadline) throws ContextError {
-            ensureParent (parent);
+        public static Result<Context, GLib.Error> withDeadline (Context parent, Vala.Time.DateTime deadline) {
+            GLib.Error ? parentError = validateParent (parent);
+            if (parentError != null) {
+                return Result.error<Context, GLib.Error> (parentError);
+            }
 
             int64 now_unix = Vala.Time.DateTime.now ().toUnixTimestamp ();
             int64 deadline_unix = deadline.toUnixTimestamp ();
@@ -104,7 +118,7 @@ namespace Vala.Lang {
             if (timeout_millis <= 0) {
                 var expired = new Context (parent, GLib.get_monotonic_time ());
                 expired.cancelWithReason ("timeout");
-                return expired;
+                return Result.ok<Context, GLib.Error> (expired);
             }
 
             return withTimeout (parent, Duration.ofSeconds (diff_seconds));
@@ -185,20 +199,23 @@ namespace Vala.Lang {
          * Returns value for key from this context chain.
          *
          * @param key lookup key.
-         * @return value or null.
+         * @return Result.ok(value or null), or
+         *         Result.error(ContextError.INVALID_ARGUMENT) when key is empty.
          */
-        public string ? value (string key) throws ContextError {
+        public Result<string ?, GLib.Error> value (string key) {
             if (key.length == 0) {
-                throw new ContextError.INVALID_ARGUMENT ("key must not be empty");
+                return Result.error<string ?, GLib.Error> (
+                    new ContextError.INVALID_ARGUMENT ("key must not be empty")
+                );
             }
 
             string ? v = _local_values.get (key);
             if (v != null) {
-                return v;
+                return Result.ok<string ?, GLib.Error> (v);
             }
 
             if (_parent == null) {
-                return null;
+                return Result.ok<string ?, GLib.Error> (null);
             }
             return _parent.value (key);
         }
@@ -208,22 +225,26 @@ namespace Vala.Lang {
          *
          * @param key key string.
          * @param value value string.
-         * @return child context containing key/value.
+         * @return Result.ok(child context containing key/value), or
+         *         Result.error(ContextError.INVALID_ARGUMENT) when key is empty.
          */
-        public Context withValue (string key, string value) throws ContextError {
+        public Result<Context, GLib.Error> withValue (string key, string value) {
             if (key.length == 0) {
-                throw new ContextError.INVALID_ARGUMENT ("key must not be empty");
+                return Result.error<Context, GLib.Error> (
+                    new ContextError.INVALID_ARGUMENT ("key must not be empty")
+                );
             }
 
             var child = new Context (this, _deadline_mono_usec);
             child._local_values.put (key, value);
-            return child;
+            return Result.ok<Context, GLib.Error> (child);
         }
 
-        private static void ensureParent (Context ? parent) throws ContextError {
+        private static GLib.Error ? validateParent (Context ? parent) {
             if (parent == null) {
-                throw new ContextError.INVALID_ARGUMENT ("parent context must not be null");
+                return new ContextError.INVALID_ARGUMENT ("parent context must not be null");
             }
+            return null;
         }
 
         private void inheritParentCancellation () {
