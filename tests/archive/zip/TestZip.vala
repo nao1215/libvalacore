@@ -49,7 +49,7 @@ string ? findBySuffix (ArrayList<string> entries, string suffix) {
     return null;
 }
 
-void assertOk (Result<bool ?, GLib.Error> result) {
+void assertOk (Result<bool, GLib.Error> result) {
     assert (result.isOk ());
     assert (result.unwrap ());
 }

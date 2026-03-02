@@ -24,15 +24,15 @@ namespace Vala.Archive {
          * @param files source files.
          * @return Result.ok(true) on success, or Result.error(ZipError) on failure.
          */
-        public static Result<bool ?, GLib.Error> create (Vala.Io.Path archive, ArrayList<Vala.Io.Path> files) {
+        public static Result<bool, GLib.Error> create (Vala.Io.Path archive, ArrayList<Vala.Io.Path> files) {
             if (Objects.isNull (archive) || Objects.isNull (files) || files.size () == 0) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.INVALID_ARGUMENT ("archive/files must not be null and files must not be empty")
                 );
             }
 
             if (Files.exists (archive) && !Files.remove (archive)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("failed to remove existing archive: %s".printf (archive.toString ()))
                 );
             }
@@ -51,7 +51,7 @@ namespace Vala.Archive {
                 }
                 string name = file.basename ();
                 if (basenames.contains (name)) {
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new ZipError.INVALID_ARGUMENT (
                             "duplicate basename is not allowed for zip -j mode: %s".printf (name)
                         )
@@ -63,7 +63,7 @@ namespace Vala.Archive {
             }
 
             if (!hasFile) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.NOT_FOUND ("no regular files were provided")
                 );
             }
@@ -73,11 +73,11 @@ namespace Vala.Archive {
                 execArgs[i] = args.index (i);
             }
             if (!Vala.Io.Process.exec ("zip", execArgs)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("zip create command failed: %s".printf (archive.toString ()))
                 );
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         /**
@@ -87,9 +87,9 @@ namespace Vala.Archive {
          * @param dir source directory.
          * @return Result.ok(true) on success, or Result.error(ZipError) on failure.
          */
-        public static Result<bool ?, GLib.Error> createFromDir (Vala.Io.Path archive, Vala.Io.Path dir) {
+        public static Result<bool, GLib.Error> createFromDir (Vala.Io.Path archive, Vala.Io.Path dir) {
             if (Objects.isNull (archive) || Objects.isNull (dir) || !Files.isDir (dir)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.INVALID_ARGUMENT (
                         "archive and existing source directory are required: %s".printf (dir.toString ())
                     )
@@ -97,7 +97,7 @@ namespace Vala.Archive {
             }
 
             if (Files.exists (archive) && !Files.remove (archive)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("failed to remove existing archive: %s".printf (archive.toString ()))
                 );
             }
@@ -108,13 +108,13 @@ namespace Vala.Archive {
                 string[] argv = { "zip", "-qr", archive.toString (), ".", null };
                 var process = launcher.spawnv (argv);
                 if (!process.wait_check (null)) {
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new ZipError.IO ("zip createFromDir command failed: %s".printf (archive.toString ()))
                     );
                 }
-                return Result.ok<bool ?, GLib.Error> (true);
+                return Result.ok<bool, GLib.Error> (true);
             } catch (GLib.Error e) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO (
                         "zip createFromDir failed for dir=%s archive=%s: %s".printf (
                             dir.toString (),
@@ -133,32 +133,32 @@ namespace Vala.Archive {
          * @param dest destination directory.
          * @return Result.ok(true) on success, or Result.error(ZipError) on failure.
          */
-        public static Result<bool ?, GLib.Error> extract (Vala.Io.Path archive, Vala.Io.Path dest) {
+        public static Result<bool, GLib.Error> extract (Vala.Io.Path archive, Vala.Io.Path dest) {
             if (Objects.isNull (archive) || Objects.isNull (dest)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.INVALID_ARGUMENT ("archive and dest must not be null")
                 );
             }
             if (!Files.isFile (archive)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.NOT_FOUND ("archive does not exist: %s".printf (archive.toString ()))
                 );
             }
             if (!Files.exists (dest) && !Files.makeDirs (dest)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("failed to create destination directory: %s".printf (dest.toString ()))
                 );
             }
 
             var listed = list (archive);
             if (listed.isError ()) {
-                return Result.error<bool ?, GLib.Error> (listed.unwrapError ());
+                return Result.error<bool, GLib.Error> (listed.unwrapError ());
             }
             ArrayList<string> entries = listed.unwrap ();
             for (int i = 0; i < entries.size (); i++) {
                 string ? entry = entries.get (i);
                 if (entry == null || !isSafeArchiveEntry (entry, dest)) {
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new ZipError.SECURITY (
                             "unsafe zip entry rejected during extract: %s".printf (entry ?? "<null>")
                         )
@@ -167,7 +167,7 @@ namespace Vala.Archive {
             }
 
             if (!Vala.Io.Process.exec ("unzip", { "-qq", archive.toString (), "-d", dest.toString () })) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO (
                         "unzip extract command failed: archive=%s dest=%s".printf (
                             archive.toString (),
@@ -176,7 +176,7 @@ namespace Vala.Archive {
                     )
                 );
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         /**
@@ -221,26 +221,26 @@ namespace Vala.Archive {
          * @param file file to add.
          * @return Result.ok(true) on success, or Result.error(ZipError) on failure.
          */
-        public static Result<bool ?, GLib.Error> addFile (Vala.Io.Path archive, Vala.Io.Path file) {
+        public static Result<bool, GLib.Error> addFile (Vala.Io.Path archive, Vala.Io.Path file) {
             if (Objects.isNull (archive) || Objects.isNull (file)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.INVALID_ARGUMENT ("archive and file must not be null")
                 );
             }
             if (!Files.isFile (archive)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.NOT_FOUND ("archive does not exist: %s".printf (archive.toString ()))
                 );
             }
             if (!Files.isFile (file)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.NOT_FOUND ("file does not exist: %s".printf (file.toString ()))
                 );
             }
             if (!Vala.Io.Process.exec (
                     "zip",
                     { "-q", "-j", "-g", archive.toString (), file.toString () })) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO (
                         "zip addFile command failed: archive=%s file=%s".printf (
                             archive.toString (),
@@ -249,7 +249,7 @@ namespace Vala.Archive {
                     )
                 );
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         /**
@@ -260,22 +260,22 @@ namespace Vala.Archive {
          * @param dest destination file path.
          * @return Result.ok(true) on success, or Result.error(ZipError) on failure.
          */
-        public static Result<bool ?, GLib.Error> extractFile (Vala.Io.Path archive,
-                                                              string entry,
-                                                              Vala.Io.Path dest) {
+        public static Result<bool, GLib.Error> extractFile (Vala.Io.Path archive,
+                                                            string entry,
+                                                            Vala.Io.Path dest) {
             if (Objects.isNull (archive) || Objects.isNull (dest) || entry.strip ().length == 0) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.INVALID_ARGUMENT ("archive, entry and dest must be valid")
                 );
             }
             if (!Files.isFile (archive)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.NOT_FOUND ("archive does not exist: %s".printf (archive.toString ()))
                 );
             }
             var listed = list (archive);
             if (listed.isError ()) {
-                return Result.error<bool ?, GLib.Error> (listed.unwrapError ());
+                return Result.error<bool, GLib.Error> (listed.unwrapError ());
             }
             string targetEntry = entry;
             if (targetEntry.has_prefix ("./")) {
@@ -298,7 +298,7 @@ namespace Vala.Archive {
                 }
             }
             if (!found) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.NOT_FOUND (
                         "entry not found: entry=%s archive=%s".printf (entry, archive.toString ())
                     )
@@ -307,7 +307,7 @@ namespace Vala.Archive {
 
             Vala.Io.Path parent = dest.parent ();
             if (!Files.exists (parent) && !Files.makeDirs (parent)) {
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("failed to create parent directory: %s".printf (parent.toString ()))
                 );
             }
@@ -329,7 +329,7 @@ namespace Vala.Archive {
                 );
                 GLib.InputStream ? stdoutPipe = process.get_stdout_pipe ();
                 if (stdoutPipe == null) {
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new ZipError.IO ("failed to open unzip stdout stream: %s".printf (archive.toString ()))
                     );
                 }
@@ -348,7 +348,7 @@ namespace Vala.Archive {
                     if (read < 0) {
                         outStream.close (null);
                         Files.remove (temp);
-                        return Result.error<bool ?, GLib.Error> (
+                        return Result.error<bool, GLib.Error> (
                             new ZipError.IO ("failed to read unzip stream: %s".printf (archive.toString ()))
                         );
                     }
@@ -362,7 +362,7 @@ namespace Vala.Archive {
                     if (Files.exists (temp)) {
                         Files.remove (temp);
                     }
-                    return Result.error<bool ?, GLib.Error> (
+                    return Result.error<bool, GLib.Error> (
                         new ZipError.NOT_FOUND (
                             "entry not found or extraction failed: entry=%s archive=%s".printf (
                                 entry,
@@ -375,7 +375,7 @@ namespace Vala.Archive {
                 if (Files.exists (temp)) {
                     Files.remove (temp);
                 }
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO (
                         "zip extractFile failed: archive=%s entry=%s reason=%s".printf (
                             archive.toString (),
@@ -390,7 +390,7 @@ namespace Vala.Archive {
             Vala.Io.Path backup = parent.resolve (".zip-dest-backup-%s.tmp".printf (GLib.Uuid.string_random ()));
             if (hadDest && !Files.move (dest, backup)) {
                 Files.remove (temp);
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("failed to backup destination file: %s".printf (dest.toString ()))
                 );
             }
@@ -399,14 +399,14 @@ namespace Vala.Archive {
                     Files.move (backup, dest);
                 }
                 Files.remove (temp);
-                return Result.error<bool ?, GLib.Error> (
+                return Result.error<bool, GLib.Error> (
                     new ZipError.IO ("failed to move extracted file to destination: %s".printf (dest.toString ()))
                 );
             }
             if (hadDest && Files.exists (backup)) {
                 Files.remove (backup);
             }
-            return Result.ok<bool ?, GLib.Error> (true);
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         private static bool isSafeArchiveEntry (string entry, Vala.Io.Path dest) {
