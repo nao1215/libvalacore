@@ -1723,10 +1723,10 @@ Type conversion utilities similar to Go's `strconv`.
 
 | Method | Description |
 |---|---|
-| `toInt(string s)` | Converts text to `int` (`null` on parse failure) |
-| `toInt64(string s)` | Converts text to `int64` (`null` on parse failure) |
-| `toDouble(string s)` | Converts text to `double` (`null` on parse failure) |
-| `toBool(string s)` | Converts text to `bool` (`true/false/1/0`, else `null`) |
+| `toInt(string s)` | Returns `Result<int, Error>` (error: `ConvertError.PARSE` on parse failure) |
+| `toInt64(string s)` | Returns `Result<int64, Error>` (error: `ConvertError.PARSE` on parse failure) |
+| `toDouble(string s)` | Returns `Result<double, Error>` (error: `ConvertError.PARSE` on parse failure) |
+| `toBool(string s)` | Returns `Result<bool, Error>` (`true/false/1/0`; error: `ConvertError.PARSE` otherwise) |
 | `intToString(int n)` | Converts `int` to string |
 | `doubleToString(double d, int precision)` | Converts `double` with fixed precision |
 | `boolToString(bool b)` | Converts bool to `"true"` / `"false"` |
