@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Math {
     /**
      * Recoverable random utility argument errors.
@@ -25,13 +26,13 @@ namespace Vala.Math {
          * @param bound exclusive upper bound.
          * @return Result containing random integer, or INVALID_ARGUMENT error.
          */
-        public static Vala.Collections.Result<int, GLib.Error> nextInt (int bound) {
+        public static Vala.Collections.Result<int ?, GLib.Error> nextInt (int bound) {
             if (bound <= 0) {
-                return Vala.Collections.Result.error<int, GLib.Error> (
+                return Vala.Collections.Result.error<int ?, GLib.Error> (
                     new RandomError.INVALID_ARGUMENT ("bound must be greater than zero")
                 );
             }
-            return Vala.Collections.Result.ok<int, GLib.Error> (GLib.Random.int_range (0, bound));
+            return Vala.Collections.Result.ok<int ?, GLib.Error> (GLib.Random.int_range (0, bound));
         }
 
         /**
@@ -41,13 +42,13 @@ namespace Vala.Math {
          * @param max exclusive upper bound.
          * @return Result containing random integer, or INVALID_ARGUMENT error.
          */
-        public static Vala.Collections.Result<int, GLib.Error> nextIntRange (int min, int max) {
+        public static Vala.Collections.Result<int ?, GLib.Error> nextIntRange (int min, int max) {
             if (min >= max) {
-                return Vala.Collections.Result.error<int, GLib.Error> (
+                return Vala.Collections.Result.error<int ?, GLib.Error> (
                     new RandomError.INVALID_ARGUMENT ("min must be less than max")
                 );
             }
-            return Vala.Collections.Result.ok<int, GLib.Error> (GLib.Random.int_range (min, max));
+            return Vala.Collections.Result.ok<int ?, GLib.Error> (GLib.Random.int_range (min, max));
         }
 
         /**

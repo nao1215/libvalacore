@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Io {
     /**
      * Recoverable AtomicFile argument errors.

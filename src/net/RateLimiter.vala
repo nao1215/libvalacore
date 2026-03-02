@@ -1,3 +1,4 @@
+using Vala.Collections;
 using Vala.Lang;
 
 namespace Vala.Net {
@@ -132,9 +133,9 @@ namespace Vala.Net {
          * @return Result.ok(true/false) for acquisition outcome, or
          *         Result.error(RateLimiterError.INVALID_ARGUMENT) when permits is not positive.
          */
-        public Vala.Collections.Result<bool, GLib.Error> allowN (int permits) {
+        public Vala.Collections.Result<bool ?, GLib.Error> allowN (int permits) {
             if (permits <= 0) {
-                return Vala.Collections.Result.error<bool, GLib.Error> (
+                return Vala.Collections.Result.error<bool ?, GLib.Error> (
                     new RateLimiterError.INVALID_ARGUMENT (
                         "permits must be positive, got %d".printf (permits)
                     )
@@ -146,10 +147,10 @@ namespace Vala.Net {
             if (_tokens >= permits) {
                 _tokens -= permits;
                 _mutex.unlock ();
-                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                return Vala.Collections.Result.ok<bool ?, GLib.Error> (true);
             }
             _mutex.unlock ();
-            return Vala.Collections.Result.ok<bool, GLib.Error> (false);
+            return Vala.Collections.Result.ok<bool ?, GLib.Error> (false);
         }
 
         /**
@@ -190,9 +191,9 @@ namespace Vala.Net {
          * @return Result.ok(true) when permits are acquired, or
          *         Result.error(RateLimiterError.INVALID_ARGUMENT) when permits is not positive.
          */
-        public Vala.Collections.Result<bool, GLib.Error> waitN (int permits) {
+        public Vala.Collections.Result<bool ?, GLib.Error> waitN (int permits) {
             if (permits <= 0) {
-                return Vala.Collections.Result.error<bool, GLib.Error> (
+                return Vala.Collections.Result.error<bool ?, GLib.Error> (
                     new RateLimiterError.INVALID_ARGUMENT (
                         "permits must be positive, got %d".printf (permits)
                     )
@@ -207,7 +208,7 @@ namespace Vala.Net {
                 if (_tokens >= permits) {
                     _tokens -= permits;
                     _mutex.unlock ();
-                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                    return Vala.Collections.Result.ok<bool ?, GLib.Error> (true);
                 }
 
                 delay = waitMillisLocked (permits);
@@ -263,9 +264,9 @@ namespace Vala.Net {
          * @return Result.ok(true) when rate is updated, or
          *         Result.error(RateLimiterError.INVALID_ARGUMENT) when permitsPerSecond is not positive.
          */
-        public Vala.Collections.Result<bool, GLib.Error> setRate (int permitsPerSecond) {
+        public Vala.Collections.Result<bool ?, GLib.Error> setRate (int permitsPerSecond) {
             if (permitsPerSecond <= 0) {
-                return Vala.Collections.Result.error<bool, GLib.Error> (
+                return Vala.Collections.Result.error<bool ?, GLib.Error> (
                     new RateLimiterError.INVALID_ARGUMENT (
                         "permitsPerSecond must be positive, got %d".printf (permitsPerSecond)
                     )
@@ -279,7 +280,7 @@ namespace Vala.Net {
                 _burst = permitsPerSecond;
             }
             _mutex.unlock ();
-            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+            return Vala.Collections.Result.ok<bool ?, GLib.Error> (true);
         }
 
         /**

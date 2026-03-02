@@ -173,7 +173,7 @@ namespace Vala.Concurrent {
                     return;
                 }
 
-                future.completeSuccess ((owned) result.unwrap ());
+                future.completeSuccess (result.unwrap ());
             });
             return future;
         }

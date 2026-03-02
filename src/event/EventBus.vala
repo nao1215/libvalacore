@@ -98,17 +98,17 @@ namespace Vala.Event {
          *         Result.ok(false) when no subscribers exist, or
          *         Result.error(EventBusError.INVALID_ARGUMENT) when topic is empty.
          */
-        public Result<bool, GLib.Error> publish (string topic,
-                                                 GLib.Variant eventData) {
+        public Result<bool ?, GLib.Error> publish (string topic,
+                                                   GLib.Variant eventData) {
             if (topic.length == 0) {
-                return Result.error<bool, GLib.Error> (
+                return Result.error<bool ?, GLib.Error> (
                     new EventBusError.INVALID_ARGUMENT ("topic must not be empty")
                 );
             }
 
             ArrayList<EventSubscription> snapshot = takeSubscriptionsForPublish (topic);
             if (snapshot.size () == 0) {
-                return Result.ok<bool, GLib.Error> (false);
+                return Result.ok<bool ?, GLib.Error> (false);
             }
 
             for (int i = 0; i < snapshot.size (); i++) {
@@ -125,7 +125,7 @@ namespace Vala.Event {
                     sub.handler (eventData);
                 }
             }
-            return Result.ok<bool, GLib.Error> (true);
+            return Result.ok<bool ?, GLib.Error> (true);
         }
 
         /**
@@ -136,16 +136,16 @@ namespace Vala.Event {
          *         subscriptions were removed, or
          *         Result.error(EventBusError.INVALID_ARGUMENT) when topic is empty.
          */
-        public Result<bool, GLib.Error> unsubscribe (string topic) {
+        public Result<bool ?, GLib.Error> unsubscribe (string topic) {
             if (topic.length == 0) {
-                return Result.error<bool, GLib.Error> (
+                return Result.error<bool ?, GLib.Error> (
                     new EventBusError.INVALID_ARGUMENT ("topic must not be empty")
                 );
             }
             _mutex.lock ();
             bool removed = _topics.remove (topic);
             _mutex.unlock ();
-            return Result.ok<bool, GLib.Error> (removed);
+            return Result.ok<bool ?, GLib.Error> (removed);
         }
 
         /**
@@ -155,9 +155,9 @@ namespace Vala.Event {
          * @return Result.ok(true/false) for subscriber existence, or
          *         Result.error(EventBusError.INVALID_ARGUMENT) when topic is empty.
          */
-        public Result<bool, GLib.Error> hasSubscribers (string topic) {
+        public Result<bool ?, GLib.Error> hasSubscribers (string topic) {
             if (topic.length == 0) {
-                return Result.error<bool, GLib.Error> (
+                return Result.error<bool ?, GLib.Error> (
                     new EventBusError.INVALID_ARGUMENT ("topic must not be empty")
                 );
             }
@@ -166,7 +166,7 @@ namespace Vala.Event {
             ArrayList<EventSubscription> ? list = _topics.get (topic);
             bool has = list != null && list.size () > 0;
             _mutex.unlock ();
-            return Result.ok<bool, GLib.Error> (has);
+            return Result.ok<bool ?, GLib.Error> (has);
         }
 
         /**

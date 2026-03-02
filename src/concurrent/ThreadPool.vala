@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Concurrent {
     /**
      * Recoverable worker pool configuration errors.

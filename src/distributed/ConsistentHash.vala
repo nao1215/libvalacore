@@ -75,17 +75,17 @@ namespace Vala.Distributed {
          * @return Result.ok(true/false) for add outcome, or
          *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public Result<bool, GLib.Error> addNode (string nodeId) {
+        public Result<bool ?, GLib.Error> addNode (string nodeId) {
             GLib.Error ? nodeError = validateNodeId (nodeId);
             if (nodeError != null) {
-                return Result.error<bool, GLib.Error> (nodeError);
+                return Result.error<bool ?, GLib.Error> (nodeError);
             }
 
             bool added = _nodes.add (nodeId);
             if (added) {
                 rebuildRing ();
             }
-            return Result.ok<bool, GLib.Error> (added);
+            return Result.ok<bool ?, GLib.Error> (added);
         }
 
         /**
@@ -95,17 +95,17 @@ namespace Vala.Distributed {
          * @return Result.ok(true/false) for remove outcome, or
          *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public Result<bool, GLib.Error> removeNode (string nodeId) {
+        public Result<bool ?, GLib.Error> removeNode (string nodeId) {
             GLib.Error ? nodeError = validateNodeId (nodeId);
             if (nodeError != null) {
-                return Result.error<bool, GLib.Error> (nodeError);
+                return Result.error<bool ?, GLib.Error> (nodeError);
             }
 
             bool removed = _nodes.remove (nodeId);
             if (removed) {
                 rebuildRing ();
             }
-            return Result.ok<bool, GLib.Error> (removed);
+            return Result.ok<bool ?, GLib.Error> (removed);
         }
 
         /**
@@ -115,12 +115,12 @@ namespace Vala.Distributed {
          * @return Result.ok(true/false) for existence, or
          *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public Result<bool, GLib.Error> containsNode (string nodeId) {
+        public Result<bool ?, GLib.Error> containsNode (string nodeId) {
             GLib.Error ? nodeError = validateNodeId (nodeId);
             if (nodeError != null) {
-                return Result.error<bool, GLib.Error> (nodeError);
+                return Result.error<bool ?, GLib.Error> (nodeError);
             }
-            return Result.ok<bool, GLib.Error> (_nodes.contains (nodeId));
+            return Result.ok<bool ?, GLib.Error> (_nodes.contains (nodeId));
         }
 
         /**

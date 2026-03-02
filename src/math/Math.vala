@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Math {
     /**
      * Recoverable argument errors for math helpers.
@@ -54,20 +55,20 @@ namespace Vala.Math {
          * @return Result.ok(clamped value) or Result.error(MathError.INVALID_ARGUMENT)
          *         when lo is greater than hi.
          */
-        public static Vala.Collections.Result<double, GLib.Error> clamp (double x, double lo, double hi) {
+        public static Vala.Collections.Result<double ?, GLib.Error> clamp (double x, double lo, double hi) {
             if (lo > hi) {
-                return Vala.Collections.Result.error<double, GLib.Error> (
+                return Vala.Collections.Result.error<double ?, GLib.Error> (
                     new MathError.INVALID_ARGUMENT ("lo must be less than or equal to hi")
                 );
             }
 
             if (x < lo) {
-                return Vala.Collections.Result.ok<double, GLib.Error> (lo);
+                return Vala.Collections.Result.ok<double ?, GLib.Error> (lo);
             }
             if (x > hi) {
-                return Vala.Collections.Result.ok<double, GLib.Error> (hi);
+                return Vala.Collections.Result.ok<double ?, GLib.Error> (hi);
             }
-            return Vala.Collections.Result.ok<double, GLib.Error> (x);
+            return Vala.Collections.Result.ok<double ?, GLib.Error> (x);
         }
 
         /**
@@ -241,14 +242,14 @@ namespace Vala.Math {
          * @return Result.ok(factorial value) or Result.error(MathError.INVALID_ARGUMENT)
          *         when n is outside [0, 20].
          */
-        public static Vala.Collections.Result<int64, GLib.Error> factorial (int n) {
+        public static Vala.Collections.Result<int64 ?, GLib.Error> factorial (int n) {
             if (n < 0) {
-                return Vala.Collections.Result.error<int64, GLib.Error> (
+                return Vala.Collections.Result.error<int64 ?, GLib.Error> (
                     new MathError.INVALID_ARGUMENT ("n must be non-negative")
                 );
             }
             if (n > 20) {
-                return Vala.Collections.Result.error<int64, GLib.Error> (
+                return Vala.Collections.Result.error<int64 ?, GLib.Error> (
                     new MathError.INVALID_ARGUMENT ("n must be in range [0, 20]")
                 );
             }
@@ -257,7 +258,7 @@ namespace Vala.Math {
             for (int i = 2; i <= n; i++) {
                 result *= i;
             }
-            return Vala.Collections.Result.ok<int64, GLib.Error> (result);
+            return Vala.Collections.Result.ok<int64 ?, GLib.Error> (result);
         }
 
         private static int64 _abs_int64 (int64 x) {

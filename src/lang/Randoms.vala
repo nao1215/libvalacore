@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Lang {
     /**
      * Recoverable random utility argument errors.
@@ -31,13 +32,13 @@ namespace Vala.Lang {
          * @param bound exclusive upper bound.
          * @return Result containing random integer, or INVALID_ARGUMENT error.
          */
-        public static Vala.Collections.Result<int, GLib.Error> nextInt (int bound) {
+        public static Vala.Collections.Result<int ?, GLib.Error> nextInt (int bound) {
             if (bound <= 0) {
-                return Vala.Collections.Result.error<int, GLib.Error> (
+                return Vala.Collections.Result.error<int ?, GLib.Error> (
                     new RandomsError.INVALID_ARGUMENT ("bound must be greater than zero")
                 );
             }
-            return Vala.Collections.Result.ok<int, GLib.Error> (GLib.Random.int_range (0, bound));
+            return Vala.Collections.Result.ok<int ?, GLib.Error> (GLib.Random.int_range (0, bound));
         }
 
         /**

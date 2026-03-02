@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Math {
     /**
      * Recoverable BigInteger argument errors.
@@ -267,7 +268,7 @@ namespace Vala.Math {
                 index++;
             }
             if (index == value.length) {
-                return "0";
+                return Result.ok<string, GLib.Error> ("0");
             }
 
             string absolute = value.substring (index);

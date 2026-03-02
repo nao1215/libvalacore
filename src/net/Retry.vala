@@ -30,7 +30,7 @@ namespace Vala.Net {
      * Returning Result.error is treated as a retryable failure unless
      * predicate configured by withRetryOn() rejects it.
      */
-    public delegate Result<bool, GLib.Error> RetryVoidFunc ();
+    public delegate Result<bool ?, GLib.Error> RetryVoidFunc ();
 
     /**
      * Predicate used to decide whether retry should continue.

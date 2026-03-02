@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Math {
     /**
      * Recoverable BigDecimal argument and arithmetic errors.

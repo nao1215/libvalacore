@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Distributed {
     /**
      * Recoverable Snowflake generator errors.
@@ -121,7 +122,7 @@ namespace Vala.Distributed {
          * @return Result.ok(next unique ID), or
          *         Result.error(SnowflakeError.CLOCK_BEFORE_EPOCH/TIMESTAMP_OVERFLOW).
          */
-        public Vala.Collections.Result<int64, GLib.Error> nextId () {
+        public Vala.Collections.Result<int64 ?, GLib.Error> nextId () {
             _mutex.lock ();
 
             int64 now = currentTimeMillis ();
@@ -141,13 +142,13 @@ namespace Vala.Distributed {
             int64 elapsed = now - _epoch_millis;
             if (elapsed < 0L) {
                 _mutex.unlock ();
-                return Vala.Collections.Result.error<int64, GLib.Error> (
+                return Vala.Collections.Result.error<int64 ?, GLib.Error> (
                     new SnowflakeError.CLOCK_BEFORE_EPOCH ("current time is before configured epoch")
                 );
             }
             if (elapsed > TIMESTAMP_MASK) {
                 _mutex.unlock ();
-                return Vala.Collections.Result.error<int64, GLib.Error> (
+                return Vala.Collections.Result.error<int64 ?, GLib.Error> (
                     new SnowflakeError.TIMESTAMP_OVERFLOW ("snowflake timestamp overflow")
                 );
             }
@@ -158,7 +159,7 @@ namespace Vala.Distributed {
                        (((int64) _node_id & NODE_MASK) << SEQUENCE_BITS) |
                        _sequence;
             _mutex.unlock ();
-            return Vala.Collections.Result.ok<int64, GLib.Error> (id);
+            return Vala.Collections.Result.ok<int64 ?, GLib.Error> (id);
         }
 
         /**

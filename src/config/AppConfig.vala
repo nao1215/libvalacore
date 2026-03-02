@@ -197,23 +197,23 @@ namespace Vala.Config {
          * @return Result.ok(parsed int or fallback), or
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public Result<int, GLib.Error> getInt (string key, int fallback = 0) {
+        public Result<int ?, GLib.Error> getInt (string key, int fallback = 0) {
             GLib.Error ? keyError = ensureKey (key);
             if (keyError != null) {
-                return Result.error<int, GLib.Error> (keyError);
+                return Result.error<int ?, GLib.Error> (keyError);
             }
 
             string source;
             string ? raw = resolveValue (key, out source);
             if (raw == null) {
-                return Result.ok<int, GLib.Error> (fallback);
+                return Result.ok<int ?, GLib.Error> (fallback);
             }
 
             int parsed;
             if (int.try_parse (raw.strip (), out parsed)) {
-                return Result.ok<int, GLib.Error> (parsed);
+                return Result.ok<int ?, GLib.Error> (parsed);
             }
-            return Result.ok<int, GLib.Error> (fallback);
+            return Result.ok<int ?, GLib.Error> (fallback);
         }
 
         /**
@@ -227,20 +227,20 @@ namespace Vala.Config {
          * @return Result.ok(parsed bool or fallback), or
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public Result<bool, GLib.Error> getBool (string key, bool fallback = false) {
+        public Result<bool ?, GLib.Error> getBool (string key, bool fallback = false) {
             GLib.Error ? keyError = ensureKey (key);
             if (keyError != null) {
-                return Result.error<bool, GLib.Error> (keyError);
+                return Result.error<bool ?, GLib.Error> (keyError);
             }
 
             string source;
             string ? raw = resolveValue (key, out source);
             if (raw == null) {
-                return Result.ok<bool, GLib.Error> (fallback);
+                return Result.ok<bool ?, GLib.Error> (fallback);
             }
 
             bool ? parsed = parseBool (raw);
-            return Result.ok<bool, GLib.Error> (parsed ?? fallback);
+            return Result.ok<bool ?, GLib.Error> (parsed ?? fallback);
         }
 
         /**
