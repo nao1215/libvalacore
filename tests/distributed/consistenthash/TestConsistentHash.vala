@@ -17,155 +17,145 @@ void main (string[] args) {
 
 void testBasic () {
     var ring = new ConsistentHash ();
-    try {
-        assert (ring.getNode ("k") == null);
-        assert (ring.addNode ("node-a") == true);
-        assert (ring.addNode ("node-b") == true);
-        assert (ring.addNode ("node-a") == false);
-        assert (ring.containsNode ("node-a") == true);
-        assert (ring.nodeCount () == 2);
-        assert (ring.virtualNodeCount () == 200);
+    var firstNode = ring.getNode ("k");
+    assert (firstNode.isOk ());
+    assert (firstNode.unwrap () == null);
 
-        string ? node = ring.getNode ("user:42");
-        assert (node == "node-a" || node == "node-b");
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
-    }
+    var addA = ring.addNode ("node-a");
+    assert (addA.isOk ());
+    assert (addA.unwrap () == true);
+
+    var addB = ring.addNode ("node-b");
+    assert (addB.isOk ());
+    assert (addB.unwrap () == true);
+
+    var addADuplicate = ring.addNode ("node-a");
+    assert (addADuplicate.isOk ());
+    assert (addADuplicate.unwrap () == false);
+
+    var containsA = ring.containsNode ("node-a");
+    assert (containsA.isOk ());
+    assert (containsA.unwrap () == true);
+
+    assert (ring.nodeCount () == 2);
+    assert (ring.virtualNodeCount () == 200);
+
+    var nodeResult = ring.getNode ("user:42");
+    assert (nodeResult.isOk ());
+    string ? node = nodeResult.unwrap ();
+    assert (node == "node-a" || node == "node-b");
 }
 
 void testGetNodes () {
     var ring = new ConsistentHash ();
-    try {
-        ring.addNode ("n1");
-        ring.addNode ("n2");
-        ring.addNode ("n3");
+    assert (ring.addNode ("n1").isOk ());
+    assert (ring.addNode ("n2").isOk ());
+    assert (ring.addNode ("n3").isOk ());
 
-        ArrayList<string> nodes = ring.getNodes ("key", 2);
-        assert (nodes.size () == 2);
-        assert (nodes.get (0) != nodes.get (1));
+    var nodesResult = ring.getNodes ("key", 2);
+    assert (nodesResult.isOk ());
+    ArrayList<string> nodes = nodesResult.unwrap ();
+    assert (nodes.size () == 2);
+    assert (nodes.get (0) != nodes.get (1));
 
-        ArrayList<string> allNodes = ring.getNodes ("key", 10);
-        assert (allNodes.size () == 3);
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
-    }
+    var allNodesResult = ring.getNodes ("key", 10);
+    assert (allNodesResult.isOk ());
+    ArrayList<string> allNodes = allNodesResult.unwrap ();
+    assert (allNodes.size () == 3);
 }
 
 void testWithVirtualNodes () {
     var ring = new ConsistentHash ();
-    try {
-        ring.addNode ("n1");
-        ring.addNode ("n2");
-        assert (ring.virtualNodeCount () == 200);
+    assert (ring.addNode ("n1").isOk ());
+    assert (ring.addNode ("n2").isOk ());
+    assert (ring.virtualNodeCount () == 200);
 
-        ring.withVirtualNodes (10);
-        assert (ring.virtualNodeCount () == 20);
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
-    }
+    var configured = ring.withVirtualNodes (10);
+    assert (configured.isOk ());
+    assert (ring.virtualNodeCount () == 20);
 }
 
 void testDistribution () {
     var ring = new ConsistentHash ();
-    try {
-        ring.addNode ("n1");
-        ring.addNode ("n2");
+    assert (ring.addNode ("n1").isOk ());
+    assert (ring.addNode ("n2").isOk ());
 
-        var keys = new ArrayList<string> ();
-        for (int i = 0; i < 100; i++) {
-            keys.add ("key-%d".printf (i));
-        }
-
-        HashMap<string, int> dist = ring.distribution (keys);
-        assert (dist.size () == 2);
-
-        int total = dist.getOrDefault ("n1", 0) + dist.getOrDefault ("n2", 0);
-        assert (total == 100);
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
+    var keys = new ArrayList<string> ();
+    for (int i = 0; i < 100; i++) {
+        keys.add ("key-%d".printf (i));
     }
+
+    HashMap<string, int> dist = ring.distribution (keys);
+    assert (dist.size () == 2);
+
+    int total = dist.getOrDefault ("n1", 0) + dist.getOrDefault ("n2", 0);
+    assert (total == 100);
 }
 
 void testRebalanceEstimate () {
     var ring = new ConsistentHash ();
-    try {
-        ring.addNode ("n1");
-        ring.addNode ("n2");
-        ring.addNode ("n3");
+    assert (ring.addNode ("n1").isOk ());
+    assert (ring.addNode ("n2").isOk ());
+    assert (ring.addNode ("n3").isOk ());
 
-        var keys = new ArrayList<string> ();
-        for (int i = 0; i < 200; i++) {
-            keys.add ("sample-%d".printf (i));
-        }
-
-        double ratio = ring.rebalanceEstimate (keys);
-        assert (ratio > 0.0);
-        assert (ratio < 1.0);
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
+    var keys = new ArrayList<string> ();
+    for (int i = 0; i < 200; i++) {
+        keys.add ("sample-%d".printf (i));
     }
+
+    double ratio = ring.rebalanceEstimate (keys);
+    assert (ratio > 0.0);
+    assert (ratio < 1.0);
 }
 
 void testRemoveAndClear () {
     var ring = new ConsistentHash ();
-    try {
-        ring.addNode ("n1");
-        ring.addNode ("n2");
-        assert (ring.removeNode ("n1") == true);
-        assert (ring.removeNode ("n1") == false);
-        assert (ring.containsNode ("n1") == false);
-        assert (ring.nodeCount () == 1);
+    assert (ring.addNode ("n1").isOk ());
+    assert (ring.addNode ("n2").isOk ());
 
-        ring.clear ();
-        assert (ring.nodeCount () == 0);
-        assert (ring.virtualNodeCount () == 0);
-        assert (ring.getNode ("k") == null);
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
-    }
+    var removedN1 = ring.removeNode ("n1");
+    assert (removedN1.isOk ());
+    assert (removedN1.unwrap () == true);
+
+    removedN1 = ring.removeNode ("n1");
+    assert (removedN1.isOk ());
+    assert (removedN1.unwrap () == false);
+
+    var containsN1 = ring.containsNode ("n1");
+    assert (containsN1.isOk ());
+    assert (containsN1.unwrap () == false);
+    assert (ring.nodeCount () == 1);
+
+    ring.clear ();
+    assert (ring.nodeCount () == 0);
+    assert (ring.virtualNodeCount () == 0);
+
+    var nodeAfterClear = ring.getNode ("k");
+    assert (nodeAfterClear.isOk ());
+    assert (nodeAfterClear.unwrap () == null);
 }
 
 void testInvalidArguments () {
     var ring = new ConsistentHash ();
 
-    bool replicasThrown = false;
-    try {
-        ring.withVirtualNodes (0);
-    } catch (ConsistentHashError e) {
-        replicasThrown = true;
-        assert (e is ConsistentHashError.INVALID_ARGUMENT);
-    }
-    assert (replicasThrown);
+    var invalidReplicas = ring.withVirtualNodes (0);
+    assert (invalidReplicas.isError ());
+    assert (invalidReplicas.unwrapError () is ConsistentHashError.INVALID_ARGUMENT);
+    assert (invalidReplicas.unwrapError ().message == "replicas must be positive");
 
-    bool nodeThrown = false;
-    try {
-        ring.addNode ("");
-    } catch (ConsistentHashError e) {
-        nodeThrown = true;
-        assert (e is ConsistentHashError.INVALID_ARGUMENT);
-    }
-    assert (nodeThrown);
+    var invalidNode = ring.addNode ("");
+    assert (invalidNode.isError ());
+    assert (invalidNode.unwrapError () is ConsistentHashError.INVALID_ARGUMENT);
+    assert (invalidNode.unwrapError ().message == "nodeId must not be empty");
 
-    bool keyThrown = false;
-    try {
-        ring.getNode ("");
-    } catch (ConsistentHashError e) {
-        keyThrown = true;
-        assert (e is ConsistentHashError.INVALID_ARGUMENT);
-    }
-    assert (keyThrown);
+    var invalidKey = ring.getNode ("");
+    assert (invalidKey.isError ());
+    assert (invalidKey.unwrapError () is ConsistentHashError.INVALID_ARGUMENT);
+    assert (invalidKey.unwrapError ().message == "key must not be empty");
 
-    bool countThrown = false;
-    try {
-        ring.addNode ("n1");
-    } catch (ConsistentHashError e) {
-        assert_not_reached ();
-    }
-    try {
-        ring.getNodes ("k", 0);
-    } catch (ConsistentHashError e) {
-        countThrown = true;
-        assert (e is ConsistentHashError.INVALID_ARGUMENT);
-    }
-    assert (countThrown);
+    assert (ring.addNode ("n1").isOk ());
+    var invalidCount = ring.getNodes ("k", 0);
+    assert (invalidCount.isError ());
+    assert (invalidCount.unwrapError () is ConsistentHashError.INVALID_ARGUMENT);
+    assert (invalidCount.unwrapError ().message == "count must be positive");
 }
