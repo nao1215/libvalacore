@@ -21,8 +21,7 @@ void testNextInt () {
         var result = Randoms.nextInt (10);
         assert (result.isOk ());
 
-        int ? n = result.unwrap ();
-        assert (n != null);
+        int n = result.unwrap ();
         assert (n >= 0);
         assert (n < 10);
     }
