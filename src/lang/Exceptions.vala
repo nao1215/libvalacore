@@ -23,8 +23,8 @@ namespace Vala.Lang {
          * @param e error to propagate.
          * @return Result.error carrying the provided error.
          */
-        public static Result<bool ?, GLib.Error> sneakyThrow (GLib.Error e) {
-            return Result.error<bool ?, GLib.Error> (e);
+        public static Result<bool, GLib.Error> sneakyThrow (GLib.Error e) {
+            return Result.error<bool, GLib.Error> (e);
         }
 
         /**
