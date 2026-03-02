@@ -953,11 +953,11 @@ Static utility methods for Gzip compression and decompression.
 
 | Method | Description |
 |---|---|
-| `compress(uint8[] data)` | Compresses bytes with default level |
-| `decompress(uint8[] data)` | Decompresses Gzip bytes (`null` on invalid input) |
-| `compressFile(Path src, Path dst)` | Compresses source file to destination |
-| `decompressFile(Path src, Path dst)` | Decompresses Gzip file to destination |
-| `compressLevel(uint8[] data, int level)` | Compresses bytes with explicit level (`1..9`) |
+| `compress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `GzipError.IO`) |
+| `decompress(uint8[] data)` | Returns `Result<Bytes, Error>` (error: `GzipError.PARSE`) |
+| `compressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.NOT_FOUND`, `GzipError.IO`) |
+| `decompressFile(Path src, Path dst)` | Returns `Result<bool?, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.NOT_FOUND`, `GzipError.PARSE`, `GzipError.IO`) |
+| `compressLevel(uint8[] data, int level)` | Returns `Result<Bytes, Error>` (errors: `GzipError.INVALID_ARGUMENT`, `GzipError.IO`) |
 
 ### Vala.Compress.Zlib
 Static utility methods for Zlib compression and decompression.
