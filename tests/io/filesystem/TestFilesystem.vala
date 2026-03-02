@@ -3,12 +3,19 @@ using Vala.Time;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/io/filesystem/testConstruct", testConstruct);
     Test.add_func ("/io/filesystem/testGetFileAttributes", testGetFileAttributes);
     Test.add_func ("/io/filesystem/testSetLastModifiedTime", testSetLastModifiedTime);
     Test.add_func ("/io/filesystem/testAccessChecks", testAccessChecks);
     Test.add_func ("/io/filesystem/testGetOwner", testGetOwner);
     Test.add_func ("/io/filesystem/testSetOwnerInvalid", testSetOwnerInvalid);
+    Test.add_func ("/io/filesystem/testInvalidPathOperations", testInvalidPathOperations);
     Test.run ();
+}
+
+void testConstruct () {
+    var filesystem = new Filesystem ();
+    assert (filesystem != null);
 }
 
 Vala.Time.DateTime createDateTime (int year,
@@ -100,4 +107,20 @@ void testSetOwnerInvalid () {
     } finally {
         Files.remove (tmp);
     }
+}
+
+void testInvalidPathOperations () {
+    string missingPath = "/tmp/valacore/ut/no_such_filesystem_%d".printf (Posix.getpid ());
+    Vala.Io.Path missing = new Vala.Io.Path (missingPath);
+    Vala.Time.DateTime target = createDateTime (2001, 2, 3, 4, 5, 6);
+
+    GLib.FileInfo ? info = Filesystem.getFileAttributes (missing);
+    bool setMtime = Filesystem.setLastModifiedTime (missing, target);
+    string ? owner = Filesystem.getOwner (missing);
+    bool setOwnerEmpty = Filesystem.setOwner (missing, "");
+
+    assert (info == null);
+    assert (setMtime == false);
+    assert (owner == null);
+    assert (setOwnerEmpty == false);
 }
