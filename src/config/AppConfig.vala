@@ -227,20 +227,23 @@ namespace Vala.Config {
          * @return Result.ok(parsed bool or fallback), or
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
-        public Result<bool ?, GLib.Error> getBool (string key, bool fallback = false) {
+        public Result<bool, GLib.Error> getBool (string key, bool fallback = false) {
             GLib.Error ? keyError = ensureKey (key);
             if (keyError != null) {
-                return Result.error<bool ?, GLib.Error> (keyError);
+                return Result.error<bool, GLib.Error> (keyError);
             }
 
             string source;
             string ? raw = resolveValue (key, out source);
             if (raw == null) {
-                return Result.ok<bool ?, GLib.Error> (fallback);
+                return Result.ok<bool, GLib.Error> (fallback);
             }
 
             bool ? parsed = parseBool (raw);
-            return Result.ok<bool ?, GLib.Error> (parsed ?? fallback);
+            if (parsed != null) {
+                return Result.ok<bool, GLib.Error> ((bool) parsed);
+            }
+            return Result.ok<bool, GLib.Error> (fallback);
         }
 
         /**

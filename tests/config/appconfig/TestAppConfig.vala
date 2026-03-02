@@ -1,4 +1,5 @@
 using Vala.Config;
+using Vala.Collections;
 using Vala.Io;
 using Vala.Time;
 
@@ -39,7 +40,7 @@ int mustGetInt (AppConfig config, string key, int fallback = 0) {
 }
 
 bool mustGetBool (AppConfig config, string key, bool fallback = false) {
-    var value = config.getBool (key, fallback);
+    Result<bool, GLib.Error> value = config.getBool (key, fallback);
     assert (value.isOk ());
     return value.unwrap ();
 }
