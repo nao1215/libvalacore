@@ -566,13 +566,10 @@ void testMust () {
     if (root == null) {
         return;
     }
-    try {
-        JsonValue v = Json.must (root, "$.user.id");
-        int ? id = v.asInt ();
-        assert (id != null && id == 123);
-    } catch (JsonError e) {
-        assert_not_reached ();
-    }
+    var value = Json.must (root, "$.user.id");
+    assert (value.isOk ());
+    int ? id = value.unwrap ().asInt ();
+    assert (id != null && id == 123);
 }
 
 void testMustMissing () {
@@ -582,32 +579,20 @@ void testMustMissing () {
         return;
     }
 
-    bool missingThrown = false;
-    try {
-        Json.must (root, "$.user.missing");
-    } catch (JsonError e) {
-        missingThrown = true;
-        assert (e is JsonError.NOT_FOUND);
-    }
-    assert (missingThrown);
+    var missing = Json.must (root, "$.user.missing");
+    assert (missing.isError ());
+    assert (missing.unwrapError () is JsonError.NOT_FOUND);
+    assert (missing.unwrapError ().message == "value is required at path: $.user.missing");
 
-    bool emptyPathThrown = false;
-    try {
-        Json.must (root, " ");
-    } catch (JsonError e) {
-        emptyPathThrown = true;
-        assert (e is JsonError.INVALID_PATH);
-    }
-    assert (emptyPathThrown);
+    var emptyPath = Json.must (root, " ");
+    assert (emptyPath.isError ());
+    assert (emptyPath.unwrapError () is JsonError.INVALID_PATH);
+    assert (emptyPath.unwrapError ().message == "path must not be empty");
 
-    bool malformedPathThrown = false;
-    try {
-        Json.must (root, "$.user[abc]");
-    } catch (JsonError e) {
-        malformedPathThrown = true;
-        assert (e is JsonError.INVALID_PATH);
-    }
-    assert (malformedPathThrown);
+    var malformedPath = Json.must (root, "$.user[abc]");
+    assert (malformedPath.isError ());
+    assert (malformedPath.unwrapError () is JsonError.INVALID_PATH);
+    assert (malformedPath.unwrapError ().message == "invalid path: $.user[abc]");
 }
 
 // --- set, remove, merge, flatten ---
