@@ -14,6 +14,12 @@ void main (string[] args) {
     Test.run ();
 }
 
+ShellResult mustExecWithTimeout (string command, Duration timeout) {
+    var result = Vala.Io.Shell.execWithTimeout (command, timeout);
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
 void testExec () {
     ShellResult result = Vala.Io.Shell.exec ("echo hello");
 
@@ -38,12 +44,7 @@ void testExecQuiet () {
 }
 
 void testExecWithTimeout () {
-    ShellResult result;
-    try {
-        result = Vala.Io.Shell.execWithTimeout ("sleep 2", Duration.ofSeconds (1));
-    } catch (Vala.Io.ShellError e) {
-        assert_not_reached ();
-    }
+    ShellResult result = mustExecWithTimeout ("sleep 2", Duration.ofSeconds (1));
 
     assert (result.isSuccess () == false);
     assert (result.durationMillis () >= 900);
@@ -77,12 +78,7 @@ void testLines () {
 }
 
 void testExecWithTimeoutInvalid () {
-    bool thrown = false;
-    try {
-        Vala.Io.Shell.execWithTimeout ("echo hello", Duration.ofSeconds (-1));
-    } catch (Vala.Io.ShellError e) {
-        thrown = true;
-        assert (e is Vala.Io.ShellError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var result = Vala.Io.Shell.execWithTimeout ("echo hello", Duration.ofSeconds (-1));
+    assert (result.isError ());
+    assert (result.unwrapError () is Vala.Io.ShellError.INVALID_ARGUMENT);
 }
