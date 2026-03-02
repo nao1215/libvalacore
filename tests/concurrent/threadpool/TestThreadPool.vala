@@ -19,16 +19,9 @@ void main (string[] args) {
 }
 
 WorkerPool mustWorkerPool (int poolSize) {
-    WorkerPool ? pool = null;
-    try {
-        pool = new WorkerPool (poolSize);
-    } catch (WorkerPoolError e) {
-        assert_not_reached ();
-    }
-    if (pool == null) {
-        assert_not_reached ();
-    }
-    return pool;
+    var created = WorkerPool.of (poolSize);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testCreateWithSize () {
@@ -156,12 +149,8 @@ void testConcurrentSubmit () {
 }
 
 void testInvalidPoolSize () {
-    bool thrown = false;
-    try {
-        new WorkerPool (0);
-    } catch (WorkerPoolError e) {
-        thrown = true;
-        assert (e is WorkerPoolError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = WorkerPool.of (0);
+    assert (created.isError ());
+    assert (created.unwrapError () is WorkerPoolError.INVALID_ARGUMENT);
+    assert (created.unwrapError ().message == "poolSize must be positive, got 0");
 }
