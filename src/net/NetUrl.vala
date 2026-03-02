@@ -1,4 +1,14 @@
+using Vala.Collections;
+
 namespace Vala.Net {
+    /**
+     * Recoverable URL parse errors.
+     */
+    public errordomain NetUrlError {
+        INVALID_ARGUMENT,
+        PARSE
+    }
+
     /**
      * Immutable URL value object.
      */
@@ -13,14 +23,22 @@ namespace Vala.Net {
          * Parses URL text.
          *
          * @param url URL text.
-         * @return parsed URL object or null.
+         * @return Result.ok(parsed URL object), or
+         *         Result.error(NetUrlError.INVALID_ARGUMENT/PARSE) on invalid input.
          */
-        public static Url ? parse (string url) {
+        public static Result<Url, GLib.Error> parse (string url) {
+            if (url == "") {
+                return Result.error<Url, GLib.Error> (
+                    new NetUrlError.INVALID_ARGUMENT ("url must not be empty")
+                );
+            }
             try {
                 GLib.Uri uri = GLib.Uri.parse (url, GLib.UriFlags.NONE);
-                return new Url.from_uri (uri);
+                return Result.ok<Url, GLib.Error> (new Url.from_uri (uri));
             } catch (GLib.UriError e) {
-                return null;
+                return Result.error<Url, GLib.Error> (
+                    new NetUrlError.PARSE ("failed to parse URL: %s".printf (url))
+                );
             }
         }
 

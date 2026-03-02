@@ -587,7 +587,7 @@ Immutable URL value object.
 
 | Method | Description |
 |---|---|
-| `parse(string url)` | Parses URL text (returns null when invalid) |
+| `parse(string url)` | Returns `Result<Url, Error>` (errors: `NetUrlError.INVALID_ARGUMENT`, `NetUrlError.PARSE`) |
 | `scheme()` | Returns URL scheme |
 | `host()` | Returns host |
 | `port()` | Returns port number (`-1` when not specified) |
