@@ -10,16 +10,9 @@ void main (string[] args) {
 }
 
 Semaphore mustSemaphore (int permits) {
-    Semaphore ? sem = null;
-    try {
-        sem = new Semaphore (permits);
-    } catch (SemaphoreError e) {
-        assert_not_reached ();
-    }
-    if (sem == null) {
-        assert_not_reached ();
-    }
-    return sem;
+    var created = Semaphore.of (permits);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testAcquireRelease () {
@@ -79,12 +72,8 @@ void testAcquireBlocks () {
 }
 
 void testInvalidPermits () {
-    bool thrown = false;
-    try {
-        new Semaphore (-1);
-    } catch (SemaphoreError e) {
-        thrown = true;
-        assert (e is SemaphoreError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = Semaphore.of (-1);
+    assert (created.isError ());
+    assert (created.unwrapError () is SemaphoreError.INVALID_ARGUMENT);
+    assert (created.unwrapError ().message == "permits must be non-negative");
 }
