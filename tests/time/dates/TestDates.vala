@@ -22,11 +22,9 @@ Vala.Time.DateTime createDateTime (int year,
                                    int hour,
                                    int min,
                                    int sec) {
-    try {
-        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
-    } catch (DateTimeError e) {
-        assert_not_reached ();
-    }
+    var created = Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testNow () {

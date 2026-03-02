@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Time {
     /**
      * Recoverable DateTime argument/parse errors.
@@ -34,15 +35,15 @@ namespace Vala.Time {
          * @param hour hour value (0-23).
          * @param min minute value (0-59).
          * @param sec second value (0-59).
-         * @return created date-time.
-         * @throws DateTimeError.INVALID_COMPONENTS when components are invalid.
+         * @return Result.ok(created date-time), or
+         *         Result.error(DateTimeError.INVALID_COMPONENTS) when components are invalid.
          */
-        public static DateTime of (int year,
-                                   int month,
-                                   int day,
-                                   int hour,
-                                   int min,
-                                   int sec) throws DateTimeError {
+        public static Result<DateTime, GLib.Error> of (int year,
+                                                       int month,
+                                                       int day,
+                                                       int hour,
+                                                       int min,
+                                                       int sec) {
             GLib.DateTime ? dt = new GLib.DateTime.local (year,
                                                           month,
                                                           day,
@@ -50,9 +51,11 @@ namespace Vala.Time {
                                                           min,
                                                           (double) sec);
             if (dt == null) {
-                throw new DateTimeError.INVALID_COMPONENTS ("invalid date-time components");
+                return Result.error<DateTime, GLib.Error> (
+                    new DateTimeError.INVALID_COMPONENTS ("invalid date-time components")
+                );
             }
-            return new DateTime.from_glib (dt);
+            return Result.ok<DateTime, GLib.Error> (new DateTime.from_glib (dt));
         }
 
         /**
