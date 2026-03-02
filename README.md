@@ -194,7 +194,7 @@ Console utility methods.
 | Method | Description |
 |---|---|
 | `isTTY()` | Returns whether standard input is a terminal |
-| `readPassword()` | Reads a password from terminal input without echo (`null` when stdin is not a TTY) |
+| `readPassword()` | Returns `Result<string, Error>` (errors: `ConsoleError.NOT_TTY`, `ConsoleError.IO`) |
 
 ### Vala.Io.Process
 Process execution helper methods.

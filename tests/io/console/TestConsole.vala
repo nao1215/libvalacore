@@ -1,4 +1,5 @@
 using Vala.Io;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -23,5 +24,8 @@ void testReadPasswordWhenNotTTY () {
         return;
     }
 
-    assert (Console.readPassword () == null);
+    Result<string, GLib.Error> password = Console.readPassword ();
+    assert (password.isError ());
+    assert (password.unwrapError () is ConsoleError.NOT_TTY);
+    assert (password.unwrapError ().message == "stdin is not a tty");
 }
