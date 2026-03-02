@@ -1,4 +1,5 @@
 using Vala.Event;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -8,6 +9,7 @@ void main (string[] args) {
     Test.add_func ("/event/eventbus/testUnsubscribeAndClear", testUnsubscribeAndClear);
     Test.add_func ("/event/eventbus/testAsyncDispatch", testAsyncDispatch);
     Test.add_func ("/event/eventbus/testInvalidTopic", testInvalidTopic);
+    Test.add_func ("/event/eventbus/testInvalidTopicAcrossApis", testInvalidTopicAcrossApis);
 
     Test.run ();
 }
@@ -133,4 +135,32 @@ void testInvalidTopic () {
     assert (published.isError ());
     assert (published.unwrapError () is EventBusError.INVALID_ARGUMENT);
     assert (published.unwrapError ().message == "topic must not be empty");
+}
+
+void testInvalidTopicAcrossApis () {
+    var bus = new EventBus ();
+
+    Result<EventBus, GLib.Error> sub = bus.subscribe ("", (eventData) => {});
+    assertInvalidTopicBusResult (sub);
+
+    Result<EventBus, GLib.Error> subOnce = bus.subscribeOnce ("", (eventData) => {});
+    assertInvalidTopicBusResult (subOnce);
+
+    Result<bool, GLib.Error> has = bus.hasSubscribers ("");
+    assertInvalidTopicBoolResult (has);
+
+    Result<bool, GLib.Error> unsubscribed = bus.unsubscribe ("");
+    assertInvalidTopicBoolResult (unsubscribed);
+}
+
+void assertInvalidTopicBusResult (Result<EventBus, GLib.Error> result) {
+    assert (result.isError ());
+    assert (result.unwrapError () is EventBusError.INVALID_ARGUMENT);
+    assert (result.unwrapError ().message == "topic must not be empty");
+}
+
+void assertInvalidTopicBoolResult (Result<bool, GLib.Error> result) {
+    assert (result.isError ());
+    assert (result.unwrapError () is EventBusError.INVALID_ARGUMENT);
+    assert (result.unwrapError ().message == "topic must not be empty");
 }

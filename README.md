@@ -1712,7 +1712,7 @@ In-process pub/sub bus with optional asynchronous dispatch.
 | `EventBus()` | Creates event bus |
 | `withAsync()` | Enables asynchronous dispatch mode |
 | `subscribe(string topic, EventHandler handler)` | Returns `Result<EventBus, Error>` (error: `EventBusError.INVALID_ARGUMENT` when topic is empty) |
-| `subscribeOnce(string topic, EventHandler handler)` | Subscribes one-shot handler (`throws EventBusError.INVALID_ARGUMENT` when topic is empty) |
+| `subscribeOnce(string topic, EventHandler handler)` | Returns `Result<EventBus, Error>` (error: `EventBusError.INVALID_ARGUMENT` when topic is empty) |
 | `publish(string topic, Variant eventData)` | Returns `Result<bool, Error>` (`true` when dispatched, `false` when no subscribers; error on invalid topic) |
 | `unsubscribe(string topic)` | Returns `Result<bool, Error>` (`true` when removed, `false` when absent; error on invalid topic) |
 | `hasSubscribers(string topic)` | Returns `Result<bool, Error>` (error: `EventBusError.INVALID_ARGUMENT` when topic is empty) |
