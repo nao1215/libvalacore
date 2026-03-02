@@ -21,18 +21,19 @@ namespace Vala.Math {
          * Creates a BigDecimal from decimal text.
          *
          * @param value decimal text (optional sign and decimal point).
-         * @throws BigDecimalError.INVALID_ARGUMENT when value is invalid decimal text.
+         * @return Result.ok(normalized decimal), or
+         *         Result.error(BigDecimalError.INVALID_ARGUMENT) when value is invalid decimal text.
          */
-        public BigDecimal (string value) throws BigDecimalError {
+        public static Result<BigDecimal, GLib.Error> of (string value) {
             BigInteger unscaled;
             int parsedScale;
             if (!tryParseComponents (value, out unscaled, out parsedScale)) {
-                throw new BigDecimalError.INVALID_ARGUMENT ("invalid decimal text");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.INVALID_ARGUMENT ("invalid decimal text")
+                );
             }
 
-            BigDecimal normalized = fromComponents (unscaled, parsedScale);
-            _unscaled = mustBigInteger (normalized._unscaled.toString ());
-            _scale = normalized._scale;
+            return Result.ok<BigDecimal, GLib.Error> (fromComponents (unscaled, parsedScale));
         }
 
         private BigDecimal.fromParts (BigInteger unscaled, int scale) {
@@ -41,18 +42,14 @@ namespace Vala.Math {
         }
 
         /**
-         * Parses decimal text and returns null for invalid input.
+         * Parses decimal text.
          *
          * @param value decimal text.
-         * @return parsed value or null.
+         * @return Result.ok(parsed decimal), or
+         *         Result.error(BigDecimalError.INVALID_ARGUMENT) for invalid text.
          */
-        public static BigDecimal ? parse (string value) {
-            BigInteger unscaled;
-            int parsedScale;
-            if (!tryParseComponents (value, out unscaled, out parsedScale)) {
-                return null;
-            }
-            return fromComponents (unscaled, parsedScale);
+        public static Result<BigDecimal, GLib.Error> parse (string value) {
+            return of (value);
         }
 
         /**
@@ -168,15 +165,19 @@ namespace Vala.Math {
          * Returns product of this value and other.
          *
          * @param other multiplier.
-         * @return computed product.
-         * @throws BigDecimalError.SCALE_OVERFLOW when resulting scale exceeds int range.
+         * @return Result.ok(product), or
+         *         Result.error(BigDecimalError.SCALE_OVERFLOW) when resulting scale exceeds int range.
          */
-        public BigDecimal multiply (BigDecimal other) throws BigDecimalError {
+        public Result<BigDecimal, GLib.Error> multiply (BigDecimal other) {
             if (_scale > int.MAX - other._scale) {
-                throw new BigDecimalError.SCALE_OVERFLOW ("scale overflow in multiply");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.SCALE_OVERFLOW ("scale overflow in multiply")
+                );
             }
             BigInteger product = _unscaled.multiply (other._unscaled);
-            return fromComponents (product, _scale + other._scale);
+            return Result.ok<BigDecimal, GLib.Error> (
+                fromComponents (product, _scale + other._scale)
+            );
         }
 
         /**
@@ -185,10 +186,10 @@ namespace Vala.Math {
          * Quotient is truncated toward zero with up to 16 fractional digits.
          *
          * @param other divisor.
-         * @return quotient.
-         * @throws BigDecimalError when divideWithScale validation fails.
+         * @return Result.ok(quotient), or
+         *         Result.error(...) when divideWithScale validation fails.
          */
-        public BigDecimal divide (BigDecimal other) throws BigDecimalError {
+        public Result<BigDecimal, GLib.Error> divide (BigDecimal other) {
             return divideWithScale (other, DEFAULT_DIVIDE_SCALE);
         }
 
@@ -199,65 +200,91 @@ namespace Vala.Math {
          *
          * @param other divisor.
          * @param scale scale for quotient.
-         * @return quotient.
-         * @throws BigDecimalError.INVALID_ARGUMENT when scale is negative.
-         * @throws BigDecimalError.DIVISION_BY_ZERO when other is zero.
-         * @throws BigDecimalError.SCALE_OVERFLOW when resulting scale exceeds int range.
+         * @return Result.ok(quotient), or
+         *         Result.error(BigDecimalError.INVALID_ARGUMENT / DIVISION_BY_ZERO / SCALE_OVERFLOW).
          */
-        public BigDecimal divideWithScale (BigDecimal other,
-                                           int scale) throws BigDecimalError {
+        public Result<BigDecimal, GLib.Error> divideWithScale (BigDecimal other, int scale) {
             if (scale < 0) {
-                throw new BigDecimalError.INVALID_ARGUMENT ("scale must be non-negative");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.INVALID_ARGUMENT ("scale must be non-negative")
+                );
             }
             if (other._unscaled.toString () == "0") {
-                throw new BigDecimalError.DIVISION_BY_ZERO ("division by zero");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.DIVISION_BY_ZERO ("division by zero")
+                );
             }
             if (scale > int.MAX - other._scale) {
-                throw new BigDecimalError.SCALE_OVERFLOW ("scale overflow in divideWithScale");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.SCALE_OVERFLOW ("scale overflow in divideWithScale")
+                );
             }
 
             BigInteger numerator = _unscaled.multiply (pow10 (scale + other._scale));
             BigInteger denominator = other._unscaled.multiply (pow10 (_scale));
-            BigInteger quotient = mustDivide (numerator, denominator);
-            return fromComponents (quotient, scale);
+            var quotient = numerator.divide (denominator);
+            if (quotient.isError ()) {
+                return Result.error<BigDecimal, GLib.Error> (quotient.unwrapError ());
+            }
+            return Result.ok<BigDecimal, GLib.Error> (
+                fromComponents (quotient.unwrap (), scale)
+            );
         }
 
         /**
          * Returns remainder of this value divided by other.
          *
          * @param other divisor.
-         * @return remainder.
-         * @throws BigDecimalError.DIVISION_BY_ZERO when other is zero.
-         * @throws BigDecimalError.SCALE_OVERFLOW when internal multiply overflows scale.
+         * @return Result.ok(remainder), or
+         *         Result.error(BigDecimalError.DIVISION_BY_ZERO / SCALE_OVERFLOW).
          */
-        public BigDecimal mod (BigDecimal other) throws BigDecimalError {
+        public Result<BigDecimal, GLib.Error> mod (BigDecimal other) {
             if (other._unscaled.toString () == "0") {
-                throw new BigDecimalError.DIVISION_BY_ZERO ("division by zero");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.DIVISION_BY_ZERO ("division by zero")
+                );
             }
 
             BigInteger numerator = _unscaled.multiply (pow10 (other._scale));
             BigInteger denominator = other._unscaled.multiply (pow10 (_scale));
-            BigInteger quotient = mustDivide (numerator, denominator);
-            BigDecimal scaledQuotient = fromComponents (quotient, 0);
-            return subtract (other.multiply (scaledQuotient));
+            var quotient = numerator.divide (denominator);
+            if (quotient.isError ()) {
+                return Result.error<BigDecimal, GLib.Error> (quotient.unwrapError ());
+            }
+
+            BigDecimal scaledQuotient = fromComponents (quotient.unwrap (), 0);
+            var product = other.multiply (scaledQuotient);
+            if (product.isError ()) {
+                return Result.error<BigDecimal, GLib.Error> (product.unwrapError ());
+            }
+            return Result.ok<BigDecimal, GLib.Error> (subtract (product.unwrap ()));
         }
 
         /**
          * Returns this value raised to exponent.
          *
          * @param exponent non-negative exponent.
-         * @return computed power.
-         * @throws BigDecimalError.INVALID_ARGUMENT when exponent is negative.
-         * @throws BigDecimalError.SCALE_OVERFLOW when resulting scale exceeds int range.
+         * @return Result.ok(power), or
+         *         Result.error(BigDecimalError.INVALID_ARGUMENT / SCALE_OVERFLOW).
          */
-        public BigDecimal pow (int exponent) throws BigDecimalError {
+        public Result<BigDecimal, GLib.Error> pow (int exponent) {
             if (exponent < 0) {
-                throw new BigDecimalError.INVALID_ARGUMENT ("exponent must be non-negative");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.INVALID_ARGUMENT ("exponent must be non-negative")
+                );
             }
             if (_scale != 0 && exponent != 0 && _scale > int.MAX / exponent) {
-                throw new BigDecimalError.SCALE_OVERFLOW ("scale overflow in pow");
+                return Result.error<BigDecimal, GLib.Error> (
+                    new BigDecimalError.SCALE_OVERFLOW ("scale overflow in pow")
+                );
             }
-            return fromComponents (mustPow (_unscaled, exponent), _scale * exponent);
+            var powered = _unscaled.pow (exponent);
+            if (powered.isError ()) {
+                return Result.error<BigDecimal, GLib.Error> (powered.unwrapError ());
+            }
+            return Result.ok<BigDecimal, GLib.Error> (
+                fromComponents (powered.unwrap (), _scale * exponent)
+            );
         }
 
         private static BigDecimal fromComponents (BigInteger unscaled, int scale) {
@@ -427,26 +454,6 @@ namespace Vala.Math {
                 return safeConstant ("0");
             }
             return parsed.unwrap ();
-        }
-
-        private static BigInteger mustDivide (BigInteger left, BigInteger right) {
-            var quotient = left.divide (right);
-            if (quotient.isError ()) {
-                warning ("BigDecimal internal: decimal division failed: %s",
-                         quotient.unwrapError ().message);
-                return safeConstant ("0");
-            }
-            return quotient.unwrap ();
-        }
-
-        private static BigInteger mustPow (BigInteger value, int exponent) {
-            var powered = value.pow (exponent);
-            if (powered.isError ()) {
-                warning ("BigDecimal internal: decimal power failed: %s",
-                         powered.unwrapError ().message);
-                return safeConstant ("1");
-            }
-            return powered.unwrap ();
         }
 
         private static BigInteger safeConstant (string literal) {

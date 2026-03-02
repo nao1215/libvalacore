@@ -16,51 +16,39 @@ void main (string[] args) {
 }
 
 BigDecimal bd (string value) {
-    try {
-        return new BigDecimal (value);
-    } catch (BigDecimalError e) {
-        assert_not_reached ();
-    }
+    var parsed = BigDecimal.of (value);
+    assert (parsed.isOk ());
+    return parsed.unwrap ();
 }
 
 BigDecimal multiplyOk (BigDecimal left, BigDecimal right) {
-    try {
-        return left.multiply (right);
-    } catch (BigDecimalError e) {
-        assert_not_reached ();
-    }
+    var product = left.multiply (right);
+    assert (product.isOk ());
+    return product.unwrap ();
 }
 
 BigDecimal divideOk (BigDecimal left, BigDecimal right) {
-    try {
-        return left.divide (right);
-    } catch (BigDecimalError e) {
-        assert_not_reached ();
-    }
+    var quotient = left.divide (right);
+    assert (quotient.isOk ());
+    return quotient.unwrap ();
 }
 
 BigDecimal divideScaleOk (BigDecimal left, BigDecimal right, int scale) {
-    try {
-        return left.divideWithScale (right, scale);
-    } catch (BigDecimalError e) {
-        assert_not_reached ();
-    }
+    var quotient = left.divideWithScale (right, scale);
+    assert (quotient.isOk ());
+    return quotient.unwrap ();
 }
 
 BigDecimal modOk (BigDecimal left, BigDecimal right) {
-    try {
-        return left.mod (right);
-    } catch (BigDecimalError e) {
-        assert_not_reached ();
-    }
+    var remainder = left.mod (right);
+    assert (remainder.isOk ());
+    return remainder.unwrap ();
 }
 
 BigDecimal powOk (BigDecimal value, int exponent) {
-    try {
-        return value.pow (exponent);
-    } catch (BigDecimalError e) {
-        assert_not_reached ();
-    }
+    var powered = value.pow (exponent);
+    assert (powered.isOk ());
+    return powered.unwrap ();
 }
 
 void testNormalize () {
@@ -77,14 +65,14 @@ void testNormalize () {
 }
 
 void testParse () {
-    BigDecimal ? ok = BigDecimal.parse ("-12.3400");
-    assert (ok != null);
-    assert (ok.toString () == "-12.34");
+    var ok = BigDecimal.parse ("-12.3400");
+    assert (ok.isOk ());
+    assert (ok.unwrap ().toString () == "-12.34");
 
-    assert (BigDecimal.parse ("") == null);
-    assert (BigDecimal.parse ("abc") == null);
-    assert (BigDecimal.parse ("1.2.3") == null);
-    assert (BigDecimal.parse ("-") == null);
+    assert (BigDecimal.parse ("").isError ());
+    assert (BigDecimal.parse ("abc").isError ());
+    assert (BigDecimal.parse ("1.2.3").isError ());
+    assert (BigDecimal.parse ("-").isError ());
 }
 
 void testAddSubtract () {
@@ -138,48 +126,23 @@ void testLargeValues () {
 }
 
 void testInvalidArguments () {
-    bool textThrown = false;
-    try {
-        new BigDecimal ("abc");
-    } catch (BigDecimalError e) {
-        textThrown = true;
-        assert (e is BigDecimalError.INVALID_ARGUMENT);
-    }
-    assert (textThrown);
+    var text = BigDecimal.of ("abc");
+    assert (text.isError ());
+    assert (text.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
 
-    bool divThrown = false;
-    try {
-        bd ("1").divide (bd ("0"));
-    } catch (BigDecimalError e) {
-        divThrown = true;
-        assert (e is BigDecimalError.DIVISION_BY_ZERO);
-    }
-    assert (divThrown);
+    var div = bd ("1").divide (bd ("0"));
+    assert (div.isError ());
+    assert (div.unwrapError () is BigDecimalError.DIVISION_BY_ZERO);
 
-    bool scaleThrown = false;
-    try {
-        bd ("1").divideWithScale (bd ("3"), -1);
-    } catch (BigDecimalError e) {
-        scaleThrown = true;
-        assert (e is BigDecimalError.INVALID_ARGUMENT);
-    }
-    assert (scaleThrown);
+    var scale = bd ("1").divideWithScale (bd ("3"), -1);
+    assert (scale.isError ());
+    assert (scale.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
 
-    bool modThrown = false;
-    try {
-        bd ("1").mod (bd ("0"));
-    } catch (BigDecimalError e) {
-        modThrown = true;
-        assert (e is BigDecimalError.DIVISION_BY_ZERO);
-    }
-    assert (modThrown);
+    var mod = bd ("1").mod (bd ("0"));
+    assert (mod.isError ());
+    assert (mod.unwrapError () is BigDecimalError.DIVISION_BY_ZERO);
 
-    bool powThrown = false;
-    try {
-        bd ("2").pow (-1);
-    } catch (BigDecimalError e) {
-        powThrown = true;
-        assert (e is BigDecimalError.INVALID_ARGUMENT);
-    }
-    assert (powThrown);
+    var pow = bd ("2").pow (-1);
+    assert (pow.isError ());
+    assert (pow.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
 }
