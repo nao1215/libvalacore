@@ -1,4 +1,5 @@
 using Vala.Net;
+using Vala.Collections;
 
 void main (string[] args) {
     Test.init (ref args);
@@ -9,9 +10,12 @@ void main (string[] args) {
 }
 
 void testParse () {
-    Vala.Net.Url ? url = Vala.Net.Url.parse ("https://example.com:8443/path/to?a=1&b=2#top");
+    Result<Vala.Net.Url, GLib.Error> parsed = Vala.Net.Url.parse (
+        "https://example.com:8443/path/to?a=1&b=2#top"
+    );
+    assert (parsed.isOk ());
+    Vala.Net.Url url = parsed.unwrap ();
 
-    assert (url != null);
     assert (url.scheme () == "https");
     assert (url.host () == "example.com");
     assert (url.port () == 8443);
@@ -22,9 +26,10 @@ void testParse () {
 }
 
 void testParseWithoutOptionalParts () {
-    Vala.Net.Url ? url = Vala.Net.Url.parse ("http://localhost/test");
+    Result<Vala.Net.Url, GLib.Error> parsed = Vala.Net.Url.parse ("http://localhost/test");
+    assert (parsed.isOk ());
+    Vala.Net.Url url = parsed.unwrap ();
 
-    assert (url != null);
     assert (url.scheme () == "http");
     assert (url.host () == "localhost");
     assert (url.port () == -1);
@@ -34,6 +39,15 @@ void testParseWithoutOptionalParts () {
 }
 
 void testParseInvalid () {
-    assert (Vala.Net.Url.parse ("not a url") == null);
-    assert (Vala.Net.Url.parse ("://missing") == null);
+    Result<Vala.Net.Url, GLib.Error> malformed = Vala.Net.Url.parse ("not a url");
+    assert (malformed.isError ());
+    assert (malformed.unwrapError () is NetUrlError.PARSE);
+
+    Result<Vala.Net.Url, GLib.Error> missingScheme = Vala.Net.Url.parse ("://missing");
+    assert (missingScheme.isError ());
+    assert (missingScheme.unwrapError () is NetUrlError.PARSE);
+
+    Result<Vala.Net.Url, GLib.Error> empty = Vala.Net.Url.parse ("");
+    assert (empty.isError ());
+    assert (empty.unwrapError () is NetUrlError.INVALID_ARGUMENT);
 }

@@ -18,16 +18,9 @@ void main (string[] args) {
 LruCache<K, V> mustCreateCache<K, V> (int max_entries,
                                       GLib.HashFunc<K> hash_func,
                                       GLib.EqualFunc<K> equal_func) {
-    LruCache<K, V> ? cache = null;
-    try {
-        cache = new LruCache<K, V> (max_entries, hash_func, equal_func);
-    } catch (LruCacheError e) {
-        assert_not_reached ();
-    }
-    if (cache == null) {
-        assert_not_reached ();
-    }
-    return cache;
+    var created = LruCache.of<K, V> (max_entries, hash_func, equal_func);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testPutGet () {
@@ -78,17 +71,21 @@ void testRemoveAndClear () {
 
 void testTtlExpiration () {
     var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
-    try {
-        cache.withTtl (Duration.ofSeconds (1));
-    } catch (LruCacheError e) {
-        assert_not_reached ();
-    }
+    var configured = cache.withTtl (Duration.ofSeconds (1));
+    assert (configured.isOk ());
 
     cache.put ("a", "1");
-    Posix.usleep (1200000);
+    bool expired = false;
+    for (int i = 0; i < 30; i++) {
+        if (!cache.contains ("a") && cache.size () == 0) {
+            expired = true;
+            break;
+        }
+        Posix.usleep (50000);
+    }
 
+    assert (expired == true);
     assert (cache.get ("a") == null);
-    assert (cache.size () == 0);
 }
 
 void testLoader () {
@@ -118,24 +115,18 @@ void testStats () {
 }
 
 void testInvalidMaxEntries () {
-    bool thrown = false;
-    try {
-        new LruCache<string, string> (0, GLib.str_hash, GLib.str_equal);
-    } catch (LruCacheError e) {
-        thrown = true;
-        assert (e is LruCacheError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = LruCache.of<string, string> (0, GLib.str_hash, GLib.str_equal);
+    assert (created.isError ());
+    var createdErr = created.unwrapError ();
+    assert (createdErr is LruCacheError.INVALID_ARGUMENT);
+    assert (createdErr.message == "max_entries must be greater than 0");
 }
 
 void testNegativeTtl () {
     var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
-    bool thrown = false;
-    try {
-        cache.withTtl (Duration.ofSeconds (-1));
-    } catch (LruCacheError e) {
-        thrown = true;
-        assert (e is LruCacheError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var configured = cache.withTtl (Duration.ofSeconds (-1));
+    assert (configured.isError ());
+    var configuredErr = configured.unwrapError ();
+    assert (configuredErr is LruCacheError.INVALID_ARGUMENT);
+    assert (configuredErr.message == "ttl must be non-negative");
 }

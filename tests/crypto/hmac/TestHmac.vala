@@ -2,10 +2,17 @@ using Vala.Crypto;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/hmac/testConstruct", testConstruct);
     Test.add_func ("/hmac/testSha256", testSha256);
     Test.add_func ("/hmac/testSha512", testSha512);
     Test.add_func ("/hmac/testVerify", testVerify);
+    Test.add_func ("/hmac/testVerifyEdgeCases", testVerifyEdgeCases);
     Test.run ();
+}
+
+void testConstruct () {
+    var hmac = new Vala.Crypto.Hmac ();
+    assert (hmac != null);
 }
 
 void testSha256 () {
@@ -30,4 +37,9 @@ void testVerify () {
     assert (Vala.Crypto.Hmac.verify (expected, same) == true);
     assert (Vala.Crypto.Hmac.verify (expected, different) == false);
     assert (Vala.Crypto.Hmac.verify (expected, expected + "00") == false);
+}
+
+void testVerifyEdgeCases () {
+    assert (Vala.Crypto.Hmac.verify ("", "") == true);
+    assert (Vala.Crypto.Hmac.verify ("abc", "abd") == false);
 }

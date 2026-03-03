@@ -12,14 +12,20 @@ void main (string[] args) {
 }
 
 RateLimiter mustRateLimiter (int permits_per_second, int burst) {
-    RateLimiter limiter;
-    try {
-        limiter = new RateLimiter (permits_per_second);
-        limiter.withBurst (burst);
-    } catch (RateLimiterError e) {
-        assert_not_reached ();
-    }
+    var created = RateLimiter.of (permits_per_second);
+    assert (created.isOk ());
+    RateLimiter limiter = created.unwrap ();
+
+    var configured = limiter.withBurst (burst);
+    assert (configured.isOk ());
     return limiter;
+}
+
+void assertInvalidArgument<T> (Vala.Collections.Result<T, GLib.Error> result, string expected_message) {
+    assert (result.isError ());
+    var err = result.unwrapError ();
+    assert (err is RateLimiterError.INVALID_ARGUMENT);
+    assert (err.message == expected_message);
 }
 
 void testAllow () {
@@ -32,12 +38,14 @@ void testAllow () {
 void testAllowN () {
     var limiter = mustRateLimiter (10, 3);
 
-    try {
-        assert (limiter.allowN (2) == true);
-        assert (limiter.allowN (2) == false);
-    } catch (RateLimiterError e) {
-        assert_not_reached ();
-    }
+    var allow2 = limiter.allowN (2);
+    assert (allow2.isOk ());
+    assert (allow2.unwrap () == true);
+
+    allow2 = limiter.allowN (2);
+    assert (allow2.isOk ());
+    assert (allow2.unwrap () == false);
+
     assert (limiter.availableTokens () <= 1);
 }
 
@@ -70,61 +78,32 @@ void testSetRateAndReset () {
     assert (limiter.allow () == true);
     assert (limiter.allow () == false);
 
-    try {
-        limiter.setRate (1000);
-    } catch (RateLimiterError e) {
-        assert_not_reached ();
-    }
+    var setRate = limiter.setRate (1000);
+    assert (setRate.isOk ());
+    assert (setRate.unwrap () == true);
     limiter.reset ();
 
     assert (limiter.allow () == true);
 }
 
 void testInvalidArguments () {
-    bool ctorThrown = false;
-    try {
-        new RateLimiter (0);
-    } catch (RateLimiterError e) {
-        ctorThrown = true;
-        assert (e is RateLimiterError.INVALID_ARGUMENT);
-    }
-    assert (ctorThrown);
+    var invalidCtor = RateLimiter.of (0);
+    assertInvalidArgument<RateLimiter> (invalidCtor, "permitsPerSecond must be positive, got 0");
 
     var limiter = mustRateLimiter (1, 1);
 
-    bool burstThrown = false;
-    try {
-        limiter.withBurst (0);
-    } catch (RateLimiterError e) {
-        burstThrown = true;
-        assert (e is RateLimiterError.INVALID_ARGUMENT);
-    }
-    assert (burstThrown);
+    var invalidBurst = limiter.withBurst (0);
+    assertInvalidArgument<RateLimiter> (invalidBurst, "permits must be positive, got 0");
 
-    bool allowNThrown = false;
-    try {
-        limiter.allowN (0);
-    } catch (RateLimiterError e) {
-        allowNThrown = true;
-        assert (e is RateLimiterError.INVALID_ARGUMENT);
-    }
-    assert (allowNThrown);
+    var invalidAllowN = limiter.allowN (0);
+    assertInvalidArgument<bool> (invalidAllowN, "permits must be positive, got 0");
 
-    bool waitNThrown = false;
-    try {
-        limiter.waitN (0);
-    } catch (RateLimiterError e) {
-        waitNThrown = true;
-        assert (e is RateLimiterError.INVALID_ARGUMENT);
-    }
-    assert (waitNThrown);
+    var invalidWaitN = limiter.waitN (0);
+    assertInvalidArgument<bool> (invalidWaitN, "permits must be positive, got 0");
 
-    bool setRateThrown = false;
-    try {
-        limiter.setRate (0);
-    } catch (RateLimiterError e) {
-        setRateThrown = true;
-        assert (e is RateLimiterError.INVALID_ARGUMENT);
-    }
-    assert (setRateThrown);
+    var impossibleWaitN = limiter.waitN (2);
+    assertInvalidArgument<bool> (impossibleWaitN, "permits must not exceed burst capacity (1), got 2");
+
+    var invalidSetRate = limiter.setRate (0);
+    assertInvalidArgument<bool> (invalidSetRate, "permitsPerSecond must be positive, got 0");
 }

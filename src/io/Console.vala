@@ -1,4 +1,14 @@
+using Vala.Collections;
+
 namespace Vala.Io {
+    /**
+     * Recoverable console I/O errors.
+     */
+    public errordomain ConsoleError {
+        NOT_TTY,
+        IO
+    }
+
     /**
      * Console utility methods.
      *
@@ -8,7 +18,12 @@ namespace Vala.Io {
      * Example:
      * {{{
      *     if (Console.isTTY ()) {
-     *         string? password = Console.readPassword ();
+     *         var result = Console.readPassword ();
+     *         if (result.isOk ()) {
+     *             string password = result.unwrap ();
+     *         } else {
+     *             stderr.printf ("%s\n", result.unwrapError ().message);
+     *         }
      *     }
      * }}}
      */
@@ -25,29 +40,46 @@ namespace Vala.Io {
         /**
          * Reads a password from terminal input without echo.
          *
-         * @return password text, or null when stdin is not a TTY.
+         * @return Result.ok(password text), or
+         *         Result.error(ConsoleError.NOT_TTY/IO).
          */
-        public static string ? readPassword () {
+        public static Result<string, GLib.Error> readPassword () {
             if (!isTTY ()) {
-                return null;
+                return Result.error<string, GLib.Error> (
+                    new ConsoleError.NOT_TTY ("stdin is not a tty")
+                );
             }
 
             Posix.termios old_termios = {};
             if (Posix.tcgetattr (Posix.STDIN_FILENO, out old_termios) != 0) {
-                return null;
+                return Result.error<string, GLib.Error> (
+                    new ConsoleError.IO ("failed to read terminal attributes")
+                );
             }
 
             Posix.termios new_termios = old_termios;
             new_termios.c_lflag &= ~Posix.ECHO;
             if (Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, new_termios) != 0) {
-                return null;
+                return Result.error<string, GLib.Error> (
+                    new ConsoleError.IO ("failed to disable terminal echo")
+                );
             }
 
             string ? line = stdin.read_line ();
 
-            Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, old_termios);
+            if (Posix.tcsetattr (Posix.STDIN_FILENO, Posix.TCSANOW, old_termios) != 0) {
+                return Result.error<string, GLib.Error> (
+                    new ConsoleError.IO ("failed to restore terminal attributes")
+                );
+            }
 
-            return line;
+            if (line == null) {
+                return Result.error<string, GLib.Error> (
+                    new ConsoleError.IO ("failed to read password line")
+                );
+            }
+
+            return Result.ok<string, GLib.Error> (line);
         }
     }
 }

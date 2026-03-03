@@ -20,65 +20,33 @@ void main (string[] args) {
 }
 
 Context mustWithCancel (Context parent) {
-    Context ? ctx = null;
-    try {
-        ctx = Context.withCancel (parent);
-    } catch (ContextError e) {
-        assert_not_reached ();
-    }
-    if (ctx == null) {
-        assert_not_reached ();
-    }
-    return ctx;
+    var created = Context.withCancel (parent);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 Context mustWithTimeout (Context parent, Duration timeout) {
-    Context ? ctx = null;
-    try {
-        ctx = Context.withTimeout (parent, timeout);
-    } catch (ContextError e) {
-        assert_not_reached ();
-    }
-    if (ctx == null) {
-        assert_not_reached ();
-    }
-    return ctx;
+    var created = Context.withTimeout (parent, timeout);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 Context mustWithDeadline (Context parent, Vala.Time.DateTime deadline) {
-    Context ? ctx = null;
-    try {
-        ctx = Context.withDeadline (parent, deadline);
-    } catch (ContextError e) {
-        assert_not_reached ();
-    }
-    if (ctx == null) {
-        assert_not_reached ();
-    }
-    return ctx;
+    var created = Context.withDeadline (parent, deadline);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 string ? mustValue (Context ctx, string key) {
-    string ? result = null;
-    try {
-        result = ctx.value (key);
-    } catch (ContextError e) {
-        assert_not_reached ();
-    }
-    return result;
+    var result = ctx.value (key);
+    assert (result.isOk ());
+    return result.unwrap ();
 }
 
 Context mustWithValue (Context ctx, string key, string value) {
-    Context ? child = null;
-    try {
-        child = ctx.withValue (key, value);
-    } catch (ContextError e) {
-        assert_not_reached ();
-    }
-    if (child == null) {
-        assert_not_reached ();
-    }
-    return child;
+    var child = ctx.withValue (key, value);
+    assert (child.isOk ());
+    return child.unwrap ();
 }
 
 void testBackground () {
@@ -161,34 +129,22 @@ void testDone () {
 }
 
 void testWithTimeoutInvalid () {
-    bool thrown = false;
-    try {
-        Context.withTimeout (Context.background (), Duration.ofSeconds (-1));
-    } catch (ContextError e) {
-        thrown = true;
-        assert (e is ContextError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = Context.withTimeout (Context.background (), Duration.ofSeconds (-1));
+    assert (created.isError ());
+    assert (created.unwrapError () is ContextError.INVALID_ARGUMENT);
+    assert (created.unwrapError ().message == "timeout must be non-negative");
 }
 
 void testWithValueInvalidKey () {
-    bool thrown = false;
-    try {
-        Context.background ().withValue ("", "alice");
-    } catch (ContextError e) {
-        thrown = true;
-        assert (e is ContextError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var child = Context.background ().withValue ("", "alice");
+    assert (child.isError ());
+    assert (child.unwrapError () is ContextError.INVALID_ARGUMENT);
+    assert (child.unwrapError ().message == "key must not be empty");
 }
 
 void testValueInvalidKey () {
-    bool thrown = false;
-    try {
-        Context.background ().value ("");
-    } catch (ContextError e) {
-        thrown = true;
-        assert (e is ContextError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var value = Context.background ().value ("");
+    assert (value.isError ());
+    assert (value.unwrapError () is ContextError.INVALID_ARGUMENT);
+    assert (value.unwrapError ().message == "key must not be empty");
 }

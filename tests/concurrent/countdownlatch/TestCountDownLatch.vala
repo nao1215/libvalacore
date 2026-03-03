@@ -11,16 +11,9 @@ void main (string[] args) {
 }
 
 CountDownLatch mustLatch (int count) {
-    CountDownLatch ? latch = null;
-    try {
-        latch = new CountDownLatch (count);
-    } catch (CountDownLatchError e) {
-        assert_not_reached ();
-    }
-    if (latch == null) {
-        assert_not_reached ();
-    }
-    return latch;
+    var created = CountDownLatch.of (count);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testAwait () {
@@ -72,12 +65,8 @@ void testGetCount () {
 }
 
 void testInvalidCount () {
-    bool thrown = false;
-    try {
-        new CountDownLatch (-1);
-    } catch (CountDownLatchError e) {
-        thrown = true;
-        assert (e is CountDownLatchError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var created = CountDownLatch.of (-1);
+    assert (created.isError ());
+    assert (created.unwrapError () is CountDownLatchError.INVALID_ARGUMENT);
+    assert (created.unwrapError ().message == "count must be non-negative");
 }

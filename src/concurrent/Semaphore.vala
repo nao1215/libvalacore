@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Concurrent {
     /**
      * Recoverable semaphore configuration errors.
@@ -14,7 +15,11 @@ namespace Vala.Concurrent {
      *
      * Example:
      * {{{
-     *     var sem = new Semaphore (3);
+     *     var created = Semaphore.of (3);
+     *     if (created.isError ()) {
+     *         return;
+     *     }
+     *     var sem = created.unwrap ();
      *     sem.acquire ();
      *     try {
      *         // bounded concurrency section
@@ -32,13 +37,25 @@ namespace Vala.Concurrent {
          * Creates semaphore with initial permits.
          *
          * @param permits initial permit count.
-         * @throws SemaphoreError.INVALID_ARGUMENT when permits is negative.
          */
-        public Semaphore (int permits) throws SemaphoreError {
-            if (permits < 0) {
-                throw new SemaphoreError.INVALID_ARGUMENT ("permits must be non-negative");
-            }
+        private Semaphore (int permits) {
             _permits = permits;
+        }
+
+        /**
+         * Creates semaphore with initial permits.
+         *
+         * @param permits initial permit count.
+         * @return Result.ok(semaphore), or
+         *         Result.error(SemaphoreError.INVALID_ARGUMENT) when permits is negative.
+         */
+        public static Vala.Collections.Result<Semaphore, GLib.Error> of (int permits) {
+            if (permits < 0) {
+                return Vala.Collections.Result.error<Semaphore, GLib.Error> (
+                    new SemaphoreError.INVALID_ARGUMENT ("permits must be non-negative")
+                );
+            }
+            return Vala.Collections.Result.ok<Semaphore, GLib.Error> (new Semaphore (permits));
         }
 
         /**

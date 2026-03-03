@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Concurrent {
     /**
      * Recoverable countdown latch configuration errors.
@@ -15,7 +16,11 @@ namespace Vala.Concurrent {
      *
      * Example:
      * {{{
-     *     var latch = new CountDownLatch (2);
+     *     var created = CountDownLatch.of (2);
+     *     if (created.isError ()) {
+     *         return;
+     *     }
+     *     var latch = created.unwrap ();
      *     // Two workers call latch.countDown()
      *     latch.@await ();
      * }}}
@@ -29,13 +34,25 @@ namespace Vala.Concurrent {
          * Creates latch with initial count.
          *
          * @param count initial count.
-         * @throws CountDownLatchError.INVALID_ARGUMENT when count is negative.
          */
-        public CountDownLatch (int count) throws CountDownLatchError {
-            if (count < 0) {
-                throw new CountDownLatchError.INVALID_ARGUMENT ("count must be non-negative");
-            }
+        private CountDownLatch (int count) {
             _count = count;
+        }
+
+        /**
+         * Creates latch with initial count.
+         *
+         * @param count initial count.
+         * @return Result.ok(latch), or
+         *         Result.error(CountDownLatchError.INVALID_ARGUMENT) when count is negative.
+         */
+        public static Vala.Collections.Result<CountDownLatch, GLib.Error> of (int count) {
+            if (count < 0) {
+                return Vala.Collections.Result.error<CountDownLatch, GLib.Error> (
+                    new CountDownLatchError.INVALID_ARGUMENT ("count must be non-negative")
+                );
+            }
+            return Vala.Collections.Result.ok<CountDownLatch, GLib.Error> (new CountDownLatch (count));
         }
 
         /**

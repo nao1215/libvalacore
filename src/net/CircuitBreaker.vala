@@ -47,9 +47,20 @@ namespace Vala.Net {
      *
      * Example:
      * {{{
-     *     var breaker = new CircuitBreaker ("payments")
-     *         .withFailureThreshold (3)
-     *         .withOpenTimeout (Duration.ofSeconds (10));
+     *     var created = CircuitBreaker.of ("payments");
+     *     if (created.isError ()) {
+     *         return;
+     *     }
+     *     var breaker = created.unwrap ();
+     *
+     *     var configured = breaker.withFailureThreshold (3);
+     *     if (configured.isError ()) {
+     *         return;
+     *     }
+     *     configured = breaker.withOpenTimeout (Duration.ofSeconds (10));
+     *     if (configured.isError ()) {
+     *         return;
+     *     }
      *
      *     Result<string, string> result = breaker.call<string> (() => {
      *         string? payload = fetch_from_remote ();
@@ -88,13 +99,25 @@ namespace Vala.Net {
          * Creates a circuit breaker.
          *
          * @param name breaker name.
-         * @throws CircuitBreakerError.INVALID_ARGUMENT when name is empty.
          */
-        public CircuitBreaker (string name) throws CircuitBreakerError {
-            if (name.length == 0) {
-                throw new CircuitBreakerError.INVALID_ARGUMENT ("name must not be empty");
-            }
+        private CircuitBreaker (string name) {
             _name = name;
+        }
+
+        /**
+         * Creates a circuit breaker.
+         *
+         * @param name breaker name.
+         * @return Result.ok(breaker), or
+         *         Result.error(CircuitBreakerError.INVALID_ARGUMENT) when name is empty.
+         */
+        public static Result<CircuitBreaker, GLib.Error> of (string name) {
+            if (name.length == 0) {
+                return Result.error<CircuitBreaker, GLib.Error> (
+                    new CircuitBreakerError.INVALID_ARGUMENT ("name must not be empty")
+                );
+            }
+            return Result.ok<CircuitBreaker, GLib.Error> (new CircuitBreaker (name));
         }
 
         /**
@@ -104,15 +127,17 @@ namespace Vala.Net {
          * reached.
          *
          * @param n failure threshold.
-         * @return this breaker.
-         * @throws CircuitBreakerError.INVALID_ARGUMENT when n is not positive.
+         * @return Result.ok(this breaker), or
+         *         Result.error(CircuitBreakerError.INVALID_ARGUMENT) when n is not positive.
          */
-        public CircuitBreaker withFailureThreshold (int n) throws CircuitBreakerError {
+        public Result<CircuitBreaker, GLib.Error> withFailureThreshold (int n) {
             if (n <= 0) {
-                throw new CircuitBreakerError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n));
+                return Result.error<CircuitBreaker, GLib.Error> (
+                    new CircuitBreakerError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n))
+                );
             }
             _failure_threshold = n;
-            return this;
+            return Result.ok<CircuitBreaker, GLib.Error> (this);
         }
 
         /**
@@ -122,15 +147,17 @@ namespace Vala.Net {
          * to CLOSED state.
          *
          * @param n success threshold.
-         * @return this breaker.
-         * @throws CircuitBreakerError.INVALID_ARGUMENT when n is not positive.
+         * @return Result.ok(this breaker), or
+         *         Result.error(CircuitBreakerError.INVALID_ARGUMENT) when n is not positive.
          */
-        public CircuitBreaker withSuccessThreshold (int n) throws CircuitBreakerError {
+        public Result<CircuitBreaker, GLib.Error> withSuccessThreshold (int n) {
             if (n <= 0) {
-                throw new CircuitBreakerError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n));
+                return Result.error<CircuitBreaker, GLib.Error> (
+                    new CircuitBreakerError.INVALID_ARGUMENT ("n must be positive, got %d".printf (n))
+                );
             }
             _success_threshold = n;
-            return this;
+            return Result.ok<CircuitBreaker, GLib.Error> (this);
         }
 
         /**
@@ -140,18 +167,20 @@ namespace Vala.Net {
          * check.
          *
          * @param timeout open timeout.
-         * @return this breaker.
-         * @throws CircuitBreakerError.INVALID_ARGUMENT when timeout is negative.
+         * @return Result.ok(this breaker), or
+         *         Result.error(CircuitBreakerError.INVALID_ARGUMENT) when timeout is negative.
          */
-        public CircuitBreaker withOpenTimeout (Duration timeout) throws CircuitBreakerError {
+        public Result<CircuitBreaker, GLib.Error> withOpenTimeout (Duration timeout) {
             int64 millis = timeout.toMillis ();
             if (millis < 0) {
-                throw new CircuitBreakerError.INVALID_ARGUMENT (
-                          "timeout must be non-negative, got " + millis.to_string ()
+                return Result.error<CircuitBreaker, GLib.Error> (
+                    new CircuitBreakerError.INVALID_ARGUMENT (
+                        "timeout must be non-negative, got " + millis.to_string ()
+                    )
                 );
             }
             _open_timeout_millis = millis;
-            return this;
+            return Result.ok<CircuitBreaker, GLib.Error> (this);
         }
 
         /**

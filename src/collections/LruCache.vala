@@ -48,32 +48,55 @@ namespace Vala.Collections {
          * @param max_entries maximum number of entries.
          * @param hash_func hash function for key.
          * @param equal_func equality function for key.
-         * @throws LruCacheError.INVALID_ARGUMENT when max_entries is not positive.
          */
-        public LruCache (int max_entries,
-                         GLib.HashFunc<K> hash_func,
-                         GLib.EqualFunc<K> equal_func) throws LruCacheError {
-            if (max_entries <= 0) {
-                throw new LruCacheError.INVALID_ARGUMENT ("max_entries must be greater than 0");
-            }
-
+        private LruCache (int max_entries,
+                          GLib.HashFunc<K> hash_func,
+                          GLib.EqualFunc<K> equal_func) {
+            assert (max_entries > 0);
             _max_entries = max_entries;
             _entries = new GLib.HashTable<K, LruNode<K, V> > (hash_func, equal_func);
+            assert (_entries != null);
+        }
+
+        /**
+         * Creates an LRU cache.
+         *
+         * @param max_entries maximum number of entries.
+         * @param hash_func hash function for key.
+         * @param equal_func equality function for key.
+         * @return Result.ok(cache) or
+         *         Result.error(LruCacheError.INVALID_ARGUMENT) when max_entries is not positive.
+         */
+        public static Result<LruCache<G, H>, GLib.Error> of<G, H> (int max_entries,
+                                                                   GLib.HashFunc<G> hash_func,
+                                                                   GLib.EqualFunc<G> equal_func) {
+            if (max_entries <= 0) {
+                return Result.error<LruCache<G, H>, GLib.Error> (
+                    new LruCacheError.INVALID_ARGUMENT ("max_entries must be greater than 0")
+                );
+            }
+
+            return Result.ok<LruCache<G, H>, GLib.Error> (
+                new LruCache<G, H> (max_entries, hash_func, equal_func)
+            );
         }
 
         /**
          * Sets entry TTL.
          *
          * @param ttl entry TTL duration.
-         * @return this cache instance.
-         * @throws LruCacheError.INVALID_ARGUMENT when ttl is negative.
+         * @return Result.ok(this cache instance), or
+         *         Result.error(LruCacheError.INVALID_ARGUMENT) when ttl is negative.
          */
-        public LruCache<K, V> withTtl (Duration ttl) throws LruCacheError {
-            if (ttl.toMillis () < 0) {
-                throw new LruCacheError.INVALID_ARGUMENT ("ttl must be non-negative");
+        public Result<LruCache<K, V>, GLib.Error> withTtl (Duration ttl) {
+            int64 ttl_millis = ttl.toMillis ();
+            if (ttl_millis < 0) {
+                return Result.error<LruCache<K, V>, GLib.Error> (
+                    new LruCacheError.INVALID_ARGUMENT ("ttl must be non-negative")
+                );
             }
-            _ttl_millis = ttl.toMillis ();
-            return this;
+            _ttl_millis = ttl_millis;
+            return Result.ok<LruCache<K, V>, GLib.Error> (this);
         }
 
         /**

@@ -1,4 +1,15 @@
+using Vala.Collections;
+
 namespace Vala.Io {
+    /**
+     * Recoverable resource loading errors.
+     */
+    public errordomain ResourceError {
+        INVALID_ARGUMENT,
+        NOT_FOUND,
+        IO
+    }
+
     /**
      * Resource loading helper methods.
      *
@@ -7,9 +18,9 @@ namespace Vala.Io {
      *
      * Example:
      * {{{
-     *     uint8[]? bytes = Resource.readResource ("./assets/logo.bin");
-     *     if (bytes != null) {
-     *         print ("loaded=%u\n", bytes.length);
+     *     var bytes = Resource.readResource ("./assets/logo.bin");
+     *     if (bytes.isOk ()) {
+     *         print ("loaded=%zu\n", bytes.unwrap ().get_size ());
      *     }
      * }}}
      */
@@ -18,23 +29,36 @@ namespace Vala.Io {
          * Reads resource data from a file path.
          *
          * @param name resource file path.
-         * @return file bytes, or null on failure.
+         * @return Result.ok(resource bytes), or Result.error(ResourceError.*) on failure.
          */
-        public static uint8[] ? readResource (string name) {
+        public static Result<GLib.Bytes, GLib.Error> readResource (string name) {
             if (name.length == 0) {
-                return null;
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new ResourceError.INVALID_ARGUMENT ("resource name must not be empty")
+                );
             }
 
             try {
                 uint8[] data;
                 if (FileUtils.get_data (name, out data)) {
-                    return data;
+                    return Result.ok<GLib.Bytes, GLib.Error> (new GLib.Bytes (data));
                 }
             } catch (GLib.FileError e) {
-                return null;
+                if (e is GLib.FileError.NOENT) {
+                    return Result.error<GLib.Bytes, GLib.Error> (
+                        new ResourceError.NOT_FOUND ("resource file not found: %s".printf (name))
+                    );
+                }
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new ResourceError.IO (
+                        "failed to read resource file: %s: %s".printf (name, e.message)
+                    )
+                );
             }
 
-            return null;
+            return Result.error<GLib.Bytes, GLib.Error> (
+                new ResourceError.IO ("failed to read resource file: %s".printf (name))
+            );
         }
     }
 }

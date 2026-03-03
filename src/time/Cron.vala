@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Time {
     /**
      * Scheduled task callback.
@@ -31,6 +32,14 @@ namespace Vala.Time {
         private int64 _next_fire_millis;
         private GLib.Thread<void *> ? _worker;
 
+        private Cron (Mode mode, int64 intervalMillis, int hour, int minute) {
+            _mode = mode;
+            _interval_millis = intervalMillis;
+            _daily_hour = hour;
+            _daily_minute = minute;
+            initRuntimeState ();
+        }
+
         /**
          * Creates scheduler from cron expression.
          *
@@ -39,41 +48,67 @@ namespace Vala.Time {
          * - "M H * * *" (every day at H:M)
          *
          * @param expression cron expression.
+         * @return Result.ok(scheduler), or
+         *         Result.error(CronError.INVALID_EXPRESSION) when expression format is unsupported.
          */
-        public Cron (string expression) throws CronError {
-            parseExpression (expression);
-            initRuntimeState ();
-        }
-
-        private Cron.fromInterval (int64 intervalMillis) throws CronError {
-            if (intervalMillis <= 0) {
-                throw new CronError.INVALID_ARGUMENT ("interval must be positive");
+        public static Result<Cron, GLib.Error> of (string expression) {
+            string normalized = normalizeSpaces (expression);
+            string[] parts = normalized.split (" ");
+            if (parts.length != 5) {
+                return invalidExpressionResult (expression);
             }
-            _mode = Mode.INTERVAL;
-            _interval_millis = intervalMillis;
-            _daily_hour = 0;
-            _daily_minute = 0;
-            initRuntimeState ();
-        }
 
-        private Cron.fromDailyAt (int hour, int minute) throws CronError {
-            validateHourMinute (hour, minute);
+            if (parts[0].has_prefix ("*/") &&
+                parts[1] == "*" &&
+                parts[2] == "*" &&
+                parts[3] == "*" &&
+                parts[4] == "*") {
+                var minutes = parsePositiveInt (parts[0].substring (2), "minutes");
+                if (minutes.isError ()) {
+                    return Result.error<Cron, GLib.Error> (minutes.unwrapError ());
+                }
+                return Result.ok<Cron, GLib.Error> (
+                    new Cron (Mode.INTERVAL, (int64) minutes.unwrap () * 60 * 1000, 0, 0)
+                );
+            }
 
-            _mode = Mode.DAILY;
-            _daily_hour = hour;
-            _daily_minute = minute;
-            _interval_millis = 0;
-            initRuntimeState ();
+            if (parts[2] == "*" && parts[3] == "*" && parts[4] == "*") {
+                var minute = parseBoundedInt (parts[0], 0, 59, "minute");
+                if (minute.isError ()) {
+                    return Result.error<Cron, GLib.Error> (minute.unwrapError ());
+                }
+
+                var hour = parseBoundedInt (parts[1], 0, 23, "hour");
+                if (hour.isError ()) {
+                    return Result.error<Cron, GLib.Error> (hour.unwrapError ());
+                }
+
+                return Result.ok<Cron, GLib.Error> (
+                    new Cron (Mode.DAILY, 0, hour.unwrap (), minute.unwrap ())
+                );
+            }
+
+            return invalidExpressionResult (expression);
         }
 
         /**
          * Creates fixed-interval scheduler.
          *
          * @param interval repeat interval.
-         * @return Cron scheduler.
+         * @return Result.ok(scheduler), or
+         *         Result.error(CronError.INVALID_ARGUMENT) when interval is not positive.
          */
-        public static Cron every (Duration interval) throws CronError {
-            return new Cron.fromInterval (interval.toMillis ());
+        public static Result<Cron, GLib.Error> every (Duration interval) {
+            int64 interval_millis = interval.toMillis ();
+            if (interval_millis <= 0) {
+                return Result.error<Cron, GLib.Error> (
+                    new CronError.INVALID_ARGUMENT ("interval must be positive")
+                );
+            }
+
+            return Result.ok<Cron, GLib.Error> (
+                new Cron (Mode.INTERVAL, interval_millis, 0, 0)
+            );
         }
 
         /**
@@ -81,10 +116,18 @@ namespace Vala.Time {
          *
          * @param hour hour in [0, 23].
          * @param minute minute in [0, 59].
-         * @return Cron scheduler.
+         * @return Result.ok(scheduler), or
+         *         Result.error(CronError.INVALID_ARGUMENT) when hour/minute is out of range.
          */
-        public static Cron at (int hour, int minute) throws CronError {
-            return new Cron.fromDailyAt (hour, minute);
+        public static Result<Cron, GLib.Error> at (int hour, int minute) {
+            GLib.Error ? validation_error = validateHourMinute (hour, minute);
+            if (validation_error != null) {
+                return Result.error<Cron, GLib.Error> (validation_error);
+            }
+
+            return Result.ok<Cron, GLib.Error> (
+                new Cron (Mode.DAILY, 0, hour, minute)
+            );
         }
 
         /**
@@ -101,13 +144,18 @@ namespace Vala.Time {
          *
          * @param initialDelay delay before first schedule evaluation.
          * @param task callback function.
+         * @return Result.ok(this scheduler), or
+         *         Result.error(CronError.INVALID_ARGUMENT) when delay is negative.
          */
-        public void scheduleWithDelay (Duration initialDelay, owned CronTask task) throws CronError {
+        public Result<Cron, GLib.Error> scheduleWithDelay (Duration initialDelay, owned CronTask task) {
             int64 delay = initialDelay.toMillis ();
             if (delay < 0) {
-                throw new CronError.INVALID_ARGUMENT ("initialDelay must be non-negative");
+                return Result.error<Cron, GLib.Error> (
+                    new CronError.INVALID_ARGUMENT ("initialDelay must be non-negative")
+                );
             }
             startInternal (delay, (owned) task);
+            return Result.ok<Cron, GLib.Error> (this);
         }
 
         /**
@@ -244,43 +292,6 @@ namespace Vala.Time {
             return target.to_unix () * 1000;
         }
 
-        private void parseExpression (string expression) throws CronError {
-            string normalized = normalizeSpaces (expression);
-            string[] parts = normalized.split (" ");
-            if (parts.length != 5) {
-                throw new CronError.INVALID_EXPRESSION (
-                          "unsupported cron expression: %s".printf (expression)
-                );
-            }
-
-            if (parts[0].has_prefix ("*/") &&
-                parts[1] == "*" &&
-                parts[2] == "*" &&
-                parts[3] == "*" &&
-                parts[4] == "*") {
-                int minutes = parsePositiveInt (parts[0].substring (2), "minutes");
-                _mode = Mode.INTERVAL;
-                _interval_millis = (int64) minutes * 60 * 1000;
-                _daily_hour = 0;
-                _daily_minute = 0;
-                return;
-            }
-
-            if (parts[2] == "*" && parts[3] == "*" && parts[4] == "*") {
-                int minute = parseBoundedInt (parts[0], 0, 59, "minute");
-                int hour = parseBoundedInt (parts[1], 0, 23, "hour");
-                _mode = Mode.DAILY;
-                _daily_hour = hour;
-                _daily_minute = minute;
-                _interval_millis = 0;
-                return;
-            }
-
-            throw new CronError.INVALID_EXPRESSION (
-                      "unsupported cron expression: %s".printf (expression)
-            );
-        }
-
         private void initRuntimeState () {
             _running = false;
             _next_fire_millis = 0;
@@ -295,32 +306,47 @@ namespace Vala.Time {
             return out;
         }
 
-        private static int parsePositiveInt (string text, string label) throws CronError {
-            int value = parseBoundedInt (text, 1, int.MAX, label);
-            return value;
+        private static Result<Cron, GLib.Error> invalidExpressionResult (string expression) {
+            return Result.error<Cron, GLib.Error> (
+                new CronError.INVALID_EXPRESSION (
+                    "unsupported cron expression: %s".printf (expression)
+                )
+            );
         }
 
-        private static int parseBoundedInt (string text, int min, int max, string label) throws CronError {
+        private static Result<int, GLib.Error> parsePositiveInt (string text, string label) {
+            return parseBoundedInt (text, 1, int.MAX, label);
+        }
+
+        private static Result<int, GLib.Error> parseBoundedInt (string text,
+                                                                int min,
+                                                                int max,
+                                                                string label) {
             if (!GLib.Regex.match_simple ("^-?[0-9]+$", text)) {
-                throw new CronError.INVALID_EXPRESSION ("invalid %s: %s".printf (label, text));
+                return Result.error<int, GLib.Error> (
+                    new CronError.INVALID_EXPRESSION ("invalid %s: %s".printf (label, text))
+                );
             }
 
             int value = int.parse (text);
             if (value < min || value > max) {
-                throw new CronError.INVALID_EXPRESSION (
-                          "%s must be in range [%d, %d]".printf (label, min, max)
+                return Result.error<int, GLib.Error> (
+                    new CronError.INVALID_EXPRESSION (
+                        "%s must be in range [%d, %d]".printf (label, min, max)
+                    )
                 );
             }
-            return value;
+            return Result.ok<int, GLib.Error> (value);
         }
 
-        private static void validateHourMinute (int hour, int minute) throws CronError {
+        private static GLib.Error ? validateHourMinute (int hour, int minute) {
             if (hour < 0 || hour > 23) {
-                throw new CronError.INVALID_ARGUMENT ("hour must be in range [0, 23]");
+                return new CronError.INVALID_ARGUMENT ("hour must be in range [0, 23]");
             }
             if (minute < 0 || minute > 59) {
-                throw new CronError.INVALID_ARGUMENT ("minute must be in range [0, 59]");
+                return new CronError.INVALID_ARGUMENT ("minute must be in range [0, 59]");
             }
+            return null;
         }
 
         private static int64 currentTimeMillis () {

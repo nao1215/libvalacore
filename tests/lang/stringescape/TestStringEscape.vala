@@ -2,10 +2,17 @@ using Vala.Lang;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/lang/stringescape/testConstruct", testConstruct);
     Test.add_func ("/lang/stringescape/testEscapeHtml", testEscapeHtml);
     Test.add_func ("/lang/stringescape/testEscapeJson", testEscapeJson);
+    Test.add_func ("/lang/stringescape/testEscapeJsonControls", testEscapeJsonControls);
     Test.add_func ("/lang/stringescape/testEscapeXml", testEscapeXml);
     Test.run ();
+}
+
+void testConstruct () {
+    var escaper = new StringEscape ();
+    assert (escaper != null);
 }
 
 void testEscapeHtml () {
@@ -17,6 +24,12 @@ void testEscapeHtml () {
 void testEscapeJson () {
     string src = "line1\n\"quoted\"\\path\t";
     string expected = "line1\\n\\\"quoted\\\"\\\\path\\t";
+    assert (StringEscape.escapeJson (src) == expected);
+}
+
+void testEscapeJsonControls () {
+    string src = "\b\f\r" + ((char) 0x01).to_string ();
+    string expected = "\\b\\f\\r\\u0001";
     assert (StringEscape.escapeJson (src) == expected);
 }
 

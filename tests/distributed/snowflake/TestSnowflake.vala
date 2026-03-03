@@ -19,29 +19,22 @@ Vala.Time.DateTime createDateTime (int year,
                                    int hour,
                                    int min,
                                    int sec) {
-    try {
-        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
-    } catch (Vala.Time.DateTimeError e) {
-        assert_not_reached ();
-    }
+    var created = Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 Snowflake createGenerator (int node_id) {
-    try {
-        return new Snowflake (node_id);
-    } catch (SnowflakeError e) {
-        assert_not_reached ();
-    }
+    var created = Snowflake.of (node_id);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testBasic () {
     var generator = createGenerator (7);
-    int64 id;
-    try {
-        id = generator.nextId ();
-    } catch (SnowflakeError e) {
-        assert_not_reached ();
-    }
+    var idResult = generator.nextId ();
+    assert (idResult.isOk ());
+    int64 id = idResult.unwrap ();
 
     assert (id > 0);
     assert (generator.nodeIdOf (id) == 7);
@@ -64,12 +57,9 @@ void testMonotonicUnique () {
 
     int64 previous = -1L;
     for (int i = 0; i < 3000; i++) {
-        int64 current;
-        try {
-            current = generator.nextId ();
-        } catch (SnowflakeError e) {
-            assert_not_reached ();
-        }
+        var currentResult = generator.nextId ();
+        assert (currentResult.isOk ());
+        int64 current = currentResult.unwrap ();
         assert (current > previous);
 
         string key = current.to_string ();
@@ -83,12 +73,9 @@ void testMonotonicUnique () {
 void testWithEpoch () {
     Vala.Time.DateTime epoch = createDateTime (2024, 1, 1, 0, 0, 0);
     var generator = createGenerator (9).withEpoch (epoch);
-    int64 id;
-    try {
-        id = generator.nextId ();
-    } catch (SnowflakeError e) {
-        assert_not_reached ();
-    }
+    var idResult = generator.nextId ();
+    assert (idResult.isOk ());
+    int64 id = idResult.unwrap ();
 
     int64 timestamp = generator.timestampMillis (id);
     int64 epochMillis = epoch.toUnixTimestamp () * 1000L;
@@ -98,12 +85,9 @@ void testWithEpoch () {
 
 void testNextString () {
     var generator = createGenerator (3);
-    string idText;
-    try {
-        idText = generator.nextString ();
-    } catch (SnowflakeError e) {
-        assert_not_reached ();
-    }
+    var textResult = generator.nextString ();
+    assert (textResult.isOk ());
+    string idText = textResult.unwrap ();
     int64 id = int64.parse (idText);
 
     assert (idText.length > 0);
@@ -112,34 +96,19 @@ void testNextString () {
 }
 
 void testInvalidArguments () {
-    bool nodeThrown = false;
-    try {
-        new Snowflake (-1);
-    } catch (SnowflakeError e) {
-        nodeThrown = true;
-        assert (e is SnowflakeError.INVALID_ARGUMENT);
-    }
-    assert (nodeThrown);
+    var invalidNode = Snowflake.of (-1);
+    assert (invalidNode.isError ());
+    assert (invalidNode.unwrapError () is SnowflakeError.INVALID_ARGUMENT);
 
-    bool clockThrown = false;
-    try {
-        Vala.Time.DateTime future = createDateTime (3000, 1, 1, 0, 0, 0);
-        Snowflake generator = createGenerator (1).withEpoch (future);
-        generator.nextId ();
-    } catch (SnowflakeError e) {
-        clockThrown = true;
-        assert (e is SnowflakeError.CLOCK_BEFORE_EPOCH);
-    }
-    assert (clockThrown);
+    Vala.Time.DateTime future = createDateTime (3000, 1, 1, 0, 0, 0);
+    Snowflake clockGenerator = createGenerator (1).withEpoch (future);
+    var clockResult = clockGenerator.nextId ();
+    assert (clockResult.isError ());
+    assert (clockResult.unwrapError () is SnowflakeError.CLOCK_BEFORE_EPOCH);
 
-    bool overflowThrown = false;
-    try {
-        Vala.Time.DateTime oldEpoch = createDateTime (1900, 1, 1, 0, 0, 0);
-        Snowflake generator = createGenerator (1).withEpoch (oldEpoch);
-        generator.nextId ();
-    } catch (SnowflakeError e) {
-        overflowThrown = true;
-        assert (e is SnowflakeError.TIMESTAMP_OVERFLOW);
-    }
-    assert (overflowThrown);
+    Vala.Time.DateTime oldEpoch = createDateTime (1900, 1, 1, 0, 0, 0);
+    Snowflake overflowGenerator = createGenerator (1).withEpoch (oldEpoch);
+    var overflowResult = overflowGenerator.nextId ();
+    assert (overflowResult.isError ());
+    assert (overflowResult.unwrapError () is SnowflakeError.TIMESTAMP_OVERFLOW);
 }

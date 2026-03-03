@@ -15,19 +15,17 @@ void main (string[] args) {
     Test.run ();
 }
 
+T mustOk<T> (Vala.Collections.Result<T, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
 int mustDoInt (SingleFlight group, string key, owned SingleFlightFunc<int> fn) {
-    int result = 0;
-    bool succeeded = false;
-    try {
-        result = group.@do<int> (key, fn);
-        succeeded = true;
-    } catch (SingleFlightError e) {
-        assert_not_reached ();
-    }
-    if (!succeeded) {
-        assert_not_reached ();
-    }
-    return result;
+    return mustOk<int> (group.@do<int> (key, fn));
+}
+
+CountDownLatch mustLatch (int count) {
+    return mustOk<CountDownLatch> (CountDownLatch.of (count));
 }
 
 void testDo () {
@@ -46,25 +44,22 @@ void testDo () {
 
 void testDoSharesExecution () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
-    var done = new CountDownLatch (2);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
+    var done = mustLatch (2);
 
     int called = 0;
     int first = 0;
     int second = 0;
 
     new GLib.Thread<void *> ("singleflight-test-1", () => {
-        try {
-            first = group.@do<int> ("same-key", () => {
-                called++;
-                started.countDown ();
-                release.@await ();
-                return 7;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("same-key", () => {
+            called++;
+            started.countDown ();
+            release.@await ();
+            return 7;
+        });
+        first = mustOk<int> (result);
         done.countDown ();
         return null;
     });
@@ -72,14 +67,11 @@ void testDoSharesExecution () {
     started.@await ();
 
     new GLib.Thread<void *> ("singleflight-test-2", () => {
-        try {
-            second = group.@do<int> ("same-key", () => {
-                called += 100;
-                return 999;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("same-key", () => {
+            called += 100;
+            return 999;
+        });
+        second = mustOk<int> (result);
         done.countDown ();
         return null;
     });
@@ -100,8 +92,8 @@ void testDoSharesExecution () {
 
 void testDoFutureSharesExecution () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
     int called = 0;
 
     Future<int> first = group.doFuture<int> ("future-key", () => {
@@ -130,20 +122,17 @@ void testDoFutureSharesExecution () {
 
 void testForget () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
-    var done = new CountDownLatch (1);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
+    var done = mustLatch (1);
 
     new GLib.Thread<void *> ("singleflight-test-forget", () => {
-        try {
-            group.@do<int> ("forget-key", () => {
-                started.countDown ();
-                release.@await ();
-                return 1;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("forget-key", () => {
+            started.countDown ();
+            release.@await ();
+            return 1;
+        });
+        assert (mustOk<int> (result) == 1);
         done.countDown ();
         return null;
     });
@@ -161,8 +150,8 @@ void testForget () {
 
 void testClear () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (2);
-    var release = new CountDownLatch (1);
+    var started = mustLatch (2);
+    var release = mustLatch (1);
 
     Future<int> first = group.doFuture<int> ("k1", () => {
         started.countDown ();
@@ -191,16 +180,11 @@ void testClear () {
 
 void testDoInvalidKey () {
     var group = new SingleFlight ();
-    bool thrown = false;
-    try {
-        group.@do<int> ("", () => {
-            return 0;
-        });
-    } catch (SingleFlightError e) {
-        thrown = true;
-        assert (e is SingleFlightError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var result = group.@do<int> ("", () => {
+        return 0;
+    });
+    assert (result.isError ());
+    assert (result.unwrapError () is SingleFlightError.INVALID_ARGUMENT);
 }
 
 void testDoFutureInvalidKey () {
@@ -215,36 +199,28 @@ void testDoFutureInvalidKey () {
 
 void testDoTypeMismatch () {
     var group = new SingleFlight ();
-    var started = new CountDownLatch (1);
-    var release = new CountDownLatch (1);
-    var done = new CountDownLatch (1);
+    var started = mustLatch (1);
+    var release = mustLatch (1);
+    var done = mustLatch (1);
 
     new GLib.Thread<void *> ("singleflight-type-mismatch", () => {
-        try {
-            group.@do<int> ("mixed-key", () => {
-                started.countDown ();
-                release.@await ();
-                return 10;
-            });
-        } catch (SingleFlightError e) {
-            assert_not_reached ();
-        }
+        var result = group.@do<int> ("mixed-key", () => {
+            started.countDown ();
+            release.@await ();
+            return 10;
+        });
+        assert (mustOk<int> (result) == 10);
         done.countDown ();
         return null;
     });
 
     started.@await ();
 
-    bool thrown = false;
-    try {
-        group.@do<string> ("mixed-key", () => {
-            return "x";
-        });
-    } catch (SingleFlightError e) {
-        thrown = true;
-        assert (e is SingleFlightError.TYPE_MISMATCH);
-    }
-    assert (thrown);
+    var mismatch = group.@do<string> ("mixed-key", () => {
+        return "x";
+    });
+    assert (mismatch.isError ());
+    assert (mismatch.unwrapError () is SingleFlightError.TYPE_MISMATCH);
 
     release.countDown ();
     done.@await ();

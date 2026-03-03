@@ -451,25 +451,30 @@ namespace Vala.Io {
          * Starts watch for file or directory.
          *
          * @param path target path.
-         * @return watcher instance.
-         * @throws WatcherError.PATH_NOT_FOUND when path does not exist.
-         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
+         * @return Result.ok(watcher instance), or
+         *         Result.error(WatcherError.PATH_NOT_FOUND / MONITOR_SETUP_FAILED).
          */
-        public static FileWatcher watch (Path path) throws WatcherError {
-            return new FileWatcher (path, false, null);
+        public static Result<FileWatcher, GLib.Error> watch (Path path) {
+            try {
+                return Result.ok<FileWatcher, GLib.Error> (new FileWatcher (path, false, null));
+            } catch (WatcherError e) {
+                return Result.error<FileWatcher, GLib.Error> (e);
+            }
         }
 
         /**
          * Starts recursive directory watch.
          *
          * @param root root directory.
-         * @return watcher instance.
-         * @throws WatcherError.PATH_NOT_FOUND when root does not exist.
-         * @throws WatcherError.INVALID_ARGUMENT when root is not a directory.
-         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
+         * @return Result.ok(watcher instance), or
+         *         Result.error(WatcherError.PATH_NOT_FOUND / INVALID_ARGUMENT / MONITOR_SETUP_FAILED).
          */
-        public static FileWatcher watchRecursive (Path root) throws WatcherError {
-            return new FileWatcher (root, true, null);
+        public static Result<FileWatcher, GLib.Error> watchRecursive (Path root) {
+            try {
+                return Result.ok<FileWatcher, GLib.Error> (new FileWatcher (root, true, null));
+            } catch (WatcherError e) {
+                return Result.error<FileWatcher, GLib.Error> (e);
+            }
         }
 
         /**
@@ -477,13 +482,15 @@ namespace Vala.Io {
          *
          * @param root root directory.
          * @param glob glob filter.
-         * @return watcher instance.
-         * @throws WatcherError.PATH_NOT_FOUND when root does not exist.
-         * @throws WatcherError.INVALID_ARGUMENT when root is not a directory.
-         * @throws WatcherError.MONITOR_SETUP_FAILED when monitor setup fails.
+         * @return Result.ok(watcher instance), or
+         *         Result.error(WatcherError.PATH_NOT_FOUND / INVALID_ARGUMENT / MONITOR_SETUP_FAILED).
          */
-        public static FileWatcher watchGlob (Path root, string glob) throws WatcherError {
-            return new FileWatcher (root, true, glob);
+        public static Result<FileWatcher, GLib.Error> watchGlob (Path root, string glob) {
+            try {
+                return Result.ok<FileWatcher, GLib.Error> (new FileWatcher (root, true, glob));
+            } catch (WatcherError e) {
+                return Result.error<FileWatcher, GLib.Error> (e);
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ void main (string[] args) {
     Test.add_func ("/archive/tar/testExtractFileFailureKeepsDestination",
                    testExtractFileFailureKeepsDestination);
     Test.add_func ("/archive/tar/testExtractRejectsLinkEntries", testExtractRejectsLinkEntries);
+    Test.add_func ("/archive/tar/testCreateRejectsDuplicateBasename", testCreateRejectsDuplicateBasename);
     Test.add_func ("/archive/tar/testInvalidInputs", testInvalidInputs);
     Test.run ();
 }
@@ -56,6 +57,16 @@ string ? findBySuffix (ArrayList<string> entries, string suffix) {
     return null;
 }
 
+void assertOk (Result<bool, GLib.Error> result) {
+    assert (result.isOk ());
+    assert (result.unwrap ());
+}
+
+ArrayList<string> unwrapEntries (Result<ArrayList<string>, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
 void testCreateAndExtract () {
     if (!requireTarTool ()) {
         return;
@@ -75,8 +86,8 @@ void testCreateAndExtract () {
     files.add (a);
     files.add (b);
 
-    assert (Tar.create (archive, files));
-    assert (Tar.extract (archive, new Vala.Io.Path (root + "/out")));
+    assertOk (Tar.create (archive, files));
+    assertOk (Tar.extract (archive, new Vala.Io.Path (root + "/out")));
     assert (Files.readAllText (new Vala.Io.Path (root + "/out/a.txt")) == "alpha");
     assert (Files.readAllText (new Vala.Io.Path (root + "/out/b.txt")) == "beta");
     cleanup (root);
@@ -98,8 +109,8 @@ void testCreateAndExtractLeadingDash () {
     var files = new ArrayList<Vala.Io.Path> ();
     files.add (dashFile);
 
-    assert (Tar.create (archive, files));
-    assert (Tar.extract (archive, new Vala.Io.Path (root + "/out")));
+    assertOk (Tar.create (archive, files));
+    assertOk (Tar.extract (archive, new Vala.Io.Path (root + "/out")));
     assert (Files.readAllText (new Vala.Io.Path (root + "/out/-dash.txt")) == "dash");
     cleanup (root);
 }
@@ -116,14 +127,9 @@ void testCreateFromDirAndList () {
     assert (Files.writeText (new Vala.Io.Path (root + "/tree/sub/nested.txt"), "n"));
 
     var archive = new Vala.Io.Path (root + "/tree.tar");
-    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
 
-    ArrayList<string> ? entries = Tar.list (archive);
-    assert (entries != null);
-    if (entries == null) {
-        cleanup (root);
-        return;
-    }
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
     assert (containsSuffix (entries, "root.txt"));
     assert (containsSuffix (entries, "sub/nested.txt"));
     cleanup (root);
@@ -140,18 +146,13 @@ void testAddFile () {
     assert (Files.writeText (new Vala.Io.Path (root + "/base/one.txt"), "one"));
 
     var archive = new Vala.Io.Path (root + "/base.tar");
-    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/base")));
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/base")));
 
     var add = new Vala.Io.Path (root + "/add.txt");
     assert (Files.writeText (add, "add"));
-    assert (Tar.addFile (archive, add));
+    assertOk (Tar.addFile (archive, add));
 
-    ArrayList<string> ? entries = Tar.list (archive);
-    assert (entries != null);
-    if (entries == null) {
-        cleanup (root);
-        return;
-    }
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
     assert (containsSuffix (entries, "add.txt"));
     cleanup (root);
 }
@@ -167,14 +168,9 @@ void testExtractFile () {
     assert (Files.writeText (new Vala.Io.Path (root + "/tree/sub/nested.txt"), "target"));
 
     var archive = new Vala.Io.Path (root + "/tree.tar");
-    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
 
-    ArrayList<string> ? entries = Tar.list (archive);
-    assert (entries != null);
-    if (entries == null) {
-        cleanup (root);
-        return;
-    }
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
 
     string ? entry = findBySuffix (entries, "sub/nested.txt");
     assert (entry != null);
@@ -184,7 +180,7 @@ void testExtractFile () {
     }
 
     var outputPath = new Vala.Io.Path (root + "/single.txt");
-    assert (Tar.extractFile (archive, entry, outputPath));
+    assertOk (Tar.extractFile (archive, entry, outputPath));
     assert (Files.readAllText (outputPath) == "target");
     cleanup (root);
 }
@@ -200,12 +196,35 @@ void testExtractFileFailureKeepsDestination () {
     assert (Files.writeText (new Vala.Io.Path (root + "/tree/ok.txt"), "ok"));
 
     var archive = new Vala.Io.Path (root + "/tree.tar");
-    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
 
     var outputPath = new Vala.Io.Path (root + "/single.txt");
     assert (Files.writeText (outputPath, "keep"));
-    assert (!Tar.extractFile (archive, "missing-entry.txt", outputPath));
+    var extracted = Tar.extractFile (archive, "missing-entry.txt", outputPath);
+    assert (extracted.isError ());
+    assert (extracted.unwrapError () is TarError.NOT_FOUND);
     assert (Files.readAllText (outputPath) == "keep");
+    cleanup (root);
+}
+
+void testCreateRejectsDuplicateBasename () {
+    if (!requireTarTool ()) {
+        return;
+    }
+
+    string root = rootFor ("duplicate_basename");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/a")));
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/b")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/a/name.txt"), "one"));
+    assert (Files.writeText (new Vala.Io.Path (root + "/b/name.txt"), "two"));
+
+    var files = new ArrayList<Vala.Io.Path> ();
+    files.add (new Vala.Io.Path (root + "/a/name.txt"));
+    files.add (new Vala.Io.Path (root + "/b/name.txt"));
+    var created = Tar.create (new Vala.Io.Path (root + "/dup.tar"), files);
+    assert (created.isError ());
+    assert (created.unwrapError () is TarError.INVALID_ARGUMENT);
     cleanup (root);
 }
 
@@ -219,12 +238,60 @@ void testInvalidInputs () {
     assert (Files.makeDirs (new Vala.Io.Path (root)));
 
     var empty = new ArrayList<Vala.Io.Path> ();
-    assert (!Tar.create (new Vala.Io.Path (root + "/x.tar"), empty));
-    assert (Tar.list (new Vala.Io.Path (root + "/missing.tar")) == null);
-    assert (!Tar.extract (
-                new Vala.Io.Path (root + "/missing.tar"),
-                new Vala.Io.Path (root + "/out")
-    ));
+    var emptyCreate = Tar.create (new Vala.Io.Path (root + "/x.tar"), empty);
+    assert (emptyCreate.isError ());
+    assert (emptyCreate.unwrapError () is TarError.INVALID_ARGUMENT);
+
+    var noRegularFiles = new ArrayList<Vala.Io.Path> ();
+    noRegularFiles.add (new Vala.Io.Path (root + "/missing.txt"));
+    var missingCreate = Tar.create (new Vala.Io.Path (root + "/y.tar"), noRegularFiles);
+    assert (missingCreate.isError ());
+    assert (missingCreate.unwrapError () is TarError.NOT_FOUND);
+
+    var fromDir = Tar.createFromDir (new Vala.Io.Path (root + "/from-dir.tar"), new Vala.Io.Path (root + "/missing-dir"));
+    assert (fromDir.isError ());
+    assert (fromDir.unwrapError () is TarError.INVALID_ARGUMENT);
+
+    var listed = Tar.list (new Vala.Io.Path (root + "/missing.tar"));
+    assert (listed.isError ());
+    assert (listed.unwrapError () is TarError.NOT_FOUND);
+
+    var extracted = Tar.extract (new Vala.Io.Path (root + "/missing.tar"), new Vala.Io.Path (root + "/out"));
+    assert (extracted.isError ());
+    assert (extracted.unwrapError () is TarError.NOT_FOUND);
+
+    var added = Tar.addFile (new Vala.Io.Path (root + "/missing.tar"), new Vala.Io.Path (root + "/missing.txt"));
+    assert (added.isError ());
+    assert (added.unwrapError () is TarError.NOT_FOUND);
+
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/base")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/base/one.txt"), "one"));
+    var archive = new Vala.Io.Path (root + "/base.tar");
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/base")));
+
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
+    string ? oneEntry = findBySuffix (entries, "one.txt");
+    assert (oneEntry != null);
+    if (oneEntry != null) {
+        var parentAsFile = new Vala.Io.Path (root + "/parent_as_file");
+        assert (Files.writeText (parentAsFile, "file"));
+        var invalidDest = new Vala.Io.Path (parentAsFile.toString () + "/out.txt");
+        var invalidParent = Tar.extractFile (archive, oneEntry, invalidDest);
+        assert (invalidParent.isError ());
+        assert (invalidParent.unwrapError () is TarError.INVALID_ARGUMENT);
+    }
+
+    var addMissingFile = Tar.addFile (archive, new Vala.Io.Path (root + "/missing-file.txt"));
+    assert (addMissingFile.isError ());
+    assert (addMissingFile.unwrapError () is TarError.NOT_FOUND);
+
+    var extractedFile = Tar.extractFile (
+        new Vala.Io.Path (root + "/missing.tar"),
+        "entry.txt",
+        new Vala.Io.Path (root + "/entry.txt")
+    );
+    assert (extractedFile.isError ());
+    assert (extractedFile.unwrapError () is TarError.NOT_FOUND);
     cleanup (root);
 }
 
@@ -246,7 +313,9 @@ void testExtractRejectsLinkEntries () {
     }
 
     var archive = new Vala.Io.Path (root + "/link.tar");
-    assert (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
-    assert (!Tar.extract (archive, new Vala.Io.Path (root + "/out")));
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+    var extracted = Tar.extract (archive, new Vala.Io.Path (root + "/out"));
+    assert (extracted.isError ());
+    assert (extracted.unwrapError () is TarError.SECURITY);
     cleanup (root);
 }

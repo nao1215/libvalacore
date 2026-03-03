@@ -25,11 +25,9 @@ void main (string[] args) {
 }
 
 AtomicFile atomicWithBackup (string suffix) {
-    try {
-        return new AtomicFile ().withBackup (true).backupSuffix (suffix);
-    } catch (AtomicFileError e) {
-        assert_not_reached ();
-    }
+    var configured = new AtomicFile ().withBackup (true).backupSuffix (suffix);
+    assert (configured.isOk ());
+    return configured.unwrap ();
 }
 
 void testWriteAndReadConsistent () {
@@ -175,12 +173,9 @@ void testReplaceMissingSource () {
 }
 
 void testBackupSuffixInvalid () {
-    bool thrown = false;
-    try {
-        new AtomicFile ().backupSuffix ("");
-    } catch (AtomicFileError e) {
-        thrown = true;
-        assert (e is AtomicFileError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var configured = new AtomicFile ().backupSuffix ("");
+    assert (configured.isError ());
+    var err = configured.unwrapError ();
+    assert (err is AtomicFileError.INVALID_ARGUMENT);
+    assert (err.message == "suffix must not be empty");
 }

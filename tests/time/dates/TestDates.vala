@@ -2,6 +2,7 @@ using Vala.Time;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/time/dates/testConstruct", testConstruct);
     Test.add_func ("/time/dates/testNow", testNow);
     Test.add_func ("/time/dates/testParseAndFormat", testParseAndFormat);
     Test.add_func ("/time/dates/testParseInvalid", testParseInvalid);
@@ -10,17 +11,20 @@ void main (string[] args) {
     Test.run ();
 }
 
+void testConstruct () {
+    var helper = new Dates ();
+    assert (helper != null);
+}
+
 Vala.Time.DateTime createDateTime (int year,
                                    int month,
                                    int day,
                                    int hour,
                                    int min,
                                    int sec) {
-    try {
-        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
-    } catch (DateTimeError e) {
-        assert_not_reached ();
-    }
+    var created = Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testNow () {

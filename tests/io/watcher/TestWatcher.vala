@@ -3,7 +3,7 @@ using Vala.Time;
 
 delegate bool ConditionFunc ();
 
-delegate FileWatcher WatchFactory () throws WatcherError;
+delegate Vala.Collections.Result<FileWatcher, GLib.Error> WatchFactory ();
 
 void main (string[] args) {
     Test.init (ref args);
@@ -41,16 +41,9 @@ bool waitUntil (owned ConditionFunc cond, int timeoutMillis) {
 }
 
 FileWatcher mustWatchWith (owned WatchFactory fn) {
-    FileWatcher ? watcher = null;
-    try {
-        watcher = fn ();
-    } catch (WatcherError e) {
-        assert_not_reached ();
-    }
-    if (watcher == null) {
-        assert_not_reached ();
-    }
-    return watcher;
+    var watcher = fn ();
+    assert (watcher.isOk ());
+    return watcher.unwrap ();
 }
 
 FileWatcher mustWatch (Vala.Io.Path path) {
@@ -216,14 +209,9 @@ void testDebounce () {
 
 void testWatchMissingPath () {
     string missing = GLib.Path.build_filename (Environment.get_tmp_dir (), "missing-watcher-" + GLib.Uuid.string_random ());
-    bool thrown = false;
-    try {
-        Watcher.watch (new Vala.Io.Path (missing));
-    } catch (WatcherError e) {
-        thrown = true;
-        assert (e is WatcherError.PATH_NOT_FOUND);
-    }
-    assert (thrown);
+    var watcher = Watcher.watch (new Vala.Io.Path (missing));
+    assert (watcher.isError ());
+    assert (watcher.unwrapError () is WatcherError.PATH_NOT_FOUND);
 }
 
 void testWatchRecursiveOnFile () {
@@ -232,14 +220,8 @@ void testWatchRecursiveOnFile () {
     Files.makeDirs (new Vala.Io.Path (root));
     Files.writeText (new Vala.Io.Path (root + "/single.txt"), "x");
 
-    bool thrown = false;
-    try {
-        Watcher.watchRecursive (new Vala.Io.Path (root + "/single.txt"));
-    } catch (WatcherError e) {
-        thrown = true;
-        assert (e is WatcherError.INVALID_ARGUMENT);
-    }
-
-    assert (thrown);
+    var watcher = Watcher.watchRecursive (new Vala.Io.Path (root + "/single.txt"));
+    assert (watcher.isError ());
+    assert (watcher.unwrapError () is WatcherError.INVALID_ARGUMENT);
     cleanup (root);
 }

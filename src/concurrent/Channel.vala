@@ -70,18 +70,20 @@ namespace Vala.Concurrent {
          * Creates a buffered channel.
          *
          * @param capacity buffer size (must be > 0).
-         * @return buffered channel.
-         * @throws ChannelError.INVALID_ARGUMENT when capacity is not positive.
+         * @return Result.ok(buffered channel), or
+         *         Result.error(ChannelError.INVALID_ARGUMENT) when capacity is not positive.
          */
-        public static Channel<T> buffered<T> (int capacity) throws ChannelError {
+        public static Result<Channel<T>, GLib.Error> buffered<T> (int capacity) {
             if (capacity <= 0) {
-                throw new ChannelError.INVALID_ARGUMENT (
-                          "capacity must be positive, got %d".printf (capacity)
+                return Result.error<Channel<T>, GLib.Error> (
+                    new ChannelError.INVALID_ARGUMENT (
+                        "capacity must be positive, got %d".printf (capacity)
+                    )
                 );
             }
             var ch = new Channel<T> ();
             ch._capacity = capacity;
-            return ch;
+            return Result.ok<Channel<T>, GLib.Error> (ch);
         }
 
         /**
@@ -395,13 +397,15 @@ namespace Vala.Concurrent {
          *
          * @param src source channel.
          * @param n number of output channels.
-         * @return output channels.
-         * @throws ChannelError.INVALID_ARGUMENT when n is not positive.
+         * @return Result.ok(output channels), or
+         *         Result.error(ChannelError.INVALID_ARGUMENT) when n is not positive.
          */
-        public static ArrayList<Channel<T> > fanOut<T> (Channel<T> src, int n) throws ChannelError {
+        public static Result<ArrayList<Channel<T> >, GLib.Error> fanOut<T> (Channel<T> src, int n) {
             if (n <= 0) {
-                throw new ChannelError.INVALID_ARGUMENT (
-                          "n must be positive, got %d".printf (n)
+                return Result.error<ArrayList<Channel<T> >, GLib.Error> (
+                    new ChannelError.INVALID_ARGUMENT (
+                        "n must be positive, got %d".printf (n)
+                    )
                 );
             }
             var outputs = new ArrayList<Channel<T> > ();
@@ -429,7 +433,7 @@ namespace Vala.Concurrent {
                 return null;
             });
 
-            return outputs;
+            return Result.ok<ArrayList<Channel<T> >, GLib.Error> (outputs);
         }
 
         /**
@@ -545,7 +549,11 @@ namespace Vala.Concurrent {
      *
      * Example (buffered):
      * {{{
-     *     var ch = ChannelInt.buffered (10);
+     *     var created = ChannelInt.buffered (10);
+     *     if (created.isError ()) {
+     *         return;
+     *     }
+     *     var ch = created.unwrap ();
      *     ch.send (1);
      *     ch.send (2);
      *     int v1 = ch.receive ();
@@ -576,18 +584,20 @@ namespace Vala.Concurrent {
          * Creates a buffered channel with the given capacity.
          *
          * @param capacity buffer size (must be > 0).
-         * @return a new buffered ChannelInt.
-         * @throws ChannelError.INVALID_ARGUMENT when capacity is not positive.
+         * @return Result.ok(buffered ChannelInt), or
+         *         Result.error(ChannelError.INVALID_ARGUMENT) when capacity is not positive.
          */
-        public static ChannelInt buffered (int capacity) throws ChannelError {
+        public static Result<ChannelInt, GLib.Error> buffered (int capacity) {
             if (capacity <= 0) {
-                throw new ChannelError.INVALID_ARGUMENT (
-                          "capacity must be positive, got %d".printf (capacity)
+                return Result.error<ChannelInt, GLib.Error> (
+                    new ChannelError.INVALID_ARGUMENT (
+                        "capacity must be positive, got %d".printf (capacity)
+                    )
                 );
             }
             var ch = new ChannelInt ();
             ch._capacity = capacity;
-            return ch;
+            return Result.ok<ChannelInt, GLib.Error> (ch);
         }
 
         /**
@@ -799,7 +809,11 @@ namespace Vala.Concurrent {
      *
      * Example:
      * {{{
-     *     var ch = ChannelString.buffered (5);
+     *     var created = ChannelString.buffered (5);
+     *     if (created.isError ()) {
+     *         return;
+     *     }
+     *     var ch = created.unwrap ();
      *     ch.send ("hello");
      *     string msg = ch.receive ();
      * }}}
@@ -828,18 +842,20 @@ namespace Vala.Concurrent {
          * Creates a buffered string channel.
          *
          * @param capacity buffer size (must be > 0).
-         * @return a new buffered ChannelString.
-         * @throws ChannelError.INVALID_ARGUMENT when capacity is not positive.
+         * @return Result.ok(buffered ChannelString), or
+         *         Result.error(ChannelError.INVALID_ARGUMENT) when capacity is not positive.
          */
-        public static ChannelString buffered (int capacity) throws ChannelError {
+        public static Result<ChannelString, GLib.Error> buffered (int capacity) {
             if (capacity <= 0) {
-                throw new ChannelError.INVALID_ARGUMENT (
-                          "capacity must be positive, got %d".printf (capacity)
+                return Result.error<ChannelString, GLib.Error> (
+                    new ChannelError.INVALID_ARGUMENT (
+                        "capacity must be positive, got %d".printf (capacity)
+                    )
                 );
             }
             var ch = new ChannelString ();
             ch._capacity = capacity;
-            return ch;
+            return Result.ok<ChannelString, GLib.Error> (ch);
         }
 
         /**

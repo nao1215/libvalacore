@@ -15,173 +15,161 @@ void main (string[] args) {
     Test.run ();
 }
 
+bool unwrapBoolResult (Result<bool, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
 void testBasic () {
     var hash = new RendezvousHash ();
-    try {
-        assert (hash.getNode ("key-1") == null);
+    var firstNode = hash.getNode ("key-1");
+    assert (firstNode.isOk ());
+    assert (firstNode.unwrap () == null);
 
-        assert (hash.addNode ("node-a") == true);
-        assert (hash.addNode ("node-b") == true);
-        assert (hash.addNode ("node-a") == false);
-        assert (hash.containsNode ("node-a") == true);
-        assert (hash.nodeCount () == 2);
+    var addA = hash.addNode ("node-a");
+    assert (unwrapBoolResult (addA) == true);
 
-        string ? node = hash.getNode ("user:42");
-        assert (node == "node-a" || node == "node-b");
+    var addB = hash.addNode ("node-b");
+    assert (unwrapBoolResult (addB) == true);
 
-        assert (hash.removeNode ("node-b") == true);
-        assert (hash.removeNode ("node-b") == false);
-        assert (hash.nodeCount () == 1);
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
-    }
+    var addADuplicate = hash.addNode ("node-a");
+    assert (unwrapBoolResult (addADuplicate) == false);
+
+    var containsA = hash.containsNode ("node-a");
+    assert (unwrapBoolResult (containsA) == true);
+    assert (hash.nodeCount () == 2);
+
+    var nodeResult = hash.getNode ("user:42");
+    assert (nodeResult.isOk ());
+    string ? node = nodeResult.unwrap ();
+    assert (node == "node-a" || node == "node-b");
+
+    var removedB = hash.removeNode ("node-b");
+    assert (unwrapBoolResult (removedB) == true);
+
+    removedB = hash.removeNode ("node-b");
+    assert (unwrapBoolResult (removedB) == false);
+    assert (hash.nodeCount () == 1);
 }
 
 void testGetTopNodes () {
     var hash = new RendezvousHash ();
-    try {
-        hash.addNode ("n1");
-        hash.addNode ("n2");
-        hash.addNode ("n3");
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n3")) == true);
 
-        ArrayList<string> top2 = hash.getTopNodes ("key", 2);
-        assert (top2.size () == 2);
-        assert (top2.get (0) != top2.get (1));
+    var top2Result = hash.getTopNodes ("key", 2);
+    assert (top2Result.isOk ());
+    ArrayList<string> top2 = top2Result.unwrap ();
+    assert (top2.size () == 2);
+    assert (top2.get (0) != top2.get (1));
 
-        ArrayList<string> top10 = hash.getTopNodes ("key", 10);
-        assert (top10.size () == 3);
+    var top10Result = hash.getTopNodes ("key", 10);
+    assert (top10Result.isOk ());
+    ArrayList<string> top10 = top10Result.unwrap ();
+    assert (top10.size () == 3);
 
-        string ? assigned = hash.getNode ("key");
-        assert (assigned == top10.get (0));
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
-    }
+    var assignedResult = hash.getNode ("key");
+    assert (assignedResult.isOk ());
+    string ? assigned = assignedResult.unwrap ();
+    assert (assigned == top10.get (0));
 }
 
 void testSetWeight () {
     var hash = new RendezvousHash ();
-    try {
-        hash.addNode ("slow");
-        hash.addNode ("fast");
-        assert (hash.setWeight ("fast", 3.0) == true);
-        assert (hash.setWeight ("missing", 2.0) == false);
+    assert (unwrapBoolResult (hash.addNode ("slow")) == true);
+    assert (unwrapBoolResult (hash.addNode ("fast")) == true);
 
-        var keys = new ArrayList<string> ();
-        for (int i = 0; i < 3000; i++) {
-            keys.add ("weight-key-%d".printf (i));
-        }
+    var weightedFast = hash.setWeight ("fast", 3.0);
+    assert (unwrapBoolResult (weightedFast) == true);
 
-        HashMap<string, int> dist = hash.distribution (keys);
-        int slowCount = dist.getOrDefault ("slow", 0);
-        int fastCount = dist.getOrDefault ("fast", 0);
-        assert (fastCount > slowCount);
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
+    var weightedMissing = hash.setWeight ("missing", 2.0);
+    assert (unwrapBoolResult (weightedMissing) == false);
+
+    var keys = new ArrayList<string> ();
+    for (int i = 0; i < 3000; i++) {
+        keys.add ("weight-key-%d".printf (i));
     }
+
+    HashMap<string, int> dist = hash.distribution (keys);
+    int slowCount = dist.getOrDefault ("slow", 0);
+    int fastCount = dist.getOrDefault ("fast", 0);
+    assert (fastCount > slowCount);
 }
 
 void testDistribution () {
     var hash = new RendezvousHash ();
-    try {
-        hash.addNode ("n1");
-        hash.addNode ("n2");
-        hash.addNode ("n3");
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n3")) == true);
 
-        var keys = new ArrayList<string> ();
-        for (int i = 0; i < 200; i++) {
-            keys.add ("sample-%d".printf (i));
-        }
-
-        HashMap<string, int> dist = hash.distribution (keys);
-        assert (dist.size () == 3);
-        int total = dist.getOrDefault ("n1", 0) +
-                    dist.getOrDefault ("n2", 0) +
-                    dist.getOrDefault ("n3", 0);
-        assert (total == 200);
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
+    var keys = new ArrayList<string> ();
+    for (int i = 0; i < 200; i++) {
+        keys.add ("sample-%d".printf (i));
     }
+
+    HashMap<string, int> dist = hash.distribution (keys);
+    assert (dist.size () == 3);
+    int total = dist.getOrDefault ("n1", 0) +
+                dist.getOrDefault ("n2", 0) +
+                dist.getOrDefault ("n3", 0);
+    assert (total == 200);
 }
 
 void testRebalanceEstimate () {
     var hash = new RendezvousHash ();
-    try {
-        hash.addNode ("n1");
-        hash.addNode ("n2");
-        hash.addNode ("n3");
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n3")) == true);
 
-        var keys = new ArrayList<string> ();
-        for (int i = 0; i < 200; i++) {
-            keys.add ("k-%d".printf (i));
-        }
-
-        double ratio = hash.rebalanceEstimate (keys);
-        assert (ratio > 0.0);
-        assert (ratio < 1.0);
-
-        var empty = new RendezvousHash ();
-        assert (empty.rebalanceEstimate (keys) == 0.0);
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
+    var keys = new ArrayList<string> ();
+    for (int i = 0; i < 200; i++) {
+        keys.add ("k-%d".printf (i));
     }
+
+    double ratio = hash.rebalanceEstimate (keys);
+    assert (ratio > 0.0);
+    assert (ratio < 1.0);
+
+    var empty = new RendezvousHash ();
+    assert (empty.rebalanceEstimate (keys) == 0.0);
 }
 
 void testClear () {
     var hash = new RendezvousHash ();
-    try {
-        hash.addNode ("n1");
-        hash.addNode ("n2");
-        hash.clear ();
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
+    assert (unwrapBoolResult (hash.addNode ("n2")) == true);
+    hash.clear ();
 
-        assert (hash.nodeCount () == 0);
-        assert (hash.getNode ("key") == null);
-        assert (hash.distribution (new ArrayList<string> ()).size () == 0);
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
-    }
+    assert (hash.nodeCount () == 0);
+    var node = hash.getNode ("key");
+    assert (node.isOk ());
+    assert (node.unwrap () == null);
+    assert (hash.distribution (new ArrayList<string> ()).size () == 0);
 }
 
 void testInvalidArguments () {
     var hash = new RendezvousHash ();
 
-    bool nodeThrown = false;
-    try {
-        hash.addNode ("");
-    } catch (RendezvousHashError e) {
-        nodeThrown = true;
-        assert (e is RendezvousHashError.INVALID_ARGUMENT);
-    }
-    assert (nodeThrown);
+    var invalidNode = hash.addNode ("");
+    assert (invalidNode.isError ());
+    assert (invalidNode.unwrapError () is RendezvousHashError.INVALID_ARGUMENT);
+    assert (invalidNode.unwrapError ().message == "nodeId must not be empty");
 
-    bool keyThrown = false;
-    try {
-        hash.getNode ("");
-    } catch (RendezvousHashError e) {
-        keyThrown = true;
-        assert (e is RendezvousHashError.INVALID_ARGUMENT);
-    }
-    assert (keyThrown);
+    var invalidKey = hash.getNode ("");
+    assert (invalidKey.isError ());
+    assert (invalidKey.unwrapError () is RendezvousHashError.INVALID_ARGUMENT);
+    assert (invalidKey.unwrapError ().message == "key must not be empty");
 
-    bool nThrown = false;
-    try {
-        hash.addNode ("n1");
-    } catch (RendezvousHashError e) {
-        assert_not_reached ();
-    }
-    try {
-        hash.getTopNodes ("k", 0);
-    } catch (RendezvousHashError e) {
-        nThrown = true;
-        assert (e is RendezvousHashError.INVALID_ARGUMENT);
-    }
-    assert (nThrown);
+    assert (unwrapBoolResult (hash.addNode ("n1")) == true);
 
-    bool weightThrown = false;
-    try {
-        hash.setWeight ("n1", 0.0);
-    } catch (RendezvousHashError e) {
-        weightThrown = true;
-        assert (e is RendezvousHashError.INVALID_ARGUMENT);
-    }
-    assert (weightThrown);
+    var invalidTopN = hash.getTopNodes ("k", 0);
+    assert (invalidTopN.isError ());
+    assert (invalidTopN.unwrapError () is RendezvousHashError.INVALID_ARGUMENT);
+    assert (invalidTopN.unwrapError ().message == "n must be positive");
+
+    var invalidWeight = hash.setWeight ("n1", 0.0);
+    assert (invalidWeight.isError ());
+    assert (invalidWeight.unwrapError () is RendezvousHashError.INVALID_ARGUMENT);
+    assert (invalidWeight.unwrapError ().message == "weight must be positive");
 }

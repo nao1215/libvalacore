@@ -564,18 +564,22 @@ namespace Vala.Collections {
          * use joiningWith() and provide an explicit formatter.
          *
          * @param delimiter the delimiter string.
-         * @return joined string.
-         * @throws StreamError.UNSUPPORTED_TYPE when T is not string.
+         * @return Result.ok(joined string), or
+         *         Result.error(StreamError.UNSUPPORTED_TYPE) when T is not string.
          */
-        public string joining (string delimiter = "") throws StreamError {
+        public Result<string, GLib.Error> joining (string delimiter = "") {
             if (typeof (T) != typeof (string)) {
-                throw new StreamError.UNSUPPORTED_TYPE (
-                          "joining() is only supported for Stream<string>; use joiningWith() for non-string types"
+                return Result.error<string, GLib.Error> (
+                    new StreamError.UNSUPPORTED_TYPE (
+                        "joining() is only supported for Stream<string>; use joiningWith() for non-string types"
+                    )
                 );
             }
-            return joiningWith ((item) => {
+            return Result.ok<string, GLib.Error> (
+                joiningWith ((item) => {
                 return (string) item;
-            }, delimiter);
+            }, delimiter)
+            );
         }
 
         /**

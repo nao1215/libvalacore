@@ -1,3 +1,4 @@
+using Vala.Collections;
 using Vala.Lang;
 using Vala.Time;
 
@@ -141,25 +142,29 @@ namespace Vala.Io {
          *
          * @param command shell command.
          * @param timeout timeout duration.
-         * @return execution result.
-         * @throws ShellError.INVALID_ARGUMENT when timeout is negative.
+         * @return Result.ok(execution result), or
+         *         Result.error(ShellError.INVALID_ARGUMENT) when timeout is negative.
          */
-        public static ShellResult execWithTimeout (string command,
-                                                   Duration timeout) throws ShellError {
+        public static Result<ShellResult, GLib.Error> execWithTimeout (string command,
+                                                                       Duration timeout) {
             int64 timeoutMillis = timeout.toMillis ();
             if (timeoutMillis < 0) {
-                throw new ShellError.INVALID_ARGUMENT (
-                          ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
+                return Result.error<ShellResult, GLib.Error> (
+                    new ShellError.INVALID_ARGUMENT (
+                        ("timeout must be non-negative, got %" + int64.FORMAT).printf (timeoutMillis)
+                    )
                 );
             }
 
             if (timeoutMillis == 0) {
-                return run (command, false);
+                return Result.ok<ShellResult, GLib.Error> (run (command, false));
             }
 
             int64 seconds = (timeoutMillis + 999) / 1000;
             string wrapped = "timeout --preserve-status %" + int64.FORMAT + "s /bin/sh -c %s";
-            return run (wrapped.printf (seconds, GLib.Shell.quote (command)), false);
+            return Result.ok<ShellResult, GLib.Error> (
+                run (wrapped.printf (seconds, GLib.Shell.quote (command)), false)
+            );
         }
 
         /**

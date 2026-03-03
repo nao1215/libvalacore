@@ -26,14 +26,9 @@ void testGetStackTrace () {
 }
 
 void testSneakyThrow () {
-    bool thrown = false;
     GLib.Error source = new TestError.SAMPLE ("boom");
-    try {
-        Exceptions.sneakyThrow (source);
-    } catch (GLib.Error e) {
-        thrown = true;
-        assert (e is TestError.SAMPLE);
-        assert (e.message == "boom");
-    }
-    assert (thrown);
+    var failed = Exceptions.sneakyThrow (source);
+    assert (failed.isError ());
+    assert (failed.unwrapError () is TestError.SAMPLE);
+    assert (failed.unwrapError ().message == "boom");
 }

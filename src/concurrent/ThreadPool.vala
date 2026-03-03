@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Concurrent {
     /**
      * Recoverable worker pool configuration errors.
@@ -35,7 +36,11 @@ namespace Vala.Concurrent {
      *
      * Example with return value:
      * {{{
-     *     var pool = new WorkerPool (4);
+     *     var created = WorkerPool.of (4);
+     *     if (created.isError ()) {
+     *         return;
+     *     }
+     *     var pool = created.unwrap ();
      *     int result = pool.submitInt (() => { return 42; }).await ();
      *     pool.shutdown ();
      * }}}
@@ -53,23 +58,39 @@ namespace Vala.Concurrent {
          *
          * Example:
          * {{{
-         *     var pool = new WorkerPool (4);
+         *     var created = WorkerPool.of (4);
+         *     if (created.isError ()) {
+         *         return;
+         *     }
+         *     var pool = created.unwrap ();
          * }}}
          *
          * @param poolSize the number of worker threads (must be > 0).
-         * @throws WorkerPoolError.INVALID_ARGUMENT when poolSize is not positive.
          */
-        public WorkerPool (int poolSize) throws WorkerPoolError {
-            if (poolSize <= 0) {
-                throw new WorkerPoolError.INVALID_ARGUMENT (
-                          "poolSize must be positive, got %d".printf (poolSize)
-                );
-            }
+        private WorkerPool (int poolSize) {
             initializePool (poolSize);
         }
 
         private WorkerPool.unchecked (int poolSize) {
             initializePool (poolSize);
+        }
+
+        /**
+         * Creates a thread pool with the specified number of worker threads.
+         *
+         * @param poolSize the number of worker threads (must be > 0).
+         * @return Result.ok(pool), or
+         *         Result.error(WorkerPoolError.INVALID_ARGUMENT) when poolSize is not positive.
+         */
+        public static Result<WorkerPool, GLib.Error> of (int poolSize) {
+            if (poolSize <= 0) {
+                return Result.error<WorkerPool, GLib.Error> (
+                    new WorkerPoolError.INVALID_ARGUMENT (
+                        "poolSize must be positive, got %d".printf (poolSize)
+                    )
+                );
+            }
+            return Result.ok<WorkerPool, GLib.Error> (new WorkerPool (poolSize));
         }
 
         private void initializePool (int poolSize) {
@@ -112,7 +133,7 @@ namespace Vala.Concurrent {
          *
          * Example:
          * {{{
-         *     var pool = new WorkerPool (2);
+         *     var pool = WorkerPool.withDefault ();
          *     var promise = pool.submitInt (() => { return 42; });
          *     int result = promise.await ();
          *     pool.shutdown ();
@@ -141,7 +162,7 @@ namespace Vala.Concurrent {
          *
          * Example:
          * {{{
-         *     var pool = new WorkerPool (2);
+         *     var pool = WorkerPool.withDefault ();
          *     var promise = pool.submitString (() => { return "hello"; });
          *     string result = promise.await ();
          *     pool.shutdown ();
@@ -170,7 +191,7 @@ namespace Vala.Concurrent {
          *
          * Example:
          * {{{
-         *     var pool = new WorkerPool (2);
+         *     var pool = WorkerPool.withDefault ();
          *     var promise = pool.submitBool (() => { return true; });
          *     bool result = promise.await ();
          *     pool.shutdown ();
@@ -199,7 +220,7 @@ namespace Vala.Concurrent {
          *
          * Example:
          * {{{
-         *     var pool = new WorkerPool (2);
+         *     var pool = WorkerPool.withDefault ();
          *     var promise = pool.submitDouble (() => { return 3.14; });
          *     double result = promise.await ();
          *     pool.shutdown ();

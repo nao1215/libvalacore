@@ -14,11 +14,9 @@ void main (string[] args) {
 }
 
 HyperLogLog createEstimator (double error_rate = 0.01) {
-    try {
-        return new HyperLogLog (error_rate);
-    } catch (HyperLogLogError e) {
-        assert_not_reached ();
-    }
+    var created = HyperLogLog.of (error_rate);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testCountEstimate () {
@@ -99,39 +97,27 @@ void testClear () {
 }
 
 void testInvalidArguments () {
-    bool thrown = false;
-    try {
-        new HyperLogLog (0.0);
-    } catch (HyperLogLogError e) {
-        thrown = true;
-        assert (e is HyperLogLogError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var zero = HyperLogLog.of (0.0);
+    assert (zero.isError ());
+    assert (zero.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
+    assert (zero.unwrapError ().message == "errorRate must be in range (0, 1)");
 
-    thrown = false;
-    try {
-        new HyperLogLog (1.0);
-    } catch (HyperLogLogError e) {
-        thrown = true;
-        assert (e is HyperLogLogError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var one = HyperLogLog.of (1.0);
+    assert (one.isError ());
+    assert (one.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
+    assert (one.unwrapError ().message == "errorRate must be in range (0, 1)");
 
-    thrown = false;
-    try {
-        new HyperLogLog (-0.5);
-    } catch (HyperLogLogError e) {
-        thrown = true;
-        assert (e is HyperLogLogError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var negative = HyperLogLog.of (-0.5);
+    assert (negative.isError ());
+    assert (negative.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
+    assert (negative.unwrapError ().message == "errorRate must be in range (0, 1)");
 
-    thrown = false;
-    try {
-        new HyperLogLog (1.5);
-    } catch (HyperLogLogError e) {
-        thrown = true;
-        assert (e is HyperLogLogError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var larger = HyperLogLog.of (1.5);
+    assert (larger.isError ());
+    assert (larger.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
+    assert (larger.unwrapError ().message == "errorRate must be in range (0, 1)");
+
+    var nanRate = HyperLogLog.of (double.NAN);
+    assert (nanRate.isError ());
+    assert (nanRate.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
 }

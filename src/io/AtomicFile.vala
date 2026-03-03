@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Io {
     /**
      * Recoverable AtomicFile argument errors.
@@ -15,9 +16,11 @@ namespace Vala.Io {
      *
      * Example:
      * {{{
-     *     var atomic = new AtomicFile ()
+     *     var configured = new AtomicFile ()
      *         .withBackup (true)
      *         .backupSuffix (".bak");
+     *     assert (configured.isOk ());
+     *     var atomic = configured.unwrap ();
      *
      *     bool ok = atomic.write (new Path ("/tmp/app.conf"), "port=8080\n");
      * }}}
@@ -47,15 +50,17 @@ namespace Vala.Io {
          * Sets backup suffix used when backup is enabled.
          *
          * @param suffix backup suffix such as ".bak".
-         * @return this AtomicFile instance.
-         * @throws AtomicFileError.INVALID_ARGUMENT when suffix is empty.
+         * @return Result.ok(this AtomicFile instance) or
+         *         Result.error(AtomicFileError.INVALID_ARGUMENT) when suffix is empty.
          */
-        public AtomicFile backupSuffix (string suffix) throws AtomicFileError {
+        public Vala.Collections.Result<AtomicFile, GLib.Error> backupSuffix (string suffix) {
             if (suffix.length == 0) {
-                throw new AtomicFileError.INVALID_ARGUMENT ("suffix must not be empty");
+                return Vala.Collections.Result.error<AtomicFile, GLib.Error> (
+                    new AtomicFileError.INVALID_ARGUMENT ("suffix must not be empty")
+                );
             }
             _backup_suffix = suffix;
-            return this;
+            return Vala.Collections.Result.ok<AtomicFile, GLib.Error> (this);
         }
 
         /**

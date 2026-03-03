@@ -1,4 +1,5 @@
 using Vala.Io;
+using Vala.Collections;
 
 namespace Vala.Encoding {
     /**
@@ -118,13 +119,15 @@ namespace Vala.Encoding {
          *
          * @param data rows and columns to serialize.
          * @param separator field separator (for example ",").
-         * @return CSV text.
-         * @throws CsvError.INVALID_ARGUMENT when separator is empty.
+         * @return Result.ok(CSV text), or
+         *         Result.error(CsvError.INVALID_ARGUMENT) when separator is empty.
          */
-        public static string write (Vala.Collections.ArrayList<Vala.Collections.ArrayList<string> > data,
-                                    string separator) throws CsvError {
+        public static Result<string, GLib.Error> write (Vala.Collections.ArrayList<Vala.Collections.ArrayList<string> > data,
+                                                        string separator) {
             if (separator.length == 0) {
-                throw new CsvError.INVALID_ARGUMENT ("separator must not be empty");
+                return Result.error<string, GLib.Error> (
+                    new CsvError.INVALID_ARGUMENT ("separator must not be empty")
+                );
             }
 
             var builder = new GLib.StringBuilder ();
@@ -145,7 +148,7 @@ namespace Vala.Encoding {
                     builder.append_c ('\n');
                 }
             }
-            return builder.str;
+            return Result.ok<string, GLib.Error> (builder.str);
         }
 
         private static string escapeField (string field, string separator) {

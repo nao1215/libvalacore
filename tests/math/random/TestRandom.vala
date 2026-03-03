@@ -10,30 +10,29 @@ void main (string[] args) {
     Test.add_func ("/random/testChoice", testChoice);
     Test.add_func ("/random/testChoiceEmpty", testChoiceEmpty);
     Test.add_func ("/random/testInvalidArguments", testInvalidArguments);
+    Test.add_func ("/random/testInvalidArgumentsAdditional", testInvalidArgumentsAdditional);
     Test.run ();
 }
 
 void testNextInt () {
-    try {
-        for (int i = 0; i < 100; i++) {
-            int n = Vala.Math.Random.nextInt (10);
-            assert (n >= 0);
-            assert (n < 10);
-        }
-    } catch (RandomError e) {
-        assert_not_reached ();
+    for (int i = 0; i < 100; i++) {
+        var result = Vala.Math.Random.nextInt (10);
+        assert (result.isOk ());
+
+        int n = result.unwrap ();
+        assert (n >= 0);
+        assert (n < 10);
     }
 }
 
 void testNextIntRange () {
-    try {
-        for (int i = 0; i < 100; i++) {
-            int n = Vala.Math.Random.nextIntRange (-3, 7);
-            assert (n >= -3);
-            assert (n < 7);
-        }
-    } catch (RandomError e) {
-        assert_not_reached ();
+    for (int i = 0; i < 100; i++) {
+        var result = Vala.Math.Random.nextIntRange (-3, 7);
+        assert (result.isOk ());
+
+        int n = result.unwrap ();
+        assert (n >= -3);
+        assert (n < 7);
     }
 }
 
@@ -95,21 +94,37 @@ void testChoiceEmpty () {
 }
 
 void testInvalidArguments () {
-    bool nextIntThrown = false;
-    try {
-        Vala.Math.Random.nextInt (0);
-    } catch (RandomError e) {
-        nextIntThrown = true;
-        assert (e is RandomError.INVALID_ARGUMENT);
-    }
-    assert (nextIntThrown);
+    var nextInt = Vala.Math.Random.nextInt (0);
+    assert (nextInt.isError ());
 
-    bool rangeThrown = false;
-    try {
-        Vala.Math.Random.nextIntRange (5, 5);
-    } catch (RandomError e) {
-        rangeThrown = true;
-        assert (e is RandomError.INVALID_ARGUMENT);
-    }
-    assert (rangeThrown);
+    GLib.Error ? nextIntErr = nextInt.unwrapError ();
+    assert (nextIntErr != null);
+    assert (nextIntErr is RandomError.INVALID_ARGUMENT);
+    assert (nextIntErr.message == "bound must be greater than zero");
+
+    var range = Vala.Math.Random.nextIntRange (5, 5);
+    assert (range.isError ());
+
+    GLib.Error ? rangeErr = range.unwrapError ();
+    assert (rangeErr != null);
+    assert (rangeErr is RandomError.INVALID_ARGUMENT);
+    assert (rangeErr.message == "min must be less than max");
+}
+
+void testInvalidArgumentsAdditional () {
+    var nextInt = Vala.Math.Random.nextInt (-1);
+    assert (nextInt.isError ());
+
+    GLib.Error ? nextIntErr = nextInt.unwrapError ();
+    assert (nextIntErr != null);
+    assert (nextIntErr is RandomError.INVALID_ARGUMENT);
+    assert (nextIntErr.message == "bound must be greater than zero");
+
+    var range = Vala.Math.Random.nextIntRange (10, 0);
+    assert (range.isError ());
+
+    GLib.Error ? rangeErr = range.unwrapError ();
+    assert (rangeErr != null);
+    assert (rangeErr is RandomError.INVALID_ARGUMENT);
+    assert (rangeErr.message == "min must be less than max");
 }

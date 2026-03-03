@@ -6,6 +6,7 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/io/filelock/testTryAcquireAndRelease", testTryAcquireAndRelease);
     Test.add_func ("/io/filelock/testAcquireTimeout", testAcquireTimeout);
+    Test.add_func ("/io/filelock/testAcquireTimeoutImmediateSuccess", testAcquireTimeoutImmediateSuccess);
     Test.add_func ("/io/filelock/testAcquireAfterRelease", testAcquireAfterRelease);
     Test.add_func ("/io/filelock/testWithLock", testWithLock);
     Test.add_func ("/io/filelock/testOwnerPidUnavailable", testOwnerPidUnavailable);
@@ -45,13 +46,22 @@ void testAcquireTimeout () {
     var lock2 = new FileLock (lockPath);
 
     assert (lock1.tryAcquire () == true);
-    try {
-        assert (lock2.acquireTimeout (Duration.ofSeconds (0)) == false);
-    } catch (FileLockError e) {
-        assert_not_reached ();
-    }
+    var acquired = lock2.acquireTimeout (Duration.ofSeconds (0));
+    assert (acquired.isOk ());
+    assert (acquired.unwrap () == false);
 
     assert (lock1.release () == true);
+}
+
+void testAcquireTimeoutImmediateSuccess () {
+    Vala.Io.Path lockPath = new Vala.Io.Path ("/tmp/valacore/ut/filelock_timeout_immediate.lock");
+    Files.remove (lockPath);
+
+    var file_lock = new FileLock (lockPath);
+    var acquired = file_lock.acquireTimeout (Duration.ofSeconds (0));
+    assert (acquired.isOk ());
+    assert (acquired.unwrap () == true);
+    assert (file_lock.release () == true);
 }
 
 void testAcquireAfterRelease () {
@@ -83,11 +93,9 @@ void testAcquireAfterRelease () {
     releaseMutex.unlock ();
 
     int64 startMicros = GLib.get_monotonic_time ();
-    try {
-        assert (lock2.acquireTimeout (Duration.ofSeconds (1)) == true);
-    } catch (FileLockError e) {
-        assert_not_reached ();
-    }
+    var acquired = lock2.acquireTimeout (Duration.ofSeconds (1));
+    assert (acquired.isOk ());
+    assert (acquired.unwrap () == true);
     int64 elapsedMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
 
     assert (elapsedMillis < 1000);
@@ -136,12 +144,8 @@ void testAcquireTimeoutInvalid () {
     Files.remove (lockPath);
 
     var file_lock = new FileLock (lockPath);
-    bool thrown = false;
-    try {
-        file_lock.acquireTimeout (Duration.ofSeconds (-1));
-    } catch (FileLockError e) {
-        thrown = true;
-        assert (e is FileLockError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var acquired = file_lock.acquireTimeout (Duration.ofSeconds (-1));
+    assert (acquired.isError ());
+    assert (acquired.unwrapError () is FileLockError.INVALID_ARGUMENT);
+    assert (acquired.unwrapError ().message == "timeout must be non-negative, got -1000");
 }

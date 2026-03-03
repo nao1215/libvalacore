@@ -813,33 +813,42 @@ namespace Vala.Encoding {
         }
 
         /**
-         * Returns a value at path or throws when missing.
+         * Returns a value at path or a recoverable error.
          *
          * Example:
          * {{{
-         *     JsonValue value = Json.must (root, "$.user.id");
+         *     var valueResult = Json.must (root, "$.user.id");
+         *     if (valueResult.isError ()) {
+         *         return;
+         *     }
+         *     JsonValue value = valueResult.unwrap ();
          * }}}
          *
          * @param root root value.
          * @param path JSON path expression.
-         * @return value at path.
-         * @throws JsonError.INVALID_PATH when path is empty or malformed.
-         * @throws JsonError.NOT_FOUND when no value exists at path.
+         * @return Result.ok(value at path), or
+         *         Result.error(JsonError.INVALID_PATH/JsonError.NOT_FOUND).
          */
-        public static JsonValue must (JsonValue root, string path) throws JsonError {
+        public static Result<JsonValue, GLib.Error> must (JsonValue root, string path) {
             string p = path.strip ();
             if (p.length == 0) {
-                throw new JsonError.INVALID_PATH ("path must not be empty");
+                return Result.error<JsonValue, GLib.Error> (
+                    new JsonError.INVALID_PATH ("path must not be empty")
+                );
             }
             if (!isValidQueryPathSyntax (p)) {
-                throw new JsonError.INVALID_PATH ("invalid path: %s".printf (path));
+                return Result.error<JsonValue, GLib.Error> (
+                    new JsonError.INVALID_PATH ("invalid path: %s".printf (path))
+                );
             }
 
             JsonValue ? v = query (root, p);
             if (v == null) {
-                throw new JsonError.NOT_FOUND ("value is required at path: %s".printf (path));
+                return Result.error<JsonValue, GLib.Error> (
+                    new JsonError.NOT_FOUND ("value is required at path: %s".printf (path))
+                );
             }
-            return v;
+            return Result.ok<JsonValue, GLib.Error> (v);
         }
 
         /**

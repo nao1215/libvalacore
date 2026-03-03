@@ -24,12 +24,10 @@ void main (string[] args) {
 
 Retry mustRetryWithFixedDelay (int attempts, Duration delay) {
     var retry = new Retry ();
-    try {
-        retry.withMaxAttempts (attempts)
-         .withFixedDelay (delay);
-    } catch (RetryError e) {
-        assert_not_reached ();
-    }
+    var configured = retry.withMaxAttempts (attempts);
+    assert (configured.isOk ());
+    configured = retry.withFixedDelay (delay);
+    assert (configured.isOk ());
     return retry;
 }
 
@@ -98,8 +96,9 @@ void testRetryVoid () {
     bool ok = retry.retryVoid (() => {
         calls++;
         if (calls < 2) {
-            throw new RetryTestError.FAIL ("temporary");
+            return Result.error<bool, GLib.Error> (new RetryTestError.FAIL ("temporary"));
         }
+        return Result.ok<bool, GLib.Error> (true);
     });
 
     assert (ok == true);
@@ -112,7 +111,7 @@ void testRetryVoidFailure () {
 
     bool ok = retry.retryVoid (() => {
         calls++;
-        throw new RetryTestError.FAIL ("permanent");
+        return Result.error<bool, GLib.Error> (new RetryTestError.FAIL ("permanent"));
     });
 
     assert (ok == false);
@@ -130,8 +129,11 @@ void testHttpStatusRetry503 () {
     bool ok = retry.retryVoid (() => {
         calls++;
         if (calls == 1) {
-            throw new RetryTestError.FAIL ("HTTP 503 Service Unavailable");
+            return Result.error<bool, GLib.Error> (
+                new RetryTestError.FAIL ("HTTP 503 Service Unavailable")
+            );
         }
+        return Result.ok<bool, GLib.Error> (true);
     });
 
     assert (ok == true);
@@ -148,7 +150,7 @@ void testHttpStatusRetry404 () {
     int calls = 0;
     bool ng = retry.retryVoid (() => {
         calls++;
-        throw new RetryTestError.FAIL ("HTTP 404 Not Found");
+        return Result.error<bool, GLib.Error> (new RetryTestError.FAIL ("HTTP 404 Not Found"));
     });
 
     assert (ng == false);
@@ -157,12 +159,10 @@ void testHttpStatusRetry404 () {
 
 void testNetworkDefault () {
     Retry retry = Retry.networkDefault ();
-    try {
-        retry.withMaxAttempts (2)
-         .withFixedDelay (Duration.ofSeconds (0));
-    } catch (RetryError e) {
-        assert_not_reached ();
-    }
+    var configured = retry.withMaxAttempts (2);
+    assert (configured.isOk ());
+    configured = retry.withFixedDelay (Duration.ofSeconds (0));
+    assert (configured.isOk ());
     int callbacks = 0;
 
     retry.onRetry ((attempt, reason, delayMillis) => {
@@ -183,12 +183,10 @@ void testNetworkDefault () {
 
 void testIoDefault () {
     Retry retry = Retry.ioDefault ();
-    try {
-        retry.withMaxAttempts (2)
-         .withFixedDelay (Duration.ofSeconds (0));
-    } catch (RetryError e) {
-        assert_not_reached ();
-    }
+    var configured = retry.withMaxAttempts (2);
+    assert (configured.isOk ());
+    configured = retry.withFixedDelay (Duration.ofSeconds (0));
+    assert (configured.isOk ());
 
     int calls = 0;
     bool ok = retry.retry (() => {
@@ -203,48 +201,23 @@ void testIoDefault () {
 void testInvalidConfigurations () {
     var retry = new Retry ();
 
-    bool maxAttemptsThrown = false;
-    try {
-        retry.withMaxAttempts (0);
-    } catch (RetryError e) {
-        maxAttemptsThrown = true;
-        assert (e is RetryError.INVALID_ARGUMENT);
-    }
-    assert (maxAttemptsThrown);
+    var invalidAttempts = retry.withMaxAttempts (0);
+    assert (invalidAttempts.isError ());
+    assert (invalidAttempts.unwrapError () is RetryError.INVALID_ARGUMENT);
 
-    bool backoffInitialThrown = false;
-    try {
-        retry.withBackoff (Duration.ofSeconds (-1), Duration.ofSeconds (1));
-    } catch (RetryError e) {
-        backoffInitialThrown = true;
-        assert (e is RetryError.INVALID_ARGUMENT);
-    }
-    assert (backoffInitialThrown);
+    var invalidBackoffInitial = retry.withBackoff (Duration.ofSeconds (-1), Duration.ofSeconds (1));
+    assert (invalidBackoffInitial.isError ());
+    assert (invalidBackoffInitial.unwrapError () is RetryError.INVALID_ARGUMENT);
 
-    bool backoffRangeThrown = false;
-    try {
-        retry.withBackoff (Duration.ofSeconds (2), Duration.ofSeconds (1));
-    } catch (RetryError e) {
-        backoffRangeThrown = true;
-        assert (e is RetryError.INVALID_ARGUMENT);
-    }
-    assert (backoffRangeThrown);
+    var invalidBackoffRange = retry.withBackoff (Duration.ofSeconds (2), Duration.ofSeconds (1));
+    assert (invalidBackoffRange.isError ());
+    assert (invalidBackoffRange.unwrapError () is RetryError.INVALID_ARGUMENT);
 
-    bool backoffMaxThrown = false;
-    try {
-        retry.withBackoff (Duration.ofSeconds (1), Duration.ofSeconds (-1));
-    } catch (RetryError e) {
-        backoffMaxThrown = true;
-        assert (e is RetryError.INVALID_ARGUMENT);
-    }
-    assert (backoffMaxThrown);
+    var invalidBackoffMax = retry.withBackoff (Duration.ofSeconds (1), Duration.ofSeconds (-1));
+    assert (invalidBackoffMax.isError ());
+    assert (invalidBackoffMax.unwrapError () is RetryError.INVALID_ARGUMENT);
 
-    bool fixedDelayThrown = false;
-    try {
-        retry.withFixedDelay (Duration.ofSeconds (-1));
-    } catch (RetryError e) {
-        fixedDelayThrown = true;
-        assert (e is RetryError.INVALID_ARGUMENT);
-    }
-    assert (fixedDelayThrown);
+    var invalidFixedDelay = retry.withFixedDelay (Duration.ofSeconds (-1));
+    assert (invalidFixedDelay.isError ());
+    assert (invalidFixedDelay.unwrapError () is RetryError.INVALID_ARGUMENT);
 }

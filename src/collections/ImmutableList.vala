@@ -58,16 +58,18 @@ namespace Vala.Collections {
          * Returns element at index.
          *
          * @param index target index.
-         * @return element at index.
-         * @throws ImmutableListError.INDEX_OUT_OF_BOUNDS when index is outside [0, size).
+         * @return Result.ok(element) on success, or
+         *         Result.error(ImmutableListError.INDEX_OUT_OF_BOUNDS) when index is outside [0, size).
          */
-        public new T get (int index) throws ImmutableListError {
+        public new Result<T, GLib.Error> get (int index) {
             if (index < 0 || index >= (int) _items.length) {
-                throw new ImmutableListError.INDEX_OUT_OF_BOUNDS (
-                          "index out of bounds: %d".printf (index)
+                return Result.error<T, GLib.Error> (
+                    new ImmutableListError.INDEX_OUT_OF_BOUNDS (
+                        "index out of bounds: %d".printf (index)
+                    )
                 );
             }
-            return _items[index];
+            return Result.ok<T, GLib.Error> (_items[index]);
         }
 
         /**

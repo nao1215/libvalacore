@@ -140,7 +140,10 @@ fi
 
 # Extract total line coverage percentage
 SUMMARY=$(lcov --summary "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>&1 || true)
-TOTAL_COVER=$(echo "${SUMMARY}" | grep 'lines' | sed 's/.*: *\([0-9]*\.[0-9]*\)%.*/\1/' | head -1)
+TOTAL_COVER=$(echo "${SUMMARY}" \
+    | grep -E '^[[:space:]]*lines\.*:' \
+    | sed -E 's/.*: *([0-9]+([.][0-9]+)?)%.*/\1/' \
+    | head -1)
 TOTAL_COVER_INT=${TOTAL_COVER%.*}
 
 if [ -z "${TOTAL_COVER}" ]; then

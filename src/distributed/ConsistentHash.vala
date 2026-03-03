@@ -53,75 +53,89 @@ namespace Vala.Distributed {
          * Sets virtual node count per physical node.
          *
          * @param replicas virtual node count (must be > 0).
-         * @return this ring for chaining.
-         * @throws ConsistentHashError.INVALID_ARGUMENT when replicas is not positive.
+         * @return Result.ok(this ring) for chaining, or
+         *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when replicas is not positive.
          */
-        public ConsistentHash withVirtualNodes (int replicas) throws ConsistentHashError {
+        public Result<ConsistentHash, GLib.Error> withVirtualNodes (int replicas) {
             if (replicas <= 0) {
-                throw new ConsistentHashError.INVALID_ARGUMENT ("replicas must be positive");
+                return Result.error<ConsistentHash, GLib.Error> (
+                    new ConsistentHashError.INVALID_ARGUMENT ("replicas must be positive")
+                );
             }
 
             _replicas = replicas;
             rebuildRing ();
-            return this;
+            return Result.ok<ConsistentHash, GLib.Error> (this);
         }
 
         /**
          * Adds physical node to ring.
          *
          * @param nodeId node identifier.
-         * @return true when node is newly added.
-         * @throws ConsistentHashError.INVALID_ARGUMENT when nodeId is empty.
+         * @return Result.ok(true/false) for add outcome, or
+         *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public bool addNode (string nodeId) throws ConsistentHashError {
-            ensureNodeId (nodeId);
+        public Result<bool, GLib.Error> addNode (string nodeId) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
 
             bool added = _nodes.add (nodeId);
             if (added) {
                 rebuildRing ();
             }
-            return added;
+            return Result.ok<bool, GLib.Error> (added);
         }
 
         /**
          * Removes physical node from ring.
          *
          * @param nodeId node identifier.
-         * @return true when node existed.
-         * @throws ConsistentHashError.INVALID_ARGUMENT when nodeId is empty.
+         * @return Result.ok(true/false) for remove outcome, or
+         *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public bool removeNode (string nodeId) throws ConsistentHashError {
-            ensureNodeId (nodeId);
+        public Result<bool, GLib.Error> removeNode (string nodeId) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
 
             bool removed = _nodes.remove (nodeId);
             if (removed) {
                 rebuildRing ();
             }
-            return removed;
+            return Result.ok<bool, GLib.Error> (removed);
         }
 
         /**
          * Returns whether node exists.
          *
          * @param nodeId node identifier.
-         * @return true when node exists.
-         * @throws ConsistentHashError.INVALID_ARGUMENT when nodeId is empty.
+         * @return Result.ok(true/false) for existence, or
+         *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty.
          */
-        public bool containsNode (string nodeId) throws ConsistentHashError {
-            ensureNodeId (nodeId);
-            return _nodes.contains (nodeId);
+        public Result<bool, GLib.Error> containsNode (string nodeId) {
+            GLib.Error ? nodeError = validateNodeId (nodeId);
+            if (nodeError != null) {
+                return Result.error<bool, GLib.Error> (nodeError);
+            }
+            return Result.ok<bool, GLib.Error> (_nodes.contains (nodeId));
         }
 
         /**
          * Returns assigned node for key.
          *
          * @param key lookup key.
-         * @return assigned node or null when ring is empty.
-         * @throws ConsistentHashError.INVALID_ARGUMENT when key is empty.
+         * @return Result.ok(assigned node or null when ring is empty), or
+         *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when key is empty.
          */
-        public string ? getNode (string key) throws ConsistentHashError {
-            ensureKey (key);
-            return locateNodeInRing (_ring, key);
+        public Result<string ?, GLib.Error> getNode (string key) {
+            GLib.Error ? keyError = validateKey (key);
+            if (keyError != null) {
+                return Result.error<string ?, GLib.Error> (keyError);
+            }
+            return Result.ok<string ?, GLib.Error> (locateNodeInRing (_ring, key));
         }
 
         /**
@@ -129,19 +143,24 @@ namespace Vala.Distributed {
          *
          * @param key lookup key.
          * @param count max number of nodes to return.
-         * @return list of distinct nodes.
-         * @throws ConsistentHashError.INVALID_ARGUMENT when key is empty or count is not positive.
+         * @return Result.ok(list of distinct nodes), or
+         *         Result.error(ConsistentHashError.INVALID_ARGUMENT) when key is empty or count is not positive.
          */
-        public ArrayList<string> getNodes (string key,
-                                           int count) throws ConsistentHashError {
-            ensureKey (key);
+        public Result<ArrayList<string>, GLib.Error> getNodes (string key,
+                                                               int count) {
+            GLib.Error ? keyError = validateKey (key);
+            if (keyError != null) {
+                return Result.error<ArrayList<string>, GLib.Error> (keyError);
+            }
             if (count <= 0) {
-                throw new ConsistentHashError.INVALID_ARGUMENT ("count must be positive");
+                return Result.error<ArrayList<string>, GLib.Error> (
+                    new ConsistentHashError.INVALID_ARGUMENT ("count must be positive")
+                );
             }
 
             var result = new ArrayList<string> ();
             if (_ring.size () == 0) {
-                return result;
+                return Result.ok<ArrayList<string>, GLib.Error> (result);
             }
 
             var seen = new HashSet<string> (GLib.str_hash, GLib.str_equal);
@@ -163,7 +182,7 @@ namespace Vala.Distributed {
                 }
             }
 
-            return result;
+            return Result.ok<ArrayList<string>, GLib.Error> (result);
         }
 
         /**
@@ -338,16 +357,18 @@ namespace Vala.Distributed {
             return GLib.str_hash (value);
         }
 
-        private static void ensureNodeId (string nodeId) throws ConsistentHashError {
+        private static GLib.Error ? validateNodeId (string nodeId) {
             if (nodeId.length == 0) {
-                throw new ConsistentHashError.INVALID_ARGUMENT ("nodeId must not be empty");
+                return new ConsistentHashError.INVALID_ARGUMENT ("nodeId must not be empty");
             }
+            return null;
         }
 
-        private static void ensureKey (string key) throws ConsistentHashError {
+        private static GLib.Error ? validateKey (string key) {
             if (key.length == 0) {
-                throw new ConsistentHashError.INVALID_ARGUMENT ("key must not be empty");
+                return new ConsistentHashError.INVALID_ARGUMENT ("key must not be empty");
             }
+            return null;
         }
     }
 }

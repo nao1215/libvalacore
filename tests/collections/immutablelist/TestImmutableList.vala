@@ -19,13 +19,17 @@ void testBasicRead () {
     ImmutableList<string> list = ImmutableList.of<string> ({ "a", "b", "c" });
 
     assert (list.size () == 3);
-    try {
-        assert (list.get (0) == "a");
-        assert (list.get (1) == "b");
-        assert (list.get (2) == "c");
-    } catch (ImmutableListError e) {
-        assert_not_reached ();
-    }
+    var first = list.get (0);
+    assert (first.isOk ());
+    assert (first.unwrap () == "a");
+
+    var second = list.get (1);
+    assert (second.isOk ());
+    assert (second.unwrap () == "b");
+
+    var third = list.get (2);
+    assert (third.isOk ());
+    assert (third.unwrap () == "c");
 }
 
 void testContainsAndEmpty () {
@@ -46,29 +50,21 @@ void testToArrayReturnsCopy () {
     ImmutableList<string> list = new ImmutableList<string> (source);
 
     source[0] = "changed";
-    try {
-        assert (list.get (0) == "x");
-    } catch (ImmutableListError e) {
-        assert_not_reached ();
-    }
+    var first = list.get (0);
+    assert (first.isOk ());
+    assert (first.unwrap () == "x");
 
     string[] copy = list.toArray ();
     copy[1] = "changed";
-    try {
-        assert (list.get (1) == "y");
-    } catch (ImmutableListError e) {
-        assert_not_reached ();
-    }
+    var second = list.get (1);
+    assert (second.isOk ());
+    assert (second.unwrap () == "y");
 }
 
 void testGetOutOfBounds () {
     ImmutableList<string> list = ImmutableList.of<string> ({ "a" });
-    bool thrown = false;
-    try {
-        list.get (1);
-    } catch (ImmutableListError e) {
-        thrown = true;
-        assert (e is ImmutableListError.INDEX_OUT_OF_BOUNDS);
-    }
-    assert (thrown);
+    var outOfBounds = list.get (1);
+    assert (outOfBounds.isError ());
+    assert (outOfBounds.unwrapError () is ImmutableListError.INDEX_OUT_OF_BOUNDS);
+    assert (outOfBounds.unwrapError ().message == "index out of bounds: 1");
 }

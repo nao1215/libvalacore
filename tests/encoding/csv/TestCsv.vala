@@ -16,11 +16,9 @@ void main (string[] args) {
 }
 
 string writeCsv (ArrayList<ArrayList<string> > rows, string separator) {
-    try {
-        return Csv.write (rows, separator);
-    } catch (CsvError e) {
-        assert_not_reached ();
-    }
+    var written = Csv.write (rows, separator);
+    assert (written.isOk ());
+    return written.unwrap ();
 }
 
 void testConstruct () {
@@ -139,12 +137,7 @@ void testInvalidSeparator () {
     ArrayList<ArrayList<string> > rows = new ArrayList<ArrayList<string> > ();
     rows.add (new ArrayList<string> (GLib.str_equal));
 
-    bool thrown = false;
-    try {
-        Csv.write (rows, "");
-    } catch (CsvError e) {
-        thrown = true;
-        assert (e is CsvError.INVALID_ARGUMENT);
-    }
-    assert (thrown);
+    var written = Csv.write (rows, "");
+    assert (written.isError ());
+    assert (written.unwrapError () is CsvError.INVALID_ARGUMENT);
 }

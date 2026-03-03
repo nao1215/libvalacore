@@ -324,13 +324,13 @@ void testToMap () {
 
 void testJoining () {
     var list = stringList ({ "a", "b", "c" });
-    try {
-        string joined = Stream.fromList<string> (list).joining (",");
-        assert (joined == "a,b,c");
-        assert (Stream.empty<string> ().joining (",") == "");
-    } catch (StreamError e) {
-        assert_not_reached ();
-    }
+    var joined = Stream.fromList<string> (list).joining (",");
+    assert (joined.isOk ());
+    assert (joined.unwrap () == "a,b,c");
+
+    var joinedEmpty = Stream.empty<string> ().joining (",");
+    assert (joinedEmpty.isOk ());
+    assert (joinedEmpty.unwrap () == "");
 }
 
 void testJoiningWith () {
@@ -342,14 +342,9 @@ void testJoiningWith () {
 }
 
 void testJoiningNonStringThrows () {
-    bool thrown = false;
-    try {
-        Stream.range (1, 2).joining ();
-    } catch (StreamError e) {
-        thrown = true;
-        assert (e is StreamError.UNSUPPORTED_TYPE);
-    }
-    assert (thrown);
+    var joined = Stream.range (1, 2).joining ();
+    assert (joined.isError ());
+    assert (joined.unwrapError () is StreamError.UNSUPPORTED_TYPE);
 }
 
 void testFirstOr () {

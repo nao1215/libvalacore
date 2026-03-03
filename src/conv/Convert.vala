@@ -1,4 +1,13 @@
+using Vala.Collections;
+
 namespace Vala.Conv {
+    /**
+     * Recoverable conversion errors.
+     */
+    public errordomain ConvertError {
+        PARSE
+    }
+
     /**
      * Type conversion utility methods.
      */
@@ -7,42 +16,51 @@ namespace Vala.Conv {
          * Converts string to int.
          *
          * @param s source text.
-         * @return parsed integer, or null on failure.
+         * @return Result.ok(parsed integer), or
+         *         Result.error(ConvertError.PARSE) when parsing fails.
          */
-        public static int ? toInt (string s) {
+        public static Result<int, GLib.Error> toInt (string s) {
             int value = 0;
             if (int.try_parse (s, out value)) {
-                return value;
+                return Result.ok<int, GLib.Error> (value);
             }
-            return null;
+            return Result.error<int, GLib.Error> (
+                new ConvertError.PARSE ("failed to parse int: %s".printf (s))
+            );
         }
 
         /**
          * Converts string to int64.
          *
          * @param s source text.
-         * @return parsed int64, or null on failure.
+         * @return Result.ok(parsed int64), or
+         *         Result.error(ConvertError.PARSE) when parsing fails.
          */
-        public static int64 ? toInt64 (string s) {
+        public static Result<int64 ?, GLib.Error> toInt64 (string s) {
             int64 value = 0;
             if (int64.try_parse (s, out value)) {
-                return value;
+                return Result.ok<int64 ?, GLib.Error> (value);
             }
-            return null;
+            return Result.error<int64 ?, GLib.Error> (
+                new ConvertError.PARSE ("failed to parse int64: %s".printf (s))
+            );
         }
 
         /**
          * Converts string to double.
          *
          * @param s source text.
-         * @return parsed double, or null on failure.
+         * @return Result.ok(parsed double), or
+         *         Result.error(ConvertError.PARSE) when parsing fails.
          */
-        public static double ? toDouble (string s) {
+        public static Result<double ?, GLib.Error> toDouble (string s) {
             double value = 0.0;
             if (double.try_parse (s, out value)) {
-                return value;
+                return Result.ok<double ?, GLib.Error> (value);
             }
-            return null;
+            return Result.error<double ?, GLib.Error> (
+                new ConvertError.PARSE ("failed to parse double: %s".printf (s))
+            );
         }
 
         /**
@@ -51,17 +69,20 @@ namespace Vala.Conv {
          * Accepted values: "true", "false", "1", "0" (case-insensitive).
          *
          * @param s source text.
-         * @return parsed bool, or null on failure.
+         * @return Result.ok(parsed bool), or
+         *         Result.error(ConvertError.PARSE) when parsing fails.
          */
-        public static bool ? toBool (string s) {
+        public static Result<bool, GLib.Error> toBool (string s) {
             string normalized = s.strip ().down ();
             if (normalized == "true" || normalized == "1") {
-                return true;
+                return Result.ok<bool, GLib.Error> (true);
             }
             if (normalized == "false" || normalized == "0") {
-                return false;
+                return Result.ok<bool, GLib.Error> (false);
             }
-            return null;
+            return Result.error<bool, GLib.Error> (
+                new ConvertError.PARSE ("failed to parse bool: %s".printf (s))
+            );
         }
 
         /**

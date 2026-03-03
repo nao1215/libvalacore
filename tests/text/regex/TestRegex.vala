@@ -2,13 +2,20 @@ using Vala.Text;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/regex/testConstruct", testConstruct);
     Test.add_func ("/regex/testMatches", testMatches);
     Test.add_func ("/regex/testMatchesInvalidPattern", testMatchesInvalidPattern);
     Test.add_func ("/regex/testReplaceAll", testReplaceAll);
     Test.add_func ("/regex/testReplaceAllInvalidPattern", testReplaceAllInvalidPattern);
     Test.add_func ("/regex/testSplit", testSplit);
+    Test.add_func ("/regex/testSplitNoMatch", testSplitNoMatch);
     Test.add_func ("/regex/testSplitInvalidPattern", testSplitInvalidPattern);
     Test.run ();
+}
+
+void testConstruct () {
+    var regex = new Vala.Text.Regex ();
+    assert (regex != null);
 }
 
 void testMatches () {
@@ -37,6 +44,12 @@ void testSplit () {
     assert (parts[1] == "b");
     assert (parts[2] == "");
     assert (parts[3] == "c");
+}
+
+void testSplitNoMatch () {
+    string[] parts = Vala.Text.Regex.split ("abc", ",");
+    assert (parts.length == 1);
+    assert (parts[0] == "abc");
 }
 
 void testSplitInvalidPattern () {

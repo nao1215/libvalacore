@@ -14,11 +14,9 @@ void main (string[] args) {
 }
 
 BloomFilter<string> createFilter (int expected_insertions = 1000, double false_positive_rate = 0.01) {
-    try {
-        return new BloomFilter<string> (expected_insertions, false_positive_rate);
-    } catch (BloomFilterError e) {
-        assert_not_reached ();
-    }
+    var created = BloomFilter.of<string> (expected_insertions, false_positive_rate);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testBasic () {
@@ -101,21 +99,19 @@ void testClear () {
 }
 
 void testInvalidArguments () {
-    bool insertedThrown = false;
-    try {
-        new BloomFilter<string> (0, 0.01);
-    } catch (BloomFilterError e) {
-        insertedThrown = true;
-        assert (e is BloomFilterError.INVALID_ARGUMENT);
-    }
-    assert (insertedThrown);
+    var invalidExpected = BloomFilter.of<string> (0, 0.01);
+    assert (invalidExpected.isError ());
+    var expectedErr = invalidExpected.unwrapError ();
+    assert (expectedErr is BloomFilterError.INVALID_ARGUMENT);
+    assert (expectedErr.message == "expectedInsertions must be positive");
 
-    bool fprThrown = false;
-    try {
-        new BloomFilter<string> (100, 1.0);
-    } catch (BloomFilterError e) {
-        fprThrown = true;
-        assert (e is BloomFilterError.INVALID_ARGUMENT);
-    }
-    assert (fprThrown);
+    var invalidFpr = BloomFilter.of<string> (100, 1.0);
+    assert (invalidFpr.isError ());
+    var fprErr = invalidFpr.unwrapError ();
+    assert (fprErr is BloomFilterError.INVALID_ARGUMENT);
+    assert (fprErr.message == "falsePositiveRate must be in range (0, 1)");
+
+    var nanFpr = BloomFilter.of<string> (100, double.NAN);
+    assert (nanFpr.isError ());
+    assert (nanFpr.unwrapError () is BloomFilterError.INVALID_ARGUMENT);
 }

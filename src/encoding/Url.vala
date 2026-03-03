@@ -1,4 +1,13 @@
+using Vala.Collections;
+
 namespace Vala.Encoding {
+    /**
+     * Error domain for URL codec operations.
+     */
+    public errordomain UrlError {
+        PARSE
+    }
+
     /**
      * Static utility methods for URL percent-encoding.
      *
@@ -22,17 +31,18 @@ namespace Vala.Encoding {
         /**
          * Decodes URL percent-encoded text.
          *
-         * Returns an empty string when the input cannot be decoded.
-         *
          * @param s encoded URL component.
-         * @return decoded string.
+         * @return Result.ok(decoded string), or
+         *         Result.error(UrlError.PARSE) on malformed percent-encoding.
          */
-        public static string decode (string s) {
+        public static Result<string, GLib.Error> decode (string s) {
             string ? decoded = GLib.Uri.unescape_string (s, null);
             if (decoded == null) {
-                return "";
+                return Result.error<string, GLib.Error> (
+                    new UrlError.PARSE ("failed to decode percent-encoded input: %s".printf (s))
+                );
             }
-            return decoded;
+            return Result.ok<string, GLib.Error> (decoded);
         }
     }
 }

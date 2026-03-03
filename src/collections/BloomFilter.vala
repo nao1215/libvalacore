@@ -21,16 +21,8 @@ namespace Vala.Collections {
          *
          * @param expectedInsertions expected number of inserted items.
          * @param falsePositiveRate target false-positive rate in range (0, 1).
-         * @throws BloomFilterError.INVALID_ARGUMENT when parameters are out of range.
          */
-        public BloomFilter (int expectedInsertions, double falsePositiveRate) throws BloomFilterError {
-            if (expectedInsertions <= 0) {
-                throw new BloomFilterError.INVALID_ARGUMENT ("expectedInsertions must be positive");
-            }
-            if (falsePositiveRate <= 0.0 || falsePositiveRate >= 1.0) {
-                throw new BloomFilterError.INVALID_ARGUMENT ("falsePositiveRate must be in range (0, 1)");
-            }
-
+        private BloomFilter (int expectedInsertions, double falsePositiveRate) {
             _target_false_positive_rate = falsePositiveRate;
 
             double ln2 = GLib.Math.log (2.0);
@@ -46,6 +38,32 @@ namespace Vala.Collections {
 
             _inserted_count = 0;
             _bits = new uint8[(_bit_size + 7) / 8];
+        }
+
+        /**
+         * Creates BloomFilter from expected insertions and false-positive rate.
+         *
+         * @param expectedInsertions expected number of inserted items.
+         * @param falsePositiveRate target false-positive rate in range (0, 1).
+         * @return Result.ok(filter), or
+         *         Result.error(BloomFilterError.INVALID_ARGUMENT) when parameters are out of range.
+         */
+        public static Result<BloomFilter<G>, GLib.Error> of<G> (int expectedInsertions,
+                                                                double falsePositiveRate) {
+            if (expectedInsertions <= 0) {
+                return Result.error<BloomFilter<G>, GLib.Error> (
+                    new BloomFilterError.INVALID_ARGUMENT ("expectedInsertions must be positive")
+                );
+            }
+            if (falsePositiveRate.is_nan () || falsePositiveRate <= 0.0 || falsePositiveRate >= 1.0) {
+                return Result.error<BloomFilter<G>, GLib.Error> (
+                    new BloomFilterError.INVALID_ARGUMENT ("falsePositiveRate must be in range (0, 1)")
+                );
+            }
+
+            return Result.ok<BloomFilter<G>, GLib.Error> (
+                new BloomFilter<G> (expectedInsertions, falsePositiveRate)
+            );
         }
 
         private BloomFilter.withParams (int bitSize,

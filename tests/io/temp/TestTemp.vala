@@ -2,9 +2,15 @@ using Vala.Io;
 
 void main (string[] args) {
     Test.init (ref args);
+    Test.add_func ("/io/temp/testConstruct", testConstruct);
     Test.add_func ("/io/temp/testWithTempFile", testWithTempFile);
     Test.add_func ("/io/temp/testWithTempDir", testWithTempDir);
     Test.run ();
+}
+
+void testConstruct () {
+    var helper = new Temp ();
+    assert (helper.get_type () == typeof (Temp));
 }
 
 void testWithTempFile () {

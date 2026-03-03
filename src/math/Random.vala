@@ -1,3 +1,4 @@
+using Vala.Collections;
 namespace Vala.Math {
     /**
      * Recoverable random utility argument errors.
@@ -14,8 +15,10 @@ namespace Vala.Math {
      *
      * Example:
      * {{{
-     *     int x = Random.nextIntRange (10, 20);
-     *     bool coin = Random.nextBool ();
+     *     var x = Random.nextIntRange (10, 20);
+     *     if (x.isOk ()) {
+     *         int n = x.unwrap ();
+     *     }
      * }}}
      */
     public class Random : GLib.Object {
@@ -23,14 +26,15 @@ namespace Vala.Math {
          * Returns a random integer in [0, bound).
          *
          * @param bound exclusive upper bound.
-         * @return random integer.
-         * @throws RandomError.INVALID_ARGUMENT when bound is not positive.
+         * @return Result containing random integer, or INVALID_ARGUMENT error.
          */
-        public static int nextInt (int bound) throws RandomError {
+        public static Vala.Collections.Result<int, GLib.Error> nextInt (int bound) {
             if (bound <= 0) {
-                throw new RandomError.INVALID_ARGUMENT ("bound must be greater than zero");
+                return Vala.Collections.Result.error<int, GLib.Error> (
+                    new RandomError.INVALID_ARGUMENT ("bound must be greater than zero")
+                );
             }
-            return GLib.Random.int_range (0, bound);
+            return Vala.Collections.Result.ok<int, GLib.Error> (GLib.Random.int_range (0, bound));
         }
 
         /**
@@ -38,14 +42,15 @@ namespace Vala.Math {
          *
          * @param min inclusive lower bound.
          * @param max exclusive upper bound.
-         * @return random integer.
-         * @throws RandomError.INVALID_ARGUMENT when min is not less than max.
+         * @return Result containing random integer, or INVALID_ARGUMENT error.
          */
-        public static int nextIntRange (int min, int max) throws RandomError {
+        public static Vala.Collections.Result<int, GLib.Error> nextIntRange (int min, int max) {
             if (min >= max) {
-                throw new RandomError.INVALID_ARGUMENT ("min must be less than max");
+                return Vala.Collections.Result.error<int, GLib.Error> (
+                    new RandomError.INVALID_ARGUMENT ("min must be less than max")
+                );
             }
-            return GLib.Random.int_range (min, max);
+            return Vala.Collections.Result.ok<int, GLib.Error> (GLib.Random.int_range (min, max));
         }
 
         /**

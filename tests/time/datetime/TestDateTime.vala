@@ -20,11 +20,9 @@ Vala.Time.DateTime createDateTime (int year,
                                    int hour,
                                    int min,
                                    int sec) {
-    try {
-        return Vala.Time.DateTime.of (year, month, day, hour, min, sec);
-    } catch (DateTimeError e) {
-        assert_not_reached ();
-    }
+    var created = Vala.Time.DateTime.of (year, month, day, hour, min, sec);
+    assert (created.isOk ());
+    return created.unwrap ();
 }
 
 void testNow () {
@@ -104,12 +102,7 @@ void testDiff () {
 }
 
 void testInvalidComponents () {
-    bool thrown = false;
-    try {
-        Vala.Time.DateTime.of (2024, 2, 30, 0, 0, 0);
-    } catch (DateTimeError e) {
-        thrown = true;
-        assert (e is DateTimeError.INVALID_COMPONENTS);
-    }
-    assert (thrown);
+    var created = Vala.Time.DateTime.of (2024, 2, 30, 0, 0, 0);
+    assert (created.isError ());
+    assert (created.unwrapError () is DateTimeError.INVALID_COMPONENTS);
 }
