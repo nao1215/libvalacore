@@ -26,19 +26,25 @@ void testExecSuccess () {
 void testExecFailure () {
     var result = Vala.Io.Process.exec ("sh", { "-c", "exit 7" });
     assert (result.isError ());
-    assert (result.unwrapError () is ProcessError.EXIT_NON_ZERO);
+    GLib.Error err = result.unwrapError ();
+    assert (err is ProcessError.EXIT_NON_ZERO);
+    assert (err.message.contains ("sh"));
 }
 
 void testExecInvalidCommand () {
     var result = Vala.Io.Process.exec ("", {});
     assert (result.isError ());
-    assert (result.unwrapError () is ProcessError.INVALID_ARGUMENT);
+    GLib.Error err = result.unwrapError ();
+    assert (err is ProcessError.INVALID_ARGUMENT);
+    assert (err.message == "command must not be empty");
 }
 
 void testExecCommandNotFound () {
     var result = Vala.Io.Process.exec ("__no_such_command__", {});
     assert (result.isError ());
-    assert (result.unwrapError () is ProcessError.SPAWN_FAILED);
+    GLib.Error err = result.unwrapError ();
+    assert (err is ProcessError.SPAWN_FAILED);
+    assert (err.message.contains ("__no_such_command__"));
 }
 
 void testExecWithOutputSuccess () {
@@ -50,19 +56,25 @@ void testExecWithOutputSuccess () {
 void testExecWithOutputFailure () {
     var result = Vala.Io.Process.execWithOutput ("sh", { "-c", "echo err 1>&2; exit 2" });
     assert (result.isError ());
-    assert (result.unwrapError () is ProcessError.EXIT_NON_ZERO);
+    GLib.Error err = result.unwrapError ();
+    assert (err is ProcessError.EXIT_NON_ZERO);
+    assert (err.message.contains ("stderr=err"));
 }
 
 void testExecWithOutputInvalidCommand () {
     var result = Vala.Io.Process.execWithOutput ("", {});
     assert (result.isError ());
-    assert (result.unwrapError () is ProcessError.INVALID_ARGUMENT);
+    GLib.Error err = result.unwrapError ();
+    assert (err is ProcessError.INVALID_ARGUMENT);
+    assert (err.message == "command must not be empty");
 }
 
 void testExecWithOutputCommandNotFound () {
     var result = Vala.Io.Process.execWithOutput ("__no_such_command__", {});
     assert (result.isError ());
-    assert (result.unwrapError () is ProcessError.SPAWN_FAILED);
+    GLib.Error err = result.unwrapError ();
+    assert (err is ProcessError.SPAWN_FAILED);
+    assert (err.message.contains ("__no_such_command__"));
 }
 
 void testExecWithOutputEmpty () {
