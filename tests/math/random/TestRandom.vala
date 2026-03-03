@@ -105,6 +105,7 @@ void testInvalidArguments () {
 
     GLib.Error ? nextIntErr = nextInt.unwrapError ();
     assert (nextIntErr != null);
+    assert (nextIntErr is RandomError.INVALID_ARGUMENT);
     assert (nextIntErr.message == "bound must be greater than zero");
 
     var range = Vala.Math.Random.nextIntRange (5, 5);
@@ -112,6 +113,7 @@ void testInvalidArguments () {
 
     GLib.Error ? rangeErr = range.unwrapError ();
     assert (rangeErr != null);
+    assert (rangeErr is RandomError.INVALID_ARGUMENT);
     assert (rangeErr.message == "min must be less than max");
 }
 
@@ -121,6 +123,7 @@ void testInvalidArgumentsAdditional () {
 
     GLib.Error ? nextIntErr = nextInt.unwrapError ();
     assert (nextIntErr != null);
+    assert (nextIntErr is RandomError.INVALID_ARGUMENT);
     assert (nextIntErr.message == "bound must be greater than zero");
 
     var range = Vala.Math.Random.nextIntRange (10, 0);
@@ -128,5 +131,6 @@ void testInvalidArgumentsAdditional () {
 
     GLib.Error ? rangeErr = range.unwrapError ();
     assert (rangeErr != null);
+    assert (rangeErr is RandomError.INVALID_ARGUMENT);
     assert (rangeErr.message == "min must be less than max");
 }

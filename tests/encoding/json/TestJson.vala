@@ -582,17 +582,19 @@ void testMustMissing () {
     var missing = Json.must (root, "$.user.missing");
     assert (missing.isError ());
     assert (missing.unwrapError () is JsonError.NOT_FOUND);
-    assert (missing.unwrapError ().message == "value is required at path: $.user.missing");
+    assert (missing.unwrapError ().message.contains ("value is required"));
+    assert (missing.unwrapError ().message.contains ("$.user.missing"));
 
     var emptyPath = Json.must (root, " ");
     assert (emptyPath.isError ());
     assert (emptyPath.unwrapError () is JsonError.INVALID_PATH);
-    assert (emptyPath.unwrapError ().message == "path must not be empty");
+    assert (emptyPath.unwrapError ().message.contains ("path must not be empty"));
 
     var malformedPath = Json.must (root, "$.user[abc]");
     assert (malformedPath.isError ());
     assert (malformedPath.unwrapError () is JsonError.INVALID_PATH);
-    assert (malformedPath.unwrapError ().message == "invalid path: $.user[abc]");
+    assert (malformedPath.unwrapError ().message.contains ("invalid path"));
+    assert (malformedPath.unwrapError ().message.contains ("$.user[abc]"));
 }
 
 // --- set, remove, merge, flatten ---

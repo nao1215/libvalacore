@@ -102,6 +102,11 @@ void testInvalidArguments () {
     assert (invalidWaitN.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
     assert (invalidWaitN.unwrapError ().message == "permits must be positive, got 0");
 
+    var impossibleWaitN = limiter.waitN (2);
+    assert (impossibleWaitN.isError ());
+    assert (impossibleWaitN.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
+    assert (impossibleWaitN.unwrapError ().message == "permits must not exceed burst capacity (1), got 2");
+
     var invalidSetRate = limiter.setRate (0);
     assert (invalidSetRate.isError ());
     assert (invalidSetRate.unwrapError () is RateLimiterError.INVALID_ARGUMENT);

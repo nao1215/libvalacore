@@ -142,7 +142,7 @@ fi
 SUMMARY=$(lcov --summary "${FILTERED}" --rc branch_coverage=0 --ignore-errors deprecated,inconsistent 2>&1 || true)
 TOTAL_COVER=$(echo "${SUMMARY}" \
     | grep -E '^[[:space:]]*lines\.*:' \
-    | sed -E 's/.*: *([0-9]+\.[0-9]+)%.*/\1/' \
+    | sed -E 's/.*: *([0-9]+([.][0-9]+)?)%.*/\1/' \
     | head -1)
 TOTAL_COVER_INT=${TOTAL_COVER%.*}
 

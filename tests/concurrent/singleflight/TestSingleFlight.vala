@@ -15,16 +15,17 @@ void main (string[] args) {
     Test.run ();
 }
 
-int mustDoInt (SingleFlight group, string key, owned SingleFlightFunc<int> fn) {
-    var result = group.@do<int> (key, fn);
+T mustOk<T> (Vala.Collections.Result<T, GLib.Error> result) {
     assert (result.isOk ());
     return result.unwrap ();
 }
 
+int mustDoInt (SingleFlight group, string key, owned SingleFlightFunc<int> fn) {
+    return mustOk<int> (group.@do<int> (key, fn));
+}
+
 CountDownLatch mustLatch (int count) {
-    var created = CountDownLatch.of (count);
-    assert (created.isOk ());
-    return created.unwrap ();
+    return mustOk<CountDownLatch> (CountDownLatch.of (count));
 }
 
 void testDo () {
@@ -58,8 +59,7 @@ void testDoSharesExecution () {
             release.@await ();
             return 7;
         });
-        assert (result.isOk ());
-        first = result.unwrap ();
+        first = mustOk<int> (result);
         done.countDown ();
         return null;
     });
@@ -71,8 +71,7 @@ void testDoSharesExecution () {
             called += 100;
             return 999;
         });
-        assert (result.isOk ());
-        second = result.unwrap ();
+        second = mustOk<int> (result);
         done.countDown ();
         return null;
     });
@@ -133,7 +132,7 @@ void testForget () {
             release.@await ();
             return 1;
         });
-        assert (result.isOk ());
+        assert (mustOk<int> (result) == 1);
         done.countDown ();
         return null;
     });
@@ -210,7 +209,7 @@ void testDoTypeMismatch () {
             release.@await ();
             return 10;
         });
-        assert (result.isOk ());
+        assert (mustOk<int> (result) == 10);
         done.countDown ();
         return null;
     });

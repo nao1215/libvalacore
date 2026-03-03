@@ -75,10 +75,17 @@ void testTtlExpiration () {
     assert (configured.isOk ());
 
     cache.put ("a", "1");
-    Posix.usleep (1200000);
+    bool expired = false;
+    for (int i = 0; i < 30; i++) {
+        if (!cache.contains ("a") && cache.size () == 0) {
+            expired = true;
+            break;
+        }
+        Posix.usleep (50000);
+    }
 
+    assert (expired == true);
     assert (cache.get ("a") == null);
-    assert (cache.size () == 0);
 }
 
 void testLoader () {

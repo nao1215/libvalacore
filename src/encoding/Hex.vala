@@ -37,7 +37,7 @@ namespace Vala.Encoding {
         /**
          * Decodes a hexadecimal string into bytes.
          *
-         * Returns an empty array for invalid input (odd length or
+         * Returns Result.error for invalid input (odd length or
          * non-hex characters).
          *
          * @param hex hexadecimal text.
@@ -60,9 +60,14 @@ namespace Vala.Encoding {
             for (int i = 0; i < hex.length; i += 2) {
                 int high = _hex_value (hex.get_char (i));
                 int low = _hex_value (hex.get_char (i + 1));
-                if (high < 0 || low < 0) {
+                if (high < 0) {
                     return Result.error<GLib.Bytes, GLib.Error> (
                         new HexError.PARSE ("invalid hex character at position %d".printf (i))
+                    );
+                }
+                if (low < 0) {
+                    return Result.error<GLib.Bytes, GLib.Error> (
+                        new HexError.PARSE ("invalid hex character at position %d".printf (i + 1))
                     );
                 }
                 result[out_index] = (uint8) ((high << 4) | low);

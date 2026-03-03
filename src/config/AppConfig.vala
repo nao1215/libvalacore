@@ -58,10 +58,11 @@ namespace Vala.Config {
          *
          * @param appName application name.
          * @return Result.ok(loaded AppConfig), or
-         *         Result.error(AppConfigError.INVALID_ARGUMENT) when appName is empty.
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when appName is empty or file loading fails.
          */
         public static Result<AppConfig, GLib.Error> load (string appName) {
-            if (appName.length == 0) {
+            string normalized_app_name = appName.strip ();
+            if (normalized_app_name.length == 0) {
                 return Result.error<AppConfig, GLib.Error> (
                     new AppConfigError.INVALID_ARGUMENT ("appName must not be empty")
                 );
@@ -70,19 +71,22 @@ namespace Vala.Config {
             var config = new AppConfig ();
             var candidates = new ArrayList<Vala.Io.Path> ();
 
-            candidates.add (new Vala.Io.Path ("%s.properties".printf (appName)));
-            candidates.add (new Vala.Io.Path ("%s.conf".printf (appName)));
+            candidates.add (new Vala.Io.Path ("%s.properties".printf (normalized_app_name)));
+            candidates.add (new Vala.Io.Path ("%s.conf".printf (normalized_app_name)));
 
             string ? home = GLib.Environment.get_home_dir ();
             if (home != null && home.length > 0) {
-                candidates.add (new Vala.Io.Path ("%s/.config/%s/config.properties".printf (home, appName)));
+                candidates.add (new Vala.Io.Path ("%s/.config/%s/config.properties".printf (home, normalized_app_name)));
             }
-            candidates.add (new Vala.Io.Path ("/etc/%s/config.properties".printf (appName)));
+            candidates.add (new Vala.Io.Path ("/etc/%s/config.properties".printf (normalized_app_name)));
 
             for (int i = 0; i < candidates.size (); i++) {
                 Vala.Io.Path ? path = candidates.get (i);
                 if (path != null && Files.isFile (path)) {
-                    config.loadFromFile (path);
+                    var loaded = config.loadFromFile (path);
+                    if (loaded.isError ()) {
+                        return Result.error<AppConfig, GLib.Error> (loaded.unwrapError ());
+                    }
                     break;
                 }
             }
@@ -95,7 +99,7 @@ namespace Vala.Config {
          *
          * @param path config file path.
          * @return Result.ok(loaded AppConfig), or
-         *         Result.error(AppConfigError.INVALID_ARGUMENT) when path is empty or not a file.
+         *         Result.error(AppConfigError.INVALID_ARGUMENT) when path is invalid or file loading fails.
          */
         public static Result<AppConfig, GLib.Error> loadFile (Vala.Io.Path path) {
             if (path.toString ().strip ().length == 0 || !Files.isFile (path)) {
@@ -106,7 +110,10 @@ namespace Vala.Config {
                 );
             }
             var config = new AppConfig ();
-            config.loadFromFile (path);
+            var loaded = config.loadFromFile (path);
+            if (loaded.isError ()) {
+                return Result.error<AppConfig, GLib.Error> (loaded.unwrapError ());
+            }
             return Result.ok<AppConfig, GLib.Error> (config);
         }
 
@@ -327,12 +334,16 @@ namespace Vala.Config {
             return Result.ok<string, GLib.Error> (source);
         }
 
-        private void loadFromFile (Vala.Io.Path path) {
+        private Result<bool, GLib.Error> loadFromFile (Vala.Io.Path path) {
             _fileValues.clear ();
 
             var props = new Properties ();
             if (!props.load (path)) {
-                return;
+                return Result.error<bool, GLib.Error> (
+                    new AppConfigError.INVALID_ARGUMENT (
+                        "failed to load config file: %s".printf (path.toString ())
+                    )
+                );
             }
 
             string[] keys = props.keys ();
@@ -342,6 +353,7 @@ namespace Vala.Config {
                     _fileValues.put (keys[i], value);
                 }
             }
+            return Result.ok<bool, GLib.Error> (true);
         }
 
         private string ? resolveValue (string key, out string source) {

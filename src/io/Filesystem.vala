@@ -38,7 +38,9 @@ namespace Vala.Io {
                 ));
             } catch (GLib.Error e) {
                 return Result.error<GLib.FileInfo, GLib.Error> (
-                    new FilesystemError.IO ("failed to query file attributes: %s".printf (path.toString ()))
+                    new FilesystemError.IO (
+                        "failed to query file attributes: %s: %s".printf (path.toString (), e.message)
+                    )
                 );
             }
         }
@@ -75,7 +77,7 @@ namespace Vala.Io {
             } catch (GLib.Error e) {
                 return Result.error<bool, GLib.Error> (
                     new FilesystemError.IO (
-                        "failed to set modified time for path: %s".printf (path.toString ())
+                        "failed to set modified time for path: %s: %s".printf (path.toString (), e.message)
                     )
                 );
             }
@@ -128,7 +130,10 @@ namespace Vala.Io {
             if (Posix.stat (path.toString (), out st) != 0) {
                 return Result.error<string, GLib.Error> (
                     new FilesystemError.IO (
-                        "failed to read file metadata for path: %s".printf (path.toString ())
+                        "failed to read file metadata for path: %s: %s".printf (
+                            path.toString (),
+                            Posix.strerror (Posix.errno)
+                        )
                     )
                 );
             }
@@ -169,20 +174,44 @@ namespace Vala.Io {
                 );
             }
 
-            Posix.Stat st;
-            if (Posix.stat (path.toString (), out st) != 0) {
-                return Result.error<bool, GLib.Error> (
-                    new FilesystemError.IO ("failed to stat path: %s".printf (path.toString ()))
-                );
-            }
-
-            if (Posix.chown (path.toString (), passwd.pw_uid, st.st_gid) != 0) {
+            int fd = Posix.open (path.toString (), Posix.O_RDONLY | Posix.O_NOFOLLOW);
+            if (fd < 0) {
                 return Result.error<bool, GLib.Error> (
                     new FilesystemError.IO (
-                        "failed to change owner for path: %s (owner=%s)".printf (path.toString (), owner)
+                        "failed to open path for owner update: %s: %s".printf (
+                            path.toString (),
+                            Posix.strerror (Posix.errno)
+                        )
                     )
                 );
             }
+
+            Posix.Stat st;
+            if (Posix.fstat (fd, out st) != 0) {
+                Posix.close (fd);
+                return Result.error<bool, GLib.Error> (
+                    new FilesystemError.IO (
+                        "failed to stat opened path: %s: %s".printf (
+                            path.toString (),
+                            Posix.strerror (Posix.errno)
+                        )
+                    )
+                );
+            }
+
+            if (Posix.fchown (fd, passwd.pw_uid, st.st_gid) != 0) {
+                Posix.close (fd);
+                return Result.error<bool, GLib.Error> (
+                    new FilesystemError.IO (
+                        "failed to change owner for path: %s (owner=%s): %s".printf (
+                            path.toString (),
+                            owner,
+                            Posix.strerror (Posix.errno)
+                        )
+                    )
+                );
+            }
+            Posix.close (fd);
             return Result.ok<bool, GLib.Error> (true);
         }
     }

@@ -75,6 +75,11 @@ namespace Vala.Encoding {
             }
 
             uint8[] decoded = decodedResult.unwrap ().get_data ();
+            if (!((string) decoded).validate ((ssize_t) decoded.length, null)) {
+                return Result.error<string, GLib.Error> (
+                    new Base64Error.PARSE ("decoded base64 bytes are not valid UTF-8")
+                );
+            }
             var builder = new GLib.StringBuilder ();
             foreach (uint8 b in decoded) {
                 builder.append_c ((char) b);

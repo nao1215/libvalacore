@@ -69,10 +69,21 @@ void testParse () {
     assert (ok.isOk ());
     assert (ok.unwrap ().toString () == "-12.34");
 
-    assert (BigDecimal.parse ("").isError ());
-    assert (BigDecimal.parse ("abc").isError ());
-    assert (BigDecimal.parse ("1.2.3").isError ());
-    assert (BigDecimal.parse ("-").isError ());
+    var empty = BigDecimal.parse ("");
+    assert (empty.isError ());
+    assert (empty.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
+
+    var alpha = BigDecimal.parse ("abc");
+    assert (alpha.isError ());
+    assert (alpha.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
+
+    var malformed = BigDecimal.parse ("1.2.3");
+    assert (malformed.isError ());
+    assert (malformed.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
+
+    var minus = BigDecimal.parse ("-");
+    assert (minus.isError ());
+    assert (minus.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
 }
 
 void testAddSubtract () {

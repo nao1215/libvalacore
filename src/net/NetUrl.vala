@@ -27,7 +27,7 @@ namespace Vala.Net {
          *         Result.error(NetUrlError.INVALID_ARGUMENT/PARSE) on invalid input.
          */
         public static Result<Url, GLib.Error> parse (string url) {
-            if (url == "") {
+            if (url.strip ().length == 0) {
                 return Result.error<Url, GLib.Error> (
                     new NetUrlError.INVALID_ARGUMENT ("url must not be empty")
                 );

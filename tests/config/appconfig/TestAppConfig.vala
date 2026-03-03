@@ -166,6 +166,10 @@ void testInvalidArguments () {
     assert (load.isError ());
     assert (load.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 
+    var loadWhitespace = AppConfig.load ("   ");
+    assert (loadWhitespace.isError ());
+    assert (loadWhitespace.unwrapError () is AppConfigError.INVALID_ARGUMENT);
+
     AppConfig config = new AppConfig ();
     var required = config.require ("missing");
     assert (required.isError ());
@@ -179,7 +183,8 @@ void testInvalidArguments () {
     assert (key.isError ());
     assert (key.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 
-    var loadFile = AppConfig.loadFile (new Vala.Io.Path ("/tmp/valacore/ut/appconfig-missing.properties"));
+    string missingFilePath = "/tmp/valacore/ut/appconfig-missing-%s.properties".printf (GLib.Uuid.string_random ());
+    var loadFile = AppConfig.loadFile (new Vala.Io.Path (missingFilePath));
     assert (loadFile.isError ());
     assert (loadFile.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 }

@@ -38,20 +38,21 @@ namespace Vala.Io {
                 );
             }
 
-            if (!GLib.FileUtils.test (name, GLib.FileTest.EXISTS)) {
-                return Result.error<GLib.Bytes, GLib.Error> (
-                    new ResourceError.NOT_FOUND ("resource file not found: %s".printf (name))
-                );
-            }
-
             try {
                 uint8[] data;
                 if (FileUtils.get_data (name, out data)) {
                     return Result.ok<GLib.Bytes, GLib.Error> (new GLib.Bytes (data));
                 }
             } catch (GLib.FileError e) {
+                if (e is GLib.FileError.NOENT) {
+                    return Result.error<GLib.Bytes, GLib.Error> (
+                        new ResourceError.NOT_FOUND ("resource file not found: %s".printf (name))
+                    );
+                }
                 return Result.error<GLib.Bytes, GLib.Error> (
-                    new ResourceError.IO ("failed to read resource file: %s".printf (name))
+                    new ResourceError.IO (
+                        "failed to read resource file: %s: %s".printf (name, e.message)
+                    )
                 );
             }
 

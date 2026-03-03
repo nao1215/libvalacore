@@ -14,7 +14,7 @@ void main (string[] args) {
 
 void testConstruct () {
     var hash = new Hash ();
-    assert (hash != null);
+    assert_nonnull (hash);
 }
 
 void testMd5 () {

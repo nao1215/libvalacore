@@ -96,11 +96,11 @@ namespace Vala.Io {
                 deadlineMicros = nowMicros + timeoutMicros;
             }
             while (true) {
-                if (GLib.get_monotonic_time () > deadlineMicros) {
-                    return Vala.Collections.Result.ok<bool, GLib.Error> (false);
-                }
                 if (tryAcquire ()) {
                     return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                }
+                if (GLib.get_monotonic_time () > deadlineMicros) {
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (false);
                 }
                 int64 remainingMicros = deadlineMicros - GLib.get_monotonic_time ();
                 if (remainingMicros <= 0) {

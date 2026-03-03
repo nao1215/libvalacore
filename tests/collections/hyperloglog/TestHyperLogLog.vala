@@ -116,4 +116,8 @@ void testInvalidArguments () {
     assert (larger.isError ());
     assert (larger.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
     assert (larger.unwrapError ().message == "errorRate must be in range (0, 1)");
+
+    var nanRate = HyperLogLog.of (double.NAN);
+    assert (nanRate.isError ());
+    assert (nanRate.unwrapError () is HyperLogLogError.INVALID_ARGUMENT);
 }

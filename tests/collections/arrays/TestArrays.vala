@@ -44,6 +44,8 @@ void testSortEdgeCases () {
     int[] sorted = { 1, 2, 3, 4 };
     Arrays.sort (sorted);
     assert (sorted[0] == 1);
+    assert (sorted[1] == 2);
+    assert (sorted[2] == 3);
     assert (sorted[3] == 4);
 }
 

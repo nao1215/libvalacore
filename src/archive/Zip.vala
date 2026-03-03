@@ -422,8 +422,8 @@ namespace Vala.Archive {
                 }
             }
 
-            string basePath = dest.normalize ().toString ();
-            string resolved = dest.resolve (trimmed).normalize ().toString ();
+            string basePath = canonicalizePathForSafety (dest.normalize ().toString ());
+            string resolved = canonicalizePathForSafety (dest.resolve (trimmed).normalize ().toString ());
             if (basePath == "/") {
                 return resolved.has_prefix ("/");
             }
@@ -435,6 +435,39 @@ namespace Vala.Archive {
                 return true;
             }
             return resolved.has_prefix (basePath + "/");
+        }
+
+        private static string canonicalizePathForSafety (string path) {
+            string normalized = new Vala.Io.Path (path).normalize ().toString ();
+            string ? direct = Posix.realpath (normalized);
+            if (direct != null) {
+                return direct;
+            }
+
+            string cursor = normalized;
+            string suffix = "";
+            while (true) {
+                string ? real = Posix.realpath (cursor);
+                if (real != null) {
+                    if (suffix.length == 0) {
+                        return real;
+                    }
+                    if (real == "/") {
+                        return "/" + suffix;
+                    }
+                    return real + "/" + suffix;
+                }
+
+                string parent = GLib.Path.get_dirname (cursor);
+                string basename_part = GLib.Path.get_basename (cursor);
+                if (parent == cursor) {
+                    break;
+                }
+
+                suffix = suffix.length == 0 ? basename_part : basename_part + "/" + suffix;
+                cursor = parent;
+            }
+            return normalized;
         }
     }
 }

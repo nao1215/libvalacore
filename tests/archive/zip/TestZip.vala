@@ -175,7 +175,8 @@ void testExtractFileFailureKeepsDestination () {
     assert (Files.writeText (outputPath, "keep"));
     var extracted = Zip.extractFile (archive, "missing-entry.txt", outputPath);
     assert (extracted.isError ());
-    assert (extracted.unwrapError () is ZipError.NOT_FOUND);
+    var extractErr = extracted.unwrapError ();
+    assert (extractErr is ZipError.NOT_FOUND);
     assert (Files.readAllText (outputPath) == "keep");
     cleanup (root);
 }
@@ -197,7 +198,8 @@ void testCreateRejectsDuplicateBasename () {
     files.add (new Vala.Io.Path (root + "/b/name.txt"));
     var created = Zip.create (new Vala.Io.Path (root + "/dup.zip"), files);
     assert (created.isError ());
-    assert (created.unwrapError () is ZipError.INVALID_ARGUMENT);
+    var createErr = created.unwrapError ();
+    assert (createErr is ZipError.INVALID_ARGUMENT);
     cleanup (root);
 }
 
@@ -226,7 +228,8 @@ void testExtractRejectsTraversalEntries () {
         new Vala.Io.Path (root + "/out")
     );
     assert (extracted.isError ());
-    assert (extracted.unwrapError () is ZipError.SECURITY);
+    var securityErr = extracted.unwrapError ();
+    assert (securityErr is ZipError.SECURITY);
     cleanup (root);
 }
 

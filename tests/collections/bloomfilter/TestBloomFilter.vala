@@ -101,11 +101,17 @@ void testClear () {
 void testInvalidArguments () {
     var invalidExpected = BloomFilter.of<string> (0, 0.01);
     assert (invalidExpected.isError ());
-    assert (invalidExpected.unwrapError () is BloomFilterError.INVALID_ARGUMENT);
-    assert (invalidExpected.unwrapError ().message == "expectedInsertions must be positive");
+    var expectedErr = invalidExpected.unwrapError ();
+    assert (expectedErr is BloomFilterError.INVALID_ARGUMENT);
+    assert (expectedErr.message == "expectedInsertions must be positive");
 
     var invalidFpr = BloomFilter.of<string> (100, 1.0);
     assert (invalidFpr.isError ());
-    assert (invalidFpr.unwrapError () is BloomFilterError.INVALID_ARGUMENT);
-    assert (invalidFpr.unwrapError ().message == "falsePositiveRate must be in range (0, 1)");
+    var fprErr = invalidFpr.unwrapError ();
+    assert (fprErr is BloomFilterError.INVALID_ARGUMENT);
+    assert (fprErr.message == "falsePositiveRate must be in range (0, 1)");
+
+    var nanFpr = BloomFilter.of<string> (100, double.NAN);
+    assert (nanFpr.isError ());
+    assert (nanFpr.unwrapError () is BloomFilterError.INVALID_ARGUMENT);
 }

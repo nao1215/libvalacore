@@ -55,7 +55,7 @@ namespace Vala.Collections {
                     new BloomFilterError.INVALID_ARGUMENT ("expectedInsertions must be positive")
                 );
             }
-            if (falsePositiveRate <= 0.0 || falsePositiveRate >= 1.0) {
+            if (falsePositiveRate.is_nan () || falsePositiveRate <= 0.0 || falsePositiveRate >= 1.0) {
                 return Result.error<BloomFilter<G>, GLib.Error> (
                     new BloomFilterError.INVALID_ARGUMENT ("falsePositiveRate must be in range (0, 1)")
                 );

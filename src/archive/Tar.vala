@@ -133,14 +133,19 @@ namespace Vala.Archive {
                     new TarError.NOT_FOUND ("archive does not exist: %s".printf (archive.toString ()))
                 );
             }
-            if (Files.exists (dest)) {
+            if (!Files.exists (dest)) {
+                if (!Files.makeDirs (dest)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.IO ("failed to create destination directory: %s".printf (dest.toString ()))
+                    );
+                }
+            } else if (!Files.isDir (dest)) {
                 return Result.error<bool, GLib.Error> (
-                    new TarError.INVALID_ARGUMENT ("destination must not exist: %s".printf (dest.toString ()))
+                    new TarError.INVALID_ARGUMENT ("destination must be a directory: %s".printf (dest.toString ()))
                 );
-            }
-            if (!Files.makeDirs (dest)) {
+            } else if (!Files.canWrite (dest)) {
                 return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("failed to create destination directory: %s".printf (dest.toString ()))
+                    new TarError.INVALID_ARGUMENT ("destination directory is not writable: %s".printf (dest.toString ()))
                 );
             }
 

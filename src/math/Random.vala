@@ -16,7 +16,9 @@ namespace Vala.Math {
      * Example:
      * {{{
      *     var x = Random.nextIntRange (10, 20);
-     *     bool coin = Random.nextBool ();
+     *     if (x.isOk ()) {
+     *         int n = x.unwrap ();
+     *     }
      * }}}
      */
     public class Random : GLib.Object {

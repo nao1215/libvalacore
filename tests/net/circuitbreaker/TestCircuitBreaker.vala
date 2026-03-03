@@ -143,23 +143,27 @@ void testReset () {
 void testInvalidConfiguration () {
     var invalidName = CircuitBreaker.of ("");
     assert (invalidName.isError ());
-    assert (invalidName.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
-    assert (invalidName.unwrapError ().message == "name must not be empty");
+    var invalidNameErr = invalidName.unwrapError ();
+    assert (invalidNameErr is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidNameErr.message == "name must not be empty");
 
     var cb = mustBreaker ("api");
 
     var invalidFailureThreshold = cb.withFailureThreshold (0);
     assert (invalidFailureThreshold.isError ());
-    assert (invalidFailureThreshold.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
-    assert (invalidFailureThreshold.unwrapError ().message == "n must be positive, got 0");
+    var invalidFailureThresholdErr = invalidFailureThreshold.unwrapError ();
+    assert (invalidFailureThresholdErr is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidFailureThresholdErr.message == "n must be positive, got 0");
 
     var invalidSuccessThreshold = cb.withSuccessThreshold (0);
     assert (invalidSuccessThreshold.isError ());
-    assert (invalidSuccessThreshold.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
-    assert (invalidSuccessThreshold.unwrapError ().message == "n must be positive, got 0");
+    var invalidSuccessThresholdErr = invalidSuccessThreshold.unwrapError ();
+    assert (invalidSuccessThresholdErr is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidSuccessThresholdErr.message == "n must be positive, got 0");
 
     var invalidOpenTimeout = cb.withOpenTimeout (Duration.ofSeconds (-1));
     assert (invalidOpenTimeout.isError ());
-    assert (invalidOpenTimeout.unwrapError () is CircuitBreakerError.INVALID_ARGUMENT);
-    assert (invalidOpenTimeout.unwrapError ().message == "timeout must be non-negative, got -1000");
+    var invalidOpenTimeoutErr = invalidOpenTimeout.unwrapError ();
+    assert (invalidOpenTimeoutErr is CircuitBreakerError.INVALID_ARGUMENT);
+    assert (invalidOpenTimeoutErr.message == "timeout must be non-negative, got -1000");
 }

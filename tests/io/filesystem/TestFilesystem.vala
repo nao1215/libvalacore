@@ -109,7 +109,7 @@ void testSetOwnerInvalid () {
 }
 
 void testInvalidPathOperations () {
-    string missingPath = "/tmp/valacore/ut/no_such_filesystem_%d".printf (Posix.getpid ());
+    string missingPath = "/tmp/valacore/ut/no_such_filesystem_%s".printf (GLib.Uuid.string_random ());
     Vala.Io.Path missing = new Vala.Io.Path (missingPath);
     Vala.Time.DateTime target = createDateTime (2001, 2, 3, 4, 5, 6);
 

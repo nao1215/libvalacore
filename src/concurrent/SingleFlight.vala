@@ -70,10 +70,11 @@ namespace Vala.Concurrent {
      * Example:
      * {{{
      *     var group = new SingleFlight ();
-     *     int? value = group.@do<int> ("user:42", () => {
+     *     var result = group.@do<int> ("user:42", () => {
      *         return 42;
      *     });
-     *     assert (value == 42);
+     *     assert (result.isOk ());
+     *     assert (result.unwrap () == 42);
      * }}}
      */
     public class SingleFlight : GLib.Object {

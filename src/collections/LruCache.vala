@@ -87,12 +87,13 @@ namespace Vala.Collections {
          *         Result.error(LruCacheError.INVALID_ARGUMENT) when ttl is negative.
          */
         public Result<LruCache<K, V>, GLib.Error> withTtl (Duration ttl) {
-            if (ttl.toMillis () < 0) {
+            int64 ttl_millis = ttl.toMillis ();
+            if (ttl_millis < 0) {
                 return Result.error<LruCache<K, V>, GLib.Error> (
                     new LruCacheError.INVALID_ARGUMENT ("ttl must be non-negative")
                 );
             }
-            _ttl_millis = ttl.toMillis ();
+            _ttl_millis = ttl_millis;
             return Result.ok<LruCache<K, V>, GLib.Error> (this);
         }
 

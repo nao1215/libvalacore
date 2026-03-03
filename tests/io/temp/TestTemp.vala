@@ -10,7 +10,7 @@ void main (string[] args) {
 
 void testConstruct () {
     var helper = new Temp ();
-    assert (helper != null);
+    assert (helper.get_type () == typeof (Temp));
 }
 
 void testWithTempFile () {

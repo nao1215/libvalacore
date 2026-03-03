@@ -55,11 +55,7 @@ namespace Vala.Time {
             string normalized = normalizeSpaces (expression);
             string[] parts = normalized.split (" ");
             if (parts.length != 5) {
-                return Result.error<Cron, GLib.Error> (
-                    new CronError.INVALID_EXPRESSION (
-                        "unsupported cron expression: %s".printf (expression)
-                    )
-                );
+                return invalidExpressionResult (expression);
             }
 
             if (parts[0].has_prefix ("*/") &&
@@ -92,11 +88,7 @@ namespace Vala.Time {
                 );
             }
 
-            return Result.error<Cron, GLib.Error> (
-                new CronError.INVALID_EXPRESSION (
-                    "unsupported cron expression: %s".printf (expression)
-                )
-            );
+            return invalidExpressionResult (expression);
         }
 
         /**
@@ -312,6 +304,14 @@ namespace Vala.Time {
                 out = out.replace ("  ", " ");
             }
             return out;
+        }
+
+        private static Result<Cron, GLib.Error> invalidExpressionResult (string expression) {
+            return Result.error<Cron, GLib.Error> (
+                new CronError.INVALID_EXPRESSION (
+                    "unsupported cron expression: %s".printf (expression)
+                )
+            );
         }
 
         private static Result<int ?, GLib.Error> parsePositiveInt (string text, string label) {

@@ -175,6 +175,7 @@ void testReplaceMissingSource () {
 void testBackupSuffixInvalid () {
     var configured = new AtomicFile ().backupSuffix ("");
     assert (configured.isError ());
-    assert (configured.unwrapError () is AtomicFileError.INVALID_ARGUMENT);
-    assert (configured.unwrapError ().message == "suffix must not be empty");
+    var err = configured.unwrapError ();
+    assert (err is AtomicFileError.INVALID_ARGUMENT);
+    assert (err.message == "suffix must not be empty");
 }

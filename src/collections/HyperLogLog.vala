@@ -39,7 +39,7 @@ namespace Vala.Collections {
          *         Result.error(HyperLogLogError.INVALID_ARGUMENT) when errorRate is outside (0, 1).
          */
         public static Result<HyperLogLog, GLib.Error> of (double errorRate = 0.01) {
-            if (errorRate <= 0.0 || errorRate >= 1.0) {
+            if (errorRate.is_nan () || errorRate <= 0.0 || errorRate >= 1.0) {
                 return Result.error<HyperLogLog, GLib.Error> (
                     new HyperLogLogError.INVALID_ARGUMENT ("errorRate must be in range (0, 1)")
                 );

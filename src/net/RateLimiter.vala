@@ -189,7 +189,8 @@ namespace Vala.Net {
          *
          * @param permits number of permits.
          * @return Result.ok(true) when permits are acquired, or
-         *         Result.error(RateLimiterError.INVALID_ARGUMENT) when permits is not positive.
+         *         Result.error(RateLimiterError.INVALID_ARGUMENT) when permits is not positive
+         *         or exceeds burst capacity.
          */
         public Vala.Collections.Result<bool, GLib.Error> waitN (int permits) {
             if (permits <= 0) {
@@ -200,11 +201,31 @@ namespace Vala.Net {
                 );
             }
 
+            _mutex.lock ();
+            int burst_snapshot = _burst;
+            _mutex.unlock ();
+            if (permits > burst_snapshot) {
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new RateLimiterError.INVALID_ARGUMENT (
+                        "permits must not exceed burst capacity (%d), got %d".printf (burst_snapshot, permits)
+                    )
+                );
+            }
+
             while (true) {
                 int64 delay = 0;
 
                 _mutex.lock ();
                 refillLocked ();
+                if (permits > _burst) {
+                    int burst = _burst;
+                    _mutex.unlock ();
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new RateLimiterError.INVALID_ARGUMENT (
+                            "permits must not exceed burst capacity (%d), got %d".printf (burst, permits)
+                        )
+                    );
+                }
                 if (_tokens >= permits) {
                     _tokens -= permits;
                     _mutex.unlock ();

@@ -18,7 +18,12 @@ namespace Vala.Io {
      * Example:
      * {{{
      *     if (Console.isTTY ()) {
-     *         var password = Console.readPassword ();
+     *         var result = Console.readPassword ();
+     *         if (result.isOk ()) {
+     *             string password = result.unwrap ();
+     *         } else {
+     *             stderr.printf ("%s\n", result.unwrapError ().message);
+     *         }
      *     }
      * }}}
      */

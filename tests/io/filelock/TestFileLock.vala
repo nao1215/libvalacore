@@ -6,6 +6,7 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/io/filelock/testTryAcquireAndRelease", testTryAcquireAndRelease);
     Test.add_func ("/io/filelock/testAcquireTimeout", testAcquireTimeout);
+    Test.add_func ("/io/filelock/testAcquireTimeoutImmediateSuccess", testAcquireTimeoutImmediateSuccess);
     Test.add_func ("/io/filelock/testAcquireAfterRelease", testAcquireAfterRelease);
     Test.add_func ("/io/filelock/testWithLock", testWithLock);
     Test.add_func ("/io/filelock/testOwnerPidUnavailable", testOwnerPidUnavailable);
@@ -50,6 +51,17 @@ void testAcquireTimeout () {
     assert (acquired.unwrap () == false);
 
     assert (lock1.release () == true);
+}
+
+void testAcquireTimeoutImmediateSuccess () {
+    Vala.Io.Path lockPath = new Vala.Io.Path ("/tmp/valacore/ut/filelock_timeout_immediate.lock");
+    Files.remove (lockPath);
+
+    var file_lock = new FileLock (lockPath);
+    var acquired = file_lock.acquireTimeout (Duration.ofSeconds (0));
+    assert (acquired.isOk ());
+    assert (acquired.unwrap () == true);
+    assert (file_lock.release () == true);
 }
 
 void testAcquireAfterRelease () {
