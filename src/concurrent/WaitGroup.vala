@@ -1,9 +1,18 @@
 namespace Vala.Concurrent {
     /**
+     * Recoverable wait-group errors.
+     */
+    public errordomain WaitGroupError {
+        TIMEOUT
+    }
+
+    /**
      * Waits for a collection of tasks to complete.
      *
      * WaitGroup tracks in-flight task count via add()/done() and blocks with
      * wait() until all tasks complete.
+     *
+     * Thread-safety: THREAD_SAFE
      *
      * Example:
      * {{{
@@ -54,14 +63,73 @@ namespace Vala.Concurrent {
         }
 
         /**
+         * Waits until the counter reaches zero, with timeout contract.
+         *
+         * Timeout semantics:
+         * - `0`: non-blocking check
+         * - `>0`: wait up to N milliseconds
+         * - `<0`: wait forever (explicit infinite wait)
+         *
+         * @param timeoutMillis timeout in milliseconds.
+         * @return Result.ok(true) when all tasks are done, or
+         *         Result.error(WaitGroupError.TIMEOUT) on timeout.
+         */
+        public Vala.Collections.Result<bool, GLib.Error> waitFor (int timeoutMillis) {
+            _mutex.lock ();
+
+            if (timeoutMillis == 0) {
+                bool completed = _count == 0;
+                int remaining = _count;
+                _mutex.unlock ();
+                if (completed) {
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                }
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new WaitGroupError.TIMEOUT (
+                        "waitgroup wait timed out: timeout=0ms remaining=%d".printf (remaining)
+                    )
+                );
+            }
+
+            if (timeoutMillis < 0) {
+                while (_count > 0) {
+                    _cond.wait (_mutex);
+                }
+                _mutex.unlock ();
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+            }
+
+            int64 deadline = GLib.get_monotonic_time () + (int64) timeoutMillis * 1000;
+            while (_count > 0) {
+                if (!_cond.wait_until (_mutex, deadline)) {
+                    int remaining = _count;
+                    _mutex.unlock ();
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new WaitGroupError.TIMEOUT (
+                            "waitgroup wait timed out: timeout=%dms remaining=%d".printf (
+                                timeoutMillis,
+                                remaining
+                            )
+                        )
+                    );
+                }
+            }
+
+            _mutex.unlock ();
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+        }
+
+        /**
          * Blocks until the counter reaches zero.
+         *
+         * This is equivalent to `waitFor(-1)` (explicit infinite wait).
          */
         public void wait () {
-            _mutex.lock ();
-            while (_count > 0) {
-                _cond.wait (_mutex);
+            var result = waitFor (-1);
+            if (result.isError ()) {
+                // Defensive fallback: waitFor(-1) should not timeout.
+                warning ("%s", result.unwrapError ().message);
             }
-            _mutex.unlock ();
         }
     }
 }

@@ -753,7 +753,8 @@ Waits for a collection of tasks to complete.
 |---|---|
 | `add(int delta)` | Adds delta to task counter (ignored if it would go below zero) |
 | `done()` | Decrements task counter by one (no-op when already zero) |
-| `wait()` | Blocks until counter reaches zero |
+| `waitFor(int timeoutMillis)` | Returns `Result<bool, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; error: `WaitGroupError.TIMEOUT`) |
+| `wait()` | Blocks until counter reaches zero (`waitFor(-1)`) |
 
 ### Vala.Concurrent.Semaphore
 Counting semaphore.

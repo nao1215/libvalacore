@@ -5,6 +5,9 @@ void main (string[] args) {
     Test.add_func ("/concurrent/waitgroup/testBasic", testBasic);
     Test.add_func ("/concurrent/waitgroup/testWaitBlocksUntilDone", testWaitBlocksUntilDone);
     Test.add_func ("/concurrent/waitgroup/testDoneUnderflowNoOp", testDoneUnderflowNoOp);
+    Test.add_func ("/concurrent/waitgroup/testWaitForNonBlocking", testWaitForNonBlocking);
+    Test.add_func ("/concurrent/waitgroup/testWaitForTimeout", testWaitForTimeout);
+    Test.add_func ("/concurrent/waitgroup/testWaitForSuccessBeforeTimeout", testWaitForSuccessBeforeTimeout);
     Test.run ();
 }
 
@@ -69,4 +72,43 @@ void testDoneUnderflowNoOp () {
     wg.add (1);
     wg.done ();
     wg.wait ();
+}
+
+void testWaitForNonBlocking () {
+    Vala.Concurrent.WaitGroup wg = new Vala.Concurrent.WaitGroup ();
+
+    var ready = wg.waitFor (0);
+    assert (ready.isOk ());
+
+    wg.add (1);
+    var timeout = wg.waitFor (0);
+    assert (timeout.isError ());
+    GLib.Error timeout_error = timeout.unwrapError ();
+    assert (timeout_error is WaitGroupError.TIMEOUT);
+}
+
+void testWaitForTimeout () {
+    Vala.Concurrent.WaitGroup wg = new Vala.Concurrent.WaitGroup ();
+    wg.add (1);
+
+    var waited = wg.waitFor (10);
+    assert (waited.isError ());
+    GLib.Error err = waited.unwrapError ();
+    assert (err is WaitGroupError.TIMEOUT);
+    assert (err.message.index_of ("timeout=10ms") >= 0);
+}
+
+void testWaitForSuccessBeforeTimeout () {
+    Vala.Concurrent.WaitGroup wg = new Vala.Concurrent.WaitGroup ();
+    wg.add (1);
+
+    Thread<void *> worker = new Thread<void *> ("worker-waitfor", () => {
+        Posix.usleep (10000);
+        wg.done ();
+        return null;
+    });
+
+    var waited = wg.waitFor (100);
+    worker.join ();
+    assert (waited.isOk ());
 }
