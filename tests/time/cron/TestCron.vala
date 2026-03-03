@@ -131,6 +131,10 @@ void testExpressionInvalid () {
     var created = Cron.of ("invalid expression");
     assert (created.isError ());
     assert (created.unwrapError () is CronError.INVALID_EXPRESSION);
+
+    var overflow = Cron.of ("*/999999999999999999999999999 * * * *");
+    assert (overflow.isError ());
+    assert (overflow.unwrapError () is CronError.INVALID_EXPRESSION);
 }
 
 void testScheduleWithDelayInvalid () {

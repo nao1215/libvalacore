@@ -119,9 +119,9 @@ namespace Vala.Concurrent {
                 }
 
                 InFlightCall<T> ? waiter = existing.call as InFlightCall<T>;
-                _mutex.unlock ();
-
                 if (waiter == null) {
+                    _inFlight.remove (key);
+                    _mutex.unlock ();
                     return Result.error<T, GLib.Error> (
                         new SingleFlightError.INTERNAL_STATE (
                             "internal singleflight state is invalid"
@@ -129,6 +129,7 @@ namespace Vala.Concurrent {
                     );
                 }
 
+                _mutex.unlock ();
                 return Result.ok<T, GLib.Error> (waiter.waitResult ());
             }
 
@@ -162,7 +163,8 @@ namespace Vala.Concurrent {
          */
         public Future<T> doFuture<T> (string key, owned SingleFlightFunc<T> fn) {
             if (key.length == 0) {
-                return Future<T>.failed<T> ("key must not be empty");
+                var err = new SingleFlightError.INVALID_ARGUMENT ("key must not be empty");
+                return Future<T>.failed<T> ("%s (domain=%u, code=%d)".printf (err.message, (uint) err.domain, err.code));
             }
 
             var captured = (owned) fn;

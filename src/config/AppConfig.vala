@@ -68,6 +68,13 @@ namespace Vala.Config {
                     new AppConfigError.INVALID_ARGUMENT ("appName must not be empty")
                 );
             }
+            if (!isSafeAppName (normalized_app_name)) {
+                return Result.error<AppConfig, GLib.Error> (
+                    new AppConfigError.INVALID_ARGUMENT (
+                        "appName contains unsafe characters: %s".printf (normalized_app_name)
+                    )
+                );
+            }
 
             var config = new AppConfig ();
             var candidates = new ArrayList<Vala.Io.Path> ();
@@ -187,11 +194,11 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<string, GLib.Error> getString (string key, string fallback = "") {
-            string normalizedKey = key.strip ();
-            GLib.Error ? keyError = ensureKey (normalizedKey);
-            if (keyError != null) {
-                return Result.error<string, GLib.Error> (keyError);
+            var keyResult = normalizeAndEnsureKey (key);
+            if (keyResult.isError ()) {
+                return Result.error<string, GLib.Error> (keyResult.unwrapError ());
             }
+            string normalizedKey = keyResult.unwrap ();
 
             string source;
             string ? value = resolveValue (normalizedKey, out source);
@@ -207,11 +214,11 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<int, GLib.Error> getInt (string key, int fallback = 0) {
-            string normalizedKey = key.strip ();
-            GLib.Error ? keyError = ensureKey (normalizedKey);
-            if (keyError != null) {
-                return Result.error<int, GLib.Error> (keyError);
+            var keyResult = normalizeAndEnsureKey (key);
+            if (keyResult.isError ()) {
+                return Result.error<int, GLib.Error> (keyResult.unwrapError ());
             }
+            string normalizedKey = keyResult.unwrap ();
 
             string source;
             string ? raw = resolveValue (normalizedKey, out source);
@@ -238,11 +245,11 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<bool, GLib.Error> getBool (string key, bool fallback = false) {
-            string normalizedKey = key.strip ();
-            GLib.Error ? keyError = ensureKey (normalizedKey);
-            if (keyError != null) {
-                return Result.error<bool, GLib.Error> (keyError);
+            var keyResult = normalizeAndEnsureKey (key);
+            if (keyResult.isError ()) {
+                return Result.error<bool, GLib.Error> (keyResult.unwrapError ());
             }
+            string normalizedKey = keyResult.unwrap ();
 
             string source;
             string ? raw = resolveValue (normalizedKey, out source);
@@ -274,11 +281,11 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<Duration, GLib.Error> getDuration (string key, Duration fallback) {
-            string normalizedKey = key.strip ();
-            GLib.Error ? keyError = ensureKey (normalizedKey);
-            if (keyError != null) {
-                return Result.error<Duration, GLib.Error> (keyError);
+            var keyResult = normalizeAndEnsureKey (key);
+            if (keyResult.isError ()) {
+                return Result.error<Duration, GLib.Error> (keyResult.unwrapError ());
             }
+            string normalizedKey = keyResult.unwrap ();
 
             string source;
             string ? raw = resolveValue (normalizedKey, out source);
@@ -298,11 +305,11 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT / REQUIRED_KEY_MISSING).
          */
         public Result<string, GLib.Error> require (string key) {
-            string normalizedKey = key.strip ();
-            GLib.Error ? keyError = ensureKey (normalizedKey);
-            if (keyError != null) {
-                return Result.error<string, GLib.Error> (keyError);
+            var keyResult = normalizeAndEnsureKey (key);
+            if (keyResult.isError ()) {
+                return Result.error<string, GLib.Error> (keyResult.unwrapError ());
             }
+            string normalizedKey = keyResult.unwrap ();
 
             string source;
             string ? value = resolveValue (normalizedKey, out source);
@@ -330,11 +337,11 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<string, GLib.Error> sourceOf (string key) {
-            string normalizedKey = key.strip ();
-            GLib.Error ? keyError = ensureKey (normalizedKey);
-            if (keyError != null) {
-                return Result.error<string, GLib.Error> (keyError);
+            var keyResult = normalizeAndEnsureKey (key);
+            if (keyResult.isError ()) {
+                return Result.error<string, GLib.Error> (keyResult.unwrapError ());
             }
+            string normalizedKey = keyResult.unwrap ();
 
             string source;
             resolveValue (normalizedKey, out source);
@@ -455,12 +462,12 @@ namespace Vala.Config {
                 case "yes" :
                 case "on" :
                     return true;
-                case "0" :
-                case "false" :
-                case "no" :
-                case "off" :
+                case "0":
+                case "false":
+                case "no":
+                case "off":
                     return false;
-                    default :
+                default:
                     return null;
             }
         }
@@ -470,6 +477,22 @@ namespace Vala.Config {
                 return new AppConfigError.INVALID_ARGUMENT ("key must not be empty");
             }
             return null;
+        }
+
+        private static Result<string, GLib.Error> normalizeAndEnsureKey (string key) {
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
+            if (keyError != null) {
+                return Result.error<string, GLib.Error> (keyError);
+            }
+            return Result.ok<string, GLib.Error> (normalizedKey);
+        }
+
+        private static bool isSafeAppName (string appName) {
+            if (!GLib.Regex.match_simple ("^[A-Za-z0-9._-]+$", appName)) {
+                return false;
+            }
+            return appName.index_of ("..") < 0;
         }
     }
 }

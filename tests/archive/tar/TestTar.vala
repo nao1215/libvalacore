@@ -9,8 +9,8 @@ void main (string[] args) {
     Test.add_func ("/archive/tar/testCreateFromDirAndList", testCreateFromDirAndList);
     Test.add_func ("/archive/tar/testAddFile", testAddFile);
     Test.add_func ("/archive/tar/testExtractFile", testExtractFile);
-    Test.add_func ("/archive/tar/testExtractFileFailureKeepsDestination",
-                   testExtractFileFailureKeepsDestination);
+    Test.add_func ("/archive/tar/testExtractFileMissingEntryKeepsDestination",
+                   testExtractFileMissingEntryKeepsDestination);
     Test.add_func ("/archive/tar/testExtractRejectsLinkEntries", testExtractRejectsLinkEntries);
     Test.add_func ("/archive/tar/testCreateRejectsDuplicateBasename", testCreateRejectsDuplicateBasename);
     Test.add_func ("/archive/tar/testInvalidInputs", testInvalidInputs);
@@ -185,7 +185,7 @@ void testExtractFile () {
     cleanup (root);
 }
 
-void testExtractFileFailureKeepsDestination () {
+void testExtractFileMissingEntryKeepsDestination () {
     if (!requireTarTool ()) {
         return;
     }

@@ -314,29 +314,35 @@ namespace Vala.Time {
             );
         }
 
-        private static Result<int, GLib.Error> parsePositiveInt (string text, string label) {
+        private static Result<int ?, GLib.Error> parsePositiveInt (string text, string label) {
             return parseBoundedInt (text, 1, int.MAX, label);
         }
 
-        private static Result<int, GLib.Error> parseBoundedInt (string text,
-                                                                int min,
-                                                                int max,
-                                                                string label) {
+        private static Result<int ?, GLib.Error> parseBoundedInt (string text,
+                                                                  int min,
+                                                                  int max,
+                                                                  string label) {
             if (!GLib.Regex.match_simple ("^-?[0-9]+$", text)) {
-                return Result.error<int, GLib.Error> (
+                return Result.error<int ?, GLib.Error> (
                     new CronError.INVALID_EXPRESSION ("invalid %s: %s".printf (label, text))
                 );
             }
 
-            int value = int.parse (text);
-            if (value < min || value > max) {
-                return Result.error<int, GLib.Error> (
+            int64 parsed = 0;
+            if (!int64.try_parse (text, out parsed)) {
+                return Result.error<int ?, GLib.Error> (
+                    new CronError.INVALID_EXPRESSION ("invalid %s: %s".printf (label, text))
+                );
+            }
+
+            if (parsed < min || parsed > max) {
+                return Result.error<int ?, GLib.Error> (
                     new CronError.INVALID_EXPRESSION (
                         "%s must be in range [%d, %d]".printf (label, min, max)
                     )
                 );
             }
-            return Result.ok<int, GLib.Error> (value);
+            return Result.ok<int ?, GLib.Error> ((int) parsed);
         }
 
         private static GLib.Error ? validateHourMinute (int hour, int minute) {
