@@ -197,16 +197,32 @@ namespace Vala.Io {
                 return null;
             }
 
-            ShellResult result = run ("command -v " + GLib.Shell.quote (binary), false);
-            if (!result.isSuccess ()) {
+            if (binary.contains ("/")) {
+                var direct = new Path (binary);
+                if (Files.isFile (direct) && Files.canExec (direct)) {
+                    return direct;
+                }
                 return null;
             }
 
-            string value = result.stdout ().strip ();
-            if (value.length == 0) {
+            string ? pathEnv = Environment.get_variable ("PATH");
+            if (pathEnv == null || pathEnv.length == 0) {
                 return null;
             }
-            return new Path (value);
+
+            foreach (string dir in pathEnv.split (":")) {
+                string baseDir = dir;
+                if (baseDir.length == 0) {
+                    baseDir = ".";
+                }
+
+                string candidatePath = GLib.Path.build_filename (baseDir, binary);
+                var candidate = new Path (candidatePath);
+                if (Files.isFile (candidate) && Files.canExec (candidate)) {
+                    return candidate;
+                }
+            }
+            return null;
         }
 
         private static ShellResult run (string command, bool quiet) {

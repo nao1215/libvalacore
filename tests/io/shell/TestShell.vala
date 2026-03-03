@@ -9,6 +9,7 @@ void main (string[] args) {
     Test.add_func ("/io/shell/testExecWithTimeout", testExecWithTimeout);
     Test.add_func ("/io/shell/testPipe", testPipe);
     Test.add_func ("/io/shell/testWhich", testWhich);
+    Test.add_func ("/io/shell/testWhichMissing", testWhichMissing);
     Test.add_func ("/io/shell/testLines", testLines);
     Test.add_func ("/io/shell/testExecWithTimeoutInvalid", testExecWithTimeoutInvalid);
     Test.run ();
@@ -63,6 +64,11 @@ void testWhich () {
     Vala.Io.Path ? path = Vala.Io.Shell.which ("sh");
     assert (path != null);
     assert (path.toString ().length > 0);
+}
+
+void testWhichMissing () {
+    Vala.Io.Path ? path = Vala.Io.Shell.which ("__definitely_no_such_command__");
+    assert (path == null);
 }
 
 void testLines () {
