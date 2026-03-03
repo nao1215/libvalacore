@@ -102,17 +102,37 @@ void testSaveOrderAndEdgeCases () {
 }
 
 void testLoadMissingFile () {
+    Vala.Io.Path ? dir = Files.tempDir ("props-missing");
+    assert (dir != null);
+
     Properties props = new Properties ();
-    var loaded = props.load (new Vala.Io.Path ("/tmp/valacore/ut/no-such-properties-file"));
-    assert (loaded.isError ());
-    assert (loaded.unwrapError () is PropertiesError.IO);
+    try {
+        Vala.Io.Path missing = dir.resolve ("no-such-properties-file");
+        var loaded = props.load (missing);
+        assert (loaded.isError ());
+        assert (loaded.unwrapError () is PropertiesError.IO);
+    } finally {
+        if (dir != null) {
+            Files.deleteRecursive (dir);
+        }
+    }
 }
 
 void testSaveInvalidDestination () {
+    Vala.Io.Path ? dir = Files.tempDir ("props-invalid-dest");
+    assert (dir != null);
+
     Properties props = new Properties ();
     props.set ("k", "v");
 
-    var saved = props.save (new Vala.Io.Path ("/tmp/valacore/ut/no-such-dir/props.txt"));
-    assert (saved.isError ());
-    assert (saved.unwrapError () is PropertiesError.IO);
+    try {
+        Vala.Io.Path invalidDestination = dir.resolve ("no-such-dir").resolve ("props.txt");
+        var saved = props.save (invalidDestination);
+        assert (saved.isError ());
+        assert (saved.unwrapError () is PropertiesError.IO);
+    } finally {
+        if (dir != null) {
+            Files.deleteRecursive (dir);
+        }
+    }
 }
