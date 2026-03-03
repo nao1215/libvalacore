@@ -5,6 +5,7 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/concurrent/countdownlatch/testAwait", testAwait);
     Test.add_func ("/concurrent/countdownlatch/testAwaitTimeout", testAwaitTimeout);
+    Test.add_func ("/concurrent/countdownlatch/testAwaitTimeoutInfinite", testAwaitTimeoutInfinite);
     Test.add_func ("/concurrent/countdownlatch/testGetCount", testGetCount);
     Test.add_func ("/concurrent/countdownlatch/testInvalidCount", testInvalidCount);
     Test.run ();
@@ -47,11 +48,29 @@ void testAwait () {
 void testAwaitTimeout () {
     Vala.Concurrent.CountDownLatch latch = mustLatch (1);
 
-    bool result = latch.awaitTimeout (Duration.ofSeconds (0));
-    assert (result == false);
+    var timeout = latch.awaitTimeout (Duration.ofSeconds (0));
+    assert (timeout.isError ());
+    GLib.Error err = timeout.unwrapError ();
+    assert (err is CountDownLatchError.TIMEOUT);
+    assert (err.message.index_of ("timeout=0ms") >= 0);
 
     latch.countDown ();
-    assert (latch.awaitTimeout (Duration.ofSeconds (1)) == true);
+    var waited = latch.awaitTimeout (Duration.ofSeconds (1));
+    assert (waited.isOk ());
+}
+
+void testAwaitTimeoutInfinite () {
+    Vala.Concurrent.CountDownLatch latch = mustLatch (1);
+
+    Thread<void *> worker = new Thread<void *> ("latch-worker", () => {
+        Posix.usleep (10000);
+        latch.countDown ();
+        return null;
+    });
+
+    var waited = latch.awaitTimeout (Duration.ofSeconds (-1));
+    worker.join ();
+    assert (waited.isOk ());
 }
 
 void testGetCount () {

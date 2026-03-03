@@ -828,7 +828,7 @@ One-shot countdown latch for synchronization.
 | `of(int count)` | Returns `Result<CountDownLatch, Error>` (error: `CountDownLatchError.INVALID_ARGUMENT` when count is negative) |
 | `countDown()` | Decrements count by one |
 | `await()` | Blocks until count reaches zero |
-| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
+| `awaitTimeout(Duration timeout)` | Returns `Result<bool, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; error: `CountDownLatchError.TIMEOUT`) |
 | `getCount()` | Returns current count |
 
 ### Vala.Concurrent.WorkerPool
