@@ -296,7 +296,7 @@ namespace Vala.Archive {
             if (targetEntry.has_prefix ("./")) {
                 targetEntry = targetEntry.substring (2);
             }
-            bool found = false;
+            string ? matchedMember = null;
             ArrayList<string> entries = listed.unwrap ();
             for (int i = 0; i < entries.size (); i++) {
                 string ? listedEntry = entries.get (i);
@@ -308,11 +308,11 @@ namespace Vala.Archive {
                     normalized = normalized.substring (2);
                 }
                 if (normalized == targetEntry) {
-                    found = true;
+                    matchedMember = listedEntry;
                     break;
                 }
             }
-            if (!found) {
+            if (matchedMember == null) {
                 return Result.error<bool, GLib.Error> (
                     new TarError.NOT_FOUND ("entry not found: entry=%s archive=%s".printf (entry, archive.toString ()))
                 );
@@ -340,7 +340,7 @@ namespace Vala.Archive {
             }
 
             Vala.Io.Path temp = parent.resolve (".tar-extract-%s.tmp".printf (GLib.Uuid.string_random ()));
-            string safeEntry = entry;
+            string safeEntry = (string) matchedMember;
             if (safeEntry.has_prefix ("-")) {
                 safeEntry = "./" + safeEntry;
             }

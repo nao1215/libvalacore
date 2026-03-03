@@ -194,7 +194,13 @@ void testDoFutureInvalidKey () {
     });
     future.@await ();
     assert (future.isFailed () == true);
-    assert (future.error () == "key must not be empty");
+    var expectedErr = new SingleFlightError.INVALID_ARGUMENT ("key must not be empty");
+    string expected = "%s (domain=%u, code=%d)".printf (
+        expectedErr.message,
+        (uint) expectedErr.domain,
+        expectedErr.code
+    );
+    assert (future.error () == expected);
 }
 
 void testDoTypeMismatch () {
