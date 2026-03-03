@@ -52,6 +52,7 @@ void removePath (string path) {
         try {
             GLib.File.new_for_path (path).delete ();
         } catch (GLib.Error e) {
+            Test.message ("cleanup skipped for %s: %s", path, e.message);
         }
     }
 }
