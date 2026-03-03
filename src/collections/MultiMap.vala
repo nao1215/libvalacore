@@ -43,7 +43,9 @@ namespace Vala.Collections {
          * Returns values for a key.
          *
          * @param key lookup key.
-         * @return snapshot values list, or an empty list when missing.
+         * @return shallow-copied snapshot list, or an empty list when missing.
+         *         Replacing/removing elements in the returned list does not affect this map,
+         *         but referenced V objects themselves are shared and not cloned.
          */
         public new ArrayList<V> get (K key) {
             ArrayList<V> ? list = _map.get (key);
