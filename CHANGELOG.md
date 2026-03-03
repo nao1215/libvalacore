@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.10.0
+
+### Changed
+- **Breaking**: standardized failure handling across major APIs to `Vala.Collections.Result<T, GLib.Error>`.
+- Migrated APIs to `Result`-based contracts across core namespaces, including:
+  - `Vala.Time.Cron`
+  - `Vala.Config.AppConfig`
+  - `Vala.Concurrent.SingleFlight`, `Channel`, `WorkerPool`, and `ThreadPool` factories
+  - `Vala.Net.Retry`, `RateLimiter`, and `CircuitBreaker` configuration paths
+  - `Vala.Distributed` hashing/snowflake helpers
+  - `Vala.Math` (`BigDecimal`, `BigInteger`, `Random`, `Math`)
+  - `Vala.Lang` (`Context`, `Exceptions`, `Preconditions`, `Randoms`)
+  - `Vala.Archive` (`Tar`, `Zip`)
+  - `Vala.Compress` (`Gzip`, `Zlib`)
+  - `Vala.Encoding` (`Base64`, `Hex`, `Url`, `Csv`, `Json.must`)
+  - `Vala.Io` (`Console`, `Filesystem`, `Resource`, `FileLock`, `Watcher`, `Shell`)
+  - `Vala.Event.EventBus` and selected collection helpers (`ImmutableList`, `Stream`, `LruCache`, `BloomFilter`, `HyperLogLog`)
+- Result payload contracts were normalized for bool/int paths and tests were updated to use explicit `isOk()/unwrap()/unwrapError()` checks.
+- `Vala.Config.AppConfig` now trims keys consistently in all accessors, distinguishes load failures via `AppConfigError.LOAD_FAILED`, and rejects unsafe `appName` inputs in `load`.
+- `Vala.Concurrent.SingleFlight.doFuture` now reports failures with message, error domain, and code in a unified format.
+
+### Fixed
+- `scripts/coverage.sh` summary parsing now handles both integer and decimal line-coverage percentages robustly.
+- `Vala.Archive.Tar.extractFile` now:
+  - extracts using the exact matched archive member spelling
+  - validates destination parent directory type/writability before write
+  - reports rollback failures when both `temp -> dest` move and restore fail.
+- `Vala.Net.RateLimiter.waitN`/`tryWaitN` now reject impossible requests (`permits > burst`) instead of risking indefinite wait behavior.
+- `Vala.Time.Cron` bounded integer parsing now uses overflow-safe parsing before range checks.
+- Validation and error-classification fixes were applied across modules, including:
+  - `BloomFilter` / `HyperLogLog` rejecting `NaN`
+  - `Base64.decodeString` rejecting non-UTF-8 decoded payloads
+  - corrected `Hex.decode` low-nibble error index reporting
+  - `FileLock.acquireTimeout` zero-timeout immediate-success path
+  - improved `Filesystem` I/O cause propagation and TOCTOU-safe owner-change flow
+  - precise not-found/I/O mapping in `Resource`
+  - whitespace-only input rejection in `NetUrl`.
+- Expanded regression coverage for Result migration edge cases (invalid arguments, overflow boundaries, rollback behavior, and concurrency contracts).
+
+### Documentation
+- Updated README/inline examples for Result-based APIs, corrected signatures, and added migration guidance for legacy nullable/throw-style usage.
+
 ## 0.9.1
 
 ### Changed

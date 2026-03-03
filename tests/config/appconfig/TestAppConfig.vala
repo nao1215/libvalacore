@@ -176,6 +176,14 @@ void testInvalidArguments () {
     assert (loadWhitespace.isError ());
     assert (loadWhitespace.unwrapError () is AppConfigError.INVALID_ARGUMENT);
 
+    var loadTraversal = AppConfig.load ("../app");
+    assert (loadTraversal.isError ());
+    assert (loadTraversal.unwrapError () is AppConfigError.INVALID_ARGUMENT);
+
+    var loadWithSlash = AppConfig.load ("app/name");
+    assert (loadWithSlash.isError ());
+    assert (loadWithSlash.unwrapError () is AppConfigError.INVALID_ARGUMENT);
+
     AppConfig config = new AppConfig ();
     var required = config.require ("missing");
     assert (required.isError ());
