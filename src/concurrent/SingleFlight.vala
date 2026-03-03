@@ -170,7 +170,10 @@ namespace Vala.Concurrent {
             ThreadPool.go (() => {
                 var result = group.@do<T> (key, captured);
                 if (result.isError ()) {
-                    future.completeFailure (result.unwrapError ().message);
+                    var err = result.unwrapError ();
+                    future.completeFailure (
+                        "%s (domain=%u, code=%d)".printf (err.message, (uint) err.domain, err.code)
+                    );
                     return;
                 }
 

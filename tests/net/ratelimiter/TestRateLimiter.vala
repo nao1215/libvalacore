@@ -21,6 +21,13 @@ RateLimiter mustRateLimiter (int permits_per_second, int burst) {
     return limiter;
 }
 
+void assertInvalidArgument<T> (Vala.Collections.Result<T, GLib.Error> result, string expected_message) {
+    assert (result.isError ());
+    var err = result.unwrapError ();
+    assert (err is RateLimiterError.INVALID_ARGUMENT);
+    assert (err.message == expected_message);
+}
+
 void testAllow () {
     var limiter = mustRateLimiter (1, 1);
 
@@ -81,34 +88,22 @@ void testSetRateAndReset () {
 
 void testInvalidArguments () {
     var invalidCtor = RateLimiter.of (0);
-    assert (invalidCtor.isError ());
-    assert (invalidCtor.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
-    assert (invalidCtor.unwrapError ().message == "permitsPerSecond must be positive, got 0");
+    assertInvalidArgument<RateLimiter> (invalidCtor, "permitsPerSecond must be positive, got 0");
 
     var limiter = mustRateLimiter (1, 1);
 
     var invalidBurst = limiter.withBurst (0);
-    assert (invalidBurst.isError ());
-    assert (invalidBurst.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
-    assert (invalidBurst.unwrapError ().message == "permits must be positive, got 0");
+    assertInvalidArgument<RateLimiter> (invalidBurst, "permits must be positive, got 0");
 
     var invalidAllowN = limiter.allowN (0);
-    assert (invalidAllowN.isError ());
-    assert (invalidAllowN.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
-    assert (invalidAllowN.unwrapError ().message == "permits must be positive, got 0");
+    assertInvalidArgument<bool> (invalidAllowN, "permits must be positive, got 0");
 
     var invalidWaitN = limiter.waitN (0);
-    assert (invalidWaitN.isError ());
-    assert (invalidWaitN.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
-    assert (invalidWaitN.unwrapError ().message == "permits must be positive, got 0");
+    assertInvalidArgument<bool> (invalidWaitN, "permits must be positive, got 0");
 
     var impossibleWaitN = limiter.waitN (2);
-    assert (impossibleWaitN.isError ());
-    assert (impossibleWaitN.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
-    assert (impossibleWaitN.unwrapError ().message == "permits must not exceed burst capacity (1), got 2");
+    assertInvalidArgument<bool> (impossibleWaitN, "permits must not exceed burst capacity (1), got 2");
 
     var invalidSetRate = limiter.setRate (0);
-    assert (invalidSetRate.isError ());
-    assert (invalidSetRate.unwrapError () is RateLimiterError.INVALID_ARGUMENT);
-    assert (invalidSetRate.unwrapError ().message == "permitsPerSecond must be positive, got 0");
+    assertInvalidArgument<bool> (invalidSetRate, "permitsPerSecond must be positive, got 0");
 }

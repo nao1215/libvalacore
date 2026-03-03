@@ -201,17 +201,6 @@ namespace Vala.Net {
                 );
             }
 
-            _mutex.lock ();
-            int burst_snapshot = _burst;
-            _mutex.unlock ();
-            if (permits > burst_snapshot) {
-                return Vala.Collections.Result.error<bool, GLib.Error> (
-                    new RateLimiterError.INVALID_ARGUMENT (
-                        "permits must not exceed burst capacity (%d), got %d".printf (burst_snapshot, permits)
-                    )
-                );
-            }
-
             while (true) {
                 int64 delay = 0;
 

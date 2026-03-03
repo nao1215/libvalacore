@@ -24,6 +24,7 @@ void testOpenAfterThreshold () {
     var cb = mustBreaker ("api");
     var configured = cb.withFailureThreshold (2);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
 
     assert (cb.state () == CircuitState.CLOSED);
 
@@ -43,8 +44,10 @@ void testOpenShortCircuit () {
     var cb = mustBreaker ("api");
     var configured = cb.withFailureThreshold (1);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
     configured = cb.withOpenTimeout (Duration.ofSeconds (10));
     assert (configured.isOk ());
+    cb = configured.unwrap ();
 
     cb.call<string> (() => { return Result.error<string, string> ("boom"); });
     assert (cb.state () == CircuitState.OPEN);
@@ -63,10 +66,13 @@ void testHalfOpenToClosed () {
     var cb = mustBreaker ("api");
     var configured = cb.withFailureThreshold (1);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
     configured = cb.withSuccessThreshold (1);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
     configured = cb.withOpenTimeout (Duration.ofSeconds (0));
     assert (configured.isOk ());
+    cb = configured.unwrap ();
 
     cb.call<string> (() => {
         return Result.error<string, string> ("first attempt failed");
@@ -85,8 +91,10 @@ void testHalfOpenFailureReopens () {
     var cb = mustBreaker ("api");
     var configured = cb.withFailureThreshold (1);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
     configured = cb.withOpenTimeout (Duration.ofSeconds (1));
     assert (configured.isOk ());
+    cb = configured.unwrap ();
 
     cb.call<string> (() => {
         return Result.error<string, string> ("initial failure");
@@ -110,8 +118,10 @@ void testStateChangeCallback () {
     var cb = mustBreaker ("api");
     var configured = cb.withFailureThreshold (1);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
     configured = cb.withOpenTimeout (Duration.ofSeconds (0));
     assert (configured.isOk ());
+    cb = configured.unwrap ();
 
     int transitions = 0;
     cb.onStateChange ((from, to) => {
@@ -129,6 +139,7 @@ void testReset () {
     var cb = mustBreaker ("api");
     var configured = cb.withFailureThreshold (2);
     assert (configured.isOk ());
+    cb = configured.unwrap ();
 
     cb.recordFailure ();
     assert (cb.failureCount () == 1);

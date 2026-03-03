@@ -94,9 +94,10 @@ namespace Vala.Archive {
          */
         public static Result<bool, GLib.Error> createFromDir (Vala.Io.Path archive, Vala.Io.Path dir) {
             if (Objects.isNull (archive) || Objects.isNull (dir) || !Files.isDir (dir)) {
+                string dir_text = Objects.isNull (dir) ? "<null>" : dir.toString ();
                 return Result.error<bool, GLib.Error> (
                     new TarError.INVALID_ARGUMENT (
-                        "archive and existing source directory are required: %s".printf (dir.toString ())
+                        "archive and existing source directory are required: %s".printf (dir_text)
                     )
                 );
             }

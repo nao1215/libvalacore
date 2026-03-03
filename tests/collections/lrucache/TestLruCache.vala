@@ -117,14 +117,16 @@ void testStats () {
 void testInvalidMaxEntries () {
     var created = LruCache.of<string, string> (0, GLib.str_hash, GLib.str_equal);
     assert (created.isError ());
-    assert (created.unwrapError () is LruCacheError.INVALID_ARGUMENT);
-    assert (created.unwrapError ().message == "max_entries must be greater than 0");
+    var createdErr = created.unwrapError ();
+    assert (createdErr is LruCacheError.INVALID_ARGUMENT);
+    assert (createdErr.message == "max_entries must be greater than 0");
 }
 
 void testNegativeTtl () {
     var cache = mustCreateCache<string, string> (2, GLib.str_hash, GLib.str_equal);
     var configured = cache.withTtl (Duration.ofSeconds (-1));
     assert (configured.isError ());
-    assert (configured.unwrapError () is LruCacheError.INVALID_ARGUMENT);
-    assert (configured.unwrapError ().message == "ttl must be non-negative");
+    var configuredErr = configured.unwrapError ();
+    assert (configuredErr is LruCacheError.INVALID_ARGUMENT);
+    assert (configuredErr.message == "ttl must be non-negative");
 }

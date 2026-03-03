@@ -149,6 +149,10 @@ void testInvalidArguments () {
     assert (scale.isError ());
     assert (scale.unwrapError () is BigDecimalError.INVALID_ARGUMENT);
 
+    var scaleOverflow = bd ("1").divideWithScale (bd ("0.1"), int.MAX);
+    assert (scaleOverflow.isError ());
+    assert (scaleOverflow.unwrapError () is BigDecimalError.SCALE_OVERFLOW);
+
     var mod = bd ("1").mod (bd ("0"));
     assert (mod.isError ());
     assert (mod.unwrapError () is BigDecimalError.DIVISION_BY_ZERO);

@@ -8,7 +8,8 @@ namespace Vala.Config {
      */
     public errordomain AppConfigError {
         INVALID_ARGUMENT,
-        REQUIRED_KEY_MISSING
+        REQUIRED_KEY_MISSING,
+        LOAD_FAILED
     }
 
     /**
@@ -58,7 +59,7 @@ namespace Vala.Config {
          *
          * @param appName application name.
          * @return Result.ok(loaded AppConfig), or
-         *         Result.error(AppConfigError.INVALID_ARGUMENT) when appName is empty or file loading fails.
+         *         Result.error(AppConfigError.INVALID_ARGUMENT / LOAD_FAILED).
          */
         public static Result<AppConfig, GLib.Error> load (string appName) {
             string normalized_app_name = appName.strip ();
@@ -99,7 +100,7 @@ namespace Vala.Config {
          *
          * @param path config file path.
          * @return Result.ok(loaded AppConfig), or
-         *         Result.error(AppConfigError.INVALID_ARGUMENT) when path is invalid or file loading fails.
+         *         Result.error(AppConfigError.INVALID_ARGUMENT / LOAD_FAILED).
          */
         public static Result<AppConfig, GLib.Error> loadFile (Vala.Io.Path path) {
             if (path.toString ().strip ().length == 0 || !Files.isFile (path)) {
@@ -340,7 +341,7 @@ namespace Vala.Config {
             var props = new Properties ();
             if (!props.load (path)) {
                 return Result.error<bool, GLib.Error> (
-                    new AppConfigError.INVALID_ARGUMENT (
+                    new AppConfigError.LOAD_FAILED (
                         "failed to load config file: %s".printf (path.toString ())
                     )
                 );

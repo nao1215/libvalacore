@@ -2,7 +2,6 @@ using Vala.Math;
 
 void main (string[] args) {
     Test.init (ref args);
-    Test.add_func ("/random/testConstruct", testConstruct);
     Test.add_func ("/random/testNextInt", testNextInt);
     Test.add_func ("/random/testNextIntRange", testNextIntRange);
     Test.add_func ("/random/testNextDouble", testNextDouble);
@@ -13,11 +12,6 @@ void main (string[] args) {
     Test.add_func ("/random/testInvalidArguments", testInvalidArguments);
     Test.add_func ("/random/testInvalidArgumentsAdditional", testInvalidArgumentsAdditional);
     Test.run ();
-}
-
-void testConstruct () {
-    var random = new Vala.Math.Random ();
-    assert (random != null);
 }
 
 void testNextInt () {

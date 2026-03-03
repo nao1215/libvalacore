@@ -52,8 +52,10 @@ namespace Vala.Collections {
         private LruCache (int max_entries,
                           GLib.HashFunc<K> hash_func,
                           GLib.EqualFunc<K> equal_func) {
+            assert (max_entries > 0);
             _max_entries = max_entries;
             _entries = new GLib.HashTable<K, LruNode<K, V> > (hash_func, equal_func);
+            assert (_entries != null);
         }
 
         /**
