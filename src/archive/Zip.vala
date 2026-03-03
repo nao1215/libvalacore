@@ -244,6 +244,7 @@ namespace Vala.Archive {
                 }
             }
 
+            string destinationRoot = dest.normalize ().toString ();
             for (int i = 0; i < parsed.entries.size (); i++) {
                 ZipEntry ? entry = parsed.entries.get (i);
                 if (entry == null) {
@@ -256,6 +257,15 @@ namespace Vala.Archive {
                     return Result.error<bool, GLib.Error> (
                         new ZipError.SECURITY (
                             "zip extraction path traverses symlink component: %s".printf (entry.name)
+                        )
+                    );
+                }
+                string targetPath = target.normalize ().toString ();
+                bool resolvesToRoot = relative.length == 0 || relative == "." || targetPath == destinationRoot;
+                if (!entry.isDirectory () && resolvesToRoot) {
+                    return Result.error<bool, GLib.Error> (
+                        new ZipError.SECURITY (
+                            "zip entry resolves to extraction root file path: %s".printf (entry.name)
                         )
                     );
                 }
@@ -672,17 +682,7 @@ namespace Vala.Archive {
         private static Result<bool, GLib.Error> writeArchiveBytes (Vala.Io.Path archive,
                                                                    uint8[] bytes,
                                                                    string errorContext) {
-            if (Files.exists (archive) && !Files.remove (archive)) {
-                return Result.error<bool, GLib.Error> (
-                    new ZipError.IO ("failed to remove existing archive: %s".printf (archive.toString ()))
-                );
-            }
-            if (!Files.writeBytes (archive, bytes)) {
-                return Result.error<bool, GLib.Error> (
-                    new ZipError.IO ("%s: %s".printf (errorContext, archive.toString ()))
-                );
-            }
-            return Result.ok<bool, GLib.Error> (true);
+            return replaceFileAtomically (archive, bytes, errorContext);
         }
 
         private static Result<ParsedZip, GLib.Error> parseArchive (Vala.Io.Path archive) {
@@ -716,6 +716,13 @@ namespace Vala.Archive {
             uint16 totalEntries = readLe16 (bytes, eocdOffset + 10);
             uint32 centralSize = readLe32 (bytes, eocdOffset + 12);
             uint32 centralOffset = readLe32 (bytes, eocdOffset + 16);
+            int64 centralStart = centralOffset;
+            int64 centralEnd = centralStart + centralSize;
+            if (centralEnd < centralStart) {
+                return Result.error<ParsedZip, GLib.Error> (
+                    new ZipError.IO ("invalid zip central directory range: %s".printf (archive.toString ()))
+                );
+            }
 
             if (!hasRange (bytes, centralOffset, centralSize)) {
                 return Result.error<ParsedZip, GLib.Error> (
@@ -724,9 +731,11 @@ namespace Vala.Archive {
             }
 
             var entries = new ArrayList<ZipEntry> ();
-            int64 pos = centralOffset;
+            int64 pos = centralStart;
             for (uint16 i = 0; i < totalEntries; i++) {
-                if (!hasRange (bytes, pos, ZIP_CENTRAL_HEADER_SIZE)) {
+                if (pos < centralStart
+                    || pos > centralEnd
+                    || (centralEnd - pos) < ZIP_CENTRAL_HEADER_SIZE) {
                     return Result.error<ParsedZip, GLib.Error> (
                         new ZipError.IO ("truncated central file header: %s".printf (archive.toString ()))
                     );
@@ -748,7 +757,7 @@ namespace Vala.Archive {
                 uint32 localOffset = readLe32 (bytes, pos + 42);
 
                 int64 headerLen = ZIP_CENTRAL_HEADER_SIZE + nameLen + extraLen + commentLen;
-                if (!hasRange (bytes, pos, headerLen)) {
+                if (headerLen < ZIP_CENTRAL_HEADER_SIZE || headerLen > (centralEnd - pos)) {
                     return Result.error<ParsedZip, GLib.Error> (
                         new ZipError.IO ("truncated central entry: %s".printf (archive.toString ()))
                     );
@@ -966,6 +975,11 @@ namespace Vala.Archive {
             if (Files.exists (dest) && Files.isSymbolicFile (dest)) {
                 return Result.error<bool, GLib.Error> (
                     new ZipError.SECURITY ("destination file is symbolic link: %s".printf (dest.toString ()))
+                );
+            }
+            if (Files.exists (dest) && Files.isDir (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new ZipError.SECURITY ("destination file is a directory: %s".printf (dest.toString ()))
                 );
             }
 

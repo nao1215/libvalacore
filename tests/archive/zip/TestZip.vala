@@ -10,9 +10,13 @@ void main (string[] args) {
     Test.add_func ("/archive/zip/testExtractFile", testExtractFile);
     Test.add_func ("/archive/zip/testExtractFileFailureKeepsDestination",
                    testExtractFileFailureKeepsDestination);
+    Test.add_func ("/archive/zip/testExtractRejectsRootResolvedFileEntry",
+                   testExtractRejectsRootResolvedFileEntry);
     Test.add_func ("/archive/zip/testCreateRejectsDuplicateBasename", testCreateRejectsDuplicateBasename);
     Test.add_func ("/archive/zip/testExtractRejectsTraversalEntries", testExtractRejectsTraversalEntries);
     Test.add_func ("/archive/zip/testListRejectsTruncatedArchive", testListRejectsTruncatedArchive);
+    Test.add_func ("/archive/zip/testListRejectsCentralEntryBeyondDeclaredRange",
+                   testListRejectsCentralEntryBeyondDeclaredRange);
     Test.add_func ("/archive/zip/testInvalidInputs", testInvalidInputs);
     Test.run ();
 }
@@ -90,6 +94,13 @@ void appendLe32 (GLib.ByteArray buffer, uint32 value) {
         (uint8) ((value >> 24) & 0xff)
     };
     buffer.append (bytes);
+}
+
+void writeLe32At (uint8[] bytes, int offset, uint32 value) {
+    bytes[offset] = (uint8) (value & 0xff);
+    bytes[offset + 1] = (uint8) ((value >> 8) & 0xff);
+    bytes[offset + 2] = (uint8) ((value >> 16) & 0xff);
+    bytes[offset + 3] = (uint8) ((value >> 24) & 0xff);
 }
 
 uint8[] buildSingleFileZip (string entryName, string content) {
@@ -249,6 +260,23 @@ void testExtractFileFailureKeepsDestination () {
     cleanup (root);
 }
 
+void testExtractRejectsRootResolvedFileEntry () {
+    string root = rootFor ("reject_root_resolved_file");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root)));
+
+    var archive = new Vala.Io.Path (root + "/root.zip");
+    uint8[] zipBytes = buildSingleFileZip (".", "overwrite-root");
+    assert (Files.writeBytes (archive, zipBytes));
+
+    var outDir = new Vala.Io.Path (root + "/out");
+    var extracted = Zip.extract (archive, outDir);
+    assert (extracted.isError ());
+    assert (extracted.unwrapError () is ZipError.SECURITY);
+    assert (!Files.isFile (outDir));
+    cleanup (root);
+}
+
 void testCreateRejectsDuplicateBasename () {
     string root = rootFor ("duplicate_basename");
     cleanup (root);
@@ -295,6 +323,23 @@ void testListRejectsTruncatedArchive () {
     var archive = new Vala.Io.Path (root + "/broken.zip");
     uint8[] broken = { 0x50, 0x4b, 0x03, 0x04, 0x00 };
     assert (Files.writeBytes (archive, broken));
+
+    var listed = Zip.list (archive);
+    assert (listed.isError ());
+    assert (listed.unwrapError () is ZipError.IO);
+    cleanup (root);
+}
+
+void testListRejectsCentralEntryBeyondDeclaredRange () {
+    string root = rootFor ("invalid_central_range");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root)));
+
+    var archive = new Vala.Io.Path (root + "/invalid-central.zip");
+    uint8[] bytes = buildSingleFileZip ("one.txt", "one");
+    int eocdOffset = bytes.length - 22;
+    writeLe32At (bytes, eocdOffset + 12, 1);
+    assert (Files.writeBytes (archive, bytes));
 
     var listed = Zip.list (archive);
     assert (listed.isError ());
