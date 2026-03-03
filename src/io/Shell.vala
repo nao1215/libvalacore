@@ -228,17 +228,19 @@ namespace Vala.Io {
 
         private static ShellResult run (string command, bool quiet) {
             int64 startMicros = GLib.get_monotonic_time ();
-            Vala.Lang.Process ? proc = Vala.Lang.Process.exec (command);
+            var executed = Vala.Lang.Process.exec (command);
             int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
 
-            if (proc == null) {
+            if (executed.isError ()) {
+                GLib.Error err = executed.unwrapError ();
                 return new ShellResult (
                     SPAWN_ERROR_EXIT_CODE,
                     "",
-                    "failed to spawn process",
+                    err.message,
                     durationMillis
                 );
             }
+            Vala.Lang.Process proc = executed.unwrap ();
 
             if (quiet) {
                 return new ShellResult (proc.exitCode (), "", "", durationMillis);
@@ -254,27 +256,36 @@ namespace Vala.Io {
 
         private static ShellResult runWithTimeout (string command, int64 timeoutMillis) {
             int64 startMicros = GLib.get_monotonic_time ();
-            Vala.Lang.Process ? proc = Vala.Lang.Process.execAsync (command);
-            if (proc == null) {
+            var started = Vala.Lang.Process.execAsync (command);
+            if (started.isError ()) {
+                GLib.Error err = started.unwrapError ();
                 int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
                 return new ShellResult (
                     SPAWN_ERROR_EXIT_CODE,
                     "",
-                    "failed to spawn process",
+                    err.message,
                     durationMillis
                 );
             }
+            Vala.Lang.Process proc = started.unwrap ();
 
             GLib.Mutex mutex = GLib.Mutex ();
             GLib.Cond cond = GLib.Cond ();
             bool completed = false;
             bool waitSuccess = false;
+            string waitErrorMessage = "";
 
             Thread<void *> waitThread = new Thread<void *> ("shell-timeout-wait", () => {
-                bool success = proc.waitFor ();
+                var waited = proc.waitFor ();
+                bool success = waited.isOk ();
+                string message = "";
+                if (!success) {
+                    message = waited.unwrapError ().message;
+                }
 
                 mutex.lock ();
                 waitSuccess = success;
+                waitErrorMessage = message;
                 completed = true;
                 cond.signal ();
                 mutex.unlock ();
@@ -294,7 +305,10 @@ namespace Vala.Io {
             mutex.unlock ();
 
             if (timedOut) {
-                proc.kill ();
+                var killed = proc.kill ();
+                if (killed.isError ()) {
+                    waitErrorMessage = killed.unwrapError ().message;
+                }
 
                 mutex.lock ();
                 while (!completed) {
@@ -309,7 +323,7 @@ namespace Vala.Io {
                 return new ShellResult (
                     SPAWN_ERROR_EXIT_CODE,
                     "",
-                    "failed to wait for process",
+                    waitErrorMessage,
                     durationMillis
                 );
             }

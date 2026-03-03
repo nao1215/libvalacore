@@ -1,5 +1,15 @@
 namespace Vala.Lang {
     /**
+     * Recoverable process lifecycle errors.
+     */
+    public errordomain LangProcessError {
+        INVALID_ARGUMENT,
+        INVALID_STATE,
+        SPAWN_FAILED,
+        WAIT_FAILED
+    }
+
+    /**
      * Wrapper for external process execution.
      */
     public class Process : GLib.Object {
@@ -16,28 +26,35 @@ namespace Vala.Lang {
          * Executes command synchronously.
          *
          * @param command command line.
-         * @return process result object or null on spawn error.
+         * @return Result.ok(process wrapper) on success,
+         *         Result.error(LangProcessError.*) on failure.
          */
-        public static Process ? exec (string command) {
-            Process ? proc = execAsync (command);
-            if (proc == null) {
-                return null;
+        public static Vala.Collections.Result<Process, GLib.Error> exec (string command) {
+            var started = execAsync (command);
+            if (started.isError ()) {
+                return Vala.Collections.Result.error<Process, GLib.Error> (started.unwrapError ());
             }
-            if (!proc.waitFor ()) {
-                return null;
+
+            Process proc = started.unwrap ();
+            var waited = proc.waitFor ();
+            if (waited.isError ()) {
+                return Vala.Collections.Result.error<Process, GLib.Error> (waited.unwrapError ());
             }
-            return proc;
+            return Vala.Collections.Result.ok<Process, GLib.Error> (proc);
         }
 
         /**
          * Starts command asynchronously.
          *
          * @param command command line.
-         * @return process object or null on spawn error.
+         * @return Result.ok(process wrapper) on success,
+         *         Result.error(LangProcessError.*) on failure.
          */
-        public static Process ? execAsync (string command) {
+        public static Vala.Collections.Result<Process, GLib.Error> execAsync (string command) {
             if (command.length == 0) {
-                return null;
+                return Vala.Collections.Result.error<Process, GLib.Error> (
+                    new LangProcessError.INVALID_ARGUMENT ("command must not be empty")
+                );
             }
 
             try {
@@ -54,9 +71,13 @@ namespace Vala.Lang {
 
                 Process wrapper = new Process ();
                 wrapper._process = process;
-                return wrapper;
+                return Vala.Collections.Result.ok<Process, GLib.Error> (wrapper);
             } catch (GLib.Error e) {
-                return null;
+                return Vala.Collections.Result.error<Process, GLib.Error> (
+                    new LangProcessError.SPAWN_FAILED (
+                        "failed to spawn command '%s': %s".printf (command, e.message)
+                    )
+                );
             }
         }
 
@@ -90,14 +111,17 @@ namespace Vala.Lang {
         /**
          * Waits for process completion and captures output.
          *
-         * @return true on success.
+         * @return Result.ok(true) on success,
+         *         Result.error(LangProcessError.INVALID_STATE / WAIT_FAILED) on failure.
          */
-        public bool waitFor () {
+        public Vala.Collections.Result<bool, GLib.Error> waitFor () {
             if (_process == null) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new LangProcessError.INVALID_STATE ("process is not started")
+                );
             }
             if (_completed) {
-                return true;
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
             }
 
             try {
@@ -114,23 +138,30 @@ namespace Vala.Lang {
                     _exit_code = -_process.get_term_sig ();
                 }
                 _completed = true;
-                return true;
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
             } catch (GLib.Error e) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new LangProcessError.WAIT_FAILED (
+                        "failed waiting process completion: %s".printf (e.message)
+                    )
+                );
             }
         }
 
         /**
          * Kills the running process.
          *
-         * @return true when process exists.
+         * @return Result.ok(true) on success,
+         *         Result.error(LangProcessError.INVALID_STATE) when process is missing.
          */
-        public bool kill () {
+        public Vala.Collections.Result<bool, GLib.Error> kill () {
             if (_process == null) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new LangProcessError.INVALID_STATE ("process is not started")
+                );
             }
             _process.force_exit ();
-            return true;
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
     }
 }

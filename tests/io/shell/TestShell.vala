@@ -55,7 +55,7 @@ void testExecSpawnFailure () {
 
     assert (result.isSuccess () == false);
     assert (result.exitCode () == 127);
-    assert (result.stderr () == "failed to spawn process");
+    assert (result.stderr () == "command must not be empty");
 }
 
 void testExecWithTimeout () {
