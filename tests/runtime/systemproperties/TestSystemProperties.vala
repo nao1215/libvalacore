@@ -39,9 +39,7 @@ void testGet () {
 
     string ? osName = SystemProperties.get ("os.name");
     assert (osName != null);
-    if (osName != null) {
-        assert (osName.length > 0);
-    }
+    assert (osName.length > 0);
 }
 
 void testTime () {
