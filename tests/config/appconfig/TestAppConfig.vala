@@ -131,11 +131,15 @@ void testTypedGetters () {
     config.withCliArgs (cli);
 
     assert (mustGetInt (config, "workers", 0) == 16);
+    assert (mustGetInt (config, " workers ", 0) == 16);
     assert (mustGetBool (config, "enabled", false) == true);
+    assert (mustGetBool (config, " enabled ", false) == true);
     assert (mustGetBool (config, "debug", false) == true);
 
     Duration timeout = mustGetDuration (config, "timeout", Duration.ofSeconds (1));
     assert (timeout.toSeconds () == 120);
+    Duration timeoutTrimmed = mustGetDuration (config, " timeout ", Duration.ofSeconds (1));
+    assert (timeoutTrimmed.toSeconds () == 120);
 
     assert (mustGetInt (config, "invalid_int", 7) == 7);
     assert (mustGetBool (config, "invalid_bool", false) == false);
@@ -144,6 +148,8 @@ void testTypedGetters () {
     assert (mustGetDuration (config, "invalid_duration", fallback).toSeconds () == 9);
 
     assert (mustRequire (config, "workers") == "16");
+    assert (mustRequire (config, " workers ") == "16");
+    assert (mustSourceOf (config, " workers ") == "cli");
 }
 
 void testLoadStandardPath () {

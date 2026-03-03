@@ -187,13 +187,14 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<string, GLib.Error> getString (string key, string fallback = "") {
-            GLib.Error ? keyError = ensureKey (key);
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
             if (keyError != null) {
                 return Result.error<string, GLib.Error> (keyError);
             }
 
             string source;
-            string ? value = resolveValue (key, out source);
+            string ? value = resolveValue (normalizedKey, out source);
             return Result.ok<string, GLib.Error> (value ?? fallback);
         }
 
@@ -206,13 +207,14 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<int, GLib.Error> getInt (string key, int fallback = 0) {
-            GLib.Error ? keyError = ensureKey (key);
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
             if (keyError != null) {
                 return Result.error<int, GLib.Error> (keyError);
             }
 
             string source;
-            string ? raw = resolveValue (key, out source);
+            string ? raw = resolveValue (normalizedKey, out source);
             if (raw == null) {
                 return Result.ok<int, GLib.Error> (fallback);
             }
@@ -236,13 +238,14 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<bool, GLib.Error> getBool (string key, bool fallback = false) {
-            GLib.Error ? keyError = ensureKey (key);
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
             if (keyError != null) {
                 return Result.error<bool, GLib.Error> (keyError);
             }
 
             string source;
-            string ? raw = resolveValue (key, out source);
+            string ? raw = resolveValue (normalizedKey, out source);
             if (raw == null) {
                 return Result.ok<bool, GLib.Error> (fallback);
             }
@@ -271,13 +274,14 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<Duration, GLib.Error> getDuration (string key, Duration fallback) {
-            GLib.Error ? keyError = ensureKey (key);
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
             if (keyError != null) {
                 return Result.error<Duration, GLib.Error> (keyError);
             }
 
             string source;
-            string ? raw = resolveValue (key, out source);
+            string ? raw = resolveValue (normalizedKey, out source);
             if (raw == null) {
                 return Result.ok<Duration, GLib.Error> (fallback);
             }
@@ -294,17 +298,18 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT / REQUIRED_KEY_MISSING).
          */
         public Result<string, GLib.Error> require (string key) {
-            GLib.Error ? keyError = ensureKey (key);
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
             if (keyError != null) {
                 return Result.error<string, GLib.Error> (keyError);
             }
 
             string source;
-            string ? value = resolveValue (key, out source);
+            string ? value = resolveValue (normalizedKey, out source);
             if (value == null) {
                 return Result.error<string, GLib.Error> (
                     new AppConfigError.REQUIRED_KEY_MISSING (
-                        "required config key `%s` is missing".printf (key)
+                        "required config key `%s` is missing".printf (normalizedKey)
                     )
                 );
             }
@@ -325,13 +330,14 @@ namespace Vala.Config {
          *         Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty.
          */
         public Result<string, GLib.Error> sourceOf (string key) {
-            GLib.Error ? keyError = ensureKey (key);
+            string normalizedKey = key.strip ();
+            GLib.Error ? keyError = ensureKey (normalizedKey);
             if (keyError != null) {
                 return Result.error<string, GLib.Error> (keyError);
             }
 
             string source;
-            resolveValue (key, out source);
+            resolveValue (normalizedKey, out source);
             return Result.ok<string, GLib.Error> (source);
         }
 

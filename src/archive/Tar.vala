@@ -319,6 +319,20 @@ namespace Vala.Archive {
             }
 
             Vala.Io.Path parent = dest.parent ();
+            if (Files.exists (parent) && !Files.isDir (parent)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT (
+                        "destination parent is not a directory: %s".printf (parent.toString ())
+                    )
+                );
+            }
+            if (Files.exists (parent) && !Files.canWrite (parent)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT (
+                        "destination parent is not writable: %s".printf (parent.toString ())
+                    )
+                );
+            }
             if (!Files.exists (parent) && !Files.makeDirs (parent)) {
                 return Result.error<bool, GLib.Error> (
                     new TarError.IO ("failed to create parent directory: %s".printf (parent.toString ()))
@@ -409,12 +423,27 @@ namespace Vala.Archive {
                 );
             }
             if (!Files.move (temp, dest)) {
+                string moveFailure = "failed to move extracted file to destination: temp=%s dest=%s".printf (
+                    temp.toString (),
+                    dest.toString ()
+                );
                 if (hadDest && Files.exists (backup)) {
-                    Files.move (backup, dest);
+                    if (!Files.move (backup, dest)) {
+                        Files.remove (temp);
+                        return Result.error<bool, GLib.Error> (
+                            new TarError.IO (
+                                "%s; rollback failed: backup=%s dest=%s".printf (
+                                    moveFailure,
+                                    backup.toString (),
+                                    dest.toString ()
+                                )
+                            )
+                        );
+                    }
                 }
                 Files.remove (temp);
                 return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("failed to move extracted file to destination: %s".printf (dest.toString ()))
+                    new TarError.IO (moveFailure)
                 );
             }
             if (hadDest && Files.exists (backup)) {

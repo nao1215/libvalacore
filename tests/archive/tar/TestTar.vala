@@ -268,6 +268,19 @@ void testInvalidInputs () {
     assert (Files.writeText (new Vala.Io.Path (root + "/base/one.txt"), "one"));
     var archive = new Vala.Io.Path (root + "/base.tar");
     assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/base")));
+
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
+    string ? oneEntry = findBySuffix (entries, "one.txt");
+    assert (oneEntry != null);
+    if (oneEntry != null) {
+        var parentAsFile = new Vala.Io.Path (root + "/parent_as_file");
+        assert (Files.writeText (parentAsFile, "file"));
+        var invalidDest = new Vala.Io.Path (parentAsFile.toString () + "/out.txt");
+        var invalidParent = Tar.extractFile (archive, oneEntry, invalidDest);
+        assert (invalidParent.isError ());
+        assert (invalidParent.unwrapError () is TarError.INVALID_ARGUMENT);
+    }
+
     var addMissingFile = Tar.addFile (archive, new Vala.Io.Path (root + "/missing-file.txt"));
     assert (addMissingFile.isError ());
     assert (addMissingFile.unwrapError () is TarError.NOT_FOUND);

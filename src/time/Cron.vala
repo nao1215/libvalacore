@@ -319,9 +319,9 @@ namespace Vala.Time {
         }
 
         private static Result<int, GLib.Error> parseBoundedInt (string text,
-                                                                 int min,
-                                                                 int max,
-                                                                 string label) {
+                                                                int min,
+                                                                int max,
+                                                                string label) {
             if (!GLib.Regex.match_simple ("^-?[0-9]+$", text)) {
                 return Result.error<int, GLib.Error> (
                     new CronError.INVALID_EXPRESSION ("invalid %s: %s".printf (label, text))

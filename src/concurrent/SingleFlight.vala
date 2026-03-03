@@ -152,7 +152,9 @@ namespace Vala.Concurrent {
         /**
          * Asynchronous version of do().
          *
-         * Returns a failed future when key is empty.
+         * Returns a failed future when {@link do} returns Result.error
+         * (for example INVALID_ARGUMENT, TYPE_MISMATCH, INTERNAL_STATE).
+         * The failure string includes error message, domain, and code.
          *
          * @param key deduplication key.
          * @param fn function to run.
