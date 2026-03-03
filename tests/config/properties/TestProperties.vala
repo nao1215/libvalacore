@@ -30,10 +30,14 @@ void testSaveLoad () {
         Properties props = new Properties ();
         props.set ("k1", "v1");
         props.set ("k2", "v2");
-        assert (props.save (tmp) == true);
+        var saved = props.save (tmp);
+        assert (saved.isOk ());
+        assert (saved.unwrap () == true);
 
         Properties loaded = new Properties ();
-        assert (loaded.load (tmp) == true);
+        var loadResult = loaded.load (tmp);
+        assert (loadResult.isOk ());
+        assert (loadResult.unwrap () == true);
         assert (loaded.get ("k1") == "v1");
         assert (loaded.get ("k2") == "v2");
         assert (loaded.size () == 2);
@@ -53,7 +57,9 @@ void testLoadWithComments () {
         assert (Files.writeText (tmp, text) == true);
 
         Properties props = new Properties ();
-        assert (props.load (tmp) == true);
+        var loadResult = props.load (tmp);
+        assert (loadResult.isOk ());
+        assert (loadResult.unwrap () == true);
         assert (props.size () == 2);
         assert (props.get ("foo") == "bar");
         assert (props.get ("z") == "9");
@@ -80,7 +86,9 @@ void testSaveOrderAndEdgeCases () {
     assert (tmp != null);
 
     try {
-        assert (props.save (tmp) == true);
+        var saved = props.save (tmp);
+        assert (saved.isOk ());
+        assert (saved.unwrap () == true);
         string ? content = Files.readAllText (tmp);
         assert (content != null);
         assert (content == "a=1\nm=2\nz=3\n");
