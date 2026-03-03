@@ -1893,7 +1893,7 @@ Command-line argument parser with Builder pattern.
 | Method | Description |
 |---|---|
 | `addOption(string short, string long, string desc)` | Registers a command-line option |
-| `parse(string[] args)` | Parses command-line arguments |
+| `parse(string[] args)` | Parses command-line arguments (resets previous parse state each call) |
 | `hasOption(string shortOption)` | Returns whether the option was specified |
 | `usage()` | Prints usage information to stdout |
 | `showVersion()` | Prints application version to stdout |
