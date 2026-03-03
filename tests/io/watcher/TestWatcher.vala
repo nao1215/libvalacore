@@ -165,7 +165,8 @@ void testOnRenamed () {
     });
     Posix.usleep (100000);
 
-    assert (Files.move (new Vala.Io.Path (root + "/old.txt"), new Vala.Io.Path (root + "/new.txt")));
+    bool moved = Files.move (new Vala.Io.Path (root + "/old.txt"), new Vala.Io.Path (root + "/new.txt"));
+    assert (moved);
     assert (waitUntil (() => {
         return renamed;
     }, 1500));
