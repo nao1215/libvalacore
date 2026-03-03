@@ -138,7 +138,8 @@ namespace Vala.Io {
         /**
          * Executes a command with timeout.
          *
-         * This method uses coreutils `timeout` command on POSIX environments.
+         * Timeout is enforced internally by waiting on a worker thread and
+         * terminating the process when the deadline is exceeded.
          *
          * @param command shell command.
          * @param timeout timeout duration.
@@ -161,7 +162,7 @@ namespace Vala.Io {
             }
 
             return Result.ok<ShellResult, GLib.Error> (
-                runWithTimeout (command, timeoutMillis, false)
+                runWithTimeout (command, timeoutMillis)
             );
         }
 
@@ -251,7 +252,7 @@ namespace Vala.Io {
             );
         }
 
-        private static ShellResult runWithTimeout (string command, int64 timeoutMillis, bool quiet) {
+        private static ShellResult runWithTimeout (string command, int64 timeoutMillis) {
             int64 startMicros = GLib.get_monotonic_time ();
             Vala.Lang.Process ? proc = Vala.Lang.Process.execAsync (command);
             if (proc == null) {
@@ -311,10 +312,6 @@ namespace Vala.Io {
                     "failed to wait for process",
                     durationMillis
                 );
-            }
-
-            if (quiet) {
-                return new ShellResult (proc.exitCode (), "", "", durationMillis);
             }
 
             return new ShellResult (
