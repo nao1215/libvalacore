@@ -1338,7 +1338,7 @@ A map that stores multiple values for the same key.
 |---|---|
 | `MultiMap(HashFunc<K>, EqualFunc<K>, EqualFunc<V>?)` | Creates an empty MultiMap |
 | `put(K key, V value)` | Appends a value to the key |
-| `get(K key)` | Returns values for the key (empty list when missing) |
+| `get(K key)` | Returns a snapshot list for the key (empty list when missing) |
 | `containsKey(K key)` | Returns whether the key exists |
 | `remove(K key, V value)` | Removes the first matching value for the key |
 | `removeAll(K key)` | Removes all values for the key |

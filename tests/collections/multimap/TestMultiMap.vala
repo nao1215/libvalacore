@@ -3,6 +3,7 @@ using Vala.Collections;
 void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/collections/multimap/testPutGet", testPutGet);
+    Test.add_func ("/collections/multimap/testGetReturnsSnapshot", testGetReturnsSnapshot);
     Test.add_func ("/collections/multimap/testRemove", testRemove);
     Test.add_func ("/collections/multimap/testClear", testClear);
     Test.run ();
@@ -53,6 +54,27 @@ void testRemove () {
     map.put ("x", "2");
     assert (map.removeAll ("x") == true);
     assert (map.removeAll ("x") == false);
+}
+
+void testGetReturnsSnapshot () {
+    MultiMap<string, string> map = new MultiMap<string, string> (
+        GLib.str_hash,
+        GLib.str_equal,
+        GLib.str_equal
+    );
+
+    map.put ("k", "v1");
+    map.put ("k", "v2");
+
+    ArrayList<string> snapshot = map.get ("k");
+    assert (snapshot.size () == 2);
+    snapshot.add ("v3");
+    snapshot.removeAt (0);
+
+    ArrayList<string> actual = map.get ("k");
+    assert (actual.size () == 2);
+    assert (actual.get (0) == "v1");
+    assert (actual.get (1) == "v2");
 }
 
 void testClear () {

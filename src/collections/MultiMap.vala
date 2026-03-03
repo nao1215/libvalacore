@@ -1,6 +1,8 @@
 namespace Vala.Collections {
     /**
      * A map that can store multiple values per key.
+     *
+     * Thread-safety: NOT_THREAD_SAFE
      */
     public class MultiMap<K, V>: GLib.Object {
         private HashMap<K, ArrayList<V> > _map;
@@ -41,12 +43,12 @@ namespace Vala.Collections {
          * Returns values for a key.
          *
          * @param key lookup key.
-         * @return values list, or an empty list when missing.
+         * @return snapshot values list, or an empty list when missing.
          */
         public new ArrayList<V> get (K key) {
             ArrayList<V> ? list = _map.get (key);
             if (list != null) {
-                return list;
+                return copyValues (list);
             }
             return new ArrayList<V> (_value_equal);
         }
@@ -119,6 +121,14 @@ namespace Vala.Collections {
          */
         public void clear () {
             _map.clear ();
+        }
+
+        private ArrayList<V> copyValues (ArrayList<V> src) {
+            var copy = new ArrayList<V> (_value_equal);
+            for (int i = 0; i < src.size (); i++) {
+                copy.add (src.get (i));
+            }
+            return copy;
         }
     }
 }
