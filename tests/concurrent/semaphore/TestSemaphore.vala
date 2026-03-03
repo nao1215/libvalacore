@@ -91,7 +91,9 @@ void testAcquireTimeout () {
 
     var timeout = sem.acquireTimeout (Vala.Time.Duration.ofSeconds (0));
     assert (timeout.isError ());
-    assert (timeout.unwrapError ().message.index_of ("timeout=0ms") >= 0);
+    GLib.Error timeoutErr = timeout.unwrapError ();
+    assert (timeoutErr is SemaphoreError.TIMEOUT);
+    assert (timeoutErr.message.index_of ("timeout=0ms") >= 0);
 
     Thread<void *> releaser = new Thread<void *> ("releaser", () => {
         Posix.usleep (10000);
