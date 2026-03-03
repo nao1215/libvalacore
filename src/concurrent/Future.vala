@@ -11,6 +11,15 @@ namespace Vala.Concurrent {
     public delegate T RecoverFunc<T> (string message);
 
     /**
+     * Recoverable future await errors.
+     */
+    public errordomain FutureError {
+        TIMEOUT,
+        CANCELLED,
+        FAILED
+    }
+
+    /**
      * Represents the eventual result of an asynchronous computation.
      *
      * Future supports success/failure state tracking, blocking wait,
@@ -104,41 +113,88 @@ namespace Vala.Concurrent {
          * @return success value or null.
          */
         public T ? @await () {
-            _mutex.lock ();
-            while (!_done) {
-                _cond.wait (_mutex);
+            var waited = awaitResult (Duration.ofSeconds (-1));
+            if (waited.isError ()) {
+                return null;
             }
-            T ? value = _success ? _value : null;
-            _mutex.unlock ();
-            return value;
+            return waited.unwrap ();
         }
 
         /**
          * Waits for completion up to timeout.
          *
-         * Returns null when timed out, failed, cancelled, or when timeout is negative.
+         * Returns null when timed out, failed, or cancelled.
+         *
+         * Timeout semantics:
+         * - `0`: non-blocking check
+         * - `>0`: wait up to N milliseconds
+         * - `<0`: wait forever (explicit infinite wait)
          *
          * @param timeout wait timeout.
          * @return success value, or null.
          */
         public T ? awaitTimeout (Duration timeout) {
-            int64 timeout_millis = timeout.toMillis ();
-            if (timeout_millis < 0) {
+            var waited = awaitResult (timeout);
+            if (waited.isError ()) {
                 return null;
             }
+            return waited.unwrap ();
+        }
 
-            int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
+        /**
+         * Waits for completion and returns a Result contract.
+         *
+         * Timeout semantics:
+         * - `0`: non-blocking check
+         * - `>0`: wait up to N milliseconds
+         * - `<0`: wait forever (explicit infinite wait)
+         *
+         * @param timeout wait timeout.
+         * @return Result.ok(success value), or Result.error(FutureError.*) on timeout/cancel/failure.
+         */
+        public Result<T, GLib.Error> awaitResult (Duration timeout) {
+            int64 timeout_millis = timeout.toMillis ();
 
             _mutex.lock ();
-            while (!_done) {
-                if (!_cond.wait_until (_mutex, deadline)) {
+            if (timeout_millis == 0) {
+                if (!_done) {
                     _mutex.unlock ();
-                    return null;
+                    return Result.error<T, GLib.Error> (
+                        new FutureError.TIMEOUT ("future await timed out: timeout=0ms")
+                    );
+                }
+            } else if (timeout_millis < 0) {
+                while (!_done) {
+                    _cond.wait (_mutex);
+                }
+            } else {
+                int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
+                while (!_done) {
+                    if (!_cond.wait_until (_mutex, deadline)) {
+                        _mutex.unlock ();
+                        return Result.error<T, GLib.Error> (
+                            new FutureError.TIMEOUT (
+                                "future await timed out: timeout=%sms".printf (timeout_millis.to_string ())
+                            )
+                        );
+                    }
                 }
             }
-            T ? value = _success ? _value : null;
+
+            if (_success) {
+                T value = _value;
+                _mutex.unlock ();
+                return Result.ok<T, GLib.Error> (value);
+            }
+
+            bool cancelled = _cancelled;
+            string message = _error_message ?? (cancelled ? "cancelled" : "future failed");
             _mutex.unlock ();
-            return value;
+
+            if (cancelled) {
+                return Result.error<T, GLib.Error> (new FutureError.CANCELLED (message));
+            }
+            return Result.error<T, GLib.Error> (new FutureError.FAILED (message));
         }
 
         /**

@@ -886,7 +886,8 @@ Represents the eventual result of an asynchronous computation.
 | `completed<T>(T value)` | Creates an already successful future |
 | `failed<T>(string message)` | Creates an already failed future |
 | `await()` | Waits for completion and returns success value (value-type futures return default value on failure) |
-| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time (`null` when timeout is negative) |
+| `awaitResult(Duration timeout)` | Returns `Result<T, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; errors: `FutureError.TIMEOUT/CANCELLED/FAILED`) |
+| `awaitTimeout(Duration timeout)` | Legacy nullable wait API backed by `awaitResult` (`null` on timeout/cancel/failure) |
 | `isDone()` | Returns whether the future is completed |
 | `isSuccess()` | Returns whether the future is successful |
 | `isFailed()` | Returns whether the future failed |
