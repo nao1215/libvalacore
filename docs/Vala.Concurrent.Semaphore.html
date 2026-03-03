@@ -26,7 +26,7 @@
           <p>Counting semaphore.</p>
           <p>Semaphore controls concurrent access with permit counters. acquire() blocks when no permits are available; release() returns a permit.
           </p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> sem = <span class="main_keyword">new</span> Semaphore (<span class="main_literal">3</span>);<br/>    sem.acquire ();<br/>    <span class="main_keyword">try</span> {<br/>        <span class="main_comment">// bounded concurrency section</span><br/>    } <span class="main_keyword">finally</span> {<br/>        sem.release ();<br/>    }</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> created = Semaphore.of (<span class="main_literal">3</span>);<br/>    <span class="main_keyword">if</span> (created.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    <span class="main_keyword">var</span> sem = created.unwrap ();<br/>    sem.acquire ();<br/>    <span class="main_keyword">try</span> {<br/>        <span class="main_comment">// bounded concurrency section</span><br/>    } <span class="main_keyword">finally</span> {<br/>        sem.release ();<br/>    }</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
@@ -34,9 +34,9 @@
         <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
         </div>
         <h2 class="main_title">Content:</h2>
-        <h3 class="main_title">Creation methods:</h3>
+        <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Concurrent.Semaphore.Semaphore.html" class="creation_method">Semaphore</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.SemaphoreError.html" class="errordomain">SemaphoreError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Semaphore</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Concurrent.Semaphore.of.html" class="static_method">of</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates semaphore with initial permits.</span>
             </div></li>

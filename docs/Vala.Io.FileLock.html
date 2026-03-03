@@ -25,7 +25,7 @@
         <div class="description">
           <p>File-based inter-process lock.</p>
           <p>FileLock uses exclusive lock-file creation to coordinate critical sections across multiple processes.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> <span class="main_keyword">lock</span> = <span class="main_keyword">new</span> FileLock (<span class="main_keyword">new</span> Path (<span class="main_literal">"/tmp/myjob.lock"</span>));<br/>    <span class="main_keyword">if</span> (<span class="main_keyword">lock</span>.acquireTimeout (Duration.ofSeconds (<span class="main_literal">5</span>))) {<br/>        <span class="main_keyword">try</span> {<br/>            run_critical_job ();<br/>        } <span class="main_keyword">finally</span> {<br/>            <span class="main_keyword">lock</span>.release ();<br/>        }<br/>    }</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> <span class="main_keyword">lock</span> = <span class="main_keyword">new</span> FileLock (<span class="main_keyword">new</span> Path (<span class="main_literal">"/tmp/myjob.lock"</span>));<br/>    <span class="main_keyword">var</span> acquired = <span class="main_keyword">lock</span>.acquireTimeout (Duration.ofSeconds (<span class="main_literal">5</span>));<br/>    <span class="main_keyword">if</span> (acquired.isOk () &amp;&amp; acquired.unwrap ()) {<br/>        <span class="main_keyword">try</span> {<br/>            run_critical_job ();<br/>        } <span class="main_keyword">finally</span> {<br/>            <span class="main_keyword">lock</span>.release ();<br/>        }<br/>    }</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Io.html">Vala.Io</a>
@@ -46,7 +46,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Acquires lock, blocking until success.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Io.FileLock.acquireTimeout.html" class="method">acquireTimeout</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Io.FileLockError.html" class="errordomain">FileLockError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Io.FileLock.acquireTimeout.html" class="method">acquireTimeout</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Attempts to acquire lock within timeout.</span>
             </div></li>

@@ -45,7 +45,7 @@
         </ul>
         <h3 class="main_title">Methods:</h3>
         <ul class="navi_inline">
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.addNode.html" class="method">addNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.addNode.html" class="method">addNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Adds node to the hash set.</span>
             </div></li>
@@ -53,7 +53,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Removes all nodes and weights.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.containsNode.html" class="method">containsNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.containsNode.html" class="method">containsNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether node exists.</span>
             </div></li>
@@ -61,11 +61,11 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns distribution of sample keys per node.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Distributed.RendezvousHash.getNode.html" class="method">getNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>?,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.getNode.html" class="method">getNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns assigned node for a key.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.getTopNodes.html" class="method">getTopNodes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> n) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt;,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.getTopNodes.html" class="method">getTopNodes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> n)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns top-N nodes for key by score.</span>
             </div></li>
@@ -77,11 +77,11 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Estimates key remap ratio when one node is added.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.removeNode.html" class="method">removeNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.removeNode.html" class="method">removeNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Removes node from the hash set.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.RendezvousHash.setWeight.html" class="method">setWeight</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId, <span class="main_basic_type"><span class="struct">double</span></span> weight) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.RendezvousHash.setWeight.html" class="method">setWeight</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId, <span class="main_basic_type"><span class="struct">double</span></span> weight)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets weight for existing node.</span>
             </div></li>

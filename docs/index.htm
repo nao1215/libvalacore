@@ -103,6 +103,13 @@
             <li class="class"><a href="Vala.Archive.Zip.html">Zip</a> - <span class="brief_description">Static utility methods for Zip archive 
                 creation and extraction.</span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Archive.TarError.html">TarError</a> - <span class="brief_description">Error domain for tar archive 
+                operations.</span></li>
+            <li class="errordomain"><a href="Vala.Archive.ZipError.html">ZipError</a> - <span class="brief_description">Error domain for zip archive 
+                operations.</span></li>
+          </ul>
           <li class="namespace"><a href="Vala.Collections.html">Collections</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
@@ -222,6 +229,13 @@
             <li class="class"><a href="Vala.Compress.Zlib.html">Zlib</a> - <span class="brief_description">Static utility methods for Zlib compression
                 and decompression.</span></li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Compress.GzipError.html">GzipError</a> - <span class="brief_description">Error domain for gzip 
+                operations.</span></li>
+            <li class="errordomain"><a href="Vala.Compress.ZlibError.html">ZlibError</a> - <span class="brief_description">Error domain for zlib 
+                operations.</span></li>
+          </ul>
           <li class="namespace"><a href="Vala.Concurrent.html">Concurrent</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
@@ -331,6 +345,11 @@
             <li class="class"><a href="Vala.Conv.Convert.html">Convert</a> - <span class="brief_description">Type conversion utility methods.</span>
             </li>
           </ul>
+          <h3 class="main_title">Error domains:</h3>
+          <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Conv.ConvertError.html">ConvertError</a> - <span class="brief_description">Recoverable conversion 
+                errors.</span></li>
+          </ul>
           <li class="namespace"><a href="Vala.Crypto.html">Crypto</a></li>
           <h3 class="main_title">Classes:</h3>
           <ul class="navi_inline">
@@ -410,10 +429,16 @@
           </ul>
           <h3 class="main_title">Error domains:</h3>
           <ul class="navi_inline">
+            <li class="errordomain"><a href="Vala.Encoding.Base64Error.html">Base64Error</a> - <span class="brief_description">Error domain for Base64
+                codec operations.</span></li>
             <li class="errordomain"><a href="Vala.Encoding.CsvError.html">CsvError</a> - <span class="brief_description">Recoverable CSV argument 
                 errors.</span></li>
+            <li class="errordomain"><a href="Vala.Encoding.HexError.html">HexError</a> - <span class="brief_description">Error domain for hex codec 
+                operations.</span></li>
             <li class="errordomain"><a href="Vala.Encoding.JsonError.html">JsonError</a> - <span class="brief_description">Recoverable JSON operation 
                 errors.</span></li>
+            <li class="errordomain"><a href="Vala.Encoding.UrlError.html">UrlError</a> - <span class="brief_description">Error domain for URL codec 
+                operations.</span></li>
           </ul>
           <li class="namespace"><a href="Vala.Event.html">Event</a></li>
           <h3 class="main_title">Classes:</h3>
@@ -496,8 +521,14 @@
           <ul class="navi_inline">
             <li class="errordomain"><a href="Vala.Io.AtomicFileError.html">AtomicFileError</a> - <span class="brief_description">Recoverable 
                 AtomicFile argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Io.ConsoleError.html">ConsoleError</a> - <span class="brief_description">Recoverable console I/O 
+                errors.</span></li>
             <li class="errordomain"><a href="Vala.Io.FileLockError.html">FileLockError</a> - <span class="brief_description">Recoverable FileLock 
                 argument errors.</span></li>
+            <li class="errordomain"><a href="Vala.Io.FilesystemError.html">FilesystemError</a> - <span class="brief_description">Recoverable 
+                filesystem metadata errors.</span></li>
+            <li class="errordomain"><a href="Vala.Io.ResourceError.html">ResourceError</a> - <span class="brief_description">Recoverable resource 
+                loading errors.</span></li>
             <li class="errordomain"><a href="Vala.Io.ShellError.html">ShellError</a> - <span class="brief_description">Recoverable Shell argument 
                 errors.</span></li>
             <li class="errordomain"><a href="Vala.Io.WatcherError.html">WatcherError</a> - <span class="brief_description">Recoverable watcher 
@@ -630,6 +661,8 @@
           <ul class="navi_inline">
             <li class="errordomain"><a href="Vala.Net.CircuitBreakerError.html">CircuitBreakerError</a> - <span class="brief_description">Recoverable 
                 circuit breaker configuration errors.</span></li>
+            <li class="errordomain"><a href="Vala.Net.NetUrlError.html">NetUrlError</a> - <span class="brief_description">Recoverable URL parse 
+                errors.</span></li>
             <li class="errordomain"><a href="Vala.Net.RateLimiterError.html">RateLimiterError</a> - <span class="brief_description">Recoverable rate 
                 limiter operation errors.</span></li>
             <li class="errordomain"><a href="Vala.Net.RetryError.html">RetryError</a> - <span class="brief_description">Recoverable retry policy 
@@ -659,10 +692,10 @@
               <div class="leaf_brief_description"><span class="brief_description">Callback invoked by retry loop and interpreted as nullable result.
                 </span>
               </div></li>
-            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RetryVoidFunc.html" class="delegate">RetryVoidFunc</a></b> () <span class="main_keyword">throws</span> <span class="main_type"><span class="class">Error</span></span>
+            <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.RetryVoidFunc.html" class="delegate">RetryVoidFunc</a></b> ()
               </span>
-              <div class="leaf_brief_description"><span class="brief_description">Callback invoked by retry loop that may throw recoverable 
-                  GLib.Error.</span>
+              <div class="leaf_brief_description"><span class="brief_description">Callback invoked by retry loop with Result-style failure contract.
+                </span>
               </div></li>
             <li class="delegate"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.StateChangeCallback.html" class="delegate">StateChangeCallback</a></b> (<span class="main_type"><a href="Vala.Net.CircuitState.html" class="enum">CircuitState</a></span> from, <span class="main_type"><a href="Vala.Net.CircuitState.html" class="enum">CircuitState</a></span> to)
               </span>

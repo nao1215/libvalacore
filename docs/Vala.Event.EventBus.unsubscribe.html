@@ -13,7 +13,7 @@
         <h1 class="main_title">unsubscribe</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><span class="method">unsubscribe</span></b> (<span class="main_basic_type"><span class="class">string</span></span> topic) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">unsubscribe</span></b> (<span class="main_basic_type"><span class="class">string</span></span> topic)
         </div>
         <div class="description">
           <p>Unsubscribes all handlers from topic.</p>
@@ -26,12 +26,12 @@
               </td>
             </tr>
           </table>
-          <h2 class="main_title">Exceptions:</h2>
+          <h2 class="main_title">Returns:</h2>
           <table class="main_parameter_table">
             <tr>
-              <td class="main_parameter_table_name">EventBusError.INVALID_ARGUMENT</td>
               <td>
-                <p>when topic is empty. </p>
+                <p>Result.ok(true/false) where value indicates whether any subscriptions were removed, or Result.error(EventBusError.INVALID_ARGUMENT)
+                  when topic is empty. </p>
               </td>
             </tr>
           </table>

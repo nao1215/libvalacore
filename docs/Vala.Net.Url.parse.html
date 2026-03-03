@@ -13,7 +13,7 @@
         <h1 class="main_title">parse</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Net.Url.html" class="class">Url</a></span>? <b><span class="static_method">parse</span></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Net.Url.html" class="class">Url</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">parse</span></b> (<span class="main_basic_type"><span class="class">string</span></span> url)
         </div>
         <div class="description">
           <p>Parses URL text.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>parsed URL object or null. </p>
+                <p>Result.ok(parsed URL object), or Result.error(NetUrlError.INVALID_ARGUMENT/PARSE) on invalid input. </p>
               </td>
             </tr>
           </table>

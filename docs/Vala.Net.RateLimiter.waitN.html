@@ -13,7 +13,7 @@
         <h1 class="main_title">waitN</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><span class="method">waitN</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">waitN</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
         </div>
         <div class="description">
           <p>Waits until n permits are available and acquires them.</p>
@@ -27,12 +27,12 @@
               </td>
             </tr>
           </table>
-          <h2 class="main_title">Exceptions:</h2>
+          <h2 class="main_title">Returns:</h2>
           <table class="main_parameter_table">
             <tr>
-              <td class="main_parameter_table_name">RateLimiterError.INVALID_ARGUMENT</td>
               <td>
-                <p>when permits is not positive. </p>
+                <p>Result.ok(true) when permits are acquired, or Result.error(RateLimiterError.INVALID_ARGUMENT) when permits is not positive or 
+                  exceeds burst capacity. </p>
               </td>
             </tr>
           </table>

@@ -13,7 +13,7 @@
         <h1 class="main_title">getInt</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><span class="method">getInt</span></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> fallback = <span class="main_literal">0</span>) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">int</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">getInt</span></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> fallback = <span class="main_literal">0</span>)
         </div>
         <div class="description">
           <p>Returns int value or fallback on missing/parse failure.</p>
@@ -36,16 +36,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>parsed int or fallback. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">AppConfigError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when key is empty. </p>
+                <p>Result.ok(parsed int or fallback), or Result.error(AppConfigError.INVALID_ARGUMENT) when key is empty. </p>
               </td>
             </tr>
           </table>

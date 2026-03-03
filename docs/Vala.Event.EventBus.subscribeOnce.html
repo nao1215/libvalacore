@@ -13,7 +13,7 @@
         <h1 class="main_title">subscribeOnce</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Event.EventBus.html" class="class">EventBus</a></span> <b><span class="method">subscribeOnce</span></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Event.EventHandler.html" class="delegate">EventHandler</a></span> handler) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Event.EventBusError.html" class="errordomain">EventBusError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Event.EventBus.html" class="class">EventBus</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">subscribeOnce</span></b> (<span class="main_basic_type"><span class="class">string</span></span> topic, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Event.EventHandler.html" class="delegate">EventHandler</a></span> handler)
         </div>
         <div class="description">
           <p>Subscribes topic with one-shot handler.</p>
@@ -36,16 +36,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>this bus. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">EventBusError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when topic is empty. </p>
+                <p>Result.ok(this bus), or Result.error(EventBusError.INVALID_ARGUMENT) when topic is empty. </p>
               </td>
             </tr>
           </table>

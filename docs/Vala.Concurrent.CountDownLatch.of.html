@@ -2,18 +2,18 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-    <title>Vala.Concurrent.CountDownLatch.CountDownLatch &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <title>Vala.Concurrent.CountDownLatch.of &ndash; Valacore &ndash; Vala Binding Reference</title>
     <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
     </script>
   </head>
   <body>
-    <div class="site_header">Vala.Concurrent.CountDownLatch.CountDownLatch &ndash; Valacore Reference Manual</div>
+    <div class="site_header">Vala.Concurrent.CountDownLatch.of &ndash; Valacore Reference Manual</div>
     <div class="site_body">
       <div class="site_content">
-        <h1 class="main_title">CountDownLatch</h1>
+        <h1 class="main_title">of</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <b><span class="creation_method">CountDownLatch</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> count) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.CountDownLatchError.html" class="errordomain">CountDownLatchError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Concurrent.CountDownLatch.html" class="class">CountDownLatch</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">of</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> count)
         </div>
         <div class="description">
           <p>Creates latch with initial count.</p>
@@ -26,12 +26,11 @@
               </td>
             </tr>
           </table>
-          <h2 class="main_title">Exceptions:</h2>
+          <h2 class="main_title">Returns:</h2>
           <table class="main_parameter_table">
             <tr>
-              <td class="main_parameter_table_name">CountDownLatchError.INVALID_ARGUMENT</td>
               <td>
-                <p>when count is negative. </p>
+                <p>Result.ok(latch), or Result.error(CountDownLatchError.INVALID_ARGUMENT) when count is negative. </p>
               </td>
             </tr>
           </table>

@@ -13,7 +13,7 @@
         <h1 class="main_title">getOwner</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><span class="static_method">getOwner</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">getOwner</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
         </div>
         <div class="description">
           <p>Returns owner name for the path.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>owner name, or null on failure. </p>
+                <p>Result.ok(owner name), or Result.error(FilesystemError.*) on failure. </p>
               </td>
             </tr>
           </table>

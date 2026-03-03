@@ -13,7 +13,7 @@
         <h1 class="main_title">load</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Config.AppConfig.html" class="class">AppConfig</a></span> <b><span class="static_method">load</span></b> (<span class="main_basic_type"><span class="class">string</span></span> appName) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Config.AppConfigError.html" class="errordomain">AppConfigError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Config.AppConfig.html" class="class">AppConfig</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">load</span></b> (<span class="main_basic_type"><span class="class">string</span></span> appName)
         </div>
         <div class="description">
           <p>Loads config from standard paths using app name.</p>
@@ -32,16 +32,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>loaded AppConfig. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">AppConfigError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when appName is empty. </p>
+                <p>Result.ok(loaded AppConfig), or Result.error(AppConfigError.INVALID_ARGUMENT / LOAD_FAILED). </p>
               </td>
             </tr>
           </table>

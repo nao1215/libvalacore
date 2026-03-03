@@ -13,7 +13,7 @@
         <h1 class="main_title">getFileAttributes</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">FileInfo</span></span>? <b><span class="static_method">getFileAttributes</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">FileInfo</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">getFileAttributes</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> path)
         </div>
         <div class="description">
           <p>Returns file attributes for the given path.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>file attributes, or null on failure. </p>
+                <p>Result.ok(file attributes), or Result.error(FilesystemError.NOT_FOUND/IO) on failure. </p>
               </td>
             </tr>
           </table>

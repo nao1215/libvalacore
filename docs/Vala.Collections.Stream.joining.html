@@ -13,7 +13,7 @@
         <h1 class="main_title">joining</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><span class="method">joining</span></b> (<span class="main_basic_type"><span class="class">string</span></span> delimiter = <span class="main_literal">""</span>) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Collections.StreamError.html" class="errordomain">StreamError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">joining</span></b> (<span class="main_basic_type"><span class="class">string</span></span> delimiter = <span class="main_literal">""</span>)
         </div>
         <div class="description">
           <p>Joins stream elements into a string with a delimiter.</p>
@@ -31,16 +31,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>joined string. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">StreamError.UNSUPPORTED_TYPE</td>
-              <td>
-                <p>when T is not string. </p>
+                <p>Result.ok(joined string), or Result.error(StreamError.UNSUPPORTED_TYPE) when T is not string. </p>
               </td>
             </tr>
           </table>

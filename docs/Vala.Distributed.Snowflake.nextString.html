@@ -13,7 +13,7 @@
         <h1 class="main_title">nextString</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span> <b><span class="method">nextString</span></b> () <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.SnowflakeError.html" class="errordomain">SnowflakeError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">nextString</span></b> ()
         </div>
         <div class="description">
           <p>Generates next Snowflake ID as string.</p>
@@ -21,16 +21,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>next unique ID string. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">SnowflakeError</td>
-              <td>
-                <p>when nextId fails. </p>
+                <p>Result.ok(next unique ID string), or Result.error(...) when nextId fails. </p>
               </td>
             </tr>
           </table>

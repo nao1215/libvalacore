@@ -33,7 +33,7 @@
             thread.</p>
           <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> pool = WorkerPool.withDefault ();<br/>    pool.execute (() =&gt; {<br/>        <span class="main_comment">// background work</span><br/>    });<br/>    pool.shutdown ();</code></pre>
           </p>
-          <p>Example with return value: <pre class="main_source"><code>    <span class="main_keyword">var</span> pool = <span class="main_keyword">new</span> WorkerPool (<span class="main_literal">4</span>);<br/>    <span class="main_basic_type">int</span> result = pool.submitInt (() =&gt; { <span class="main_keyword">return</span> <span class="main_literal">42</span>; }).await ();<br/>    pool.shutdown ();</code></pre>
+          <p>Example with return value: <pre class="main_source"><code>    <span class="main_keyword">var</span> created = WorkerPool.of (<span class="main_literal">4</span>);<br/>    <span class="main_keyword">if</span> (created.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    <span class="main_keyword">var</span> pool = created.unwrap ();<br/>    <span class="main_basic_type">int</span> result = pool.submitInt (() =&gt; { <span class="main_keyword">return</span> <span class="main_literal">42</span>; }).await ();<br/>    pool.shutdown ();</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
@@ -43,17 +43,14 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">WorkerPool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Concurrent.WorkerPool.of.html" class="static_method">of</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> poolSize)
+            </span>
+            <div class="leaf_brief_description"><span class="brief_description">Creates a thread pool with the specified number of worker threads.
+              </span>
+            </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">WorkerPool</span></span> <b><a href="Vala.Concurrent.WorkerPool.withDefault.html" class="static_method">withDefault</a></b> ()
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates a thread pool with pool size equal to the number of CPU cores.
-              </span>
-            </div></li>
-        </ul>
-        <h3 class="main_title">Creation methods:</h3>
-        <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Concurrent.WorkerPool.WorkerPool.html" class="creation_method">WorkerPool</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> poolSize) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.WorkerPoolError.html" class="errordomain">WorkerPoolError</a></span>
-            </span>
-            <div class="leaf_brief_description"><span class="brief_description">Creates a thread pool with the specified number of worker threads.
               </span>
             </div></li>
         </ul>

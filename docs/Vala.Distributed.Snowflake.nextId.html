@@ -13,7 +13,7 @@
         <h1 class="main_title">nextId</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">int64</span></span> <b><span class="method">nextId</span></b> () <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.SnowflakeError.html" class="errordomain">SnowflakeError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">int64</span></span>?,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">nextId</span></b> ()
         </div>
         <div class="description">
           <p>Generates next Snowflake ID.</p>
@@ -21,22 +21,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>next unique ID. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">SnowflakeError.CLOCK_BEFORE_EPOCH</td>
-              <td>
-                <p>when current clock is before configured epoch. </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="main_parameter_table_name">SnowflakeError.TIMESTAMP_OVERFLOW</td>
-              <td>
-                <p>when 41-bit timestamp capacity is exceeded. </p>
+                <p>Result.ok(next unique ID), or Result.error(SnowflakeError.CLOCK_BEFORE_EPOCH/TIMESTAMP_OVERFLOW). </p>
               </td>
             </tr>
           </table>

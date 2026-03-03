@@ -44,7 +44,7 @@
         </ul>
         <h3 class="main_title">Methods:</h3>
         <ul class="navi_inline">
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.ConsistentHash.addNode.html" class="method">addNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.addNode.html" class="method">addNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Adds physical node to ring.</span>
             </div></li>
@@ -52,7 +52,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Clears all nodes and virtual ring state.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.ConsistentHash.containsNode.html" class="method">containsNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.containsNode.html" class="method">containsNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns whether node exists.</span>
             </div></li>
@@ -60,11 +60,11 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns key distribution across nodes for samples.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="class">string</span></span>? <b><a href="Vala.Distributed.ConsistentHash.getNode.html" class="method">getNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>?,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.getNode.html" class="method">getNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns assigned node for key.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.getNodes.html" class="method">getNodes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> count) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt;,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.getNodes.html" class="method">getNodes</a></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> count)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns up to count distinct nodes for replicas.</span>
             </div></li>
@@ -76,7 +76,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Estimates remapping ratio when one node is added.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Distributed.ConsistentHash.removeNode.html" class="method">removeNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.removeNode.html" class="method">removeNode</a></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Removes physical node from ring.</span>
             </div></li>
@@ -84,7 +84,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns total virtual node count.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">ConsistentHash</span></span> <b><a href="Vala.Distributed.ConsistentHash.withVirtualNodes.html" class="method">withVirtualNodes</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> replicas) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">ConsistentHash</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Distributed.ConsistentHash.withVirtualNodes.html" class="method">withVirtualNodes</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> replicas)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets virtual node count per physical node.</span>
             </div></li>

@@ -28,7 +28,7 @@
           <p>Suppresses duplicate concurrent work for the same key.</p>
           <p>SingleFlight ensures only one execution per key is running at a time. Concurrent callers for the same key wait and receive the same 
             result.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> group = <span class="main_keyword">new</span> SingleFlight ();<br/>    <span class="main_basic_type">int</span>? <span class="main_keyword">value</span> = group.@do&lt;<span class="main_basic_type">int</span>&gt; (<span class="main_literal">"user:42"</span>, () =&gt; {<br/>        <span class="main_keyword">return</span> <span class="main_literal">42</span>;<br/>    });<br/>    <span class="main_keyword">assert</span> (<span class="main_keyword">value</span> == <span class="main_literal">42</span>);</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> group = <span class="main_keyword">new</span> SingleFlight ();<br/>    <span class="main_keyword">var</span> result = group.@do&lt;<span class="main_basic_type">int</span>&gt; (<span class="main_literal">"user:42"</span>, () =&gt; {<br/>        <span class="main_keyword">return</span> <span class="main_literal">42</span>;<br/>    });<br/>    <span class="main_keyword">assert</span> (result.isOk ());<br/>    <span class="main_keyword">assert</span> (result.unwrap () == <span class="main_literal">42</span>);</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
@@ -45,7 +45,7 @@
         </ul>
         <h3 class="main_title">Methods:</h3>
         <ul class="navi_inline">
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><a href="Vala.Concurrent.SingleFlight.@do.html" class="method">@do</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_type"><a href="Vala.Concurrent.SingleFlightFunc.html" class="delegate">SingleFlightFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.SingleFlightError.html" class="errordomain">SingleFlightError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Concurrent.SingleFlight.@do.html" class="method">@do</a></b>&lt;<b><span>T</span></b>&gt; (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_type"><a href="Vala.Concurrent.SingleFlightFunc.html" class="delegate">SingleFlightFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Executes the function once for a key and shares the result.</span>
             </div></li>

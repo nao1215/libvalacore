@@ -13,11 +13,11 @@
         <h1 class="main_title">RetryVoidFunc</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_keyword">void</span> <b><span class="delegate">RetryVoidFunc</span></b> () <span class="main_keyword">throws</span> <span class="main_type"><span class="class">Error</span></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">delegate</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="delegate">RetryVoidFunc</span></b> ()
         </div>
         <div class="description">
-          <p>Callback invoked by retry loop that may throw recoverable GLib.Error.</p>
-          <p>Throwing an error is treated as a retryable failure unless predicate configured by withRetryOn() rejects it.</p>
+          <p>Callback invoked by retry loop with Result-style failure contract.</p>
+          <p>Returning Result.error is treated as a retryable failure unless predicate configured by withRetryOn() rejects it.</p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Net.html">Vala.Net</a>
         </div>

@@ -13,7 +13,7 @@
         <h1 class="main_title">withDeadline</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> <b><span class="static_method">withDeadline</span></b> (<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> parent, <span class="main_type"><a href="Vala.Time.DateTime.html" class="class">DateTime</a></span> deadline) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">withDeadline</span></b> (<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> parent, <span class="main_type"><a href="Vala.Time.DateTime.html" class="class">DateTime</a></span> deadline)
         </div>
         <div class="description">
           <p>Creates child context with absolute deadline.</p>
@@ -36,7 +36,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>deadline child context. </p>
+                <p>Result.ok(deadline child context), or Result.error(ContextError.INVALID_ARGUMENT) when parent is null. </p>
               </td>
             </tr>
           </table>

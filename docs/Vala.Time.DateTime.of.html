@@ -13,7 +13,7 @@
         <h1 class="main_title">of</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Time.DateTime.html" class="class">DateTime</a></span> <b><span class="static_method">of</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> year, <span class="main_basic_type"><span class="struct">int</span></span> month, <span class="main_basic_type"><span class="struct">int</span></span> day, <span class="main_basic_type"><span class="struct">int</span></span> hour, <span class="main_basic_type"><span class="struct">int</span></span> min, <span class="main_basic_type"><span class="struct">int</span></span> sec) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Time.DateTimeError.html" class="errordomain">DateTimeError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Time.DateTime.html" class="class">DateTime</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">of</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> year, <span class="main_basic_type"><span class="struct">int</span></span> month, <span class="main_basic_type"><span class="struct">int</span></span> day, <span class="main_basic_type"><span class="struct">int</span></span> hour, <span class="main_basic_type"><span class="struct">int</span></span> min, <span class="main_basic_type"><span class="struct">int</span></span> sec)
         </div>
         <div class="description">
           <p>Creates a date-time from components.</p>
@@ -60,16 +60,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>created date-time. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">DateTimeError.INVALID_COMPONENTS</td>
-              <td>
-                <p>when components are invalid. </p>
+                <p>Result.ok(created date-time), or Result.error(DateTimeError.INVALID_COMPONENTS) when components are invalid. </p>
               </td>
             </tr>
           </table>

@@ -32,18 +32,15 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Cron</span></span> <b><a href="Vala.Time.Cron.at.html" class="static_method">at</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> hour, <span class="main_basic_type"><span class="struct">int</span></span> minute) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Time.CronError.html" class="errordomain">CronError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Cron</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Time.Cron.at.html" class="static_method">at</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> hour, <span class="main_basic_type"><span class="struct">int</span></span> minute)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates daily scheduler at specific hour and minute.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">Cron</span></span> <b><a href="Vala.Time.Cron.every.html" class="static_method">every</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> interval) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Time.CronError.html" class="errordomain">CronError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Cron</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Time.Cron.every.html" class="static_method">every</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> interval)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates fixed-interval scheduler.</span>
             </div></li>
-        </ul>
-        <h3 class="main_title">Creation methods:</h3>
-        <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Time.Cron.Cron.html" class="creation_method">Cron</a></b> (<span class="main_basic_type"><span class="class">string</span></span> expression) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Time.CronError.html" class="errordomain">CronError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Cron</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Time.Cron.of.html" class="static_method">of</a></b> (<span class="main_basic_type"><span class="class">string</span></span> expression)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates scheduler from cron expression.</span>
             </div></li>
@@ -66,7 +63,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Starts scheduled execution.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Time.Cron.scheduleWithDelay.html" class="method">scheduleWithDelay</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> initialDelay, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Time.CronTask.html" class="delegate">CronTask</a></span> task) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Time.CronError.html" class="errordomain">CronError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Cron</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Time.Cron.scheduleWithDelay.html" class="method">scheduleWithDelay</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> initialDelay, <span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Time.CronTask.html" class="delegate">CronTask</a></span> task)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Starts scheduled execution with initial delay.</span>
             </div></li>

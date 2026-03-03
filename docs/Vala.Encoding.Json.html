@@ -64,9 +64,9 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Merges two JSON objects, with the second taking precedence.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> <b><a href="Vala.Encoding.Json.must.html" class="static_method">must</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Encoding.JsonError.html" class="errordomain">JsonError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Encoding.Json.must.html" class="static_method">must</a></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path)
             </span>
-            <div class="leaf_brief_description"><span class="brief_description">Returns a value at path or throws when missing.</span>
+            <div class="leaf_brief_description"><span class="brief_description">Returns a value at path or a recoverable error.</span>
             </div></li>
           <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span>? <b><a href="Vala.Encoding.Json.parse.html" class="static_method">parse</a></b> (<span class="main_basic_type"><span class="class">string</span></span> json)
             </span>

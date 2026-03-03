@@ -13,7 +13,7 @@
         <h1 class="main_title">withCancel</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> <b><span class="static_method">withCancel</span></b> (<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> parent) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">withCancel</span></b> (<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> parent)
         </div>
         <div class="description">
           <p>Creates child context that can be cancelled explicitly.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>cancellable child context. </p>
+                <p>Result.ok(cancellable child context), or Result.error(ContextError.INVALID_ARGUMENT) when parent is null. </p>
               </td>
             </tr>
           </table>

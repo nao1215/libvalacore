@@ -2,18 +2,18 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-    <title>Vala.Distributed.Snowflake.Snowflake &ndash; Valacore &ndash; Vala Binding Reference</title>
+    <title>Vala.Distributed.Snowflake.of &ndash; Valacore &ndash; Vala Binding Reference</title>
     <link href="devhelpstyle.css" rel="stylesheet" type="text/css"/><script src="scripts.js" type="text/javascript">
     </script>
   </head>
   <body>
-    <div class="site_header">Vala.Distributed.Snowflake.Snowflake &ndash; Valacore Reference Manual</div>
+    <div class="site_header">Vala.Distributed.Snowflake.of &ndash; Valacore Reference Manual</div>
     <div class="site_body">
       <div class="site_content">
-        <h1 class="main_title">Snowflake</h1>
+        <h1 class="main_title">of</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <b><span class="creation_method">Snowflake</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.SnowflakeError.html" class="errordomain">SnowflakeError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Distributed.Snowflake.html" class="class">Snowflake</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">of</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> nodeId)
         </div>
         <div class="description">
           <p>Creates a generator with node ID.</p>
@@ -26,12 +26,11 @@
               </td>
             </tr>
           </table>
-          <h2 class="main_title">Exceptions:</h2>
+          <h2 class="main_title">Returns:</h2>
           <table class="main_parameter_table">
             <tr>
-              <td class="main_parameter_table_name">SnowflakeError.INVALID_ARGUMENT</td>
               <td>
-                <p>when nodeId is out of range. </p>
+                <p>Result.ok(generator), or Result.error(SnowflakeError.INVALID_ARGUMENT) when nodeId is out of range. </p>
               </td>
             </tr>
           </table>

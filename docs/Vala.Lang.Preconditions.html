@@ -24,9 +24,9 @@
         </div>
         <div class="description">
           <p>Utility methods for precondition checks.</p>
-          <p>Methods in this class throw recoverable errors when a condition is violated. Use these checks for programmer errors (invalid arguments or
-            illegal state), and propagate the failure to callers.</p>
-          <p>Example: <pre class="main_source"><code>    Preconditions.checkArgument (port &gt; <span class="main_literal">0</span>, <span class="main_literal">"port must be positive"</span>);<br/>    Preconditions.checkState (is_initialized, <span class="main_literal">"not initialized"</span>);</code></pre>
+          <p>Methods in this class return Result values when a condition is violated. Use these checks for programmer errors (invalid arguments or 
+            illegal state), and propagate the failure contract to callers.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> argOk = Preconditions.checkArgument (port &gt; <span class="main_literal">0</span>, <span class="main_literal">"port must be positive"</span>);<br/>    <span class="main_keyword">if</span> (argOk.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    <span class="main_keyword">var</span> stateOk = Preconditions.checkState (is_initialized, <span class="main_literal">"not initialized"</span>);<br/>    <span class="main_keyword">if</span> (stateOk.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Lang.html">Vala.Lang</a>
@@ -36,11 +36,11 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_keyword">void</span> <b><a href="Vala.Lang.Preconditions.checkArgument.html" class="static_method">checkArgument</a></b> (<span class="main_basic_type"><span class="struct">bool</span></span> cond, <span class="main_basic_type"><span class="class">string</span></span> message) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.PreconditionError.html" class="errordomain">PreconditionError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Lang.Preconditions.checkArgument.html" class="static_method">checkArgument</a></b> (<span class="main_basic_type"><span class="struct">bool</span></span> cond, <span class="main_basic_type"><span class="class">string</span></span> message)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Checks argument preconditions.</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_keyword">void</span> <b><a href="Vala.Lang.Preconditions.checkState.html" class="static_method">checkState</a></b> (<span class="main_basic_type"><span class="struct">bool</span></span> cond, <span class="main_basic_type"><span class="class">string</span></span> message) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.PreconditionError.html" class="errordomain">PreconditionError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Lang.Preconditions.checkState.html" class="static_method">checkState</a></b> (<span class="main_basic_type"><span class="struct">bool</span></span> cond, <span class="main_basic_type"><span class="class">string</span></span> message)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Checks state preconditions.</span>
             </div></li>

@@ -27,7 +27,7 @@
         <div class="description">
           <p>Thread-safe string message-passing channel.</p>
           <p>In unbuffered mode (default), send blocks until a receiver calls receive, providing strict rendezvous semantics.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> ch = ChannelString.buffered (<span class="main_literal">5</span>);<br/>    ch.send (<span class="main_literal">"hello"</span>);<br/>    <span class="main_basic_type">string</span> msg = ch.receive ();</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> created = ChannelString.buffered (<span class="main_literal">5</span>);<br/>    <span class="main_keyword">if</span> (created.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    <span class="main_keyword">var</span> ch = created.unwrap ();<br/>    ch.send (<span class="main_literal">"hello"</span>);<br/>    <span class="main_basic_type">string</span> msg = ch.receive ();</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
@@ -37,7 +37,7 @@
         <h2 class="main_title">Content:</h2>
         <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><span class="class">ChannelString</span></span> <b><a href="Vala.Concurrent.ChannelString.buffered.html" class="static_method">buffered</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> capacity) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.ChannelError.html" class="errordomain">ChannelError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">ChannelString</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Concurrent.ChannelString.buffered.html" class="static_method">buffered</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> capacity)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates a buffered string channel.</span>
             </div></li>

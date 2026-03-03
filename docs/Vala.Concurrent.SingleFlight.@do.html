@@ -13,7 +13,7 @@
         <h1 class="main_title">@do</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><span class="method">@do</span></b>&lt;<b><span>T</span></b>&gt; (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_type"><a href="Vala.Concurrent.SingleFlightFunc.html" class="delegate">SingleFlightFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.SingleFlightError.html" class="errordomain">SingleFlightError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">@do</span></b>&lt;<b><span>T</span></b>&gt; (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_type"><a href="Vala.Concurrent.SingleFlightFunc.html" class="delegate">SingleFlightFunc</a></span>&lt;<span class="main_type"><span>T</span></span>&gt; fn)
         </div>
         <div class="description">
           <p>Executes the function once for a key and shares the result.</p>
@@ -37,28 +37,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>shared result. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">SingleFlightError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when key is empty. </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="main_parameter_table_name">SingleFlightError.TYPE_MISMATCH</td>
-              <td>
-                <p>when the key is in flight with another value type. </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="main_parameter_table_name">SingleFlightError.INTERNAL_STATE</td>
-              <td>
-                <p>when internal entry state is corrupted. </p>
+                <p>Result.ok(shared result), or Result.error(SingleFlightError.INVALID_ARGUMENT / TYPE_MISMATCH / INTERNAL_STATE). </p>
               </td>
             </tr>
           </table>

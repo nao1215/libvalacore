@@ -13,7 +13,7 @@
         <h1 class="main_title">decode</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">uint8</span></span>[] <b><span class="static_method">decode</span></b> (<span class="main_basic_type"><span class="class">string</span></span> encoded)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Bytes</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">decode</span></b> (<span class="main_basic_type"><span class="class">string</span></span> encoded)
         </div>
         <div class="description">
           <p>Decodes Base64 text into bytes.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>decoded bytes. </p>
+                <p>Result.ok(decoded bytes), or Result.error(Base64Error.INVALID_ARGUMENT/PARSE) on invalid input. </p>
               </td>
             </tr>
           </table>

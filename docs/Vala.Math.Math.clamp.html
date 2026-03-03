@@ -13,7 +13,7 @@
         <h1 class="main_title">clamp</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">double</span></span> <b><span class="static_method">clamp</span></b> (<span class="main_basic_type"><span class="struct">double</span></span> x, <span class="main_basic_type"><span class="struct">double</span></span> lo, <span class="main_basic_type"><span class="struct">double</span></span> hi) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Math.MathError.html" class="errordomain">MathError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">double</span></span>?,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">clamp</span></b> (<span class="main_basic_type"><span class="struct">double</span></span> x, <span class="main_basic_type"><span class="struct">double</span></span> lo, <span class="main_basic_type"><span class="struct">double</span></span> hi)
         </div>
         <div class="description">
           <p>Clamps value into [lo, hi].</p>
@@ -42,16 +42,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>clamped value. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">MathError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when lo is greater than hi. </p>
+                <p>Result.ok(clamped value) or Result.error(MathError.INVALID_ARGUMENT) when lo is greater than hi. </p>
               </td>
             </tr>
           </table>

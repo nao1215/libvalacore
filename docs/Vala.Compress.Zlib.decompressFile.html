@@ -13,7 +13,7 @@
         <h1 class="main_title">decompressFile</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><span class="static_method">decompressFile</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> src, <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> dst)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">decompressFile</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> src, <span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> dst)
         </div>
         <div class="description">
           <p>Decompresses a source zlib file and writes it to destination.</p>
@@ -36,7 +36,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>true on success. </p>
+                <p>Result.ok(true) on success, or Result.error(ZlibError) on failure. </p>
               </td>
             </tr>
           </table>

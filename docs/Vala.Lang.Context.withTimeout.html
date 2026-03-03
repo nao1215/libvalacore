@@ -13,7 +13,7 @@
         <h1 class="main_title">withTimeout</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> <b><span class="static_method">withTimeout</span></b> (<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> parent, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.ContextError.html" class="errordomain">ContextError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">withTimeout</span></b> (<span class="main_type"><a href="Vala.Lang.Context.html" class="class">Context</a></span> parent, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> timeout)
         </div>
         <div class="description">
           <p>Creates child context cancelled on timeout.</p>
@@ -36,7 +36,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>timeout child context. </p>
+                <p>Result.ok(timeout child context), or Result.error(ContextError.INVALID_ARGUMENT) on invalid inputs. </p>
               </td>
             </tr>
           </table>

@@ -25,7 +25,7 @@
         <div class="description">
           <p>Random utility methods.</p>
           <p>This class offers common random operations for quick application logic: bounded integers, doubles, and in-place array shuffling.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">int</span> id = Randoms.nextInt (<span class="main_literal">1000</span>);<br/>    <span class="main_basic_type">double</span> ratio = Randoms.nextDouble ();<br/><br/>    <span class="main_basic_type">int</span>[] values = { <span class="main_literal">1</span>, <span class="main_literal">2</span>, <span class="main_literal">3</span>, <span class="main_literal">4</span> };<br/>    Randoms.shuffle&lt;<span class="main_basic_type">int</span>&gt; (values);</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> idResult = Randoms.nextInt (<span class="main_literal">1000</span>);<br/>    <span class="main_keyword">if</span> (idResult.isOk ()) {<br/>        <span class="main_basic_type">int</span> id = idResult.unwrap ();<br/>    }<br/>    <span class="main_basic_type">double</span> ratio = Randoms.nextDouble ();<br/><br/>    <span class="main_basic_type">int</span>[] values = { <span class="main_literal">1</span>, <span class="main_literal">2</span>, <span class="main_literal">3</span>, <span class="main_literal">4</span> };<br/>    Randoms.shuffle&lt;<span class="main_basic_type">int</span>&gt; (values);</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Lang.html">Vala.Lang</a>
@@ -39,7 +39,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns a random double in [0.0, 1.0).</span>
             </div></li>
-          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">int</span></span> <b><a href="Vala.Lang.Randoms.nextInt.html" class="static_method">nextInt</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> bound) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.RandomsError.html" class="errordomain">RandomsError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">int</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Lang.Randoms.nextInt.html" class="static_method">nextInt</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> bound)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Returns a random integer in [0, bound).</span>
             </div></li>

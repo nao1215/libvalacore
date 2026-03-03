@@ -13,7 +13,7 @@
         <h1 class="main_title">@get</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span>T</span></span> <b><span class="method">@get</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> index) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Collections.ImmutableListError.html" class="errordomain">ImmutableListError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span>T</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">@get</span></b> (<span class="main_basic_type"><span class="struct">int</span></span> index)
         </div>
         <div class="description">
           <p>Returns element at index.</p>
@@ -30,16 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>element at index. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">ImmutableListError.INDEX_OUT_OF_BOUNDS</td>
-              <td>
-                <p>when index is outside [0, size). </p>
+                <p>Result.ok(element) on success, or Result.error(ImmutableListError.INDEX_OUT_OF_BOUNDS) when index is outside [0, size). </p>
               </td>
             </tr>
           </table>

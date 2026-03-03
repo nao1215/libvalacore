@@ -13,11 +13,11 @@
         <h1 class="main_title">must</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> <b><span class="static_method">must</span></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Encoding.JsonError.html" class="errordomain">JsonError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">must</span></b> (<span class="main_type"><a href="Vala.Encoding.JsonValue.html" class="class">JsonValue</a></span> root, <span class="main_basic_type"><span class="class">string</span></span> path)
         </div>
         <div class="description">
-          <p>Returns a value at path or throws when missing.</p>
-          <p>Example: <pre class="main_source"><code>    JsonValue <span class="main_keyword">value</span> = Json.must (root, <span class="main_literal">"$.user.id"</span>);</code></pre>
+          <p>Returns a value at path or a recoverable error.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> valueResult = Json.must (root, <span class="main_literal">"$.user.id"</span>);<br/>    <span class="main_keyword">if</span> (valueResult.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    JsonValue <span class="main_keyword">value</span> = valueResult.unwrap ();</code></pre>
           </p>
           <h2 class="main_title">Parameters:</h2>
           <table class="main_parameter_table">
@@ -38,22 +38,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>value at path. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">JsonError.INVALID_PATH</td>
-              <td>
-                <p>when path is empty or malformed. </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="main_parameter_table_name">JsonError.NOT_FOUND</td>
-              <td>
-                <p>when no value exists at path. </p>
+                <p>Result.ok(value at path), or Result.error(JsonError.INVALID_PATH/JsonError.NOT_FOUND). </p>
               </td>
             </tr>
           </table>

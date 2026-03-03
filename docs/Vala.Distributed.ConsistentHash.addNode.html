@@ -13,7 +13,7 @@
         <h1 class="main_title">addNode</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><span class="method">addNode</span></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.ConsistentHashError.html" class="errordomain">ConsistentHashError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">addNode</span></b> (<span class="main_basic_type"><span class="class">string</span></span> nodeId)
         </div>
         <div class="description">
           <p>Adds physical node to ring.</p>
@@ -30,16 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>true when node is newly added. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">ConsistentHashError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when nodeId is empty. </p>
+                <p>Result.ok(true/false) for add outcome, or Result.error(ConsistentHashError.INVALID_ARGUMENT) when nodeId is empty. </p>
               </td>
             </tr>
           </table>

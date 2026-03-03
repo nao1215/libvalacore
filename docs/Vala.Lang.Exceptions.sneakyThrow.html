@@ -13,25 +13,24 @@
         <h1 class="main_title">sneakyThrow</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_keyword">void</span> <b><span class="static_method">sneakyThrow</span></b> (<span class="main_type"><span class="class">Error</span></span> e) <span class="main_keyword">throws</span> <span class="main_type"><span class="class">Error</span></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">sneakyThrow</span></b> (<span class="main_type"><span class="class">Error</span></span> e)
         </div>
         <div class="description">
-          <p>Rethrows the provided error.</p>
+          <p>Converts the provided error into a failed Result.</p>
           <h2 class="main_title">Parameters:</h2>
           <table class="main_parameter_table">
             <tr>
               <td class="main_parameter_table_name">e</td>
               <td>
-                <p>error to rethrow. </p>
+                <p>error to propagate. </p>
               </td>
             </tr>
           </table>
-          <h2 class="main_title">Exceptions:</h2>
+          <h2 class="main_title">Returns:</h2>
           <table class="main_parameter_table">
             <tr>
-              <td class="main_parameter_table_name">GLib.Error</td>
               <td>
-                <p>always throws the provided error. </p>
+                <p>Result.error carrying the provided error. </p>
               </td>
             </tr>
           </table>

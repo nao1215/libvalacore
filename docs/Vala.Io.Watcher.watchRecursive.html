@@ -13,7 +13,7 @@
         <h1 class="main_title">watchRecursive</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Io.FileWatcher.html" class="class">FileWatcher</a></span> <b><span class="static_method">watchRecursive</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> root) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Io.WatcherError.html" class="errordomain">WatcherError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Io.FileWatcher.html" class="class">FileWatcher</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">watchRecursive</span></b> (<span class="main_type"><a href="Vala.Io.Path.html" class="class">Path</a></span> root)
         </div>
         <div class="description">
           <p>Starts recursive directory watch.</p>
@@ -30,28 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>watcher instance. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">WatcherError.PATH_NOT_FOUND</td>
-              <td>
-                <p>when root does not exist. </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="main_parameter_table_name">WatcherError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when root is not a directory. </p>
-              </td>
-            </tr>
-            <tr>
-              <td class="main_parameter_table_name">WatcherError.MONITOR_SETUP_FAILED</td>
-              <td>
-                <p>when monitor setup fails. </p>
+                <p>Result.ok(watcher instance), or Result.error(WatcherError.PATH_NOT_FOUND / INVALID_ARGUMENT / MONITOR_SETUP_FAILED). </p>
               </td>
             </tr>
           </table>

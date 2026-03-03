@@ -28,7 +28,7 @@
           <p>Countdown latch for one-shot synchronization.</p>
           <p>CountDownLatch starts with a fixed counter. Worker threads call countDown(), and waiting thread(s) block in await() until the counter 
             reaches zero.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> latch = <span class="main_keyword">new</span> CountDownLatch (<span class="main_literal">2</span>);<br/>    <span class="main_comment">// Two workers call latch.countDown()</span><br/>    latch.@await ();</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> created = CountDownLatch.of (<span class="main_literal">2</span>);<br/>    <span class="main_keyword">if</span> (created.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    <span class="main_keyword">var</span> latch = created.unwrap ();<br/>    <span class="main_comment">// Two workers call latch.countDown()</span><br/>    latch.@await ();</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Concurrent.html">Vala.Concurrent</a>
@@ -36,9 +36,9 @@
         <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
         </div>
         <h2 class="main_title">Content:</h2>
-        <h3 class="main_title">Creation methods:</h3>
+        <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Concurrent.CountDownLatch.CountDownLatch.html" class="creation_method">CountDownLatch</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> count) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Concurrent.CountDownLatchError.html" class="errordomain">CountDownLatchError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">CountDownLatch</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Concurrent.CountDownLatch.of.html" class="static_method">of</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> count)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates latch with initial count.</span>
             </div></li>

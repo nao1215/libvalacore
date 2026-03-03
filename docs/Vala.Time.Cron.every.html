@@ -13,7 +13,7 @@
         <h1 class="main_title">every</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Time.Cron.html" class="class">Cron</a></span> <b><span class="static_method">every</span></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> interval) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Time.CronError.html" class="errordomain">CronError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Time.Cron.html" class="class">Cron</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">every</span></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> interval)
         </div>
         <div class="description">
           <p>Creates fixed-interval scheduler.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>Cron scheduler. </p>
+                <p>Result.ok(scheduler), or Result.error(CronError.INVALID_ARGUMENT) when interval is not positive. </p>
               </td>
             </tr>
           </table>

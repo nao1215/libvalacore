@@ -13,7 +13,7 @@
         <h1 class="main_title">getTopNodes</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt; <b><span class="method">getTopNodes</span></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> n) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Distributed.RendezvousHashError.html" class="errordomain">RendezvousHashError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Collections.ArrayList.html" class="class">ArrayList</a></span>&lt;<span class="main_basic_type"><span class="class">string</span></span>&gt;,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">getTopNodes</span></b> (<span class="main_basic_type"><span class="class">string</span></span> key, <span class="main_basic_type"><span class="struct">int</span></span> n)
         </div>
         <div class="description">
           <p>Returns top-N nodes for key by score.</p>
@@ -36,16 +36,8 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>sorted node list by descending score. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">RendezvousHashError.INVALID_ARGUMENT</td>
-              <td>
-                <p>when key is empty or n is not positive. </p>
+                <p>Result.ok(sorted node list by descending score), or Result.error(RendezvousHashError.INVALID_ARGUMENT) when key is empty or n is 
+                  not positive. </p>
               </td>
             </tr>
           </table>

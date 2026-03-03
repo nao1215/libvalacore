@@ -13,7 +13,7 @@
         <h1 class="main_title">toInt</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">int</span></span>? <b><span class="static_method">toInt</span></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">int</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">toInt</span></b> (<span class="main_basic_type"><span class="class">string</span></span> s)
         </div>
         <div class="description">
           <p>Converts string to int.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>parsed integer, or null on failure. </p>
+                <p>Result.ok(parsed integer), or Result.error(ConvertError.PARSE) when parsing fails. </p>
               </td>
             </tr>
           </table>

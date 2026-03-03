@@ -13,7 +13,7 @@
         <h1 class="main_title">decompress</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_basic_type"><span class="struct">uint8</span></span>[]? <b><span class="static_method">decompress</span></b> (<span class="main_basic_type"><span class="struct">uint8</span></span>[] data)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Bytes</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">decompress</span></b> (<span class="main_basic_type"><span class="struct">uint8</span></span>[] data)
         </div>
         <div class="description">
           <p>Decompresses Gzip bytes.</p>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>decompressed bytes, or null on invalid input. </p>
+                <p>Result.ok(decompressed bytes), or Result.error(GzipError.PARSE) on invalid input. </p>
               </td>
             </tr>
           </table>

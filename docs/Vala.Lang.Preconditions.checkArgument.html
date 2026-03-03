@@ -13,11 +13,11 @@
         <h1 class="main_title">checkArgument</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_keyword">void</span> <b><span class="static_method">checkArgument</span></b> (<span class="main_basic_type"><span class="struct">bool</span></span> cond, <span class="main_basic_type"><span class="class">string</span></span> message) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Lang.PreconditionError.html" class="errordomain">PreconditionError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">checkArgument</span></b> (<span class="main_basic_type"><span class="struct">bool</span></span> cond, <span class="main_basic_type"><span class="class">string</span></span> message)
         </div>
         <div class="description">
           <p>Checks argument preconditions.</p>
-          <p>Example: <pre class="main_source"><code>    Preconditions.checkArgument (name.length &gt; <span class="main_literal">0</span>, <span class="main_literal">"name must not be empty"</span>);</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> result = Preconditions.checkArgument (name.length &gt; <span class="main_literal">0</span>, <span class="main_literal">"name must not be empty"</span>);<br/>    <span class="main_keyword">if</span> (result.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }</code></pre>
           </p>
           <h2 class="main_title">Parameters:</h2>
           <table class="main_parameter_table">
@@ -34,12 +34,11 @@
               </td>
             </tr>
           </table>
-          <h2 class="main_title">Exceptions:</h2>
+          <h2 class="main_title">Returns:</h2>
           <table class="main_parameter_table">
             <tr>
-              <td class="main_parameter_table_name">PreconditionError.INVALID_ARGUMENT</td>
               <td>
-                <p>when condition is false. </p>
+                <p>Result.ok(true) on success, or Result.error(PreconditionError.INVALID_ARGUMENT) when condition is false. </p>
               </td>
             </tr>
           </table>

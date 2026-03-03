@@ -26,7 +26,7 @@
           <p>Atomic file update helper.</p>
           <p>AtomicFile writes data by replacing file contents in a single step, reducing risk of partial writes and corrupted configuration files. 
             Optional backup support keeps previous contents before replacement.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> atomic = <span class="main_keyword">new</span> AtomicFile ()<br/>        .withBackup (<span class="main_literal">true</span>)<br/>        .backupSuffix (<span class="main_literal">".bak"</span>);<br/><br/>    <span class="main_basic_type">bool</span> ok = atomic.write (<span class="main_keyword">new</span> Path (<span class="main_literal">"/tmp/app.conf"</span>), <span class="main_literal">"port=8080</span><span class="main_escape">\n</span><span class="main_literal">"</span>);</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> configured = <span class="main_keyword">new</span> AtomicFile ()<br/>        .withBackup (<span class="main_literal">true</span>)<br/>        .backupSuffix (<span class="main_literal">".bak"</span>);<br/>    <span class="main_keyword">assert</span> (configured.isOk ());<br/>    <span class="main_keyword">var</span> atomic = configured.unwrap ();<br/><br/>    <span class="main_basic_type">bool</span> ok = atomic.write (<span class="main_keyword">new</span> Path (<span class="main_literal">"/tmp/app.conf"</span>), <span class="main_literal">"port=8080</span><span class="main_escape">\n</span><span class="main_literal">"</span>);</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Io.html">Vala.Io</a>
@@ -48,7 +48,7 @@
             <div class="leaf_brief_description"><span class="brief_description">Appends text by reading current content and writing merged content 
                 atomically.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">AtomicFile</span></span> <b><a href="Vala.Io.AtomicFile.backupSuffix.html" class="method">backupSuffix</a></b> (<span class="main_basic_type"><span class="class">string</span></span> suffix) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Io.AtomicFileError.html" class="errordomain">AtomicFileError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">AtomicFile</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Io.AtomicFile.backupSuffix.html" class="method">backupSuffix</a></b> (<span class="main_basic_type"><span class="class">string</span></span> suffix)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets backup suffix used when backup is enabled.</span>
             </div></li>

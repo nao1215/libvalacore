@@ -16,8 +16,8 @@
         <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><span class="method">retryVoid</span></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Net.RetryVoidFunc.html" class="delegate">RetryVoidFunc</a></span> fn)
         </div>
         <div class="description">
-          <p>Retries callback that may throw GLib.Error.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">bool</span> ok = retry.retryVoid (() =&gt; {<br/>        do_operation_that_may_throw ();<br/>    });</code></pre>
+          <p>Retries callback that returns Result.</p>
+          <p>Example: <pre class="main_source"><code>    <span class="main_basic_type">bool</span> ok = retry.retryVoid (() =&gt; {<br/>        <span class="main_keyword">return</span> do_operation ();<br/>    });</code></pre>
           </p>
           <h2 class="main_title">Parameters:</h2>
           <table class="main_parameter_table">

@@ -26,7 +26,7 @@
           <p>Retry policy for resilient operations such as HTTP calls or lock acquisition.</p>
           <p>This class encapsulates: - maximum attempts - delay strategy (fixed or exponential backoff) - optional jitter - retry predicate and 
             callback hooks</p>
-          <p>Example: <pre class="main_source"><code>    Retry retry = Retry.networkDefault ()<br/>        .withMaxAttempts (<span class="main_literal">3</span>)<br/>        .onRetry ((attempt, reason, delay) =&gt; {<br/>            print (<span class="main_literal">"retry </span><span class="main_escape">%d</span><span class="main_literal">: </span><span class="main_escape">%s</span><span class="main_literal"> (%"</span> + <span class="main_basic_type">int64</span>.FORMAT + <span class="main_literal">"ms)</span><span class="main_escape">\n</span><span class="main_literal">"</span>, attempt, reason, delay);<br/>        });<br/><br/>    <span class="main_basic_type">bool</span> ok = retry.retry (() =&gt; {<br/>        <span class="main_keyword">return</span> call_external_service ();<br/>    });</code></pre>
+          <p>Example: <pre class="main_source"><code>    Retry retry = Retry.networkDefault ();<br/>    <span class="main_keyword">var</span> configured = retry.withMaxAttempts (<span class="main_literal">3</span>);<br/>    <span class="main_keyword">if</span> (configured.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    retry.onRetry ((attempt, reason, delay) =&gt; {<br/>            print (<span class="main_literal">"retry </span><span class="main_escape">%d</span><span class="main_literal">: </span><span class="main_escape">%s</span><span class="main_literal"> (%"</span> + <span class="main_basic_type">int64</span>.FORMAT + <span class="main_literal">"ms)</span><span class="main_escape">\n</span><span class="main_literal">"</span>, attempt, reason, delay);<br/>        });<br/><br/>    <span class="main_basic_type">bool</span> ok = retry.retry (() =&gt; {<br/>        <span class="main_keyword">return</span> call_external_service ();<br/>    });</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Net.html">Vala.Net</a>
@@ -74,13 +74,13 @@
             </div></li>
           <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.Retry.retryVoid.html" class="method">retryVoid</a></b> (<span class="main_keyword">owned</span> <span class="main_type"><a href="Vala.Net.RetryVoidFunc.html" class="delegate">RetryVoidFunc</a></span> fn)
             </span>
-            <div class="leaf_brief_description"><span class="brief_description">Retries callback that may throw GLib.Error.</span>
+            <div class="leaf_brief_description"><span class="brief_description">Retries callback that returns Result.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Retry</span></span> <b><a href="Vala.Net.Retry.withBackoff.html" class="method">withBackoff</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> initial, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> max) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RetryError.html" class="errordomain">RetryError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Retry</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.Retry.withBackoff.html" class="method">withBackoff</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> initial, <span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> max)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets exponential backoff strategy.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Retry</span></span> <b><a href="Vala.Net.Retry.withFixedDelay.html" class="method">withFixedDelay</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> delay) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RetryError.html" class="errordomain">RetryError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Retry</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.Retry.withFixedDelay.html" class="method">withFixedDelay</a></b> (<span class="main_type"><a href="Vala.Time.Duration.html" class="class">Duration</a></span> delay)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets fixed delay strategy.</span>
             </div></li>
@@ -88,7 +88,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Enables or disables random jitter.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">Retry</span></span> <b><a href="Vala.Net.Retry.withMaxAttempts.html" class="method">withMaxAttempts</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> n) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RetryError.html" class="errordomain">RetryError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">Retry</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.Retry.withMaxAttempts.html" class="method">withMaxAttempts</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> n)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets maximum attempts.</span>
             </div></li>

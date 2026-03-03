@@ -13,10 +13,10 @@
         <h1 class="main_title">parse</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Math.BigDecimal.html" class="class">BigDecimal</a></span>? <b><span class="static_method">parse</span></b> (<span class="main_basic_type"><span class="class">string</span></span> value)
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Math.BigDecimal.html" class="class">BigDecimal</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="static_method">parse</span></b> (<span class="main_basic_type"><span class="class">string</span></span> value)
         </div>
         <div class="description">
-          <p>Parses decimal text and returns null for invalid input.</p>
+          <p>Parses decimal text.</p>
           <h2 class="main_title">Parameters:</h2>
           <table class="main_parameter_table">
             <tr>
@@ -30,7 +30,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>parsed value or null. </p>
+                <p>Result.ok(parsed decimal), or Result.error(BigDecimalError.INVALID_ARGUMENT) for invalid text. </p>
               </td>
             </tr>
           </table>

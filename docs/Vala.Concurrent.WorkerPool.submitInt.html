@@ -17,7 +17,7 @@
         </div>
         <div class="description">
           <p>Submits a task that returns an int and returns a PromiseInt representing the pending result.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> pool = <span class="main_keyword">new</span> WorkerPool (<span class="main_literal">2</span>);<br/>    <span class="main_keyword">var</span> promise = pool.submitInt (() =&gt; { <span class="main_keyword">return</span> <span class="main_literal">42</span>; });<br/>    <span class="main_basic_type">int</span> result = promise.await ();<br/>    pool.shutdown ();</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> pool = WorkerPool.withDefault ();<br/>    <span class="main_keyword">var</span> promise = pool.submitInt (() =&gt; { <span class="main_keyword">return</span> <span class="main_literal">42</span>; });<br/>    <span class="main_basic_type">int</span> result = promise.await ();<br/>    pool.shutdown ();</code></pre>
           </p>
           <h2 class="main_title">Parameters:</h2>
           <table class="main_parameter_table">

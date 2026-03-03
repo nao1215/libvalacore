@@ -26,7 +26,7 @@
           <p>Thread-safe token-bucket rate limiter.</p>
           <p>RateLimiter is useful for protecting downstream services or local resources from request spikes. It provides both non-blocking 
             (allow/allowN) and blocking (wait/waitN) acquisition APIs.</p>
-          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> limiter = <span class="main_keyword">new</span> RateLimiter (<span class="main_literal">100</span>).withBurst (<span class="main_literal">200</span>);<br/><br/>    <span class="main_keyword">if</span> (limiter.allow ()) {<br/>        send_request ();<br/>    }</code></pre>
+          <p>Example: <pre class="main_source"><code>    <span class="main_keyword">var</span> created = RateLimiter.of (<span class="main_literal">100</span>);<br/>    <span class="main_keyword">if</span> (created.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/>    <span class="main_keyword">var</span> limiter = created.unwrap ();<br/>    <span class="main_keyword">var</span> configured = limiter.withBurst (<span class="main_literal">200</span>);<br/>    <span class="main_keyword">if</span> (configured.isError ()) {<br/>        <span class="main_keyword">return</span>;<br/>    }<br/><br/>    <span class="main_keyword">if</span> (limiter.allow ()) {<br/>        send_request ();<br/>    }</code></pre>
           </p>
         </div><br/>
         <div class="namespace_note"><b>Namespace:</b> <a href="Vala.Net.html">Vala.Net</a>
@@ -34,9 +34,9 @@
         <div class="package_note"><b>Package:</b> <a href="index.htm">Valacore</a>
         </div>
         <h2 class="main_title">Content:</h2>
-        <h3 class="main_title">Creation methods:</h3>
+        <h3 class="main_title">Static methods:</h3>
         <ul class="navi_inline">
-          <li class="creation_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <b><a href="Vala.Net.RateLimiter.RateLimiter.html" class="creation_method">RateLimiter</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
+          <li class="static_method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">static</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">RateLimiter</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.RateLimiter.of.html" class="static_method">of</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Creates a new rate limiter.</span>
             </div></li>
@@ -47,7 +47,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Tries to acquire one permit immediately.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_basic_type"><span class="struct">bool</span></span> <b><a href="Vala.Net.RateLimiter.allowN.html" class="method">allowN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.RateLimiter.allowN.html" class="method">allowN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Tries to acquire n permits immediately.</span>
             </div></li>
@@ -64,7 +64,7 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Resets current tokens to burst capacity.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RateLimiter.setRate.html" class="method">setRate</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.RateLimiter.setRate.html" class="method">setRate</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permitsPerSecond)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Updates rate.</span>
             </div></li>
@@ -72,11 +72,11 @@
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Waits until one permit is available and acquires it.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_keyword">void</span> <b><a href="Vala.Net.RateLimiter.waitN.html" class="method">waitN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_basic_type"><span class="struct">bool</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.RateLimiter.waitN.html" class="method">waitN</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Waits until n permits are available and acquires them.</span>
             </div></li>
-          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><span class="class">RateLimiter</span></span> <b><a href="Vala.Net.RateLimiter.withBurst.html" class="method">withBurst</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Net.RateLimiterError.html" class="errordomain">RateLimiterError</a></span>
+          <li class="method"><span class="leaf_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><span class="class">RateLimiter</span></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><a href="Vala.Net.RateLimiter.withBurst.html" class="method">withBurst</a></b> (<span class="main_basic_type"><span class="struct">int</span></span> permits)
             </span>
             <div class="leaf_brief_description"><span class="brief_description">Sets burst capacity.</span>
             </div></li>

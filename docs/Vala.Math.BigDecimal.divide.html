@@ -13,7 +13,7 @@
         <h1 class="main_title">divide</h1>
         <hr class="main_hr"/>
         <h2 class="main_title">Description:</h2>
-        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Math.BigDecimal.html" class="class">BigDecimal</a></span> <b><span class="method">divide</span></b> (<span class="main_type"><a href="Vala.Math.BigDecimal.html" class="class">BigDecimal</a></span> other) <span class="main_keyword">throws</span> <span class="main_type"><a href="Vala.Math.BigDecimalError.html" class="errordomain">BigDecimalError</a></span>
+        <div class="main_code_definition"><span class="main_keyword">public</span> <span class="main_type"><a href="Vala.Collections.Result.html" class="class">Result</a></span>&lt;<span class="main_type"><a href="Vala.Math.BigDecimal.html" class="class">BigDecimal</a></span>,<span class="main_type"><span class="class">Error</span></span>&gt; <b><span class="method">divide</span></b> (<span class="main_type"><a href="Vala.Math.BigDecimal.html" class="class">BigDecimal</a></span> other)
         </div>
         <div class="description">
           <p>Returns quotient of this value divided by other.</p>
@@ -31,16 +31,7 @@
           <table class="main_parameter_table">
             <tr>
               <td>
-                <p>quotient. </p>
-              </td>
-            </tr>
-          </table>
-          <h2 class="main_title">Exceptions:</h2>
-          <table class="main_parameter_table">
-            <tr>
-              <td class="main_parameter_table_name">BigDecimalError</td>
-              <td>
-                <p>when divideWithScale validation fails. </p>
+                <p>Result.ok(quotient), or Result.error(...) when divideWithScale validation fails. </p>
               </td>
             </tr>
           </table>
