@@ -51,7 +51,7 @@ namespace Vala.Lang {
          *         Result.error(LangProcessError.*) on failure.
          */
         public static Vala.Collections.Result<Process, GLib.Error> execAsync (string command) {
-            if (command.length == 0) {
+            if (command.strip ().length == 0) {
                 return Vala.Collections.Result.error<Process, GLib.Error> (
                     new LangProcessError.INVALID_ARGUMENT ("command must not be empty")
                 );

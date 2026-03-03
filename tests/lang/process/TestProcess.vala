@@ -54,6 +54,10 @@ void testExecAsyncInvalid () {
     var result = Vala.Lang.Process.execAsync ("");
     assert (result.isError ());
     assert (result.unwrapError () is LangProcessError.INVALID_ARGUMENT);
+
+    var whitespace = Vala.Lang.Process.execAsync ("   \t  ");
+    assert (whitespace.isError ());
+    assert (whitespace.unwrapError () is LangProcessError.INVALID_ARGUMENT);
 }
 
 void testExecAsyncShellFallback () {
