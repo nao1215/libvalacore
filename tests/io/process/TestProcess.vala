@@ -84,12 +84,19 @@ void testExecWithOutputEmpty () {
 }
 
 void testKillInvalidPid () {
-    assert (Vala.Io.Process.kill (0) == false);
-    assert (Vala.Io.Process.kill (-1) == false);
+    var zero = Vala.Io.Process.kill (0);
+    assert (zero.isError ());
+    assert (zero.unwrapError () is ProcessError.INVALID_ARGUMENT);
+
+    var negative = Vala.Io.Process.kill (-1);
+    assert (negative.isError ());
+    assert (negative.unwrapError () is ProcessError.INVALID_ARGUMENT);
 }
 
 void testKillMissingPid () {
-    assert (Vala.Io.Process.kill (999999) == false);
+    var missing = Vala.Io.Process.kill (999999);
+    assert (missing.isError ());
+    assert (missing.unwrapError () is ProcessError.NOT_FOUND);
 }
 
 void testKillSuccess () {
@@ -106,7 +113,9 @@ void testKillSuccess () {
     int pid = int.parse (identifier);
     int64 start = GLib.get_monotonic_time ();
 
-    assert (Vala.Io.Process.kill (pid) == true);
+    var killed = Vala.Io.Process.kill (pid);
+    assert (killed.isOk ());
+    assert (killed.unwrap () == true);
 
     try {
         assert (subprocess.wait (null) == true);

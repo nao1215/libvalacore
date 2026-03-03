@@ -4,6 +4,9 @@ namespace Vala.Io {
      */
     public errordomain ProcessError {
         INVALID_ARGUMENT,
+        NOT_FOUND,
+        PERMISSION_DENIED,
+        IO,
         SPAWN_FAILED,
         EXIT_NON_ZERO
     }
@@ -127,17 +130,43 @@ namespace Vala.Io {
          *
          * Example:
          * {{{
-         *     bool ok = Process.kill (12345);
+         *     var result = Process.kill (12345);
+         *     assert (result.isOk () == true);
          * }}}
          *
          * @param pid process ID.
-         * @return true when signal delivery succeeds.
+         * @return Result.ok(true) on success, Result.error(ProcessError.*) on failure.
          */
-        public static bool kill (int pid) {
+        public static Vala.Collections.Result<bool, GLib.Error> kill (int pid) {
             if (pid <= 0) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new ProcessError.INVALID_ARGUMENT ("pid must be positive")
+                );
             }
-            return Posix.kill ((Posix.pid_t) pid, Posix.Signal.KILL) == 0;
+
+            if (Posix.kill ((Posix.pid_t) pid, Posix.Signal.KILL) == 0) {
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+            }
+
+            int code = Posix.errno;
+            switch (code) {
+                case Posix.ESRCH:
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new ProcessError.NOT_FOUND ("process not found: pid=%d".printf (pid))
+                    );
+                case Posix.EPERM:
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new ProcessError.PERMISSION_DENIED (
+                            "permission denied to signal pid=%d".printf (pid)
+                        )
+                    );
+                default:
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new ProcessError.IO (
+                            "failed to signal pid=%d errno=%d".printf (pid, code)
+                        )
+                    );
+            }
         }
     }
 }
