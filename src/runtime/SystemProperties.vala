@@ -85,17 +85,10 @@ namespace Vala.Runtime {
         }
 
         private static string osName () {
-            string ? output = null;
-            int exitStatus = 0;
-            try {
-                GLib.Process.spawn_command_line_sync ("uname -s", out output, null, out exitStatus);
-                if (exitStatus == 0 && output != null) {
-                    string trimmed = output.strip ();
-                    if (trimmed.length > 0) {
-                        return trimmed;
-                    }
-                }
-            } catch (GLib.SpawnError e) {
+            Posix.utsname unameInfo = Posix.utsname ();
+            string sysname = unameInfo.sysname.strip ();
+            if (sysname.length > 0) {
+                return sysname;
             }
             return "unknown";
         }
