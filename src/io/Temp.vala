@@ -3,7 +3,8 @@ namespace Vala.Io {
      * Recoverable temp helper errors.
      */
     public errordomain TempError {
-        CREATE_FAILED
+        CREATE_FAILED,
+        CLEANUP_FAILED
     }
 
     /**
@@ -34,12 +35,16 @@ namespace Vala.Io {
                 );
             }
 
-            try {
-                func (path);
-                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
-            } finally {
-                Files.remove (path);
+            func (path);
+            bool removed = Files.remove (path);
+            if (!removed) {
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new TempError.CLEANUP_FAILED (
+                        "failed to remove temporary file: %s".printf (path.toString ())
+                    )
+                );
             }
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
 
         /**
@@ -57,12 +62,16 @@ namespace Vala.Io {
                 );
             }
 
-            try {
-                func (path);
-                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
-            } finally {
-                Files.deleteRecursive (path);
+            func (path);
+            bool deleted = Files.deleteRecursive (path);
+            if (!deleted) {
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new TempError.CLEANUP_FAILED (
+                        "failed to remove temporary directory: %s".printf (path.toString ())
+                    )
+                );
             }
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
     }
 }
