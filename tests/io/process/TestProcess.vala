@@ -5,10 +5,14 @@ void main (string[] args) {
     Test.add_func ("/io/process/testExecSuccess", testExecSuccess);
     Test.add_func ("/io/process/testExecFailure", testExecFailure);
     Test.add_func ("/io/process/testExecInvalidCommand", testExecInvalidCommand);
+    Test.add_func ("/io/process/testExecCommandNotFound", testExecCommandNotFound);
     Test.add_func ("/io/process/testExecWithOutputSuccess", testExecWithOutputSuccess);
     Test.add_func ("/io/process/testExecWithOutputFailure", testExecWithOutputFailure);
     Test.add_func ("/io/process/testExecWithOutputInvalidCommand", testExecWithOutputInvalidCommand);
+    Test.add_func ("/io/process/testExecWithOutputCommandNotFound", testExecWithOutputCommandNotFound);
+    Test.add_func ("/io/process/testExecWithOutputEmpty", testExecWithOutputEmpty);
     Test.add_func ("/io/process/testKillInvalidPid", testKillInvalidPid);
+    Test.add_func ("/io/process/testKillMissingPid", testKillMissingPid);
     Test.add_func ("/io/process/testKillSuccess", testKillSuccess);
     Test.run ();
 }
@@ -25,6 +29,10 @@ void testExecInvalidCommand () {
     assert (Vala.Io.Process.exec ("", {}) == false);
 }
 
+void testExecCommandNotFound () {
+    assert (Vala.Io.Process.exec ("__no_such_command__", {}) == false);
+}
+
 void testExecWithOutputSuccess () {
     string ? output = Vala.Io.Process.execWithOutput ("sh", { "-c", "printf 'hello'" });
     assert (output == "hello");
@@ -38,9 +46,22 @@ void testExecWithOutputInvalidCommand () {
     assert (Vala.Io.Process.execWithOutput ("", {}) == null);
 }
 
+void testExecWithOutputCommandNotFound () {
+    assert (Vala.Io.Process.execWithOutput ("__no_such_command__", {}) == null);
+}
+
+void testExecWithOutputEmpty () {
+    string ? output = Vala.Io.Process.execWithOutput ("sh", { "-c", ":" });
+    assert (output == "");
+}
+
 void testKillInvalidPid () {
     assert (Vala.Io.Process.kill (0) == false);
     assert (Vala.Io.Process.kill (-1) == false);
+}
+
+void testKillMissingPid () {
+    assert (Vala.Io.Process.kill (999999) == false);
 }
 
 void testKillSuccess () {
