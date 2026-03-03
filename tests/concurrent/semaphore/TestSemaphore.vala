@@ -5,6 +5,9 @@ void main (string[] args) {
     Test.add_func ("/concurrent/semaphore/testAcquireRelease", testAcquireRelease);
     Test.add_func ("/concurrent/semaphore/testTryAcquire", testTryAcquire);
     Test.add_func ("/concurrent/semaphore/testAcquireBlocks", testAcquireBlocks);
+    Test.add_func ("/concurrent/semaphore/testAcquireTimeoutNonBlocking", testAcquireTimeoutNonBlocking);
+    Test.add_func ("/concurrent/semaphore/testAcquireTimeout", testAcquireTimeout);
+    Test.add_func ("/concurrent/semaphore/testAcquireTimeoutInfinite", testAcquireTimeoutInfinite);
     Test.add_func ("/concurrent/semaphore/testInvalidPermits", testInvalidPermits);
     Test.run ();
 }
@@ -69,6 +72,50 @@ void testAcquireBlocks () {
     stateMutex.lock ();
     assert (acquired == true);
     stateMutex.unlock ();
+}
+
+void testAcquireTimeoutNonBlocking () {
+    Vala.Concurrent.Semaphore sem = mustSemaphore (1);
+
+    var acquired = sem.acquireTimeout (Vala.Time.Duration.ofSeconds (0));
+    assert (acquired.isOk ());
+
+    var timeout = sem.acquireTimeout (Vala.Time.Duration.ofSeconds (0));
+    assert (timeout.isError ());
+    GLib.Error err = timeout.unwrapError ();
+    assert (err is SemaphoreError.TIMEOUT);
+}
+
+void testAcquireTimeout () {
+    Vala.Concurrent.Semaphore sem = mustSemaphore (0);
+
+    var timeout = sem.acquireTimeout (Vala.Time.Duration.ofSeconds (0));
+    assert (timeout.isError ());
+    assert (timeout.unwrapError ().message.index_of ("timeout=0ms") >= 0);
+
+    Thread<void *> releaser = new Thread<void *> ("releaser", () => {
+        Posix.usleep (10000);
+        sem.release ();
+        return null;
+    });
+
+    var acquired = sem.acquireTimeout (Vala.Time.Duration.ofSeconds (1));
+    releaser.join ();
+    assert (acquired.isOk ());
+}
+
+void testAcquireTimeoutInfinite () {
+    Vala.Concurrent.Semaphore sem = mustSemaphore (0);
+
+    Thread<void *> releaser = new Thread<void *> ("releaser-infinite", () => {
+        Posix.usleep (10000);
+        sem.release ();
+        return null;
+    });
+
+    var acquired = sem.acquireTimeout (Vala.Time.Duration.ofSeconds (-1));
+    releaser.join ();
+    assert (acquired.isOk ());
 }
 
 void testInvalidPermits () {

@@ -4,7 +4,8 @@ namespace Vala.Concurrent {
      * Recoverable semaphore configuration errors.
      */
     public errordomain SemaphoreError {
-        INVALID_ARGUMENT
+        INVALID_ARGUMENT,
+        TIMEOUT
     }
 
     /**
@@ -12,6 +13,8 @@ namespace Vala.Concurrent {
      *
      * Semaphore controls concurrent access with permit counters. acquire()
      * blocks when no permits are available; release() returns a permit.
+     *
+     * Thread-safety: THREAD_SAFE
      *
      * Example:
      * {{{
@@ -62,12 +65,66 @@ namespace Vala.Concurrent {
          * Acquires a permit, blocking until available.
          */
         public void acquire () {
-            _mutex.lock ();
-            while (_permits == 0) {
-                _cond.wait (_mutex);
+            var acquired = acquireTimeout (Vala.Time.Duration.ofSeconds (-1));
+            if (acquired.isError ()) {
+                // Defensive fallback: infinite wait should not timeout.
+                warning ("%s", acquired.unwrapError ().message);
             }
+        }
+
+        /**
+         * Acquires a permit with timeout contract.
+         *
+         * Timeout semantics:
+         * - `0`: non-blocking check
+         * - `>0`: wait up to N milliseconds
+         * - `<0`: wait forever (explicit infinite wait)
+         *
+         * @param timeout timeout duration.
+         * @return Result.ok(true) when permit acquired, or
+         *         Result.error(SemaphoreError.TIMEOUT) on timeout.
+         */
+        public Vala.Collections.Result<bool, GLib.Error> acquireTimeout (Vala.Time.Duration timeout) {
+            int64 timeout_millis = timeout.toMillis ();
+
+            _mutex.lock ();
+
+            if (timeout_millis == 0) {
+                if (_permits > 0) {
+                    _permits--;
+                    _mutex.unlock ();
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                }
+                _mutex.unlock ();
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new SemaphoreError.TIMEOUT ("semaphore acquire timed out: timeout=0ms")
+                );
+            }
+
+            if (timeout_millis < 0) {
+                while (_permits == 0) {
+                    _cond.wait (_mutex);
+                }
+                _permits--;
+                _mutex.unlock ();
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+            }
+
+            int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
+            while (_permits == 0) {
+                if (!_cond.wait_until (_mutex, deadline)) {
+                    _mutex.unlock ();
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new SemaphoreError.TIMEOUT (
+                            "semaphore acquire timed out: timeout=%sms".printf (timeout_millis.to_string ())
+                        )
+                    );
+                }
+            }
+
             _permits--;
             _mutex.unlock ();
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
 
         /**

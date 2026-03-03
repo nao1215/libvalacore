@@ -762,7 +762,8 @@ Counting semaphore.
 | Method | Description |
 |---|---|
 | `of(int permits)` | Returns `Result<Semaphore, Error>` (error: `SemaphoreError.INVALID_ARGUMENT` when permits is negative) |
-| `acquire()` | Acquires permit, blocking if necessary |
+| `acquireTimeout(Duration timeout)` | Returns `Result<bool, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; error: `SemaphoreError.TIMEOUT`) |
+| `acquire()` | Acquires permit, blocking if necessary (`acquireTimeout(-1s)`) |
 | `tryAcquire()` | Tries non-blocking permit acquisition |
 | `release()` | Releases permit |
 | `availablePermits()` | Returns currently available permits |
