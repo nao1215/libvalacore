@@ -332,6 +332,20 @@ namespace Vala.Archive {
             if (entryName.has_prefix ("-")) {
                 entryName = "./" + entryName;
             }
+            string normalizedEntryName = trimLeadingDotSlash (entryName);
+            for (int i = 0; i < parsed.entries.size (); i++) {
+                TarEntry ? existing = parsed.entries.get (i);
+                if (existing == null) {
+                    continue;
+                }
+                if (trimLeadingDotSlash (existing.name) == normalizedEntryName) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.INVALID_ARGUMENT (
+                            "archive entry already exists: %s".printf (entryName)
+                        )
+                    );
+                }
+            }
 
             var output = new GLib.ByteArray ();
             output.append (parsed.bytes[0 : (int) parsed.contentEnd]);
@@ -748,7 +762,7 @@ namespace Vala.Archive {
 
                 char typeflag = (char) bytes[(int) (offset + 156)];
                 string linkName = readHeaderString (bytes, offset + 157, 100);
-                int64 dataSize = (typeflag == '\0' || typeflag == '0') ? size : 0;
+                int64 dataSize = size;
                 int64 paddedDataSize = alignToBlockSize (dataSize);
 
                 if (offset + TAR_BLOCK_SIZE + paddedDataSize > bytes.length) {
@@ -949,6 +963,11 @@ namespace Vala.Archive {
             if (Files.exists (dest) && Files.isSymbolicFile (dest)) {
                 return Result.error<bool, GLib.Error> (
                     new TarError.SECURITY ("destination file is symbolic link: %s".printf (dest.toString ()))
+                );
+            }
+            if (Files.exists (dest) && Files.isDir (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.SECURITY ("destination file is a directory: %s".printf (dest.toString ()))
                 );
             }
 
