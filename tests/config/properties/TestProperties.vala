@@ -7,6 +7,8 @@ void main (string[] args) {
     Test.add_func ("/config/properties/testSaveLoad", testSaveLoad);
     Test.add_func ("/config/properties/testLoadWithComments", testLoadWithComments);
     Test.add_func ("/config/properties/testSaveOrderAndEdgeCases", testSaveOrderAndEdgeCases);
+    Test.add_func ("/config/properties/testLoadMissingFile", testLoadMissingFile);
+    Test.add_func ("/config/properties/testSaveInvalidDestination", testSaveInvalidDestination);
     Test.run ();
 }
 
@@ -97,4 +99,20 @@ void testSaveOrderAndEdgeCases () {
             Files.remove (tmp);
         }
     }
+}
+
+void testLoadMissingFile () {
+    Properties props = new Properties ();
+    var loaded = props.load (new Vala.Io.Path ("/tmp/valacore/ut/no-such-properties-file"));
+    assert (loaded.isError ());
+    assert (loaded.unwrapError () is PropertiesError.IO);
+}
+
+void testSaveInvalidDestination () {
+    Properties props = new Properties ();
+    props.set ("k", "v");
+
+    var saved = props.save (new Vala.Io.Path ("/tmp/valacore/ut/no-such-dir/props.txt"));
+    assert (saved.isError ());
+    assert (saved.unwrapError () is PropertiesError.IO);
 }
