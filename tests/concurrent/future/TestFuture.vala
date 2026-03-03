@@ -121,7 +121,8 @@ void testAwaitResultCancelled () {
         Thread.usleep (100 * 1000);
         return 7;
     });
-    source.cancel ();
+    bool cancelled = source.cancel ();
+    assert (cancelled);
 
     var waited = source.awaitResult (Duration.ofSeconds (1));
     assert (waited.isError ());
