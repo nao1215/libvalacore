@@ -160,10 +160,8 @@ namespace Vala.Io {
                 return Result.ok<ShellResult, GLib.Error> (run (command, false));
             }
 
-            int64 seconds = (timeoutMillis + 999) / 1000;
-            string wrapped = "timeout --preserve-status %" + int64.FORMAT + "s /bin/sh -c %s";
             return Result.ok<ShellResult, GLib.Error> (
-                run (wrapped.printf (seconds, GLib.Shell.quote (command)), false)
+                runWithTimeout (command, timeoutMillis, false)
             );
         }
 
@@ -221,6 +219,80 @@ namespace Vala.Io {
                     SPAWN_ERROR_EXIT_CODE,
                     "",
                     "failed to spawn process",
+                    durationMillis
+                );
+            }
+
+            if (quiet) {
+                return new ShellResult (proc.exitCode (), "", "", durationMillis);
+            }
+
+            return new ShellResult (
+                proc.exitCode (),
+                proc.stdout (),
+                proc.stderr (),
+                durationMillis
+            );
+        }
+
+        private static ShellResult runWithTimeout (string command, int64 timeoutMillis, bool quiet) {
+            int64 startMicros = GLib.get_monotonic_time ();
+            Vala.Lang.Process ? proc = Vala.Lang.Process.execAsync (command);
+            if (proc == null) {
+                int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
+                return new ShellResult (
+                    SPAWN_ERROR_EXIT_CODE,
+                    "",
+                    "failed to spawn process",
+                    durationMillis
+                );
+            }
+
+            GLib.Mutex mutex = GLib.Mutex ();
+            GLib.Cond cond = GLib.Cond ();
+            bool completed = false;
+            bool waitSuccess = false;
+
+            Thread<void *> waitThread = new Thread<void *> ("shell-timeout-wait", () => {
+                bool success = proc.waitFor ();
+
+                mutex.lock ();
+                waitSuccess = success;
+                completed = true;
+                cond.signal ();
+                mutex.unlock ();
+                return null;
+            });
+
+            bool timedOut = false;
+            int64 deadlineMicros = GLib.get_monotonic_time () + (timeoutMillis * 1000);
+
+            mutex.lock ();
+            while (!completed) {
+                if (!cond.wait_until (mutex, deadlineMicros)) {
+                    timedOut = true;
+                    break;
+                }
+            }
+            mutex.unlock ();
+
+            if (timedOut) {
+                proc.kill ();
+
+                mutex.lock ();
+                while (!completed) {
+                    cond.wait (mutex);
+                }
+                mutex.unlock ();
+            }
+
+            waitThread.join ();
+            int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
+            if (!waitSuccess) {
+                return new ShellResult (
+                    SPAWN_ERROR_EXIT_CODE,
+                    "",
+                    "failed to wait for process",
                     durationMillis
                 );
             }
