@@ -1,5 +1,14 @@
 namespace Vala.Io {
     /**
+     * Recoverable process execution errors.
+     */
+    public errordomain ProcessError {
+        INVALID_ARGUMENT,
+        SPAWN_FAILED,
+        EXIT_NON_ZERO
+    }
+
+    /**
      * Process execution utility methods.
      */
     public class Process : GLib.Object {
@@ -22,17 +31,20 @@ namespace Vala.Io {
          *
          * Example:
          * {{{
-         *     bool ok = Process.exec ("sh", { "-c", "exit 0" });
-         *     assert (ok == true);
+         *     var result = Process.exec ("sh", { "-c", "exit 0" });
+         *     assert (result.isOk () == true);
          * }}}
          *
          * @param cmd command path or executable name.
          * @param args command arguments.
-         * @return true when the process exits with status 0.
+         * @return Result.ok(true) when the process exits with status 0,
+         *         Result.error(ProcessError.*) on failure.
          */
-        public static bool exec (string cmd, string[] args) {
+        public static Vala.Collections.Result<bool, GLib.Error> exec (string cmd, string[] args) {
             if (!hasCommand (cmd)) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new ProcessError.INVALID_ARGUMENT ("command must not be empty")
+                );
             }
 
             string[] argv = buildArgv (cmd, args);
@@ -41,9 +53,21 @@ namespace Vala.Io {
                     argv,
                     GLib.SubprocessFlags.NONE
                 );
-                return process.wait_check ();
+                process.wait (null);
+                if (process.get_successful ()) {
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                }
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new ProcessError.EXIT_NON_ZERO (
+                        "command exited with non-zero status: %s".printf (cmd)
+                    )
+                );
             } catch (GLib.Error e) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new ProcessError.SPAWN_FAILED (
+                        "failed to execute command '%s': %s".printf (cmd, e.message)
+                    )
+                );
             }
         }
 
@@ -52,17 +76,21 @@ namespace Vala.Io {
          *
          * Example:
          * {{{
-         *     string? out = Process.execWithOutput ("sh", { "-c", "printf 'hello'" });
-         *     assert (out == "hello");
+         *     var out = Process.execWithOutput ("sh", { "-c", "printf 'hello'" });
+         *     assert (out.isOk () == true);
          * }}}
          *
          * @param cmd command path or executable name.
          * @param args command arguments.
-         * @return captured stdout when exit status is 0, otherwise null.
+         * @return Result.ok(stdout text) when exit status is 0,
+         *         Result.error(ProcessError.*) on failure.
          */
-        public static string ? execWithOutput (string cmd, string[] args) {
+        public static Vala.Collections.Result<string, GLib.Error> execWithOutput (string cmd,
+                                                                                  string[] args) {
             if (!hasCommand (cmd)) {
-                return null;
+                return Vala.Collections.Result.error<string, GLib.Error> (
+                    new ProcessError.INVALID_ARGUMENT ("command must not be empty")
+                );
             }
 
             string[] argv = buildArgv (cmd, args);
@@ -75,11 +103,22 @@ namespace Vala.Io {
                 string ? stderrText = null;
                 process.communicate_utf8 (null, null, out stdoutText, out stderrText);
                 if (!process.get_successful ()) {
-                    return null;
+                    return Vala.Collections.Result.error<string, GLib.Error> (
+                        new ProcessError.EXIT_NON_ZERO (
+                            "command exited with non-zero status: %s stderr=%s".printf (
+                                cmd,
+                                (stderrText ?? "").strip ()
+                            )
+                        )
+                    );
                 }
-                return stdoutText ?? "";
+                return Vala.Collections.Result.ok<string, GLib.Error> (stdoutText ?? "");
             } catch (GLib.Error e) {
-                return null;
+                return Vala.Collections.Result.error<string, GLib.Error> (
+                    new ProcessError.SPAWN_FAILED (
+                        "failed to execute command '%s': %s".printf (cmd, e.message)
+                    )
+                );
             }
         }
 

@@ -75,7 +75,11 @@ bool runChild (string mode, string outputPath) {
         return false;
     }
 
-    return Vala.Io.Process.exec (test_program_path, { mode, outputPath });
+    var result = Vala.Io.Process.exec (test_program_path, { mode, outputPath });
+    if (result.isError ()) {
+        return false;
+    }
+    return result.unwrap ();
 }
 
 void runChildSingle (string outputPath) {

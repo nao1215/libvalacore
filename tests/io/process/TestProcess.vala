@@ -18,41 +18,57 @@ void main (string[] args) {
 }
 
 void testExecSuccess () {
-    assert (Vala.Io.Process.exec ("sh", { "-c", "exit 0" }) == true);
+    var result = Vala.Io.Process.exec ("sh", { "-c", "exit 0" });
+    assert (result.isOk ());
+    assert (result.unwrap () == true);
 }
 
 void testExecFailure () {
-    assert (Vala.Io.Process.exec ("sh", { "-c", "exit 7" }) == false);
+    var result = Vala.Io.Process.exec ("sh", { "-c", "exit 7" });
+    assert (result.isError ());
+    assert (result.unwrapError () is ProcessError.EXIT_NON_ZERO);
 }
 
 void testExecInvalidCommand () {
-    assert (Vala.Io.Process.exec ("", {}) == false);
+    var result = Vala.Io.Process.exec ("", {});
+    assert (result.isError ());
+    assert (result.unwrapError () is ProcessError.INVALID_ARGUMENT);
 }
 
 void testExecCommandNotFound () {
-    assert (Vala.Io.Process.exec ("__no_such_command__", {}) == false);
+    var result = Vala.Io.Process.exec ("__no_such_command__", {});
+    assert (result.isError ());
+    assert (result.unwrapError () is ProcessError.SPAWN_FAILED);
 }
 
 void testExecWithOutputSuccess () {
-    string ? output = Vala.Io.Process.execWithOutput ("sh", { "-c", "printf 'hello'" });
-    assert (output == "hello");
+    var result = Vala.Io.Process.execWithOutput ("sh", { "-c", "printf 'hello'" });
+    assert (result.isOk ());
+    assert (result.unwrap () == "hello");
 }
 
 void testExecWithOutputFailure () {
-    assert (Vala.Io.Process.execWithOutput ("sh", { "-c", "echo err 1>&2; exit 2" }) == null);
+    var result = Vala.Io.Process.execWithOutput ("sh", { "-c", "echo err 1>&2; exit 2" });
+    assert (result.isError ());
+    assert (result.unwrapError () is ProcessError.EXIT_NON_ZERO);
 }
 
 void testExecWithOutputInvalidCommand () {
-    assert (Vala.Io.Process.execWithOutput ("", {}) == null);
+    var result = Vala.Io.Process.execWithOutput ("", {});
+    assert (result.isError ());
+    assert (result.unwrapError () is ProcessError.INVALID_ARGUMENT);
 }
 
 void testExecWithOutputCommandNotFound () {
-    assert (Vala.Io.Process.execWithOutput ("__no_such_command__", {}) == null);
+    var result = Vala.Io.Process.execWithOutput ("__no_such_command__", {});
+    assert (result.isError ());
+    assert (result.unwrapError () is ProcessError.SPAWN_FAILED);
 }
 
 void testExecWithOutputEmpty () {
-    string ? output = Vala.Io.Process.execWithOutput ("sh", { "-c", ":" });
-    assert (output == "");
+    var result = Vala.Io.Process.execWithOutput ("sh", { "-c", ":" });
+    assert (result.isOk ());
+    assert (result.unwrap () == "");
 }
 
 void testKillInvalidPid () {
