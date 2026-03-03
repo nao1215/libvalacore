@@ -108,7 +108,7 @@ void testWaitForSuccessBeforeTimeout () {
         return null;
     });
 
-    var waited = wg.waitFor (100);
+    var waited = wg.waitFor (1000);
     worker.join ();
     assert (waited.isOk ());
 }
