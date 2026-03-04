@@ -127,9 +127,9 @@ namespace Vala.Collections {
 
         private ArrayList<V> copyValues (ArrayList<V> src) {
             var copy = new ArrayList<V> (_value_equal);
-            for (int i = 0; i < src.size (); i++) {
-                copy.add (src.get (i));
-            }
+            src.forEach ((value) => {
+                copy.add (value);
+            });
             return copy;
         }
     }

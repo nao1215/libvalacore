@@ -37,22 +37,51 @@ void main (string[] args) {
     Test.run ();
 }
 
+const string TEST_FILES_BASE = "/tmp/valacore/ut";
+
+void failCleanup (string path, string reason) {
+    Test.message ("cleanup failed for %s: %s", path, reason);
+    assert_not_reached ();
+}
+
 void removePath (string path) {
-    var target = new Vala.Io.Path (path);
-    if (Files.exists (target)) {
-        if (Files.isDir (target) && !Files.isSymbolicFile (target)) {
-            FileTree.deleteTree (target);
+    string requested = path.strip ();
+    if (requested.length == 0 || requested == "." || requested == "..") {
+        failCleanup (path, "refusing empty or relative traversal path");
+    }
+
+    var target = new Vala.Io.Path (requested);
+    if (!target.isAbsolute ()) {
+        failCleanup (path, "path must be absolute");
+    }
+
+    Vala.Io.Path normalizedTarget = target.normalize ();
+    string targetPath = normalizedTarget.toString ();
+    string safeBase = new Vala.Io.Path (TEST_FILES_BASE).normalize ().toString ();
+    bool inSafeBase = targetPath.has_prefix (safeBase + "/");
+    if (targetPath == "/" || targetPath == safeBase || !inSafeBase) {
+        failCleanup (path, "path is outside safe test cleanup root");
+    }
+
+    if (Files.exists (normalizedTarget)) {
+        if (Files.isDir (normalizedTarget) && !Files.isSymbolicFile (normalizedTarget)) {
+            if (!FileTree.deleteTree (normalizedTarget)) {
+                failCleanup (path, "FileTree.deleteTree returned false");
+            }
             return;
         }
-        Files.remove (target);
+
+        if (!Files.remove (normalizedTarget)) {
+            failCleanup (path, "Files.remove returned false");
+        }
         return;
     }
 
-    if (Files.isSymbolicFile (target)) {
+    if (Files.isSymbolicFile (normalizedTarget)) {
         try {
-            GLib.File.new_for_path (path).delete ();
+            GLib.File.new_for_path (targetPath).delete ();
         } catch (GLib.Error e) {
-            Test.message ("cleanup skipped for %s: %s", path, e.message);
+            failCleanup (path, "failed to delete dangling symlink: %s".printf (e.message));
         }
     }
 }

@@ -7,6 +7,7 @@ void main (string[] args) {
     Test.add_func ("/archive/zip/testCreateAndExtract", testCreateAndExtract);
     Test.add_func ("/archive/zip/testCreateFromDirAndList", testCreateFromDirAndList);
     Test.add_func ("/archive/zip/testAddFile", testAddFile);
+    Test.add_func ("/archive/zip/testAddFileReplacesExistingEntry", testAddFileReplacesExistingEntry);
     Test.add_func ("/archive/zip/testExtractFile", testExtractFile);
     Test.add_func ("/archive/zip/testExtractFileFailureKeepsDestination",
                    testExtractFileFailureKeepsDestination);
@@ -37,6 +38,17 @@ bool containsSuffix (ArrayList<string> entries, string suffix) {
         }
     }
     return false;
+}
+
+int countSuffix (ArrayList<string> entries, string suffix) {
+    int count = 0;
+    for (int i = 0; i < entries.size (); i++) {
+        string ? entry = entries.get (i);
+        if (entry != null && entry.has_suffix (suffix)) {
+            count++;
+        }
+    }
+    return count;
 }
 
 string ? findBySuffix (ArrayList<string> entries, string suffix) {
@@ -214,6 +226,29 @@ void testAddFile () {
 
     ArrayList<string> entries = unwrapEntries (Zip.list (archive));
     assert (containsSuffix (entries, "add.txt"));
+    cleanup (root);
+}
+
+void testAddFileReplacesExistingEntry () {
+    string root = rootFor ("add_replace");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/base")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/base/dup.txt"), "old"));
+
+    var archive = new Vala.Io.Path (root + "/base.zip");
+    assertOk (Zip.createFromDir (archive, new Vala.Io.Path (root + "/base")));
+
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/extra")));
+    var replacement = new Vala.Io.Path (root + "/extra/dup.txt");
+    assert (Files.writeText (replacement, "new"));
+    assertOk (Zip.addFile (archive, replacement));
+
+    ArrayList<string> entries = unwrapEntries (Zip.list (archive));
+    assert (countSuffix (entries, "dup.txt") == 1);
+
+    var extracted = new Vala.Io.Path (root + "/out.txt");
+    assertOk (Zip.extractFile (archive, "dup.txt", extracted));
+    assert (Files.readAllText (extracted) == "new");
     cleanup (root);
 }
 

@@ -35,8 +35,12 @@ namespace Vala.Io {
                 );
             }
 
-            func (path);
-            bool removed = Files.remove (path);
+            bool removed = true;
+            try {
+                func (path);
+            } finally {
+                removed = Files.remove (path);
+            }
             if (!removed) {
                 return Vala.Collections.Result.error<bool, GLib.Error> (
                     new TempError.CLEANUP_FAILED (
@@ -62,8 +66,12 @@ namespace Vala.Io {
                 );
             }
 
-            func (path);
-            bool deleted = Files.deleteRecursive (path);
+            bool deleted = true;
+            try {
+                func (path);
+            } finally {
+                deleted = Files.deleteRecursive (path);
+            }
             if (!deleted) {
                 return Vala.Collections.Result.error<bool, GLib.Error> (
                     new TempError.CLEANUP_FAILED (

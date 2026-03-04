@@ -414,6 +414,18 @@ namespace Vala.Archive {
                 );
             }
 
+            string newEntryName = normalizeEntryName (file.basename (), false);
+            for (int i = (int) entries.size () - 1; i >= 0; i--) {
+                ZipWriteEntry ? existing = entries.get (i);
+                if (existing == null) {
+                    continue;
+                }
+                string existingName = normalizeEntryName (existing.name, existing.directory);
+                if (existingName == newEntryName) {
+                    entries.removeAt (i);
+                }
+            }
+
             entries.add (new ZipWriteEntry (file.basename (), fileBytes, false));
             var built = buildZipBytes (entries);
             if (built.isError ()) {

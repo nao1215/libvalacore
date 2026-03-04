@@ -90,7 +90,9 @@ void writeOctalField (uint8[] header, int offset, int width, int64 value) {
     string oct = toOctal (value);
     int digitsWidth = width - 1;
     if (oct.length > digitsWidth) {
-        oct = oct.substring (oct.length - digitsWidth);
+        GLib.error (
+            ("octal value %" + int64.FORMAT + " does not fit in width %d").printf (value, digitsWidth)
+        );
     }
     int pad = digitsWidth - oct.length;
     for (int i = 0; i < pad; i++) {
@@ -114,7 +116,9 @@ void writeChecksumField (uint8[] header) {
 
     string oct = toOctal (sum);
     if (oct.length > 6) {
-        oct = oct.substring (oct.length - 6);
+        GLib.error (
+            ("checksum octal value %" + int64.FORMAT + " does not fit in width 6").printf (sum)
+        );
     }
     int pad = 6 - oct.length;
     for (int i = 0; i < pad; i++) {
@@ -127,19 +131,30 @@ void writeChecksumField (uint8[] header) {
     header[155] = (uint8) ' ';
 }
 
-uint8[] buildSingleFileTar (string entryName, string contents) {
-    uint8[] contentBytes = contents.data[0 : contents.length];
+uint8[] buildTarHeader (string entryName,
+                        int mode,
+                        int uid,
+                        int gid,
+                        int64 size,
+                        int64 mtime,
+                        char typeflag) {
     uint8[] header = new uint8[512];
     writeStringField (header, 0, 100, entryName);
-    writeOctalField (header, 100, 8, 0644);
-    writeOctalField (header, 108, 8, 0);
-    writeOctalField (header, 116, 8, 0);
-    writeOctalField (header, 124, 12, contentBytes.length);
-    writeOctalField (header, 136, 12, 0);
-    header[156] = (uint8) '0';
+    writeOctalField (header, 100, 8, mode);
+    writeOctalField (header, 108, 8, uid);
+    writeOctalField (header, 116, 8, gid);
+    writeOctalField (header, 124, 12, size);
+    writeOctalField (header, 136, 12, mtime);
+    header[156] = (uint8) typeflag;
     writeStringField (header, 257, 6, "ustar");
     writeStringField (header, 263, 2, "00");
     writeChecksumField (header);
+    return header;
+}
+
+uint8[] buildSingleFileTar (string entryName, string contents) {
+    uint8[] contentBytes = contents.data[0 : contents.length];
+    uint8[] header = buildTarHeader (entryName, 0644, 0, 0, contentBytes.length, 0, '0');
 
     var output = new GLib.ByteArray ();
     output.append (header);
@@ -156,17 +171,7 @@ uint8[] buildSingleFileTar (string entryName, string contents) {
 
 void appendTarEntry (GLib.ByteArray output, string entryName, char typeflag, string payloadText) {
     uint8[] payload = payloadText.data[0 : payloadText.length];
-    uint8[] header = new uint8[512];
-    writeStringField (header, 0, 100, entryName);
-    writeOctalField (header, 100, 8, 0644);
-    writeOctalField (header, 108, 8, 0);
-    writeOctalField (header, 116, 8, 0);
-    writeOctalField (header, 124, 12, payload.length);
-    writeOctalField (header, 136, 12, 0);
-    header[156] = (uint8) typeflag;
-    writeStringField (header, 257, 6, "ustar");
-    writeStringField (header, 263, 2, "00");
-    writeChecksumField (header);
+    uint8[] header = buildTarHeader (entryName, 0644, 0, 0, payload.length, 0, typeflag);
 
     output.append (header);
     output.append (payload);

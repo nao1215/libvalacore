@@ -679,7 +679,12 @@ namespace Vala.Archive {
         }
 
         private static string toOctalString (int64 value) {
-            if (value <= 0) {
+            if (value < 0) {
+                GLib.error (
+                    ("negative values are not supported in tar octal fields: %" + int64.FORMAT).printf (value)
+                );
+            }
+            if (value == 0) {
                 return "0";
             }
             string out = "";
