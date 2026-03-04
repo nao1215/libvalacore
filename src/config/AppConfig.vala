@@ -352,10 +352,12 @@ namespace Vala.Config {
             _fileValues.clear ();
 
             var props = new Properties ();
-            if (!props.load (path)) {
+            var loaded = props.load (path);
+            if (loaded.isError ()) {
+                GLib.Error cause = loaded.unwrapError ();
                 return Result.error<bool, GLib.Error> (
                     new AppConfigError.LOAD_FAILED (
-                        "failed to load config file: %s".printf (path.toString ())
+                        "failed to load config file: %s (%s)".printf (path.toString (), cause.message)
                     )
                 );
             }

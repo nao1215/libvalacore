@@ -7,6 +7,8 @@ void main (string[] args) {
     Test.add_func ("/config/properties/testSaveLoad", testSaveLoad);
     Test.add_func ("/config/properties/testLoadWithComments", testLoadWithComments);
     Test.add_func ("/config/properties/testSaveOrderAndEdgeCases", testSaveOrderAndEdgeCases);
+    Test.add_func ("/config/properties/testLoadMissingFile", testLoadMissingFile);
+    Test.add_func ("/config/properties/testSaveInvalidDestination", testSaveInvalidDestination);
     Test.run ();
 }
 
@@ -30,10 +32,14 @@ void testSaveLoad () {
         Properties props = new Properties ();
         props.set ("k1", "v1");
         props.set ("k2", "v2");
-        assert (props.save (tmp) == true);
+        var saved = props.save (tmp);
+        assert (saved.isOk ());
+        assert (saved.unwrap () == true);
 
         Properties loaded = new Properties ();
-        assert (loaded.load (tmp) == true);
+        var loadResult = loaded.load (tmp);
+        assert (loadResult.isOk ());
+        assert (loadResult.unwrap () == true);
         assert (loaded.get ("k1") == "v1");
         assert (loaded.get ("k2") == "v2");
         assert (loaded.size () == 2);
@@ -53,7 +59,9 @@ void testLoadWithComments () {
         assert (Files.writeText (tmp, text) == true);
 
         Properties props = new Properties ();
-        assert (props.load (tmp) == true);
+        var loadResult = props.load (tmp);
+        assert (loadResult.isOk ());
+        assert (loadResult.unwrap () == true);
         assert (props.size () == 2);
         assert (props.get ("foo") == "bar");
         assert (props.get ("z") == "9");
@@ -80,13 +88,51 @@ void testSaveOrderAndEdgeCases () {
     assert (tmp != null);
 
     try {
-        assert (props.save (tmp) == true);
+        var saved = props.save (tmp);
+        assert (saved.isOk ());
+        assert (saved.unwrap () == true);
         string ? content = Files.readAllText (tmp);
         assert (content != null);
         assert (content == "a=1\nm=2\nz=3\n");
     } finally {
         if (tmp != null) {
             Files.remove (tmp);
+        }
+    }
+}
+
+void testLoadMissingFile () {
+    Vala.Io.Path ? dir = Files.tempDir ("props-missing");
+    assert (dir != null);
+
+    Properties props = new Properties ();
+    try {
+        Vala.Io.Path missing = dir.resolve ("no-such-properties-file");
+        var loaded = props.load (missing);
+        assert (loaded.isError ());
+        assert (loaded.unwrapError () is PropertiesError.IO);
+    } finally {
+        if (dir != null) {
+            Files.deleteRecursive (dir);
+        }
+    }
+}
+
+void testSaveInvalidDestination () {
+    Vala.Io.Path ? dir = Files.tempDir ("props-invalid-dest");
+    assert (dir != null);
+
+    Properties props = new Properties ();
+    props.set ("k", "v");
+
+    try {
+        Vala.Io.Path invalidDestination = dir.resolve ("no-such-dir").resolve ("props.txt");
+        var saved = props.save (invalidDestination);
+        assert (saved.isError ());
+        assert (saved.unwrapError () is PropertiesError.IO);
+    } finally {
+        if (dir != null) {
+            Files.deleteRecursive (dir);
         }
     }
 }

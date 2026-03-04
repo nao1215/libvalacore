@@ -22,7 +22,7 @@ string rootFor (string name) {
 }
 
 void cleanup (string root) {
-    Posix.system ("rm -rf " + root);
+    FileTree.deleteTree (new Vala.Io.Path (root));
 }
 
 bool waitUntil (owned ConditionFunc cond, int timeoutMillis) {
@@ -165,7 +165,8 @@ void testOnRenamed () {
     });
     Posix.usleep (100000);
 
-    assert (Posix.system ("mv " + root + "/old.txt " + root + "/new.txt") == 0);
+    bool moved = Files.move (new Vala.Io.Path (root + "/old.txt"), new Vala.Io.Path (root + "/new.txt"));
+    assert (moved);
     assert (waitUntil (() => {
         return renamed;
     }, 1500));

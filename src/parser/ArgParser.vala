@@ -80,6 +80,7 @@ namespace Vala.Parser {
          * @param args command line arguments.
          */
         public void parse (string[] args) {
+            resetParseState ();
             validOptionsIfNeeded (args);
             getArgListWithoutOptions (args);
             parsed = true;
@@ -173,6 +174,17 @@ namespace Vala.Parser {
                     argListWithoutOptions.append (arg);
                 }
             }
+        }
+
+        /**
+         * Reset option/argument parse state before parsing new inputs.
+         */
+        private void resetParseState () {
+            foreach (Option option in optionList) {
+                option.Disable ();
+            }
+            argListWithoutOptions = new List<string> ();
+            parsed = false;
         }
 
         /**
@@ -407,6 +419,13 @@ namespace Vala.Parser {
          */
         public void Enable () {
             enable = true;
+        }
+
+        /**
+         * Disable option.
+         */
+        public void Disable () {
+            enable = false;
         }
 
         /**

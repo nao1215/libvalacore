@@ -4,7 +4,8 @@ namespace Vala.Concurrent {
      * Recoverable countdown latch configuration errors.
      */
     public errordomain CountDownLatchError {
-        INVALID_ARGUMENT
+        INVALID_ARGUMENT,
+        TIMEOUT
     }
 
     /**
@@ -13,6 +14,8 @@ namespace Vala.Concurrent {
      * CountDownLatch starts with a fixed counter. Worker threads call
      * countDown(), and waiting thread(s) block in await() until the counter
      * reaches zero.
+     *
+     * Thread-safety: THREAD_SAFE
      *
      * Example:
      * {{{
@@ -75,31 +78,68 @@ namespace Vala.Concurrent {
          * Blocks until count reaches zero.
          */
         public void @await () {
-            _mutex.lock ();
-            while (_count > 0) {
-                _cond.wait (_mutex);
+            var waited = awaitTimeout (Vala.Time.Duration.ofSeconds (-1));
+            if (waited.isError ()) {
+                // Defensive fallback: infinite wait should not timeout.
+                warning ("%s", waited.unwrapError ().message);
             }
-            _mutex.unlock ();
         }
 
         /**
          * Blocks until count reaches zero or timeout.
          *
+         * Timeout semantics:
+         * - `0`: non-blocking check
+         * - `>0`: wait up to N milliseconds
+         * - `<0`: wait forever (explicit infinite wait)
+         *
          * @param timeout timeout duration.
-         * @return true if reached zero, false on timeout.
+         * @return Result.ok(true) when reached zero, or
+         *         Result.error(CountDownLatchError.TIMEOUT) on timeout.
          */
-        public bool awaitTimeout (Vala.Time.Duration timeout) {
-            int64 deadline = GLib.get_monotonic_time () + timeout.toMillis () * 1000;
-
+        public Vala.Collections.Result<bool, GLib.Error> awaitTimeout (Vala.Time.Duration timeout) {
+            int64 timeout_millis = timeout.toMillis ();
             _mutex.lock ();
+
+            if (timeout_millis == 0) {
+                bool completed = _count == 0;
+                int remaining = _count;
+                _mutex.unlock ();
+                if (completed) {
+                    return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+                }
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new CountDownLatchError.TIMEOUT (
+                        "countdown latch timed out: timeout=0ms remaining=%d".printf (remaining)
+                    )
+                );
+            }
+
+            if (timeout_millis < 0) {
+                while (_count > 0) {
+                    _cond.wait (_mutex);
+                }
+                _mutex.unlock ();
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
+            }
+
+            int64 deadline = GLib.get_monotonic_time () + timeout_millis * 1000;
             while (_count > 0) {
                 if (!_cond.wait_until (_mutex, deadline)) {
+                    int remaining = _count;
                     _mutex.unlock ();
-                    return false;
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new CountDownLatchError.TIMEOUT (
+                            "countdown latch timed out: timeout=%sms remaining=%d".printf (
+                                timeout_millis.to_string (),
+                                remaining
+                            )
+                        )
+                    );
                 }
             }
             _mutex.unlock ();
-            return true;
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
 
         /**

@@ -30,6 +30,9 @@ void testConstruct () {
 void testSingleHookRunsAtExit () {
     Vala.Io.Path ? tmp = Files.tempFile ("shutdownhooks", ".txt");
     assert (tmp != null);
+    if (tmp == null) {
+        return;
+    }
 
     try {
         bool spawned = runChild ("--shutdownhooks-child-single", tmp.toString ());
@@ -47,9 +50,13 @@ void testSingleHookRunsAtExit () {
 void testHooksRunInReverseOrder () {
     Vala.Io.Path ? tmp = Files.tempFile ("shutdownhooks-order", ".txt");
     assert (tmp != null);
+    if (tmp == null) {
+        return;
+    }
 
     try {
-        assert (Files.writeText (tmp, "") == true);
+        bool wrote = Files.writeText (tmp, "");
+        assert (wrote == true);
 
         bool spawned = runChild ("--shutdownhooks-child-order", tmp.toString ());
         assert (spawned == true);
@@ -68,14 +75,11 @@ bool runChild (string mode, string outputPath) {
         return false;
     }
 
-    string[] argv = { test_program_path, mode, outputPath };
-    int waitStatus = 0;
-    try {
-        GLib.Process.spawn_sync (null, argv, null, SpawnFlags.SEARCH_PATH, null, null, null, out waitStatus);
-        return GLib.Process.check_wait_status (waitStatus);
-    } catch (GLib.Error e) {
+    var result = Vala.Io.Process.exec (test_program_path, { mode, outputPath });
+    if (result.isError ()) {
         return false;
     }
+    return result.unwrap ();
 }
 
 void runChildSingle (string outputPath) {

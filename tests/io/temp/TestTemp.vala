@@ -4,7 +4,9 @@ void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/io/temp/testConstruct", testConstruct);
     Test.add_func ("/io/temp/testWithTempFile", testWithTempFile);
+    Test.add_func ("/io/temp/testWithTempFileCleanupFailure", testWithTempFileCleanupFailure);
     Test.add_func ("/io/temp/testWithTempDir", testWithTempDir);
+    Test.add_func ("/io/temp/testWithTempDirCleanupFailure", testWithTempDirCleanupFailure);
     Test.run ();
 }
 
@@ -16,21 +18,32 @@ void testConstruct () {
 void testWithTempFile () {
     Vala.Io.Path ? tempPath = null;
 
-    assert (Temp.withTempFile ((path) => {
+    var result = Temp.withTempFile ((path) => {
         tempPath = path;
         assert (Files.exists (path) == true);
         assert (Files.writeText (path, "temp-data") == true);
         assert (Files.readAllText (path) == "temp-data");
-    }) == true);
+    });
+    assert (result.isOk ());
+    assert (result.unwrap () == true);
 
     assert (tempPath != null);
     assert (Files.exists (tempPath) == false);
 }
 
+void testWithTempFileCleanupFailure () {
+    var result = Temp.withTempFile ((path) => {
+        assert (Files.exists (path) == true);
+        assert (Files.remove (path) == true);
+    });
+    assert (result.isError ());
+    assert (result.unwrapError () is TempError.CLEANUP_FAILED);
+}
+
 void testWithTempDir () {
     Vala.Io.Path ? tempDir = null;
 
-    assert (Temp.withTempDir ((dir) => {
+    var result = Temp.withTempDir ((dir) => {
         tempDir = dir;
         assert (Files.exists (dir) == true);
         assert (Files.isDir (dir) == true);
@@ -38,8 +51,19 @@ void testWithTempDir () {
         Vala.Io.Path child = dir.resolve ("child.txt");
         assert (Files.writeText (child, "hello") == true);
         assert (Files.exists (child) == true);
-    }) == true);
+    });
+    assert (result.isOk ());
+    assert (result.unwrap () == true);
 
     assert (tempDir != null);
     assert (Files.exists (tempDir) == false);
+}
+
+void testWithTempDirCleanupFailure () {
+    var result = Temp.withTempDir ((dir) => {
+        assert (Files.exists (dir) == true);
+        assert (Files.deleteRecursive (dir) == true);
+    });
+    assert (result.isError ());
+    assert (result.unwrapError () is TempError.CLEANUP_FAILED);
 }

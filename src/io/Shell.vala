@@ -138,7 +138,8 @@ namespace Vala.Io {
         /**
          * Executes a command with timeout.
          *
-         * This method uses coreutils `timeout` command on POSIX environments.
+         * Timeout is enforced internally by waiting on a worker thread and
+         * terminating the process when the deadline is exceeded.
          *
          * @param command shell command.
          * @param timeout timeout duration.
@@ -160,10 +161,8 @@ namespace Vala.Io {
                 return Result.ok<ShellResult, GLib.Error> (run (command, false));
             }
 
-            int64 seconds = (timeoutMillis + 999) / 1000;
-            string wrapped = "timeout --preserve-status %" + int64.FORMAT + "s /bin/sh -c %s";
             return Result.ok<ShellResult, GLib.Error> (
-                run (wrapped.printf (seconds, GLib.Shell.quote (command)), false)
+                runWithTimeout (command, timeoutMillis)
             );
         }
 
@@ -199,34 +198,134 @@ namespace Vala.Io {
                 return null;
             }
 
-            ShellResult result = run ("command -v " + GLib.Shell.quote (binary), false);
-            if (!result.isSuccess ()) {
+            if (binary.contains ("/")) {
+                var direct = new Path (binary);
+                if (Files.isFile (direct) && Files.canExec (direct)) {
+                    return direct;
+                }
                 return null;
             }
 
-            string value = result.stdout ().strip ();
-            if (value.length == 0) {
+            string ? pathEnv = Environment.get_variable ("PATH");
+            if (pathEnv == null || pathEnv.length == 0) {
                 return null;
             }
-            return new Path (value);
+
+            foreach (string dir in pathEnv.split (":")) {
+                string baseDir = dir;
+                if (baseDir.length == 0) {
+                    baseDir = ".";
+                }
+
+                string candidatePath = GLib.Path.build_filename (baseDir, binary);
+                var candidate = new Path (candidatePath);
+                if (Files.isFile (candidate) && Files.canExec (candidate)) {
+                    return candidate;
+                }
+            }
+            return null;
         }
 
         private static ShellResult run (string command, bool quiet) {
             int64 startMicros = GLib.get_monotonic_time ();
-            Vala.Lang.Process ? proc = Vala.Lang.Process.exec (command);
+            var executed = Vala.Lang.Process.exec (command);
             int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
 
-            if (proc == null) {
+            if (executed.isError ()) {
+                GLib.Error err = executed.unwrapError ();
                 return new ShellResult (
                     SPAWN_ERROR_EXIT_CODE,
                     "",
-                    "failed to spawn process",
+                    err.message,
                     durationMillis
                 );
             }
+            Vala.Lang.Process proc = executed.unwrap ();
 
             if (quiet) {
                 return new ShellResult (proc.exitCode (), "", "", durationMillis);
+            }
+
+            return new ShellResult (
+                proc.exitCode (),
+                proc.stdout (),
+                proc.stderr (),
+                durationMillis
+            );
+        }
+
+        private static ShellResult runWithTimeout (string command, int64 timeoutMillis) {
+            int64 startMicros = GLib.get_monotonic_time ();
+            var started = Vala.Lang.Process.execAsync (command);
+            if (started.isError ()) {
+                GLib.Error err = started.unwrapError ();
+                int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
+                return new ShellResult (
+                    SPAWN_ERROR_EXIT_CODE,
+                    "",
+                    err.message,
+                    durationMillis
+                );
+            }
+            Vala.Lang.Process proc = started.unwrap ();
+
+            GLib.Mutex mutex = GLib.Mutex ();
+            GLib.Cond cond = GLib.Cond ();
+            bool completed = false;
+            bool waitSuccess = false;
+            string waitErrorMessage = "";
+
+            Thread<void *> waitThread = new Thread<void *> ("shell-timeout-wait", () => {
+                var waited = proc.waitFor ();
+                bool success = waited.isOk ();
+                string message = "";
+                if (!success) {
+                    message = waited.unwrapError ().message;
+                }
+
+                mutex.lock ();
+                waitSuccess = success;
+                waitErrorMessage = message;
+                completed = true;
+                cond.signal ();
+                mutex.unlock ();
+                return null;
+            });
+
+            bool timedOut = false;
+            int64 deadlineMicros = GLib.get_monotonic_time () + (timeoutMillis * 1000);
+
+            mutex.lock ();
+            while (!completed) {
+                if (!cond.wait_until (mutex, deadlineMicros)) {
+                    timedOut = true;
+                    break;
+                }
+            }
+            mutex.unlock ();
+
+            if (timedOut) {
+                var killed = proc.kill ();
+                if (killed.isError ()) {
+                    waitErrorMessage = killed.unwrapError ().message;
+                }
+
+                mutex.lock ();
+                while (!completed) {
+                    cond.wait (mutex);
+                }
+                mutex.unlock ();
+            }
+
+            waitThread.join ();
+            int64 durationMillis = (GLib.get_monotonic_time () - startMicros) / 1000;
+            if (!waitSuccess) {
+                return new ShellResult (
+                    SPAWN_ERROR_EXIT_CODE,
+                    "",
+                    waitErrorMessage,
+                    durationMillis
+                );
             }
 
             return new ShellResult (

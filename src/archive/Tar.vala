@@ -17,6 +17,57 @@ namespace Vala.Archive {
      * Static utility methods for Tar archive creation and extraction.
      */
     public class Tar : GLib.Object {
+        private const int TAR_BLOCK_SIZE = 512;
+
+        private class TarEntry : GLib.Object {
+            public string name { get; private set; }
+            public char typeflag { get; private set; }
+            public string linkName { get; private set; }
+            public int64 size { get; private set; }
+            public int64 headerOffset { get; private set; }
+            public int64 dataOffset { get; private set; }
+
+            public TarEntry (string name,
+                             char typeflag,
+                             string linkName,
+                             int64 size,
+                             int64 headerOffset,
+                             int64 dataOffset) {
+                this.name = name;
+                this.typeflag = typeflag;
+                this.linkName = linkName;
+                this.size = size;
+                this.headerOffset = headerOffset;
+                this.dataOffset = dataOffset;
+            }
+
+            public bool isRegularFile () {
+                return typeflag == '\0' || typeflag == '0';
+            }
+
+            public bool isDirectory () {
+                return typeflag == '5' || name.has_suffix ("/");
+            }
+
+            public bool isLink () {
+                return typeflag == '1' || typeflag == '2';
+            }
+        }
+
+        private class ParsedArchive : GLib.Object {
+            public uint8[] bytes;
+            public ArrayList<TarEntry> entries;
+            public int64 contentEnd;
+
+            public ParsedArchive (owned uint8[] bytes,
+                                  ArrayList<TarEntry> entries,
+                                  int64 contentEnd) {
+                this.bytes = (owned) bytes;
+                this.entries = entries;
+                this.contentEnd = contentEnd;
+            }
+        }
+
         /**
          * Creates a tar archive from file list.
          *
@@ -31,12 +82,10 @@ namespace Vala.Archive {
                 );
             }
 
-            var args = new GLib.Array<string> ();
-            args.append_val ("-cf");
-            args.append_val (archive.toString ());
             var basenames = new HashSet<string> (GLib.str_hash, GLib.str_equal);
-
+            var output = new GLib.ByteArray ();
             bool hasFile = false;
+
             for (int i = 0; i < files.size (); i++) {
                 Vala.Io.Path ? file = files.get (i);
                 if (file == null || !Files.isFile (file)) {
@@ -50,15 +99,24 @@ namespace Vala.Archive {
                     );
                 }
                 basenames.add (name);
-                string safeName = name;
-                if (safeName.has_prefix ("-")) {
-                    safeName = "./" + safeName;
+
+                string archiveName = name;
+                if (archiveName.has_prefix ("-")) {
+                    archiveName = "./" + archiveName;
                 }
 
+                uint8[] ? fileBytes = Files.readBytes (file);
+                if (fileBytes == null) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.IO ("failed to read source file: %s".printf (file.toString ()))
+                    );
+                }
+
+                var appended = appendRegularEntry (output, archiveName, fileBytes, 0644);
+                if (appended.isError ()) {
+                    return Result.error<bool, GLib.Error> (appended.unwrapError ());
+                }
                 hasFile = true;
-                args.append_val ("-C");
-                args.append_val (file.parent ().toString ());
-                args.append_val (safeName);
             }
 
             if (!hasFile) {
@@ -67,22 +125,8 @@ namespace Vala.Archive {
                 );
             }
 
-            if (Files.exists (archive) && !Files.remove (archive)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("failed to remove existing archive: %s".printf (archive.toString ()))
-                );
-            }
-
-            string[] execArgs = new string[args.length];
-            for (uint i = 0; i < args.length; i++) {
-                execArgs[i] = args.index (i);
-            }
-            if (!Vala.Io.Process.exec ("tar", execArgs)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("tar create command failed: %s".printf (archive.toString ()))
-                );
-            }
-            return Result.ok<bool, GLib.Error> (true);
+            appendEndBlocks (output);
+            return writeArchiveBytes (archive, output.steal (), "failed to create tar archive");
         }
 
         /**
@@ -102,18 +146,19 @@ namespace Vala.Archive {
                 );
             }
 
-            if (Files.exists (archive) && !Files.remove (archive)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("failed to remove existing archive: %s".printf (archive.toString ()))
-                );
+            var output = new GLib.ByteArray ();
+            var rootHeader = appendDirectoryEntry (output, "./", 0755);
+            if (rootHeader.isError ()) {
+                return Result.error<bool, GLib.Error> (rootHeader.unwrapError ());
             }
 
-            if (!Vala.Io.Process.exec ("tar", { "-cf", archive.toString (), "-C", dir.toString (), "." })) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("tar createFromDir command failed: %s".printf (archive.toString ()))
-                );
+            var appended = appendDirectoryTree (output, dir, "");
+            if (appended.isError ()) {
+                return Result.error<bool, GLib.Error> (appended.unwrapError ());
             }
-            return Result.ok<bool, GLib.Error> (true);
+
+            appendEndBlocks (output);
+            return writeArchiveBytes (archive, output.steal (), "failed to create tar archive from directory");
         }
 
         /**
@@ -134,53 +179,81 @@ namespace Vala.Archive {
                     new TarError.NOT_FOUND ("archive does not exist: %s".printf (archive.toString ()))
                 );
             }
-            if (!Files.exists (dest)) {
-                if (!Files.makeDirs (dest)) {
+
+            var ensureDest = ensureDestinationDir (dest);
+            if (ensureDest.isError ()) {
+                return Result.error<bool, GLib.Error> (ensureDest.unwrapError ());
+            }
+
+            var parsedResult = parseArchive (archive);
+            if (parsedResult.isError ()) {
+                return Result.error<bool, GLib.Error> (parsedResult.unwrapError ());
+            }
+            ParsedArchive parsed = parsedResult.unwrap ();
+
+            for (int i = 0; i < parsed.entries.size (); i++) {
+                TarEntry ? entry = parsed.entries.get (i);
+                if (entry == null || !isSafeArchiveEntry (entry.name, dest)) {
                     return Result.error<bool, GLib.Error> (
-                        new TarError.IO ("failed to create destination directory: %s".printf (dest.toString ()))
+                        new TarError.SECURITY (
+                            "unsafe archive entry rejected: %s".printf (entry == null ? "<null>" : entry.name)
+                        )
                     );
                 }
-            } else if (!Files.isDir (dest)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.INVALID_ARGUMENT ("destination must be a directory: %s".printf (dest.toString ()))
-                );
-            } else if (!Files.canWrite (dest)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.INVALID_ARGUMENT ("destination directory is not writable: %s".printf (dest.toString ()))
-                );
-            }
-
-            var containsLinks = containsArchiveLinks (archive);
-            if (containsLinks.isError ()) {
-                return Result.error<bool, GLib.Error> (containsLinks.unwrapError ());
-            }
-            if (containsLinks.unwrap ()) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.SECURITY ("archive contains symbolic/hard links: %s".printf (archive.toString ()))
-                );
-            }
-
-            var listed = list (archive);
-            if (listed.isError ()) {
-                return Result.error<bool, GLib.Error> (listed.unwrapError ());
-            }
-            ArrayList<string> entries = listed.unwrap ();
-            for (int i = 0; i < entries.size (); i++) {
-                string ? entry = entries.get (i);
-                if (entry == null || !isSafeArchiveEntry (entry, dest)) {
+                if (entry.isLink ()) {
                     return Result.error<bool, GLib.Error> (
-                        new TarError.SECURITY ("unsafe archive entry rejected: %s".printf (entry ?? "<null>"))
+                        new TarError.SECURITY ("archive contains symbolic/hard links: %s".printf (archive.toString ()))
                     );
                 }
             }
 
-            if (!Vala.Io.Process.exec ("tar", { "-xf", archive.toString (), "-C", dest.toString () })) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.IO (
-                        "tar extract command failed: archive=%s dest=%s".printf (archive.toString (), dest.toString ())
-                    )
+            for (int i = 0; i < parsed.entries.size (); i++) {
+                TarEntry ? entry = parsed.entries.get (i);
+                if (entry == null) {
+                    continue;
+                }
+
+                string relative = trimLeadingDotSlash (entry.name);
+                Vala.Io.Path target = resolveArchiveEntryTarget (dest, relative);
+                if (hasSymlinkComponent (dest, relative)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.SECURITY (
+                            "archive extraction path traverses symlink component: %s".printf (entry.name)
+                        )
+                    );
+                }
+
+                if (entry.isDirectory ()) {
+                    var ensured = ensureDirectoryPath (target);
+                    if (ensured.isError ()) {
+                        return Result.error<bool, GLib.Error> (ensured.unwrapError ());
+                    }
+                    continue;
+                }
+
+                if (!entry.isRegularFile ()) {
+                    continue;
+                }
+
+                if (entry.size > int.MAX) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.IO ("entry is too large to extract: %s".printf (entry.name))
+                    );
+                }
+
+                int start = (int) entry.dataOffset;
+                int end = (int) (entry.dataOffset + entry.size);
+                uint8[] data = parsed.bytes[start : end];
+                var replaced = replaceFileAtomically (
+                    target,
+                    data,
+                    "failed to extract entry: %s".printf (entry.name)
                 );
+                if (replaced.isError ()) {
+                    return Result.error<bool, GLib.Error> (replaced.unwrapError ());
+                }
             }
+
             return Result.ok<bool, GLib.Error> (true);
         }
 
@@ -202,18 +275,17 @@ namespace Vala.Archive {
                 );
             }
 
-            string ? output = Vala.Io.Process.execWithOutput ("tar", { "-tf", archive.toString () });
-            if (output == null) {
-                return Result.error<ArrayList<string>, GLib.Error> (
-                    new TarError.IO ("failed to list tar entries: %s".printf (archive.toString ()))
-                );
+            var parsedResult = parseArchive (archive);
+            if (parsedResult.isError ()) {
+                return Result.error<ArrayList<string>, GLib.Error> (parsedResult.unwrapError ());
             }
 
-            var entries = new ArrayList<string> ();
-            foreach (string line in output.split ("\n")) {
-                string trimmed = line.strip ();
-                if (trimmed.length > 0) {
-                    entries.add (trimmed);
+            var entries = new ArrayList<string> (GLib.str_equal);
+            ArrayList<TarEntry> parsedEntries = parsedResult.unwrap ().entries;
+            for (int i = 0; i < parsedEntries.size (); i++) {
+                TarEntry ? entry = parsedEntries.get (i);
+                if (entry != null && entry.name.strip ().length > 0) {
+                    entries.add (entry.name);
                 }
             }
             return Result.ok<ArrayList<string>, GLib.Error> (entries);
@@ -243,28 +315,51 @@ namespace Vala.Archive {
                 );
             }
 
-            string name = file.basename ();
-            if (name.has_prefix ("-")) {
-                name = "./" + name;
+            var parsedResult = parseArchive (archive);
+            if (parsedResult.isError ()) {
+                return Result.error<bool, GLib.Error> (parsedResult.unwrapError ());
             }
-            if (!Vala.Io.Process.exec (
-                    "tar",
-            {
-                "--append",
-                "-f", archive.toString (),
-                "-C", file.parent ().toString (),
-                name
-            })) {
+            ParsedArchive parsed = parsedResult.unwrap ();
+
+            uint8[] ? fileBytes = Files.readBytes (file);
+            if (fileBytes == null) {
                 return Result.error<bool, GLib.Error> (
-                    new TarError.IO (
-                        "tar addFile command failed: archive=%s file=%s".printf (
-                            archive.toString (),
-                            file.toString ()
-                        )
-                    )
+                    new TarError.IO ("failed to read file to append: %s".printf (file.toString ()))
                 );
             }
-            return Result.ok<bool, GLib.Error> (true);
+
+            string entryName = file.basename ();
+            if (entryName.has_prefix ("-")) {
+                entryName = "./" + entryName;
+            }
+            string normalizedEntryName = trimLeadingDotSlash (entryName);
+            for (int i = 0; i < parsed.entries.size (); i++) {
+                TarEntry ? existing = parsed.entries.get (i);
+                if (existing == null) {
+                    continue;
+                }
+                if (trimLeadingDotSlash (existing.name) == normalizedEntryName) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.INVALID_ARGUMENT (
+                            "archive entry already exists: %s".printf (entryName)
+                        )
+                    );
+                }
+            }
+
+            var output = new GLib.ByteArray ();
+            output.append (parsed.bytes[0 : (int) parsed.contentEnd]);
+            var appended = appendRegularEntry (output, entryName, fileBytes, 0644);
+            if (appended.isError ()) {
+                return Result.error<bool, GLib.Error> (appended.unwrapError ());
+            }
+            appendEndBlocks (output);
+
+            return writeArchiveBytes (
+                archive,
+                output.steal (),
+                "failed to append file to archive: archive=%s file=%s".printf (archive.toString (), file.toString ())
+            );
         }
 
         /**
@@ -288,168 +383,675 @@ namespace Vala.Archive {
                     new TarError.NOT_FOUND ("archive does not exist: %s".printf (archive.toString ()))
                 );
             }
-            var listed = list (archive);
-            if (listed.isError ()) {
-                return Result.error<bool, GLib.Error> (listed.unwrapError ());
+
+            var parsedResult = parseArchive (archive);
+            if (parsedResult.isError ()) {
+                return Result.error<bool, GLib.Error> (parsedResult.unwrapError ());
             }
-            string targetEntry = entry;
-            if (targetEntry.has_prefix ("./")) {
-                targetEntry = targetEntry.substring (2);
-            }
-            string ? matchedMember = null;
-            ArrayList<string> entries = listed.unwrap ();
-            for (int i = 0; i < entries.size (); i++) {
-                string ? listedEntry = entries.get (i);
-                if (listedEntry == null) {
+            ParsedArchive parsed = parsedResult.unwrap ();
+
+            string targetEntry = trimLeadingDotSlash (entry);
+            TarEntry ? matchedEntry = null;
+
+            for (int i = 0; i < parsed.entries.size (); i++) {
+                TarEntry ? current = parsed.entries.get (i);
+                if (current == null) {
                     continue;
                 }
-                string normalized = listedEntry;
-                if (normalized.has_prefix ("./")) {
-                    normalized = normalized.substring (2);
-                }
-                if (normalized == targetEntry) {
-                    matchedMember = listedEntry;
+                if (trimLeadingDotSlash (current.name) == targetEntry) {
+                    matchedEntry = current;
                     break;
                 }
             }
-            if (matchedMember == null) {
+
+            if (matchedEntry == null) {
                 return Result.error<bool, GLib.Error> (
                     new TarError.NOT_FOUND ("entry not found: entry=%s archive=%s".printf (entry, archive.toString ()))
                 );
             }
 
+            if (matchedEntry.isLink ()) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.SECURITY ("entry is a symbolic/hard link: %s".printf (matchedEntry.name))
+                );
+            }
+            if (!matchedEntry.isRegularFile ()) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT ("entry is not a regular file: %s".printf (matchedEntry.name))
+                );
+            }
+
+            if (matchedEntry.size > int.MAX) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.IO ("entry is too large to extract: %s".printf (matchedEntry.name))
+                );
+            }
+
+            int start = (int) matchedEntry.dataOffset;
+            int end = (int) (matchedEntry.dataOffset + matchedEntry.size);
+            uint8[] payload = parsed.bytes[start : end];
+
+            return replaceFileAtomically (
+                dest,
+                payload,
+                "failed to extract entry: %s".printf (matchedEntry.name)
+            );
+        }
+
+        private static Result<bool, GLib.Error> appendDirectoryTree (GLib.ByteArray output,
+                                                                     Vala.Io.Path currentDir,
+                                                                     string relativeDir) {
+            GLib.List<string> ? names = Files.listDir (currentDir);
+            if (names == null) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.IO ("failed to list source directory: %s".printf (currentDir.toString ()))
+                );
+            }
+            names.sort ((a, b) => {
+                return a.collate (b);
+            });
+
+            foreach (string name in names) {
+                Vala.Io.Path child = currentDir.resolve (name);
+                string relativePath = relativeDir.length == 0 ? name : relativeDir + "/" + name;
+                string archiveEntry = "./" + relativePath;
+
+                if (Files.isSymbolicFile (child)) {
+                    Vala.Io.Path ? linkTarget = Files.readSymlink (child);
+                    if (linkTarget == null) {
+                        return Result.error<bool, GLib.Error> (
+                            new TarError.IO ("failed to read symbolic link: %s".printf (child.toString ()))
+                        );
+                    }
+                    var linkAppended = appendSymlinkEntry (output, archiveEntry, linkTarget.toString ());
+                    if (linkAppended.isError ()) {
+                        return Result.error<bool, GLib.Error> (linkAppended.unwrapError ());
+                    }
+                    continue;
+                }
+
+                if (Files.isDir (child)) {
+                    var dirAppended = appendDirectoryEntry (output, archiveEntry + "/", 0755);
+                    if (dirAppended.isError ()) {
+                        return Result.error<bool, GLib.Error> (dirAppended.unwrapError ());
+                    }
+                    var nested = appendDirectoryTree (output, child, relativePath);
+                    if (nested.isError ()) {
+                        return Result.error<bool, GLib.Error> (nested.unwrapError ());
+                    }
+                    continue;
+                }
+
+                if (!Files.isFile (child)) {
+                    continue;
+                }
+
+                uint8[] ? fileBytes = Files.readBytes (child);
+                if (fileBytes == null) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.IO ("failed to read source file: %s".printf (child.toString ()))
+                    );
+                }
+
+                var fileAppended = appendRegularEntry (output, archiveEntry, fileBytes, 0644);
+                if (fileAppended.isError ()) {
+                    return Result.error<bool, GLib.Error> (fileAppended.unwrapError ());
+                }
+            }
+
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<bool, GLib.Error> appendRegularEntry (GLib.ByteArray output,
+                                                                    string entryName,
+                                                                    uint8[] data,
+                                                                    int mode) {
+            var headerResult = buildHeader (entryName, '0', data.length, "", mode);
+            if (headerResult.isError ()) {
+                return Result.error<bool, GLib.Error> (headerResult.unwrapError ());
+            }
+            output.append (headerResult.unwrap ().get_data ());
+            output.append (data);
+
+            int padding = (int) ((TAR_BLOCK_SIZE - (data.length % TAR_BLOCK_SIZE)) % TAR_BLOCK_SIZE);
+            if (padding > 0) {
+                output.append (new uint8[padding]);
+            }
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<bool, GLib.Error> appendDirectoryEntry (GLib.ByteArray output,
+                                                                      string entryName,
+                                                                      int mode) {
+            var headerResult = buildHeader (entryName, '5', 0, "", mode);
+            if (headerResult.isError ()) {
+                return Result.error<bool, GLib.Error> (headerResult.unwrapError ());
+            }
+            output.append (headerResult.unwrap ().get_data ());
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<bool, GLib.Error> appendSymlinkEntry (GLib.ByteArray output,
+                                                                    string entryName,
+                                                                    string linkTarget) {
+            var headerResult = buildHeader (entryName, '2', 0, linkTarget, 0777);
+            if (headerResult.isError ()) {
+                return Result.error<bool, GLib.Error> (headerResult.unwrapError ());
+            }
+            output.append (headerResult.unwrap ().get_data ());
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<GLib.Bytes, GLib.Error> buildHeader (string name,
+                                                                   char typeflag,
+                                                                   int64 size,
+                                                                   string linkName,
+                                                                   int mode) {
+            if (name.strip ().length == 0) {
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT ("tar entry name must not be empty")
+                );
+            }
+            if (size < 0) {
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT ("tar entry size must not be negative")
+                );
+            }
+
+            uint8[] header = new uint8[TAR_BLOCK_SIZE];
+            if (!writeNameField (header, name)) {
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT ("tar entry name is too long: %s".printf (name))
+                );
+            }
+            if (typeflag == '2' && !writeAsciiField (header, 157, 100, linkName)) {
+                return Result.error<GLib.Bytes, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT ("tar link target is too long: %s".printf (linkName))
+                );
+            }
+
+            writeOctalField (header, 100, 8, mode);
+            writeOctalField (header, 108, 8, 0);
+            writeOctalField (header, 116, 8, 0);
+            writeOctalField (header, 124, 12, size);
+            writeOctalField (header, 136, 12, 0);
+            header[156] = (uint8) typeflag;
+            writeAsciiField (header, 257, 6, "ustar");
+            writeAsciiField (header, 263, 2, "00");
+            writeChecksumField (header);
+            return Result.ok<GLib.Bytes, GLib.Error> (new GLib.Bytes (header));
+        }
+
+        private static bool writeNameField (uint8[] header, string rawName) {
+            string name = rawName;
+            bool hadTrailingSlash = name.has_suffix ("/");
+            if (name.length > 1 && hadTrailingSlash) {
+                name = name.substring (0, name.length - 1);
+            }
+            if (name.length <= 100) {
+                string encoded = hadTrailingSlash && !name.has_suffix ("/") ? name + "/" : name;
+                return writeAsciiField (header, 0, 100, encoded);
+            }
+
+            int slashIndex = -1;
+            for (int i = 0; i < name.length; i++) {
+                if (name[i] == '/') {
+                    string prefix = name.substring (0, i);
+                    string baseName = name.substring (i + 1);
+                    if (hadTrailingSlash) {
+                        baseName += "/";
+                    }
+                    if (prefix.length <= 155 && baseName.length <= 100) {
+                        slashIndex = i;
+                    }
+                }
+            }
+
+            if (slashIndex < 0) {
+                return false;
+            }
+
+            string prefixPart = name.substring (0, slashIndex);
+            string namePart = name.substring (slashIndex + 1);
+            if (hadTrailingSlash) {
+                namePart += "/";
+            }
+
+            return writeAsciiField (header, 0, 100, namePart)
+                   && writeAsciiField (header, 345, 155, prefixPart);
+        }
+
+        private static bool writeAsciiField (uint8[] header,
+                                             int offset,
+                                             int width,
+                                             string value) {
+            if (value.length > width) {
+                return false;
+            }
+            for (int i = 0; i < value.length; i++) {
+                header[offset + i] = (uint8) value[i];
+            }
+            return true;
+        }
+
+        private static void writeOctalField (uint8[] header,
+                                             int offset,
+                                             int width,
+                                             int64 value) {
+            int digitsWidth = width - 1;
+            string octal = toOctalString (value);
+            if (octal.length > digitsWidth) {
+                octal = octal.substring (octal.length - digitsWidth);
+            }
+            int pad = digitsWidth - octal.length;
+            for (int i = 0; i < pad; i++) {
+                header[offset + i] = (uint8) '0';
+            }
+            for (int i = 0; i < octal.length; i++) {
+                header[offset + pad + i] = (uint8) octal[i];
+            }
+            header[offset + width - 1] = 0;
+        }
+
+        private static void writeChecksumField (uint8[] header) {
+            for (int i = 0; i < 8; i++) {
+                header[148 + i] = (uint8) ' ';
+            }
+
+            int64 sum = 0;
+            for (int i = 0; i < TAR_BLOCK_SIZE; i++) {
+                sum += header[i];
+            }
+
+            string octal = toOctalString (sum);
+            if (octal.length > 6) {
+                octal = octal.substring (octal.length - 6);
+            }
+            int pad = 6 - octal.length;
+            for (int i = 0; i < pad; i++) {
+                header[148 + i] = (uint8) '0';
+            }
+            for (int i = 0; i < octal.length; i++) {
+                header[148 + pad + i] = (uint8) octal[i];
+            }
+            header[154] = 0;
+            header[155] = (uint8) ' ';
+        }
+
+        private static string toOctalString (int64 value) {
+            if (value < 0) {
+                GLib.error (
+                    ("negative values are not supported in tar octal fields: %" + int64.FORMAT).printf (value)
+                );
+            }
+            if (value == 0) {
+                return "0";
+            }
+            string out = "";
+            int64 current = value;
+            while (current > 0) {
+                int digit = (int) (current & 7);
+                out = ((char) ('0' + digit)).to_string () + out;
+                current >>= 3;
+            }
+            return out;
+        }
+
+        private static void appendEndBlocks (GLib.ByteArray output) {
+            output.append (new uint8[TAR_BLOCK_SIZE]);
+            output.append (new uint8[TAR_BLOCK_SIZE]);
+        }
+
+        private static Result<bool, GLib.Error> writeArchiveBytes (Vala.Io.Path archive,
+                                                                   uint8[] bytes,
+                                                                   string errorContext) {
+            if (Files.exists (archive) && !Files.remove (archive)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.IO ("failed to remove existing archive: %s".printf (archive.toString ()))
+                );
+            }
+            if (!Files.writeBytes (archive, bytes)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.IO ("%s: %s".printf (errorContext, archive.toString ()))
+                );
+            }
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<ParsedArchive, GLib.Error> parseArchive (Vala.Io.Path archive) {
+            uint8[] ? bytes = Files.readBytes (archive);
+            if (bytes == null) {
+                return Result.error<ParsedArchive, GLib.Error> (
+                    new TarError.IO ("failed to read archive: %s".printf (archive.toString ()))
+                );
+            }
+            if (bytes.length % TAR_BLOCK_SIZE != 0) {
+                return Result.error<ParsedArchive, GLib.Error> (
+                    new TarError.IO ("invalid tar archive size: %s".printf (archive.toString ()))
+                );
+            }
+
+            var entries = new ArrayList<TarEntry> ();
+            int64 offset = 0;
+            int64 contentEnd = 0;
+
+            while (offset + TAR_BLOCK_SIZE <= bytes.length) {
+                if (isZeroBlock (bytes, offset)) {
+                    break;
+                }
+
+                bool checksumValid = hasValidHeaderChecksum (bytes, offset);
+                if (!checksumValid) {
+                    return Result.error<ParsedArchive, GLib.Error> (
+                        new TarError.IO ("invalid tar header checksum: %s".printf (archive.toString ()))
+                    );
+                }
+
+                string name = readHeaderString (bytes, offset + 0, 100);
+                string prefix = readHeaderString (bytes, offset + 345, 155);
+                if (prefix.length > 0) {
+                    name = prefix + "/" + name;
+                }
+                if (name.strip ().length == 0) {
+                    return Result.error<ParsedArchive, GLib.Error> (
+                        new TarError.IO ("invalid tar entry name: %s".printf (archive.toString ()))
+                    );
+                }
+
+                int64 size = 0;
+                if (!parseOctalField (bytes, offset + 124, 12, out size) || size < 0) {
+                    return Result.error<ParsedArchive, GLib.Error> (
+                        new TarError.IO ("invalid tar entry size: %s".printf (archive.toString ()))
+                    );
+                }
+
+                char typeflag = (char) bytes[(int) (offset + 156)];
+                string linkName = readHeaderString (bytes, offset + 157, 100);
+                int64 dataSize = size;
+                int64 paddedDataSize = alignToBlockSize (dataSize);
+
+                if (offset + TAR_BLOCK_SIZE + paddedDataSize > bytes.length) {
+                    return Result.error<ParsedArchive, GLib.Error> (
+                        new TarError.IO ("tar archive is truncated: %s".printf (archive.toString ()))
+                    );
+                }
+
+                entries.add (new TarEntry (
+                                 name,
+                                 typeflag,
+                                 linkName,
+                                 size,
+                                 offset,
+                                 offset + TAR_BLOCK_SIZE
+                ));
+
+                offset += TAR_BLOCK_SIZE + paddedDataSize;
+                contentEnd = offset;
+            }
+
+            return Result.ok<ParsedArchive, GLib.Error> (
+                new ParsedArchive ((owned) bytes, entries, contentEnd)
+            );
+        }
+
+        private static bool hasValidHeaderChecksum (uint8[] bytes, int64 headerOffset) {
+            int64 stored = 0;
+            if (!parseOctalField (bytes, headerOffset + 148, 8, out stored)) {
+                return false;
+            }
+
+            int64 sum = 0;
+            for (int i = 0; i < TAR_BLOCK_SIZE; i++) {
+                if (i >= 148 && i < 156) {
+                    sum += ' ';
+                } else {
+                    sum += bytes[(int) (headerOffset + i)];
+                }
+            }
+            return sum == stored;
+        }
+
+        private static bool parseOctalField (uint8[] bytes,
+                                             int64 offset,
+                                             int width,
+                                             out int64 value) {
+            value = 0;
+            bool started = false;
+
+            for (int i = 0; i < width; i++) {
+                uint8 raw = bytes[(int) (offset + i)];
+                if (raw == 0 || raw == ' ') {
+                    if (started) {
+                        bool onlyPadding = true;
+                        for (int j = i + 1; j < width; j++) {
+                            uint8 rest = bytes[(int) (offset + j)];
+                            if (rest != 0 && rest != ' ') {
+                                onlyPadding = false;
+                                break;
+                            }
+                        }
+                        if (!onlyPadding) {
+                            return false;
+                        }
+                        break;
+                    }
+                    continue;
+                }
+
+                if (raw < '0' || raw > '7') {
+                    return false;
+                }
+                started = true;
+
+                if (value > (int64.MAX >> 3)) {
+                    return false;
+                }
+                value = (value << 3) + (raw - '0');
+            }
+
+            return true;
+        }
+
+        private static string readHeaderString (uint8[] bytes,
+                                                int64 offset,
+                                                int width) {
+            var builder = new GLib.StringBuilder ();
+            for (int i = 0; i < width; i++) {
+                uint8 raw = bytes[(int) (offset + i)];
+                if (raw == 0) {
+                    break;
+                }
+                builder.append_c ((char) raw);
+            }
+            return builder.str;
+        }
+
+        private static bool isZeroBlock (uint8[] bytes, int64 offset) {
+            for (int i = 0; i < TAR_BLOCK_SIZE; i++) {
+                if (bytes[(int) (offset + i)] != 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static int64 alignToBlockSize (int64 n) {
+            if (n <= 0) {
+                return 0;
+            }
+            int64 rem = n % TAR_BLOCK_SIZE;
+            if (rem == 0) {
+                return n;
+            }
+            return n + (TAR_BLOCK_SIZE - rem);
+        }
+
+        private static Result<bool, GLib.Error> ensureDestinationDir (Vala.Io.Path dest) {
+            if (Files.exists (dest) && Files.isSymbolicFile (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.SECURITY ("destination must not be a symbolic link: %s".printf (dest.toString ()))
+                );
+            }
+            if (!Files.exists (dest)) {
+                if (!Files.makeDirs (dest)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.IO ("failed to create destination directory: %s".printf (dest.toString ()))
+                    );
+                }
+            } else if (!Files.isDir (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT ("destination must be a directory: %s".printf (dest.toString ()))
+                );
+            } else if (!Files.canWrite (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.INVALID_ARGUMENT (
+                        "destination directory is not writable: %s".printf (dest.toString ())
+                    )
+                );
+            }
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<bool, GLib.Error> ensureDirectoryPath (Vala.Io.Path dirPath) {
+            if (Files.exists (dirPath)) {
+                if (Files.isSymbolicFile (dirPath)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.SECURITY ("directory path is symbolic link: %s".printf (dirPath.toString ()))
+                    );
+                }
+                if (!Files.isDir (dirPath)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.IO ("destination path is not a directory: %s".printf (dirPath.toString ()))
+                    );
+                }
+                return Result.ok<bool, GLib.Error> (true);
+            }
+
+            if (!Files.makeDirs (dirPath)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.IO ("failed to create directory: %s".printf (dirPath.toString ()))
+                );
+            }
+            return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static Result<bool, GLib.Error> replaceFileAtomically (Vala.Io.Path dest,
+                                                                       uint8[] data,
+                                                                       string failurePrefix) {
             Vala.Io.Path parent = dest.parent ();
-            if (Files.exists (parent) && !Files.isDir (parent)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.INVALID_ARGUMENT (
-                        "destination parent is not a directory: %s".printf (parent.toString ())
-                    )
-                );
-            }
-            if (Files.exists (parent) && !Files.canWrite (parent)) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.INVALID_ARGUMENT (
-                        "destination parent is not writable: %s".printf (parent.toString ())
-                    )
-                );
-            }
-            if (!Files.exists (parent) && !Files.makeDirs (parent)) {
+            if (Files.exists (parent)) {
+                if (Files.isSymbolicFile (parent)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.SECURITY ("destination parent is symbolic link: %s".printf (parent.toString ()))
+                    );
+                }
+                if (!Files.isDir (parent)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.INVALID_ARGUMENT (
+                            "destination parent is not a directory: %s".printf (parent.toString ())
+                        )
+                    );
+                }
+                if (!Files.canWrite (parent)) {
+                    return Result.error<bool, GLib.Error> (
+                        new TarError.INVALID_ARGUMENT (
+                            "destination parent is not writable: %s".printf (parent.toString ())
+                        )
+                    );
+                }
+            } else if (!Files.makeDirs (parent)) {
                 return Result.error<bool, GLib.Error> (
                     new TarError.IO ("failed to create parent directory: %s".printf (parent.toString ()))
                 );
             }
 
-            Vala.Io.Path temp = parent.resolve (".tar-extract-%s.tmp".printf (GLib.Uuid.string_random ()));
-            string safeEntry = (string) matchedMember;
-            if (safeEntry.has_prefix ("-")) {
-                safeEntry = "./" + safeEntry;
+            if (Files.exists (dest) && Files.isSymbolicFile (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.SECURITY ("destination file is symbolic link: %s".printf (dest.toString ()))
+                );
+            }
+            if (Files.exists (dest) && Files.isDir (dest)) {
+                return Result.error<bool, GLib.Error> (
+                    new TarError.SECURITY ("destination file is a directory: %s".printf (dest.toString ()))
+                );
             }
 
-            try {
-                var process = new GLib.Subprocess (
-                    GLib.SubprocessFlags.STDOUT_PIPE | GLib.SubprocessFlags.STDERR_SILENCE
-                    ,
-                    "tar",
-                    "-xOf",
-                    archive.toString (),
-                    safeEntry,
-                    null
-                );
-                GLib.InputStream ? stdoutPipe = process.get_stdout_pipe ();
-                if (stdoutPipe == null) {
-                    return Result.error<bool, GLib.Error> (
-                        new TarError.IO ("failed to open tar stdout stream: %s".printf (archive.toString ()))
-                    );
-                }
-
-                GLib.File tempFile = GLib.File.new_for_path (temp.toString ());
-                var outStream = tempFile.replace (null,
-                                                  false,
-                                                  GLib.FileCreateFlags.REPLACE_DESTINATION,
-                                                  null);
-                uint8[] buf = new uint8[8192];
-                while (true) {
-                    ssize_t read = stdoutPipe.read (buf, null);
-                    if (read == 0) {
-                        break;
-                    }
-                    if (read < 0) {
-                        outStream.close (null);
-                        Files.remove (temp);
-                        return Result.error<bool, GLib.Error> (
-                            new TarError.IO ("failed to read tar stream: %s".printf (archive.toString ()))
-                        );
-                    }
-                    size_t written = 0;
-                    outStream.write_all (buf[0 : (size_t) read], out written, null);
-                }
-                outStream.flush (null);
-                outStream.close (null);
-
-                if (!process.wait_check (null)) {
-                    if (Files.exists (temp)) {
-                        Files.remove (temp);
-                    }
-                    return Result.error<bool, GLib.Error> (
-                        new TarError.IO (
-                            "tar extractFile command failed: archive=%s entry=%s".printf (
-                                archive.toString (),
-                                entry
-                            )
-                        )
-                    );
-                }
-            } catch (GLib.Error e) {
-                if (Files.exists (temp)) {
-                    Files.remove (temp);
-                }
+            Vala.Io.Path temp = parent.resolve (".tar-write-%s.tmp".printf (GLib.Uuid.string_random ()));
+            if (!Files.writeBytes (temp, data)) {
                 return Result.error<bool, GLib.Error> (
-                    new TarError.IO (
-                        "tar extractFile failed: archive=%s entry=%s reason=%s".printf (
-                            archive.toString (),
-                            entry,
-                            e.message
-                        )
-                    )
+                    new TarError.IO ("%s: failed to write temp file".printf (failurePrefix))
                 );
             }
 
             bool hadDest = Files.exists (dest);
-            Vala.Io.Path backup = parent.resolve (".tar-dest-backup-%s.tmp".printf (GLib.Uuid.string_random ()));
+            Vala.Io.Path backup = parent.resolve (".tar-backup-%s.tmp".printf (GLib.Uuid.string_random ()));
             if (hadDest && !Files.move (dest, backup)) {
                 Files.remove (temp);
                 return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("failed to backup destination file: %s".printf (dest.toString ()))
+                    new TarError.IO ("%s: failed to backup destination".printf (failurePrefix))
                 );
             }
+
             if (!Files.move (temp, dest)) {
-                string moveFailure = "failed to move extracted file to destination: temp=%s dest=%s".printf (
-                    temp.toString (),
-                    dest.toString ()
-                );
+                string message = "%s: failed to move temp file to destination".printf (failurePrefix);
                 if (hadDest && Files.exists (backup)) {
                     if (!Files.move (backup, dest)) {
                         Files.remove (temp);
                         return Result.error<bool, GLib.Error> (
-                            new TarError.IO (
-                                "%s; rollback failed: backup=%s dest=%s".printf (
-                                    moveFailure,
-                                    backup.toString (),
-                                    dest.toString ()
-                                )
-                            )
+                            new TarError.IO ("%s; rollback failed".printf (message))
                         );
                     }
                 }
                 Files.remove (temp);
                 return Result.error<bool, GLib.Error> (
-                    new TarError.IO (moveFailure)
+                    new TarError.IO (message)
                 );
             }
+
             if (hadDest && Files.exists (backup)) {
                 Files.remove (backup);
             }
             return Result.ok<bool, GLib.Error> (true);
+        }
+
+        private static string trimLeadingDotSlash (string value) {
+            string out = value;
+            while (out.has_prefix ("./")) {
+                out = out.substring (2);
+            }
+            return out;
+        }
+
+        private static Vala.Io.Path resolveArchiveEntryTarget (Vala.Io.Path dest, string relative) {
+            if (relative.length == 0 || relative == ".") {
+                return dest;
+            }
+            return dest.resolve (relative);
+        }
+
+        private static bool hasSymlinkComponent (Vala.Io.Path dest, string relative) {
+            if (Files.exists (dest) && Files.isSymbolicFile (dest)) {
+                return true;
+            }
+
+            string normalized = trimLeadingDotSlash (relative);
+            if (normalized.length == 0 || normalized == ".") {
+                return false;
+            }
+
+            string[] parts = normalized.split ("/");
+            Vala.Io.Path cursor = dest;
+            for (int i = 0; i < parts.length; i++) {
+                string part = parts[i];
+                if (part.length == 0 || part == ".") {
+                    continue;
+                }
+                cursor = cursor.resolve (part);
+                if (Files.exists (cursor) && Files.isSymbolicFile (cursor)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static bool isSafeArchiveEntry (string entry, Vala.Io.Path dest) {
@@ -478,29 +1080,6 @@ namespace Vala.Archive {
                 return true;
             }
             return resolved.has_prefix (basePath + "/");
-        }
-
-        private static Result<bool, GLib.Error> containsArchiveLinks (Vala.Io.Path archive) {
-            string ? output = Vala.Io.Process.execWithOutput ("tar", { "-tvf", archive.toString () });
-            if (output == null) {
-                return Result.error<bool, GLib.Error> (
-                    new TarError.IO ("failed to inspect tar metadata: %s".printf (archive.toString ()))
-                );
-            }
-
-            foreach (string line in output.split ("\n")) {
-                string trimmed = line.strip ();
-                if (trimmed.length == 0) {
-                    continue;
-                }
-
-                // Reject symbolic links and hard links to avoid link traversal on extraction.
-                char kind = trimmed[0];
-                if (kind == 'l' || kind == 'h') {
-                    return Result.ok<bool, GLib.Error> (true);
-                }
-            }
-            return Result.ok<bool, GLib.Error> (false);
         }
     }
 }

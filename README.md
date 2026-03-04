@@ -753,7 +753,8 @@ Waits for a collection of tasks to complete.
 |---|---|
 | `add(int delta)` | Adds delta to task counter (ignored if it would go below zero) |
 | `done()` | Decrements task counter by one (no-op when already zero) |
-| `wait()` | Blocks until counter reaches zero |
+| `waitFor(int timeoutMillis)` | Returns `Result<bool, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; error: `WaitGroupError.TIMEOUT`) |
+| `wait()` | Blocks until counter reaches zero (`waitFor(-1)`) |
 
 ### Vala.Concurrent.Semaphore
 Counting semaphore.
@@ -761,7 +762,8 @@ Counting semaphore.
 | Method | Description |
 |---|---|
 | `of(int permits)` | Returns `Result<Semaphore, Error>` (error: `SemaphoreError.INVALID_ARGUMENT` when permits is negative) |
-| `acquire()` | Acquires permit, blocking if necessary |
+| `acquireTimeout(Duration timeout)` | Returns `Result<bool, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; error: `SemaphoreError.TIMEOUT`) |
+| `acquire()` | Acquires permit, blocking if necessary (`acquireTimeout(-1s)`) |
 | `tryAcquire()` | Tries non-blocking permit acquisition |
 | `release()` | Releases permit |
 | `availablePermits()` | Returns currently available permits |
@@ -827,7 +829,7 @@ One-shot countdown latch for synchronization.
 | `of(int count)` | Returns `Result<CountDownLatch, Error>` (error: `CountDownLatchError.INVALID_ARGUMENT` when count is negative) |
 | `countDown()` | Decrements count by one |
 | `await()` | Blocks until count reaches zero |
-| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success state |
+| `awaitTimeout(Duration timeout)` | Returns `Result<bool, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; error: `CountDownLatchError.TIMEOUT`) |
 | `getCount()` | Returns current count |
 
 ### Vala.Concurrent.WorkerPool
@@ -884,7 +886,8 @@ Represents the eventual result of an asynchronous computation.
 | `completed<T>(T value)` | Creates an already successful future |
 | `failed<T>(string message)` | Creates an already failed future |
 | `await()` | Waits for completion and returns success value (value-type futures return default value on failure) |
-| `awaitTimeout(Duration timeout)` | Waits with timeout and returns success value when completed in time (`null` when timeout is negative) |
+| `awaitResult(Duration timeout)` | Returns `Result<T, Error>` (`0` non-blocking, `>0` timed wait, `<0` infinite wait; errors: `FutureError.TIMEOUT/CANCELLED/FAILED`) |
+| `awaitTimeout(Duration timeout)` | Legacy nullable wait API backed by `awaitResult` (`null` on timeout/cancel/failure) |
 | `isDone()` | Returns whether the future is completed |
 | `isSuccess()` | Returns whether the future is successful |
 | `isFailed()` | Returns whether the future failed |
@@ -1338,7 +1341,7 @@ A map that stores multiple values for the same key.
 |---|---|
 | `MultiMap(HashFunc<K>, EqualFunc<K>, EqualFunc<V>?)` | Creates an empty MultiMap |
 | `put(K key, V value)` | Appends a value to the key |
-| `get(K key)` | Returns values for the key (empty list when missing) |
+| `get(K key)` | Returns a snapshot list for the key (empty list when missing) |
 | `containsKey(K key)` | Returns whether the key exists |
 | `remove(K key, V value)` | Removes the first matching value for the key |
 | `removeAll(K key)` | Removes all values for the key |
@@ -1890,7 +1893,7 @@ Command-line argument parser with Builder pattern.
 | Method | Description |
 |---|---|
 | `addOption(string short, string long, string desc)` | Registers a command-line option |
-| `parse(string[] args)` | Parses command-line arguments |
+| `parse(string[] args)` | Parses command-line arguments (resets previous parse state each call) |
 | `hasOption(string shortOption)` | Returns whether the option was specified |
 | `usage()` | Prints usage information to stdout |
 | `showVersion()` | Prints application version to stdout |

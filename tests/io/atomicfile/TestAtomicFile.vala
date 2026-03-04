@@ -10,6 +10,16 @@ void cleanupTempDir (Vala.Io.Path dir) {
     Files.deleteRecursive (dir);
 }
 
+bool mustOkBool (Vala.Collections.Result<bool, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
+string mustOkString (Vala.Collections.Result<string, GLib.Error> result) {
+    assert (result.isOk ());
+    return result.unwrap ();
+}
+
 void main (string[] args) {
     Test.init (ref args);
     Test.add_func ("/io/atomicfile/testWriteAndReadConsistent", testWriteAndReadConsistent);
@@ -36,10 +46,10 @@ void testWriteAndReadConsistent () {
 
     try {
         var atomic = new AtomicFile ();
-        assert (atomic.write (path, "hello") == true);
+        assert (mustOkBool (atomic.write (path, "hello")) == true);
         assert (Files.readAllText (path) == "hello");
 
-        string ? stable = atomic.readConsistent (path);
+        string stable = mustOkString (atomic.readConsistent (path));
         assert (stable == "hello");
     } finally {
         cleanupTempDir (dir);
@@ -54,7 +64,7 @@ void testWriteBytes () {
         var atomic = new AtomicFile ();
         uint8[] data = { 0x41, 0x42, 0x43 };
 
-        assert (atomic.writeBytes (path, data) == true);
+        assert (mustOkBool (atomic.writeBytes (path, data)) == true);
 
         uint8[] ? loaded = Files.readBytes (path);
         assert (loaded != null);
@@ -74,9 +84,9 @@ void testAppend () {
     try {
         var atomic = new AtomicFile ();
 
-        assert (atomic.append (path, "a") == true);
-        assert (atomic.append (path, "b") == true);
-        assert (atomic.append (path, "c") == true);
+        assert (mustOkBool (atomic.append (path, "a")) == true);
+        assert (mustOkBool (atomic.append (path, "b")) == true);
+        assert (mustOkBool (atomic.append (path, "c")) == true);
 
         assert (Files.readAllText (path) == "abc");
     } finally {
@@ -94,7 +104,7 @@ void testReplace () {
         assert (Files.writeText (dst, "old-content") == true);
 
         var atomic = new AtomicFile ();
-        assert (atomic.replace (srcTmp, dst) == true);
+        assert (mustOkBool (atomic.replace (srcTmp, dst)) == true);
 
         assert (Files.exists (srcTmp) == false);
         assert (Files.readAllText (dst) == "new-content");
@@ -114,7 +124,7 @@ void testReplaceWithBackup () {
         assert (Files.writeText (dst, "prev") == true);
 
         var atomic = atomicWithBackup (".old");
-        assert (atomic.replace (srcTmp, dst) == true);
+        assert (mustOkBool (atomic.replace (srcTmp, dst)) == true);
 
         assert (Files.readAllText (dst) == "next");
         assert (Files.readAllText (backup) == "prev");
@@ -132,7 +142,7 @@ void testWriteWithBackup () {
         assert (Files.writeText (path, "before") == true);
 
         var atomic = atomicWithBackup (".prev");
-        assert (atomic.write (path, "after") == true);
+        assert (mustOkBool (atomic.write (path, "after")) == true);
 
         assert (Files.readAllText (path) == "after");
         assert (Files.readAllText (backup) == "before");
@@ -149,8 +159,13 @@ void testReadConsistentMissing () {
     try {
         var atomic = new AtomicFile ();
 
-        assert (atomic.readConsistent (missing) == null);
-        assert (atomic.readConsistent (existingDir) == null);
+        var missingRead = atomic.readConsistent (missing);
+        assert (missingRead.isError ());
+        assert (missingRead.unwrapError () is AtomicFileError.NOT_FOUND);
+
+        var dirRead = atomic.readConsistent (existingDir);
+        assert (dirRead.isError ());
+        assert (dirRead.unwrapError () is AtomicFileError.NOT_FOUND);
     } finally {
         cleanupTempDir (dir);
     }
@@ -165,7 +180,9 @@ void testReplaceMissingSource () {
         assert (Files.writeText (dst, "value") == true);
 
         var atomic = new AtomicFile ();
-        assert (atomic.replace (missing, dst) == false);
+        var replaced = atomic.replace (missing, dst);
+        assert (replaced.isError ());
+        assert (replaced.unwrapError () is AtomicFileError.NOT_FOUND);
         assert (Files.readAllText (dst) == "value");
     } finally {
         cleanupTempDir (dir);

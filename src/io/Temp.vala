@@ -1,5 +1,13 @@
 namespace Vala.Io {
     /**
+     * Recoverable temp helper errors.
+     */
+    public errordomain TempError {
+        CREATE_FAILED,
+        CLEANUP_FAILED
+    }
+
+    /**
      * Callback delegate used by temporary resource helpers.
      */
     public delegate void TempFunc (Vala.Io.Path path);
@@ -16,40 +24,62 @@ namespace Vala.Io {
          * Creates a temporary file, passes it to the callback, and removes it.
          *
          * @param func callback invoked with the temporary file path.
-         * @return true on success.
+         * @return Result.ok(true) on success,
+         *         Result.error(TempError.CREATE_FAILED) when temp file creation fails.
          */
-        public static bool withTempFile (TempFunc func) {
+        public static Vala.Collections.Result<bool, GLib.Error> withTempFile (TempFunc func) {
             Vala.Io.Path ? path = Files.tempFile ("valacore", ".tmp");
             if (path == null) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new TempError.CREATE_FAILED ("failed to create temporary file")
+                );
             }
 
+            bool removed = true;
             try {
                 func (path);
-                return true;
             } finally {
-                Files.remove (path);
+                removed = Files.remove (path);
             }
+            if (!removed) {
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new TempError.CLEANUP_FAILED (
+                        "failed to remove temporary file: %s".printf (path.toString ())
+                    )
+                );
+            }
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
 
         /**
          * Creates a temporary directory, passes it to the callback, and removes it.
          *
          * @param func callback invoked with the temporary directory path.
-         * @return true on success.
+         * @return Result.ok(true) on success,
+         *         Result.error(TempError.CREATE_FAILED) when temp directory creation fails.
          */
-        public static bool withTempDir (TempFunc func) {
+        public static Vala.Collections.Result<bool, GLib.Error> withTempDir (TempFunc func) {
             Vala.Io.Path ? path = Files.tempDir ("valacore");
             if (path == null) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new TempError.CREATE_FAILED ("failed to create temporary directory")
+                );
             }
 
+            bool deleted = true;
             try {
                 func (path);
-                return true;
             } finally {
-                Files.deleteRecursive (path);
+                deleted = Files.deleteRecursive (path);
             }
+            if (!deleted) {
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new TempError.CLEANUP_FAILED (
+                        "failed to remove temporary directory: %s".printf (path.toString ())
+                    )
+                );
+            }
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
     }
 }

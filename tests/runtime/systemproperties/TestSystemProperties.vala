@@ -36,6 +36,10 @@ void testGet () {
     string key = "LIBVALACORE_SYSTEMPROPERTIES_TEST";
     assert (Environment.set_variable (key, "ok", true) == true);
     assert (SystemProperties.get (key) == "ok");
+
+    string ? osName = SystemProperties.get ("os.name");
+    assert (osName != null);
+    assert (osName.length > 0);
 }
 
 void testTime () {

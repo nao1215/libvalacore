@@ -8,25 +8,19 @@ void main (string[] args) {
     Test.add_func ("/archive/tar/testCreateAndExtractLeadingDash", testCreateAndExtractLeadingDash);
     Test.add_func ("/archive/tar/testCreateFromDirAndList", testCreateFromDirAndList);
     Test.add_func ("/archive/tar/testAddFile", testAddFile);
+    Test.add_func ("/archive/tar/testAddFileRejectsExistingEntry", testAddFileRejectsExistingEntry);
     Test.add_func ("/archive/tar/testExtractFile", testExtractFile);
+    Test.add_func ("/archive/tar/testExtractFileRejectsDestinationDirectory",
+                   testExtractFileRejectsDestinationDirectory);
     Test.add_func ("/archive/tar/testExtractFileMissingEntryKeepsDestination",
                    testExtractFileMissingEntryKeepsDestination);
+    Test.add_func ("/archive/tar/testListParsesNonRegularEntryPayload", testListParsesNonRegularEntryPayload);
     Test.add_func ("/archive/tar/testExtractRejectsLinkEntries", testExtractRejectsLinkEntries);
+    Test.add_func ("/archive/tar/testExtractRejectsTraversalEntries", testExtractRejectsTraversalEntries);
+    Test.add_func ("/archive/tar/testListRejectsTruncatedArchive", testListRejectsTruncatedArchive);
     Test.add_func ("/archive/tar/testCreateRejectsDuplicateBasename", testCreateRejectsDuplicateBasename);
     Test.add_func ("/archive/tar/testInvalidInputs", testInvalidInputs);
     Test.run ();
-}
-
-bool hasTarTool () {
-    return Vala.Io.Process.exec ("sh", { "-c", "command -v tar >/dev/null 2>&1" });
-}
-
-bool requireTarTool () {
-    if (hasTarTool ()) {
-        return true;
-    }
-    Test.skip ("tar tool not available");
-    return false;
 }
 
 string rootFor (string name) {
@@ -67,11 +61,136 @@ ArrayList<string> unwrapEntries (Result<ArrayList<string>, GLib.Error> result) {
     return result.unwrap ();
 }
 
-void testCreateAndExtract () {
-    if (!requireTarTool ()) {
-        return;
+string toOctal (int64 value) {
+    if (value <= 0) {
+        return "0";
     }
 
+    string out = "";
+    int64 n = value;
+    while (n > 0) {
+        int digit = (int) (n & 7);
+        out = ((char) ('0' + digit)).to_string () + out;
+        n >>= 3;
+    }
+    return out;
+}
+
+void writeStringField (uint8[] header, int offset, int width, string value) {
+    int limit = value.length;
+    if (limit > width) {
+        limit = width;
+    }
+    for (int i = 0; i < limit; i++) {
+        header[offset + i] = (uint8) value[i];
+    }
+}
+
+void writeOctalField (uint8[] header, int offset, int width, int64 value) {
+    string oct = toOctal (value);
+    int digitsWidth = width - 1;
+    if (oct.length > digitsWidth) {
+        GLib.error (
+            ("octal value %" + int64.FORMAT + " does not fit in width %d").printf (value, digitsWidth)
+        );
+    }
+    int pad = digitsWidth - oct.length;
+    for (int i = 0; i < pad; i++) {
+        header[offset + i] = (uint8) '0';
+    }
+    for (int i = 0; i < oct.length; i++) {
+        header[offset + pad + i] = (uint8) oct[i];
+    }
+    header[offset + width - 1] = 0;
+}
+
+void writeChecksumField (uint8[] header) {
+    for (int i = 0; i < 8; i++) {
+        header[148 + i] = (uint8) ' ';
+    }
+
+    int64 sum = 0;
+    for (int i = 0; i < 512; i++) {
+        sum += header[i];
+    }
+
+    string oct = toOctal (sum);
+    if (oct.length > 6) {
+        GLib.error (
+            ("checksum octal value %" + int64.FORMAT + " does not fit in width 6").printf (sum)
+        );
+    }
+    int pad = 6 - oct.length;
+    for (int i = 0; i < pad; i++) {
+        header[148 + i] = (uint8) '0';
+    }
+    for (int i = 0; i < oct.length; i++) {
+        header[148 + pad + i] = (uint8) oct[i];
+    }
+    header[154] = 0;
+    header[155] = (uint8) ' ';
+}
+
+uint8[] buildTarHeader (string entryName,
+                        int mode,
+                        int uid,
+                        int gid,
+                        int64 size,
+                        int64 mtime,
+                        char typeflag) {
+    uint8[] header = new uint8[512];
+    writeStringField (header, 0, 100, entryName);
+    writeOctalField (header, 100, 8, mode);
+    writeOctalField (header, 108, 8, uid);
+    writeOctalField (header, 116, 8, gid);
+    writeOctalField (header, 124, 12, size);
+    writeOctalField (header, 136, 12, mtime);
+    header[156] = (uint8) typeflag;
+    writeStringField (header, 257, 6, "ustar");
+    writeStringField (header, 263, 2, "00");
+    writeChecksumField (header);
+    return header;
+}
+
+uint8[] buildSingleFileTar (string entryName, string contents) {
+    uint8[] contentBytes = contents.data[0 : contents.length];
+    uint8[] header = buildTarHeader (entryName, 0644, 0, 0, contentBytes.length, 0, '0');
+
+    var output = new GLib.ByteArray ();
+    output.append (header);
+    output.append (contentBytes);
+
+    int payloadPadding = (int) ((512 - (contentBytes.length % 512)) % 512);
+    if (payloadPadding > 0) {
+        output.append (new uint8[payloadPadding]);
+    }
+    output.append (new uint8[512]);
+    output.append (new uint8[512]);
+    return output.steal ();
+}
+
+void appendTarEntry (GLib.ByteArray output, string entryName, char typeflag, string payloadText) {
+    uint8[] payload = payloadText.data[0 : payloadText.length];
+    uint8[] header = buildTarHeader (entryName, 0644, 0, 0, payload.length, 0, typeflag);
+
+    output.append (header);
+    output.append (payload);
+    int padding = (int) ((512 - (payload.length % 512)) % 512);
+    if (padding > 0) {
+        output.append (new uint8[padding]);
+    }
+}
+
+uint8[] buildTarWithNonRegularPayload () {
+    var output = new GLib.ByteArray ();
+    appendTarEntry (output, "meta/pax", 'x', "hdr");
+    appendTarEntry (output, "data.txt", '0', "ok");
+    output.append (new uint8[512]);
+    output.append (new uint8[512]);
+    return output.steal ();
+}
+
+void testCreateAndExtract () {
     string root = rootFor ("create_extract");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/src")));
@@ -94,10 +213,6 @@ void testCreateAndExtract () {
 }
 
 void testCreateAndExtractLeadingDash () {
-    if (!requireTarTool ()) {
-        return;
-    }
-
     string root = rootFor ("create_extract_leading_dash");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/src")));
@@ -116,10 +231,6 @@ void testCreateAndExtractLeadingDash () {
 }
 
 void testCreateFromDirAndList () {
-    if (!requireTarTool ()) {
-        return;
-    }
-
     string root = rootFor ("from_dir");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/tree/sub")));
@@ -136,10 +247,6 @@ void testCreateFromDirAndList () {
 }
 
 void testAddFile () {
-    if (!requireTarTool ()) {
-        return;
-    }
-
     string root = rootFor ("add_file");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/base")));
@@ -157,11 +264,25 @@ void testAddFile () {
     cleanup (root);
 }
 
-void testExtractFile () {
-    if (!requireTarTool ()) {
-        return;
-    }
+void testAddFileRejectsExistingEntry () {
+    string root = rootFor ("add_file_reject_duplicate");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/base")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/base/one.txt"), "one"));
 
+    var archive = new Vala.Io.Path (root + "/base.tar");
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/base")));
+
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/extra")));
+    var duplicate = new Vala.Io.Path (root + "/extra/one.txt");
+    assert (Files.writeText (duplicate, "duplicate"));
+    var appended = Tar.addFile (archive, duplicate);
+    assert (appended.isError ());
+    assert (appended.unwrapError () is TarError.INVALID_ARGUMENT);
+    cleanup (root);
+}
+
+void testExtractFile () {
     string root = rootFor ("extract_file");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/tree/sub")));
@@ -185,11 +306,33 @@ void testExtractFile () {
     cleanup (root);
 }
 
-void testExtractFileMissingEntryKeepsDestination () {
-    if (!requireTarTool ()) {
+void testExtractFileRejectsDestinationDirectory () {
+    string root = rootFor ("extract_file_dest_dir");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root + "/tree")));
+    assert (Files.writeText (new Vala.Io.Path (root + "/tree/file.txt"), "payload"));
+
+    var archive = new Vala.Io.Path (root + "/tree.tar");
+    assertOk (Tar.createFromDir (archive, new Vala.Io.Path (root + "/tree")));
+
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
+    string ? entry = findBySuffix (entries, "file.txt");
+    assert (entry != null);
+    if (entry == null) {
+        cleanup (root);
         return;
     }
 
+    var destDir = new Vala.Io.Path (root + "/existing-dir");
+    assert (Files.makeDirs (destDir));
+    var extracted = Tar.extractFile (archive, entry, destDir);
+    assert (extracted.isError ());
+    assert (extracted.unwrapError () is TarError.SECURITY);
+    assert (Files.isDir (destDir));
+    cleanup (root);
+}
+
+void testExtractFileMissingEntryKeepsDestination () {
     string root = rootFor ("extract_file_fail_keep");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/tree")));
@@ -207,11 +350,25 @@ void testExtractFileMissingEntryKeepsDestination () {
     cleanup (root);
 }
 
-void testCreateRejectsDuplicateBasename () {
-    if (!requireTarTool ()) {
-        return;
-    }
+void testListParsesNonRegularEntryPayload () {
+    string root = rootFor ("list_non_regular_payload");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root)));
 
+    var archive = new Vala.Io.Path (root + "/non-regular.tar");
+    assert (Files.writeBytes (archive, buildTarWithNonRegularPayload ()));
+
+    ArrayList<string> entries = unwrapEntries (Tar.list (archive));
+    assert (containsSuffix (entries, "meta/pax"));
+    assert (containsSuffix (entries, "data.txt"));
+
+    var outPath = new Vala.Io.Path (root + "/out.txt");
+    assertOk (Tar.extractFile (archive, "data.txt", outPath));
+    assert (Files.readAllText (outPath) == "ok");
+    cleanup (root);
+}
+
+void testCreateRejectsDuplicateBasename () {
     string root = rootFor ("duplicate_basename");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/a")));
@@ -229,10 +386,6 @@ void testCreateRejectsDuplicateBasename () {
 }
 
 void testInvalidInputs () {
-    if (!requireTarTool ()) {
-        return;
-    }
-
     string root = rootFor ("invalid");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root)));
@@ -248,7 +401,10 @@ void testInvalidInputs () {
     assert (missingCreate.isError ());
     assert (missingCreate.unwrapError () is TarError.NOT_FOUND);
 
-    var fromDir = Tar.createFromDir (new Vala.Io.Path (root + "/from-dir.tar"), new Vala.Io.Path (root + "/missing-dir"));
+    var fromDir = Tar.createFromDir (
+        new Vala.Io.Path (root + "/from-dir.tar"),
+        new Vala.Io.Path (root + "/missing-dir")
+    );
     assert (fromDir.isError ());
     assert (fromDir.unwrapError () is TarError.INVALID_ARGUMENT);
 
@@ -296,10 +452,6 @@ void testInvalidInputs () {
 }
 
 void testExtractRejectsLinkEntries () {
-    if (!requireTarTool ()) {
-        return;
-    }
-
     string root = rootFor ("reject_links");
     cleanup (root);
     assert (Files.makeDirs (new Vala.Io.Path (root + "/tree")));
@@ -317,5 +469,36 @@ void testExtractRejectsLinkEntries () {
     var extracted = Tar.extract (archive, new Vala.Io.Path (root + "/out"));
     assert (extracted.isError ());
     assert (extracted.unwrapError () is TarError.SECURITY);
+    cleanup (root);
+}
+
+void testExtractRejectsTraversalEntries () {
+    string root = rootFor ("reject_traversal");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root)));
+
+    var archive = new Vala.Io.Path (root + "/evil.tar");
+    uint8[] evilTar = buildSingleFileTar ("../evil.txt", "danger");
+    assert (Files.writeBytes (archive, evilTar));
+
+    var extracted = Tar.extract (archive, new Vala.Io.Path (root + "/out"));
+    assert (extracted.isError ());
+    assert (extracted.unwrapError () is TarError.SECURITY);
+    assert (!Files.exists (new Vala.Io.Path (root + "/evil.txt")));
+    cleanup (root);
+}
+
+void testListRejectsTruncatedArchive () {
+    string root = rootFor ("truncated");
+    cleanup (root);
+    assert (Files.makeDirs (new Vala.Io.Path (root)));
+
+    var archive = new Vala.Io.Path (root + "/broken.tar");
+    uint8[] broken = { 0x75, 0x73, 0x74, 0x61, 0x72, 0x00, 0x00, 0x00, 0x00 };
+    assert (Files.writeBytes (archive, broken));
+
+    var listed = Tar.list (archive);
+    assert (listed.isError ());
+    assert (listed.unwrapError () is TarError.IO);
     cleanup (root);
 }

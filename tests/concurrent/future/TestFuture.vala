@@ -11,6 +11,9 @@ void main (string[] args) {
     Test.add_func ("/concurrent/future/testAwaitTimeout", testAwaitTimeout);
     Test.add_func ("/concurrent/future/testAwaitTimeoutSuccess", testAwaitTimeoutSuccess);
     Test.add_func ("/concurrent/future/testAwaitTimeoutInvalid", testAwaitTimeoutInvalid);
+    Test.add_func ("/concurrent/future/testAwaitResultTimeout", testAwaitResultTimeout);
+    Test.add_func ("/concurrent/future/testAwaitResultFailure", testAwaitResultFailure);
+    Test.add_func ("/concurrent/future/testAwaitResultCancelled", testAwaitResultCancelled);
     Test.add_func ("/concurrent/future/testMap", testMap);
     Test.add_func ("/concurrent/future/testFlatMap", testFlatMap);
     Test.add_func ("/concurrent/future/testRecover", testRecover);
@@ -85,10 +88,46 @@ void testAwaitTimeoutInvalid () {
     Future<string> future = Future<string>.completed<string> ("ok");
 
     string ? value = future.awaitTimeout (Duration.ofSeconds (-1));
-    assert (value == null);
+    assert (value == "ok");
     assert (future.isDone () == true);
     assert (future.isSuccess () == true);
     assert (future.@await () == "ok");
+}
+
+void testAwaitResultTimeout () {
+    Future<int> future = Future.run<int> (() => {
+        Thread.usleep (200 * 1000);
+        return 99;
+    });
+
+    var waited = future.awaitResult (Duration.ofSeconds (0));
+    assert (waited.isError ());
+    GLib.Error err = waited.unwrapError ();
+    assert (err is FutureError.TIMEOUT);
+}
+
+void testAwaitResultFailure () {
+    Future<int> failed = Future<int>.failed<int> ("boom");
+
+    var waited = failed.awaitResult (Duration.ofSeconds (1));
+    assert (waited.isError ());
+    GLib.Error err = waited.unwrapError ();
+    assert (err is FutureError.FAILED);
+    assert (err.message == "boom");
+}
+
+void testAwaitResultCancelled () {
+    Future<int> source = Future.run<int> (() => {
+        Thread.usleep (100 * 1000);
+        return 7;
+    });
+    bool cancelled = source.cancel ();
+    assert (cancelled);
+
+    var waited = source.awaitResult (Duration.ofSeconds (1));
+    assert (waited.isError ());
+    GLib.Error err = waited.unwrapError ();
+    assert (err is FutureError.CANCELLED);
 }
 
 void testMap () {

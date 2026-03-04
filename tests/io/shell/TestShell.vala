@@ -6,10 +6,17 @@ void main (string[] args) {
     Test.add_func ("/io/shell/testExec", testExec);
     Test.add_func ("/io/shell/testExecFailure", testExecFailure);
     Test.add_func ("/io/shell/testExecQuiet", testExecQuiet);
+    Test.add_func ("/io/shell/testExecSpawnFailure", testExecSpawnFailure);
     Test.add_func ("/io/shell/testExecWithTimeout", testExecWithTimeout);
+    Test.add_func ("/io/shell/testExecWithTimeoutZero", testExecWithTimeoutZero);
     Test.add_func ("/io/shell/testPipe", testPipe);
+    Test.add_func ("/io/shell/testPipeEmpty", testPipeEmpty);
     Test.add_func ("/io/shell/testWhich", testWhich);
+    Test.add_func ("/io/shell/testWhichMissing", testWhichMissing);
+    Test.add_func ("/io/shell/testWhichEmpty", testWhichEmpty);
+    Test.add_func ("/io/shell/testWhichDirectPath", testWhichDirectPath);
     Test.add_func ("/io/shell/testLines", testLines);
+    Test.add_func ("/io/shell/testErrorLines", testErrorLines);
     Test.add_func ("/io/shell/testExecWithTimeoutInvalid", testExecWithTimeoutInvalid);
     Test.run ();
 }
@@ -43,12 +50,27 @@ void testExecQuiet () {
     assert (result.stderr () == "");
 }
 
+void testExecSpawnFailure () {
+    ShellResult result = Vala.Io.Shell.exec ("");
+
+    assert (result.isSuccess () == false);
+    assert (result.exitCode () == 127);
+    assert (result.stderr () == "command must not be empty");
+}
+
 void testExecWithTimeout () {
     ShellResult result = mustExecWithTimeout ("sleep 2", Duration.ofSeconds (1));
 
     assert (result.isSuccess () == false);
     assert (result.durationMillis () >= 900);
     assert (result.durationMillis () < 5000);
+}
+
+void testExecWithTimeoutZero () {
+    ShellResult result = mustExecWithTimeout ("echo now", Duration.ofSeconds (0));
+
+    assert (result.isSuccess () == true);
+    assert (result.stdout ().strip () == "now");
 }
 
 void testPipe () {
@@ -59,10 +81,49 @@ void testPipe () {
     assert (result.stdout ().strip () == "2");
 }
 
+void testPipeEmpty () {
+    string[] commands = {};
+    ShellResult result = Vala.Io.Shell.pipe (commands);
+
+    assert (result.isSuccess () == false);
+    assert (result.exitCode () == 127);
+    assert (result.stderr () == "no commands");
+}
+
 void testWhich () {
     Vala.Io.Path ? path = Vala.Io.Shell.which ("sh");
     assert (path != null);
     assert (path.toString ().length > 0);
+}
+
+void testWhichMissing () {
+    Vala.Io.Path ? path = Vala.Io.Shell.which ("__definitely_no_such_command__");
+    assert (path == null);
+}
+
+void testWhichEmpty () {
+    Vala.Io.Path ? path = Vala.Io.Shell.which ("");
+    assert (path == null);
+}
+
+void testWhichDirectPath () {
+    Vala.Io.Path ? tmp = Vala.Io.Files.tempFile ("shell-which-", ".sh");
+    assert (tmp != null);
+    if (tmp == null) {
+        return;
+    }
+
+    bool written = Vala.Io.Files.writeText (tmp, "#!/bin/sh\necho x\n");
+    assert (written);
+    bool chmodOk = Vala.Io.Files.chmod (tmp, 0755);
+    assert (chmodOk);
+
+    Vala.Io.Path ? resolved = Vala.Io.Shell.which (tmp.toString ());
+    assert (resolved != null);
+    assert (resolved.toString () == tmp.toString ());
+
+    bool removed = Vala.Io.Files.remove (tmp);
+    assert (removed);
 }
 
 void testLines () {
@@ -75,6 +136,14 @@ void testLines () {
 
     var errLines = result.stderrLines ();
     assert (errLines.length () == 0);
+}
+
+void testErrorLines () {
+    ShellResult result = Vala.Io.Shell.exec ("printf 'e1\\ne2\\n' 1>&2");
+    var errLines = result.stderrLines ();
+    assert (errLines.length () == 2);
+    assert (errLines.nth_data (0) == "e1");
+    assert (errLines.nth_data (1) == "e2");
 }
 
 void testExecWithTimeoutInvalid () {

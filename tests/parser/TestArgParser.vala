@@ -21,6 +21,7 @@ void main (string[] args) {
     Test.add_func ("/testUsageWithDescription", testUsageWithDescription);
     Test.add_func ("/testParseNoOptions", testParseNoOptions);
     Test.add_func ("/testParseOnlyArgs", testParseOnlyArgs);
+    Test.add_func ("/testParseResetsPreviousState", testParseResetsPreviousState);
     Test.run ();
 }
 
@@ -210,4 +211,23 @@ void testParseOnlyArgs () {
     assert (args.length () == 2);
     assert (args.nth_data (0) == "hello");
     assert (args.nth_data (1) == "world");
+}
+
+void testParseResetsPreviousState () {
+    var parser = createTestParser ();
+    parser.addOption ("h", "help", "Show help");
+    parser.addOption ("d", "debug", "Debug mode");
+
+    parser.parse (new string[] { "testapp", "-h", "arg1" });
+    assert (parser.hasOption ("h") == true);
+    assert (parser.hasOption ("d") == false);
+    var firstArgs = parser.copyArgWithoutCmdNameAndOptions ();
+    assert (firstArgs.length () == 1);
+    assert (firstArgs.nth_data (0) == "arg1");
+
+    parser.parse (new string[] { "testapp", "--debug" });
+    assert (parser.hasOption ("h") == false);
+    assert (parser.hasOption ("d") == true);
+    var secondArgs = parser.copyArgWithoutCmdNameAndOptions ();
+    assert (secondArgs.length () == 0);
 }

@@ -1,5 +1,12 @@
 namespace Vala.Config {
     /**
+     * Recoverable properties operation errors.
+     */
+    public errordomain PropertiesError {
+        IO
+    }
+
+    /**
      * Java-like key-value properties container.
      */
     public class Properties : GLib.Object {
@@ -21,16 +28,25 @@ namespace Vala.Config {
          * - lines starting with # are ignored
          *
          * @param path source file path.
-         * @return true on success.
+         * @return Result.ok(true) on success,
+         *         Result.error(PropertiesError.IO) on read failure.
          */
-        public bool load (Vala.Io.Path path) {
+        public Vala.Collections.Result<bool, GLib.Error> load (Vala.Io.Path path) {
             string content;
             try {
                 if (!FileUtils.get_contents (path.toString (), out content)) {
-                    return false;
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new PropertiesError.IO (
+                            "failed to load properties file: %s".printf (path.toString ())
+                        )
+                    );
                 }
             } catch (GLib.FileError e) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new PropertiesError.IO (
+                        "failed to load properties file: %s (%s)".printf (path.toString (), e.message)
+                    )
+                );
             }
 
             _values.remove_all ();
@@ -53,16 +69,17 @@ namespace Vala.Config {
                 }
                 _values.insert (key, value);
             }
-            return true;
+            return Vala.Collections.Result.ok<bool, GLib.Error> (true);
         }
 
         /**
          * Saves properties to file.
          *
          * @param path destination file path.
-         * @return true on success.
+         * @return Result.ok(true) on success,
+         *         Result.error(PropertiesError.IO) on write failure.
          */
-        public bool save (Vala.Io.Path path) {
+        public Vala.Collections.Result<bool, GLib.Error> save (Vala.Io.Path path) {
             GLib.StringBuilder builder = new GLib.StringBuilder ();
             string[] sortedKeys = keys ();
             for (int i = 0; i < sortedKeys.length; i++) {
@@ -87,9 +104,21 @@ namespace Vala.Config {
             }
 
             try {
-                return FileUtils.set_contents (path.toString (), builder.str);
+                bool wrote = FileUtils.set_contents (path.toString (), builder.str);
+                if (!wrote) {
+                    return Vala.Collections.Result.error<bool, GLib.Error> (
+                        new PropertiesError.IO (
+                            "failed to save properties file: %s".printf (path.toString ())
+                        )
+                    );
+                }
+                return Vala.Collections.Result.ok<bool, GLib.Error> (true);
             } catch (GLib.FileError e) {
-                return false;
+                return Vala.Collections.Result.error<bool, GLib.Error> (
+                    new PropertiesError.IO (
+                        "failed to save properties file: %s (%s)".printf (path.toString (), e.message)
+                    )
+                );
             }
         }
 
