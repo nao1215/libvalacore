@@ -20,7 +20,7 @@ jobs:
       run: sudo apt update && sudo apt install -y --no-install-recommends valac build-essential meson libglib2.0-dev ninja-build lcov ccache
 
     - name: Cache ccache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.cache/ccache
         key: coverage-ccache-${{ runner.os }}-${{ hashFiles('meson.build', 'src/**/*.vala', 'tests/**/*.vala') }}
